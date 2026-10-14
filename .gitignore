@@ -427,3 +427,7 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+
+# Generated workbench dependencies, downloaded tools and local analysis runs.
+/.tools/
+/data/results/

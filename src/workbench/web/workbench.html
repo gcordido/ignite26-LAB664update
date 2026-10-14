@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Insurance Workbench App</title>
+    <link rel="stylesheet" href="/web/workbench.css" />
+  </head>
+  <body>
+    <header>
+      <h1>Insurance Workbench App</h1>
+      <span class="muted">Synthetic data</span>
+      <nav>
+        <a href="/lab.html">Lab</a
+        ><a href="https://contentunderstanding.ai.azure.com/">Studio</a>
+      </nav>
+    </header>
+    <main>
+      <div class="toolbar">
+        <p class="toolbar-intro">
+          Load cached results for 10 different customers, or run your live
+          analyzer (it will take a few minutes).
+        </p>
+        <div class="toolbar-group cache-group">
+          <label class="cache-label" for="cache">Cache Results:</label>
+          <select id="cache" aria-label="Saved results"></select>
+          <button id="load-cache" disabled>Load</button>
+          <button
+            id="refresh-cache"
+            class="icon-button"
+            disabled
+            title="Refresh saved results"
+            aria-label="Refresh saved results"
+          >
+            &#8635;
+          </button>
+        </div>
+        <div class="toolbar-group analyzer-group">
+          <label for="analyzer">Analyzer:</label>
+          <select id="analyzer" aria-label="Analyzer" disabled></select>
+          <button id="analyze" disabled>Run live</button>
+        </div>
+      </div>
+      <p id="error" class="error" role="alert" hidden></p>
+      <dialog id="run-confirmation">
+        <h2>Run live?</h2>
+        <p id="confirm-summary"></p>
+        <p class="muted">
+          Azure charges apply. Native results are cached automatically.
+        </p>
+        <div class="actions">
+          <button id="confirm-run">Run</button
+          ><button id="cancel-run" class="secondary">Cancel</button>
+        </div>
+      </dialog>
+      <section id="batch" hidden>
+        <h2 class="results-heading">Content Understanding Results</h2>
+        <div class="results-toolbar">
+          <div id="view-types" class="actions" aria-label="Result type">
+            <button data-view="classification" aria-pressed="true">
+              Classification
+            </button>
+            <button data-view="id_document" aria-pressed="false" hidden>
+              ID
+            </button>
+            <button data-view="tax_1099a" aria-pressed="false" hidden>
+              1099-A
+            </button>
+            <button data-view="repair_estimate" aria-pressed="false" hidden>
+              Repair Estimate
+            </button>
+            <button data-view="towing_invoice" aria-pressed="false" hidden>
+              Towing Invoice
+            </button>
+            <button data-view="rental_invoice" aria-pressed="false" hidden>
+              Rental Invoice
+            </button>
+          </div>
+          <span id="origin" class="badge"></span>
+        </div>
+        <div class="workspace">
+          <div class="table-area">
+            <div class="table-status">
+              <div id="run-progress" role="status" hidden>
+                <div class="progress-info">
+                  <span class="spinner" aria-hidden="true"></span>
+                  <span id="progress"></span>
+                  <span id="elapsed-time" title="Elapsed analysis time"
+                    >0:00</span
+                  >
+                </div>
+                <progress
+                  id="progress-bar"
+                  value="0"
+                  max="10"
+                  aria-label="Packets completed"
+                ></progress>
+              </div>
+              <div class="columns-toolbar">
+                <label id="field-setting" class="toggle" hidden
+                  ><input id="all-fields" type="checkbox" /> All fields</label
+                >
+                <label class="toggle"
+                  ><input id="show-confidence" type="checkbox" />
+                  Confidence</label
+                >
+              </div>
+            </div>
+            <div id="packets" class="table">
+              <table id="packet-table" aria-label="Customer results">
+                <colgroup></colgroup>
+                <thead></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+      <div
+        id="pane-splitter"
+        role="separator"
+        aria-orientation="vertical"
+        aria-label="Resize document preview"
+        tabindex="0"
+        title="Drag to resize preview"
+      ></div>
+      <aside id="preview" aria-label="Document preview">
+        <div id="pdf-scroll" title="Mouse wheel to zoom; drag to pan">
+          <div id="preview-empty" aria-hidden="true">
+            <svg viewBox="0 0 48 48">
+              <path
+                d="M13 5h15l8 8v30H13zM28 5v9h8M19 23h11M19 29h11M19 35h7"
+              />
+            </svg>
+            <p>Select a document or value in the table</p>
+          </div>
+          <div id="pdf-stage" hidden>
+            <canvas id="pdf-canvas"></canvas>
+            <svg
+              id="pdf-overlay"
+              viewBox="0 0 1 1"
+              preserveAspectRatio="none"
+              aria-label="Native CU field highlights"
+            ></svg>
+          </div>
+        </div>
+        <div id="pdf-controls" class="actions" hidden>
+          <button
+            id="prev-page"
+            class="icon-button"
+            aria-label="Previous PDF page"
+            title="Previous page"
+          >
+            &lsaquo;
+          </button>
+          <label for="pdf-page"
+            >Page <input id="pdf-page" type="number" min="1" value="1"
+          /></label>
+          <span id="pdf-pages"></span>
+          <button
+            id="next-page"
+            class="icon-button"
+            aria-label="Next PDF page"
+            title="Next page"
+          >
+            &rsaquo;
+          </button>
+          <button
+            id="zoom-out"
+            class="icon-button"
+            aria-label="Zoom out"
+            title="Zoom out"
+          >
+            -
+          </button>
+          <button
+            id="zoom-in"
+            class="icon-button"
+            aria-label="Zoom in"
+            title="Zoom in"
+          >
+            +
+          </button>
+          <button
+            id="fit-page"
+            class="icon-button"
+            aria-label="Fit page"
+            title="Fit page"
+          >
+            <svg viewBox="0 0 24 24">
+              <path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5M8 8h8v8H8z" />
+            </svg>
+          </button>
+          <a
+            id="source-pdf"
+            class="icon-button"
+            target="_blank"
+            rel="noopener"
+            aria-label="Open source PDF"
+            title="Open source PDF"
+            >&#8599;</a
+          >
+          <button
+            id="download"
+            class="icon-button"
+            aria-label="Download native JSON"
+            title="Download native JSON"
+          >
+            { }
+          </button>
+        </div>
+        <p id="pdf-status" role="status" hidden></p>
+      </aside>
+      <dialog id="array-dialog">
+        <div class="dialog-toolbar">
+          <h2 id="array-title"></h2>
+          <span id="array-summary"></span>
+          <button
+            id="close-array"
+            class="icon-button"
+            aria-label="Close item table"
+            title="Close"
+          >
+            &times;
+          </button>
+        </div>
+        <div id="array-table" class="table"></div>
+      </dialog>
+    </main>
+    <script type="module" src="/web/workbench.js"></script>
+  </body>
+</html>
