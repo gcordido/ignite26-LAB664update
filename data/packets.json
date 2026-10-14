@@ -1,0 +1,818 @@
+{
+  "source": "auto-claims-v3",
+  "synthetic": true,
+  "datasetHash": "2fc7820b38640a8cfb0d16273e47fdb1afc3b2b8745d967fe8ca0d6376b27e71",
+  "labelOrigin": "Source manifest document groups and authored case facts; not model predictions or proof that every service split is semantically wrong when groups differ.",
+  "packets": [
+    {
+      "id": "packet-01",
+      "sourceBatch": "auto-claim-batch-1",
+      "claimId": "CMM-26-467202",
+      "claimant": "Danielle Ortiz",
+      "region": "TX",
+      "scenario": "rear-end-collision",
+      "file": "packets/packet-01.pdf",
+      "pages": 13,
+      "sha256": "6a9b8f81434e8b1fac677b65547c2d7b96d0f4b02c714f536fac27c0e23c5d27",
+      "expectedDocuments": [
+        {
+          "sourceId": "01-card",
+          "title": "Roadside membership card",
+          "category": "id_document",
+          "start": 1,
+          "end": 1
+        },
+        {
+          "sourceId": "02-policy",
+          "title": "Policy declarations and endorsements",
+          "category": "other",
+          "start": 2,
+          "end": 4
+        },
+        {
+          "sourceId": "03-claim_form",
+          "title": "Loss intake and assessment",
+          "category": "other",
+          "start": 5,
+          "end": 6
+        },
+        {
+          "sourceId": "04-incident_report",
+          "title": "Police incident record",
+          "category": "other",
+          "start": 7,
+          "end": 7
+        },
+        {
+          "sourceId": "05-estimate",
+          "title": "Itemized repair assessment",
+          "category": "repair_estimate",
+          "start": 8,
+          "end": 8
+        },
+        {
+          "sourceId": "06-handwriting",
+          "title": "Driver or owner statement",
+          "category": "other",
+          "start": 9,
+          "end": 9
+        },
+        {
+          "sourceId": "07-invoice",
+          "title": "Rental billing and vehicle condition",
+          "category": "other",
+          "start": 10,
+          "end": 11
+        },
+        {
+          "sourceId": "08-inspection",
+          "title": "Workshop damage inspection",
+          "category": "other",
+          "start": 12,
+          "end": 12
+        },
+        {
+          "sourceId": "09-form-1099-a",
+          "title": "2025 Form 1099-A supplemental tax test",
+          "category": "tax_1099a",
+          "start": 13,
+          "end": 13
+        }
+      ],
+      "expectedRepair": {
+        "vehicle": "2022 Honda CR-V EX",
+        "vin": "7FARW1H55NA510781",
+        "odometer": 36420
+      }
+    },
+    {
+      "id": "packet-02",
+      "sourceBatch": "auto-claim-batch-2",
+      "claimId": "ASA-25-615743",
+      "claimant": "Victor Bennett",
+      "region": "WA",
+      "scenario": "parking-hit-and-run",
+      "file": "packets/packet-02.pdf",
+      "pages": 11,
+      "sha256": "5004adbbeb43c3a3e21df4ccfa349a3f0629a4979612d2758eab82bc092b396b",
+      "expectedDocuments": [
+        {
+          "sourceId": "01-card",
+          "title": "Roadside membership card",
+          "category": "id_document",
+          "start": 1,
+          "end": 1
+        },
+        {
+          "sourceId": "02-policy",
+          "title": "Policy declarations and endorsements",
+          "category": "other",
+          "start": 2,
+          "end": 3
+        },
+        {
+          "sourceId": "03-claim_form",
+          "title": "Loss intake and assessment",
+          "category": "other",
+          "start": 4,
+          "end": 4
+        },
+        {
+          "sourceId": "04-incident_report",
+          "title": "Police incident record",
+          "category": "other",
+          "start": 5,
+          "end": 5
+        },
+        {
+          "sourceId": "05-estimate",
+          "title": "Itemized repair assessment",
+          "category": "repair_estimate",
+          "start": 6,
+          "end": 6
+        },
+        {
+          "sourceId": "06-handwriting",
+          "title": "Driver or owner statement",
+          "category": "other",
+          "start": 7,
+          "end": 7
+        },
+        {
+          "sourceId": "07-invoice",
+          "title": "Replacement rental and handover",
+          "category": "other",
+          "start": 8,
+          "end": 9
+        },
+        {
+          "sourceId": "08-inspection",
+          "title": "Workshop damage inspection",
+          "category": "other",
+          "start": 10,
+          "end": 10
+        },
+        {
+          "sourceId": "09-form-1099-a",
+          "title": "2025 Form 1099-A supplemental tax test",
+          "category": "tax_1099a",
+          "start": 11,
+          "end": 11
+        }
+      ],
+      "expectedRepair": {
+        "vehicle": "2020 Subaru Outback Premium",
+        "vin": "4S4BTACC1LA511562",
+        "odometer": 62715
+      }
+    },
+    {
+      "id": "packet-03",
+      "sourceBatch": "auto-claim-batch-3",
+      "claimId": "SCI-25-526383",
+      "claimant": "Laila Haddad",
+      "region": "AZ",
+      "scenario": "theft-recovery",
+      "file": "packets/packet-03.pdf",
+      "pages": 13,
+      "sha256": "e70dfebd08d7f0ecd0b0cbe26196e7c7a3dc3fcfd84ba04acc1d37622ac55475",
+      "expectedDocuments": [
+        {
+          "sourceId": "01-card",
+          "title": "Roadside membership card",
+          "category": "id_document",
+          "start": 1,
+          "end": 1
+        },
+        {
+          "sourceId": "02-policy",
+          "title": "Policy declarations and endorsements",
+          "category": "other",
+          "start": 2,
+          "end": 4
+        },
+        {
+          "sourceId": "03-claim_form",
+          "title": "Loss intake and assessment",
+          "category": "other",
+          "start": 5,
+          "end": 6
+        },
+        {
+          "sourceId": "04-incident_report",
+          "title": "Police incident record",
+          "category": "other",
+          "start": 7,
+          "end": 7
+        },
+        {
+          "sourceId": "05-estimate",
+          "title": "Itemized repair assessment",
+          "category": "repair_estimate",
+          "start": 8,
+          "end": 8
+        },
+        {
+          "sourceId": "06-handwriting",
+          "title": "Driver or owner statement",
+          "category": "other",
+          "start": 9,
+          "end": 9
+        },
+        {
+          "sourceId": "07-invoice",
+          "title": "Recovery towing and security supplement",
+          "category": "other",
+          "start": 10,
+          "end": 11
+        },
+        {
+          "sourceId": "08-inspection",
+          "title": "Workshop damage inspection",
+          "category": "other",
+          "start": 12,
+          "end": 12
+        },
+        {
+          "sourceId": "09-form-1099-a",
+          "title": "2025 Form 1099-A supplemental tax test",
+          "category": "tax_1099a",
+          "start": 13,
+          "end": 13
+        }
+      ],
+      "expectedRepair": {
+        "vehicle": "2023 Kia Sportage LX",
+        "vin": "KNDPMCAC0PA512343",
+        "odometer": 23180
+      }
+    },
+    {
+      "id": "packet-04",
+      "sourceBatch": "auto-claim-batch-4",
+      "claimId": "ARC-26-739979",
+      "claimant": "Marcus Coleman",
+      "region": "CO",
+      "scenario": "hail-paintless-repair",
+      "file": "packets/packet-04.pdf",
+      "pages": 12,
+      "sha256": "69f3a2c7baf7b702759b09abd0f605d38013749a318e1e9b6e60b0cba9ec2e28",
+      "expectedDocuments": [
+        {
+          "sourceId": "01-card",
+          "title": "Roadside membership card",
+          "category": "id_document",
+          "start": 1,
+          "end": 1
+        },
+        {
+          "sourceId": "02-policy",
+          "title": "Policy declarations and endorsements",
+          "category": "other",
+          "start": 2,
+          "end": 3
+        },
+        {
+          "sourceId": "03-claim_form",
+          "title": "Loss intake and assessment",
+          "category": "other",
+          "start": 4,
+          "end": 4
+        },
+        {
+          "sourceId": "04-incident_report",
+          "title": "Customer-reported incident record",
+          "category": "other",
+          "start": 5,
+          "end": 5
+        },
+        {
+          "sourceId": "05-estimate",
+          "title": "Itemized repair assessment",
+          "category": "repair_estimate",
+          "start": 6,
+          "end": 7
+        },
+        {
+          "sourceId": "06-handwriting",
+          "title": "Driver or owner statement",
+          "category": "other",
+          "start": 8,
+          "end": 8
+        },
+        {
+          "sourceId": "07-claim_form",
+          "title": "PDR panel supplement and quality control",
+          "category": "other",
+          "start": 9,
+          "end": 10
+        },
+        {
+          "sourceId": "08-inspection",
+          "title": "Workshop damage inspection",
+          "category": "other",
+          "start": 11,
+          "end": 11
+        },
+        {
+          "sourceId": "09-form-1099-a",
+          "title": "2025 Form 1099-A supplemental tax test",
+          "category": "tax_1099a",
+          "start": 12,
+          "end": 12
+        }
+      ],
+      "expectedRepair": {
+        "vehicle": "2024 Mazda CX-5 2.5 S Preferred",
+        "vin": "JM3KFBCM6RA513124",
+        "odometer": 17845
+      }
+    },
+    {
+      "id": "packet-05",
+      "sourceBatch": "auto-claim-batch-5",
+      "claimId": "PRC-25-862846",
+      "claimant": "Sofia Navarro",
+      "region": "FL",
+      "scenario": "curb-and-suspension",
+      "file": "packets/packet-05.pdf",
+      "pages": 11,
+      "sha256": "c01aeb14ac2956f43d29c08a2d55e141037049d4726c28915efa0bfe3053d979",
+      "expectedDocuments": [
+        {
+          "sourceId": "01-card",
+          "title": "Roadside membership card",
+          "category": "id_document",
+          "start": 1,
+          "end": 1
+        },
+        {
+          "sourceId": "02-policy",
+          "title": "Policy declarations and endorsements",
+          "category": "other",
+          "start": 2,
+          "end": 3
+        },
+        {
+          "sourceId": "03-claim_form",
+          "title": "Loss intake and assessment",
+          "category": "other",
+          "start": 4,
+          "end": 4
+        },
+        {
+          "sourceId": "04-incident_report",
+          "title": "Customer-reported incident record",
+          "category": "other",
+          "start": 5,
+          "end": 5
+        },
+        {
+          "sourceId": "05-estimate",
+          "title": "Itemized repair assessment",
+          "category": "repair_estimate",
+          "start": 6,
+          "end": 6
+        },
+        {
+          "sourceId": "06-handwriting",
+          "title": "Driver or owner statement",
+          "category": "other",
+          "start": 7,
+          "end": 7
+        },
+        {
+          "sourceId": "07-invoice",
+          "title": "Towing billing and wheel inspection",
+          "category": "other",
+          "start": 8,
+          "end": 9
+        },
+        {
+          "sourceId": "08-inspection",
+          "title": "Workshop damage inspection",
+          "category": "other",
+          "start": 10,
+          "end": 10
+        },
+        {
+          "sourceId": "09-form-1099-a",
+          "title": "2025 Form 1099-A supplemental tax test",
+          "category": "tax_1099a",
+          "start": 11,
+          "end": 11
+        }
+      ],
+      "expectedRepair": {
+        "vehicle": "2019 Toyota Corolla LE",
+        "vin": "5YFEPMAE3KA513905",
+        "odometer": 94360
+      }
+    },
+    {
+      "id": "packet-06",
+      "sourceBatch": "auto-claim-batch-6",
+      "claimId": "PMM-26-321506",
+      "claimant": "Arthur Mensah",
+      "region": "IL",
+      "scenario": "intersection-liability-dispute",
+      "file": "packets/packet-06.pdf",
+      "pages": 13,
+      "sha256": "24938c2af735701a8e3c6e6141f677afa7e1f9cb1a6b74d9fe4e896a55587d83",
+      "expectedDocuments": [
+        {
+          "sourceId": "01-card",
+          "title": "Roadside membership card",
+          "category": "id_document",
+          "start": 1,
+          "end": 1
+        },
+        {
+          "sourceId": "02-policy",
+          "title": "Policy declarations and endorsements",
+          "category": "other",
+          "start": 2,
+          "end": 4
+        },
+        {
+          "sourceId": "03-claim_form",
+          "title": "Loss intake and assessment",
+          "category": "other",
+          "start": 5,
+          "end": 6
+        },
+        {
+          "sourceId": "04-incident_report",
+          "title": "Police incident record",
+          "category": "other",
+          "start": 7,
+          "end": 8
+        },
+        {
+          "sourceId": "05-estimate",
+          "title": "Itemized repair assessment",
+          "category": "repair_estimate",
+          "start": 9,
+          "end": 9
+        },
+        {
+          "sourceId": "06-handwriting",
+          "title": "Driver or owner statement",
+          "category": "other",
+          "start": 10,
+          "end": 10
+        },
+        {
+          "sourceId": "07-claim_form",
+          "title": "Evidence chronology and liability review",
+          "category": "other",
+          "start": 11,
+          "end": 11
+        },
+        {
+          "sourceId": "08-inspection",
+          "title": "Workshop damage inspection",
+          "category": "other",
+          "start": 12,
+          "end": 12
+        },
+        {
+          "sourceId": "09-form-1099-a",
+          "title": "2025 Form 1099-A supplemental tax test",
+          "category": "tax_1099a",
+          "start": 13,
+          "end": 13
+        }
+      ],
+      "expectedRepair": {
+        "vehicle": "2021 Ford Escape SE",
+        "vin": "1FMCU0G63MA514686",
+        "odometer": 51840
+      }
+    },
+    {
+      "id": "packet-07",
+      "sourceBatch": "auto-claim-batch-7",
+      "claimId": "CDA-25-239878",
+      "claimant": "Priya Raman",
+      "region": "LA",
+      "scenario": "flood-total-loss-assessment",
+      "file": "packets/packet-07.pdf",
+      "pages": 13,
+      "sha256": "72b913609d33eff9f183094687005af43527331d5fe0228734338960c5837336",
+      "expectedDocuments": [
+        {
+          "sourceId": "01-card",
+          "title": "Roadside membership card",
+          "category": "id_document",
+          "start": 1,
+          "end": 1
+        },
+        {
+          "sourceId": "02-policy",
+          "title": "Policy declarations and endorsements",
+          "category": "other",
+          "start": 2,
+          "end": 3
+        },
+        {
+          "sourceId": "03-claim_form",
+          "title": "Loss intake and assessment",
+          "category": "other",
+          "start": 4,
+          "end": 5
+        },
+        {
+          "sourceId": "04-incident_report",
+          "title": "Customer-reported incident record",
+          "category": "other",
+          "start": 6,
+          "end": 6
+        },
+        {
+          "sourceId": "05-estimate",
+          "title": "Itemized repair assessment",
+          "category": "repair_estimate",
+          "start": 7,
+          "end": 8
+        },
+        {
+          "sourceId": "06-handwriting",
+          "title": "Driver or owner statement",
+          "category": "other",
+          "start": 9,
+          "end": 9
+        },
+        {
+          "sourceId": "07-invoice",
+          "title": "Comparable valuation and proposed settlement",
+          "category": "other",
+          "start": 10,
+          "end": 11
+        },
+        {
+          "sourceId": "08-inspection",
+          "title": "Workshop damage inspection",
+          "category": "other",
+          "start": 12,
+          "end": 12
+        },
+        {
+          "sourceId": "09-form-1099-a",
+          "title": "2025 Form 1099-A supplemental tax test",
+          "category": "tax_1099a",
+          "start": 13,
+          "end": 13
+        }
+      ],
+      "expectedRepair": {
+        "vehicle": "2020 Volkswagen Jetta S",
+        "vin": "3VWC57BU3LA515467",
+        "odometer": 89725
+      }
+    },
+    {
+      "id": "packet-08",
+      "sourceBatch": "auto-claim-batch-8",
+      "claimId": "SLI-26-394117",
+      "claimant": "Ethan Park",
+      "region": "CA",
+      "scenario": "windshield-and-calibration",
+      "file": "packets/packet-08.pdf",
+      "pages": 11,
+      "sha256": "280ef9ac8d3fbb91e532be93a318d1e9b41c8bf3efe428d1b19c769183137f2a",
+      "expectedDocuments": [
+        {
+          "sourceId": "01-card",
+          "title": "Roadside membership card",
+          "category": "id_document",
+          "start": 1,
+          "end": 1
+        },
+        {
+          "sourceId": "02-policy",
+          "title": "Policy declarations and endorsements",
+          "category": "other",
+          "start": 2,
+          "end": 3
+        },
+        {
+          "sourceId": "03-claim_form",
+          "title": "Loss intake and assessment",
+          "category": "other",
+          "start": 4,
+          "end": 4
+        },
+        {
+          "sourceId": "04-incident_report",
+          "title": "Customer-reported incident record",
+          "category": "other",
+          "start": 5,
+          "end": 5
+        },
+        {
+          "sourceId": "05-estimate",
+          "title": "Itemized repair assessment",
+          "category": "repair_estimate",
+          "start": 6,
+          "end": 6
+        },
+        {
+          "sourceId": "06-handwriting",
+          "title": "Driver or owner statement",
+          "category": "other",
+          "start": 7,
+          "end": 7
+        },
+        {
+          "sourceId": "07-invoice",
+          "title": "Mobile glass billing and camera check",
+          "category": "other",
+          "start": 8,
+          "end": 9
+        },
+        {
+          "sourceId": "08-inspection",
+          "title": "Workshop damage inspection",
+          "category": "other",
+          "start": 10,
+          "end": 10
+        },
+        {
+          "sourceId": "09-form-1099-a",
+          "title": "2025 Form 1099-A supplemental tax test",
+          "category": "tax_1099a",
+          "start": 11,
+          "end": 11
+        }
+      ],
+      "expectedRepair": {
+        "vehicle": "2022 Hyundai IONIQ 5 SE",
+        "vin": "KM8KNDAF4NA516248",
+        "odometer": 30910
+      }
+    },
+    {
+      "id": "packet-09",
+      "sourceBatch": "auto-claim-batch-9",
+      "claimId": "MCM-25-998392",
+      "claimant": "Grace Okafor",
+      "region": "NY",
+      "scenario": "animal-strike",
+      "file": "packets/packet-09.pdf",
+      "pages": 12,
+      "sha256": "34f023b291f660c1d39dd3859c27695f18bbc9c0f8e8387fd81ee7b04d47e4d5",
+      "expectedDocuments": [
+        {
+          "sourceId": "01-card",
+          "title": "Roadside membership card",
+          "category": "id_document",
+          "start": 1,
+          "end": 1
+        },
+        {
+          "sourceId": "02-policy",
+          "title": "Policy declarations and endorsements",
+          "category": "other",
+          "start": 2,
+          "end": 3
+        },
+        {
+          "sourceId": "03-claim_form",
+          "title": "Loss intake and assessment",
+          "category": "other",
+          "start": 4,
+          "end": 5
+        },
+        {
+          "sourceId": "04-incident_report",
+          "title": "Police incident record",
+          "category": "other",
+          "start": 6,
+          "end": 6
+        },
+        {
+          "sourceId": "05-estimate",
+          "title": "Itemized repair assessment",
+          "category": "repair_estimate",
+          "start": 7,
+          "end": 7
+        },
+        {
+          "sourceId": "06-handwriting",
+          "title": "Driver or owner statement",
+          "category": "other",
+          "start": 8,
+          "end": 8
+        },
+        {
+          "sourceId": "07-invoice",
+          "title": "Rental billing and winter condition record",
+          "category": "other",
+          "start": 9,
+          "end": 10
+        },
+        {
+          "sourceId": "08-inspection",
+          "title": "Workshop damage inspection",
+          "category": "other",
+          "start": 11,
+          "end": 11
+        },
+        {
+          "sourceId": "09-form-1099-a",
+          "title": "2025 Form 1099-A supplemental tax test",
+          "category": "tax_1099a",
+          "start": 12,
+          "end": 12
+        }
+      ],
+      "expectedRepair": {
+        "vehicle": "2023 Chevrolet Equinox LT",
+        "vin": "3GNAXUEG3PA517029",
+        "odometer": 41870
+      }
+    },
+    {
+      "id": "packet-10",
+      "sourceBatch": "auto-claim-batch-10",
+      "claimId": "BTU-26-717497",
+      "claimant": "Minh Tran",
+      "region": "OH",
+      "scenario": "commercial-delivery-downtime",
+      "file": "packets/packet-10.pdf",
+      "pages": 13,
+      "sha256": "7513ab3213ad9f6cc3f274e85d9a2c187cdd621c31abce47c7657b510a455e7c",
+      "expectedDocuments": [
+        {
+          "sourceId": "01-card",
+          "title": "Roadside membership card",
+          "category": "id_document",
+          "start": 1,
+          "end": 1
+        },
+        {
+          "sourceId": "02-policy",
+          "title": "Policy declarations and endorsements",
+          "category": "other",
+          "start": 2,
+          "end": 4
+        },
+        {
+          "sourceId": "03-claim_form",
+          "title": "Loss intake and assessment",
+          "category": "other",
+          "start": 5,
+          "end": 6
+        },
+        {
+          "sourceId": "04-incident_report",
+          "title": "Customer-reported incident record",
+          "category": "other",
+          "start": 7,
+          "end": 7
+        },
+        {
+          "sourceId": "05-estimate",
+          "title": "Itemized repair assessment",
+          "category": "repair_estimate",
+          "start": 8,
+          "end": 9
+        },
+        {
+          "sourceId": "06-handwriting",
+          "title": "Driver or owner statement",
+          "category": "other",
+          "start": 10,
+          "end": 10
+        },
+        {
+          "sourceId": "07-claim_form",
+          "title": "Fleet downtime and cargo classification",
+          "category": "other",
+          "start": 11,
+          "end": 11
+        },
+        {
+          "sourceId": "08-inspection",
+          "title": "Workshop damage inspection",
+          "category": "other",
+          "start": 12,
+          "end": 12
+        },
+        {
+          "sourceId": "09-form-1099-a",
+          "title": "2025 Form 1099-A supplemental tax test",
+          "category": "tax_1099a",
+          "start": 13,
+          "end": 13
+        }
+      ],
+      "expectedRepair": {
+        "vehicle": "2021 Ram ProMaster City",
+        "vin": "ZFBERFAB8MA517810",
+        "odometer": 84510
+      }
+    }
+  ]
+}
