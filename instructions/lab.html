@@ -1,0 +1,855 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Insurance document lab - five steps</title>
+    <style>
+      :root {
+        color-scheme: light;
+        font:
+          16px/1.6 "Segoe UI",
+          sans-serif;
+        color: #17283e;
+        background: #f3f6fa;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+      }
+      header,
+      main,
+      footer {
+        max-width: 1040px;
+        margin: auto;
+        padding: 28px;
+      }
+      header {
+        padding-top: 44px;
+      }
+      h1 {
+        line-height: 1.2;
+        margin: 8px 0 14px;
+        font-size: 2.3rem;
+      }
+      h2 {
+        line-height: 1.3;
+        margin-top: 0;
+        font-size: 1.65rem;
+      }
+      h3 {
+        margin-bottom: 8px;
+        font-size: 1.05rem;
+      }
+      p {
+        margin: 12px 0;
+      }
+      a {
+        color: #075fb5;
+        text-underline-offset: 3px;
+      }
+      nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px 20px;
+        margin-top: 22px;
+      }
+      nav a {
+        font-weight: 600;
+      }
+      section {
+        scroll-margin-top: 20px;
+        background: white;
+        border: 1px solid #d6e0eb;
+        border-radius: 12px;
+        padding: 28px;
+        margin-bottom: 24px;
+      }
+      li {
+        margin: 9px 0;
+      }
+      .eyebrow {
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: #566b82;
+      }
+      .input,
+      .note {
+        padding: 12px 16px;
+        background: #edf5ff;
+        border-left: 4px solid #2874bc;
+        border-radius: 4px;
+      }
+      .note {
+        background: #fff8e6;
+        border-color: #b77b0a;
+      }
+      .done {
+        font-weight: 600;
+        color: #216143;
+      }
+      .table {
+        overflow-x: auto;
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        font-size: 0.94rem;
+      }
+      th,
+      td {
+        padding: 10px 12px;
+        border: 1px solid #d6e0eb;
+        text-align: left;
+        vertical-align: top;
+      }
+      th {
+        background: #f0f4f9;
+      }
+      code {
+        font-family: Consolas, monospace;
+        font-size: 0.92em;
+        overflow-wrap: anywhere;
+      }
+      pre {
+        padding: 16px;
+        border-radius: 6px;
+        background: #142339;
+        color: #f0f6ff;
+        overflow-x: auto;
+        line-height: 1.5;
+      }
+      pre code {
+        overflow-wrap: normal;
+      }
+      summary {
+        cursor: pointer;
+        font-weight: 600;
+      }
+      footer {
+        color: #52657a;
+        padding-top: 0;
+      }
+      @media (max-width: 650px) {
+        header,
+        main,
+        footer {
+          padding: 18px;
+        }
+        section {
+          padding: 18px;
+        }
+        h1 {
+          font-size: 1.9rem;
+        }
+      }
+      @media print {
+        body {
+          background: white;
+        }
+        section {
+          break-inside: avoid;
+        }
+        nav {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="eyebrow">Content Understanding / hands-on lab</div>
+      <h1>From documents to an Insurance Workbench</h1>
+      <p>
+        Follow these five steps in order: try prebuilts, customize extraction,
+        classify a packet, add extraction routes, and connect your analyzer to a
+        <strong>separate application</strong>. This is the only lab instruction
+        page.
+      </p>
+      <p>
+        Use
+        <a
+          href="https://contentunderstanding.ai.azure.com/"
+          target="_blank"
+          rel="noopener"
+          >CU Studio</a
+        >
+        for steps 1-4. Sign in and select your approved Azure resource. You need
+        permission to use Content Understanding, build analyzers, and use the
+        resource's configured models. Studio tests and live app analysis incur
+        Azure charges.
+      </p>
+      <p class="note">
+        <strong>Model choice:</strong> use the Preview workflow with
+        <strong>GPT-5 for classification/segmentation</strong> and
+        <strong>GPT-5.5 for custom and prebuilt extraction</strong>. Ask the lab
+        owner to configure those models if unavailable; do not change shared
+        resource deployments or defaults yourself. The app uses
+        <code>2026-06-01-preview</code> for this flow.
+      </p>
+      <nav aria-label="Five lab steps">
+        <a href="#step1">1. Prebuilt</a>
+        <a href="#step2">2. Custom</a>
+        <a href="#step3">3. Classifier</a>
+        <a href="#step4">4. Classifier + routes</a>
+        <a href="#step5">5. Your app</a>
+      </nav>
+    </header>
+    <main>
+      <section id="step1">
+        <h2>1 / Explore prebuilt analyzers</h2>
+        <p class="input">
+          <strong>Upload from <code>data\step1</code>:</strong>
+          <a href="../data/step1/towing-invoice.pdf">towing-invoice.pdf</a> (2
+          pages), <a href="../data/step1/demo-id.pdf">demo-id.pdf</a> (1 page),
+          and <a href="../data/step1/form-1099a.pdf">form-1099a.pdf</a> (1
+          page). Use one file at a time as shown below.
+        </p>
+        <ol>
+          <li>
+            Open the
+            <a
+              href="https://contentunderstanding.ai.azure.com/discover"
+              target="_blank"
+              rel="noopener"
+              >CU Studio prebuilt-analyzer gallery</a
+            >. Select the document prebuilt named in each row, choose your
+            resource if prompted, upload the indicated PDF, and run analysis.
+          </li>
+          <li>
+            Inspect the document and the actual response together. Click a
+            returned field or table value to inspect its source; compare
+            layout-only output with domain-specific extraction.
+          </li>
+        </ol>
+        <div class="table">
+          <table>
+            <thead>
+              <tr>
+                <th>Prebuilt in Studio</th>
+                <th>Upload</th>
+                <th>Inspect</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Document Layout</td>
+                <td>
+                  <a href="../data/step1/towing-invoice.pdf"
+                    >towing-invoice.pdf</a
+                  >
+                </td>
+                <td>
+                  Text, reading order, tables, and page structure. This is not
+                  invoice-domain extraction.
+                </td>
+              </tr>
+              <tr>
+                <td>Invoice / <code>prebuilt-invoice</code></td>
+                <td>
+                  <a href="../data/step1/towing-invoice.pdf"
+                    >Same towing-invoice.pdf</a
+                  >
+                </td>
+                <td>
+                  Vendor, customer, charges, total, tax, and line items. A
+                  charge is not proof of payment.
+                </td>
+              </tr>
+              <tr>
+                <td>ID document / <code>prebuilt-idDocument.generic</code></td>
+                <td><a href="../data/step1/demo-id.pdf">demo-id.pdf</a></td>
+                <td>
+                  Named holder and available ID-like fields. This fictional
+                  membership specimen is not a government ID.
+                </td>
+              </tr>
+              <tr>
+                <td>US tax / <code>prebuilt-tax.us.1099A</code></td>
+                <td>
+                  <a href="../data/step1/form-1099a.pdf">form-1099a.pdf</a>
+                </td>
+                <td>
+                  Tax year, lender, borrower, account, and form boxes. Nested
+                  year/copy results are not extra input documents.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="done">
+          Checkpoint: you can explain the difference between document layout and
+          schema-based extraction.
+        </p>
+        <p>
+          <strong>Workbench:</strong> do not launch it yet. You will explicitly
+          launch the separate app in <a href="#step5">step 5</a>.
+        </p>
+      </section>
+
+      <section id="step2">
+        <h2>2 / Build a custom repair extractor</h2>
+        <p class="input">
+          <strong>Upload from <code>data\step2</code>:</strong>
+          <a href="../data/step2/repair-estimate.pdf">repair-estimate.pdf</a> (1
+          page). This is the same repair estimate used on page 3 of the core
+          packet in the next steps.
+        </p>
+        <ol>
+          <li>
+            In
+            <a
+              href="https://contentunderstanding.ai.azure.com/build"
+              target="_blank"
+              rel="noopener"
+              >CU Studio Build</a
+            >, create a Preview <strong>Standard Extraction</strong> project.
+            Start with the <strong>Invoice template</strong> from the
+            <a
+              href="https://contentunderstanding.ai.azure.com/discover"
+              target="_blank"
+              rel="noopener"
+              >prebuilt-analyzer gallery</a
+            >. In project Advanced, select <strong>GPT-5.5</strong>.
+          </li>
+          <li>
+            Keep the template fields. Add
+            <strong>only these three lowercase fields</strong>, with method
+            <strong>Extract</strong>, and enable source and confidence for them.
+            Do not add separate make/model/year, plate, or odometer-unit fields.
+          </li>
+        </ol>
+        <div class="table">
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type / method</th>
+                <th>Copy this description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>vehicle</code></td>
+                <td>String / Extract</td>
+                <td>
+                  Printed vehicle name as one string, including year/make/model
+                  when present. Do not add color, decode the VIN, or infer
+                  missing details.
+                </td>
+              </tr>
+              <tr>
+                <td><code>vin</code></td>
+                <td>String / Extract</td>
+                <td>
+                  Exact value explicitly labeled VIN. Do not correct it or
+                  substitute registration, plate, or account numbers. Leave
+                  unset if absent.
+                </td>
+              </tr>
+              <tr>
+                <td><code>odometer</code></td>
+                <td>Number / Extract</td>
+                <td>
+                  Printed Odometer or Inspection Mileage as a number. Remove
+                  grouping separators; no units. Do not substitute Annual
+                  Mileage or infer an absent value.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <ol start="3">
+          <li>
+            Upload
+            <a href="../data/step2/repair-estimate.pdf">repair-estimate.pdf</a>,
+            save, and wait until saving indicators clear.
+            <strong
+              >Run analysis in Studio before building the analyzer.</strong
+            >
+          </li>
+          <li>
+            Check the values and source highlights:
+            <code>vehicle = "2019 Toyota Corolla LE"</code>,
+            <code>vin = "5YFEPMAE3KA513905"</code>,
+            <code>odometer = 94360</code>. The repair proposal total is
+            $1,310.13, distinct from the towing invoice. Missing values must not
+            become invented values or zero.
+          </li>
+          <li>
+            After the test passes, <strong>Build analyzer</strong> with your own
+            unique ID, for example <code>lab664_lee_repair</code>. Record the
+            actual ID and verify the saved schema contains the three fields
+            above. Do not overwrite another learner's analyzer.
+          </li>
+        </ol>
+        <p class="done">
+          Checkpoint: a tested custom repair analyzer is ready, and you have its
+          analyzer ID.
+        </p>
+        <p>
+          <strong>Workbench:</strong> no app launch is needed here;
+          <a href="#step5">step 5</a> connects the finished routed analyzer.
+        </p>
+      </section>
+
+      <section id="step3">
+        <h2>3 / Classify and split a packet, without extraction</h2>
+        <p class="input">
+          <strong>Start with <code>data\step3</code>:</strong>
+          <a href="../data/step3/classification-packet.pdf"
+            >classification-packet.pdf</a
+          >
+          (3 pages). Then use
+          <a href="../data/step3/packet-01.pdf">packet-01.pdf</a> (Danielle, 13
+          pages) and <a href="../data/step3/packet-03.pdf">packet-03.pdf</a> (13
+          pages) for realistic logical-document boundaries.
+        </p>
+        <ol>
+          <li>
+            In
+            <a
+              href="https://contentunderstanding.ai.azure.com/build"
+              target="_blank"
+              rel="noopener"
+              >CU Studio Build</a
+            >, create a Preview <strong>Classification</strong> project with
+            <strong>GPT-5</strong>. Add the four category keys and descriptions
+            below. <strong>Do not assign child analyzer IDs yet.</strong> The
+            <a
+              href="https://contentunderstanding.ai.azure.com/discover"
+              target="_blank"
+              rel="noopener"
+              >prebuilt-analyzer gallery</a
+            >
+            will be used for extraction routes in step 4, not this
+            classification-only test.
+          </li>
+          <li>
+            Enable segmentation and choose
+            <strong>Auto segment content</strong>. Leave
+            <strong>Allow in-page segments</strong> off. Do not choose
+            <strong>Segment by page</strong>; keep parent content. The settings
+            are <code>enableSegment=true</code>,
+            <code>allowInPageSegments=false</code>,
+            <code>segmentPerPage=false</code>, <code>omitContent=false</code>.
+          </li>
+        </ol>
+        <div class="table">
+          <table>
+            <thead>
+              <tr>
+                <th>Category key</th>
+                <th>Copy this description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>id_document</code></td>
+                <td>
+                  The lab's identity-like demo card with named holder, portrait
+                  and membership identifier. This synthetic membership card
+                  demonstrates ID field extraction, not government-ID
+                  authenticity. Exclude invoice, tax and repair documents.
+                </td>
+              </tr>
+              <tr>
+                <td><code>tax_1099a</code></td>
+                <td>
+                  An IRS Form 1099-A Acquisition or Abandonment of Secured
+                  Property, including fictional borrower-copy examples. Exclude
+                  other tax forms and prose references.
+                </td>
+              </tr>
+              <tr>
+                <td><code>repair_estimate</code></td>
+                <td>
+                  A standalone repair workshop estimate or quote with vehicle
+                  details and proposed parts/labor. Keep continuation pages of
+                  the same estimate together; split a different estimate even if
+                  adjacent. Exclude towing/rental/glass invoices and their
+                  supporting inspection supplements even when they mention a
+                  proposed repair schedule.
+                </td>
+              </tr>
+              <tr>
+                <td><code>other</code></td>
+                <td>
+                  Each distinct supporting document: policy
+                  declarations/endorsements, claim intake forms, incident
+                  reports, handwritten statements, towing/rental/glass invoices
+                  with their own continuation supplements, valuation/downtime
+                  schedules, and workshop inspection records. Identify logical
+                  boundaries even when adjacent documents both have category
+                  other. Keep paginated continuation pages together; do not
+                  merge different document titles or identifiers. These
+                  documents are unrouted, not discarded.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <ol start="3">
+          <li>
+            Upload the
+            <a href="../data/step3/classification-packet.pdf">three-page core</a
+            >. Save and <strong>Run analysis before building</strong>. Expect ID
+            on page 1, 1099-A on page 2, and repair estimate on page 3. Every
+            page should be covered once. Domain extractor fields are not
+            expected yet.
+          </li>
+          <li>
+            Test <a href="../data/step3/packet-01.pdf">packet-01.pdf</a>, then
+            <a href="../data/step3/packet-03.pdf">packet-03.pdf</a>. Inspect the
+            category and page range of each logical document, not one segment
+            per page. Compare to the individual source PDFs under
+            <code>data\documents\packet-01</code> and
+            <code>data\documents\packet-03</code>. Different adjacent Other
+            documents must remain separate; a document's continuation pages
+            should stay together.
+          </li>
+          <li>
+            For packet 01, the authored groups are: membership card p1; policy
+            p2-4; claim p5-6; incident p7; repair p8; statement p9; rental
+            invoice p10-11; inspection p12; 1099-A p13. At this four-class
+            stage, the rental invoice belongs to Other. Review discrepancies
+            rather than assuming authored grouping proves the model wrong.
+          </li>
+          <li>
+            After testing, build a unique <code>..._classifier</code> analyzer
+            if you want to call this stage from the app. Keep the editable
+            project for step 4.
+          </li>
+        </ol>
+        <p class="done">
+          Checkpoint: you have categories and logical page ranges, but no
+          extraction routes.
+        </p>
+        <p>
+          <strong>Workbench:</strong> <a href="#step5">step 5</a> explains
+          launching the separate app; it accepts a ready classification-only
+          analyzer as well as a routed one.
+        </p>
+      </section>
+
+      <section id="step4">
+        <h2>4 / Add extraction routes to the classifier</h2>
+        <p class="input">
+          <strong>Use the same inputs from <code>data\step4</code>:</strong>
+          <a href="../data/step4/classification-packet.pdf"
+            >classification-packet.pdf</a
+          >, <a href="../data/step4/packet-01.pdf">packet-01.pdf</a> (rental
+          invoice), and
+          <a href="../data/step4/packet-03.pdf">packet-03.pdf</a> (towing
+          invoice). This makes the before/after comparison about routing, not a
+          changed source.
+        </p>
+        <ol>
+          <li>
+            Reopen your step 3 project in
+            <a
+              href="https://contentunderstanding.ai.azure.com/build"
+              target="_blank"
+              rel="noopener"
+              >CU Studio Build</a
+            >. Keep the classifier on <strong>GPT-5</strong> and the same
+            logical-segmentation settings. Link the first three categories below
+            to the indicated analyzers. Select prebuilts from the
+            <a
+              href="https://contentunderstanding.ai.azure.com/discover"
+              target="_blank"
+              rel="noopener"
+              >prebuilt-analyzer gallery</a
+            >; use your actual custom repair ID.
+          </li>
+          <li>
+            Add <code>towing_invoice</code> and <code>rental_invoice</code>,
+            using the descriptions below, and route both to Invoice. Update
+            Other's description to the new version. Custom extraction and the
+            resource's <code>prebuilt-analyzer-completion</code> mapping must
+            use <strong>GPT-5.5</strong>; verify with the lab owner rather than
+            changing a shared mapping.
+          </li>
+        </ol>
+        <div class="table">
+          <table>
+            <thead>
+              <tr>
+                <th>Category key</th>
+                <th>Extraction route</th>
+                <th>Description change</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>id_document</code></td>
+                <td><code>prebuilt-idDocument.generic</code></td>
+                <td>Keep the step 3 description.</td>
+              </tr>
+              <tr>
+                <td><code>tax_1099a</code></td>
+                <td><code>prebuilt-tax.us.1099A</code></td>
+                <td>Keep the step 3 description.</td>
+              </tr>
+              <tr>
+                <td><code>repair_estimate</code></td>
+                <td>Your <code>..._repair</code> ID</td>
+                <td>Keep the step 3 description.</td>
+              </tr>
+              <tr>
+                <td><code>towing_invoice</code></td>
+                <td><code>prebuilt-invoice</code></td>
+                <td>
+                  A towing or roadside-recovery invoice, bill or charge ledger
+                  for vehicle transport, storage or release. Keep continuation
+                  and release/custody supplements from the same bill together.
+                  Payment may be unpaid or pending; do not infer payment.
+                  Exclude repair estimates, rental billing, and glass or panel
+                  service quotes.
+                </td>
+              </tr>
+              <tr>
+                <td><code>rental_invoice</code></td>
+                <td><code>prebuilt-invoice</code></td>
+                <td>
+                  A vehicle rental billing document or invoice with rental
+                  agreement references, dates or daily charges. Keep the same
+                  agreement's pickup/billing/vehicle-condition continuation
+                  pages together. Payment may be unpaid or pending; do not infer
+                  payment. Exclude towing bills, repair estimates, and glass or
+                  panel service quotes.
+                </td>
+              </tr>
+              <tr>
+                <td><code>other</code></td>
+                <td><strong>No route</strong></td>
+                <td>
+                  Each distinct unrouted supporting document: policy
+                  declarations/endorsements, claim intake forms, incident
+                  reports, handwritten statements, glass/panel service
+                  supporting records, valuation/downtime schedules, and workshop
+                  inspection records. Towing bills and rental billing belong to
+                  their named invoice categories, not Other. Identify logical
+                  boundaries even when adjacent documents both have category
+                  other. Keep continuation pages together; do not merge
+                  different titles or identifiers. These documents are unrouted,
+                  not discarded.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <ol start="3">
+          <li>
+            Save and <strong>Run analysis in Studio before building</strong>,
+            first on the core packet and then on both full packets. Compare
+            categories and ranges with step 3, now with child fields and source
+            highlights. Rental and towing have moved out of Other; other logical
+            boundaries should remain meaningful.
+          </li>
+          <li>
+            For the core packet, inspect ID p1, nested tax fields p2, and the
+            three custom repair fields p3. For packet 01, inspect repair p8 and
+            rental p10-11. Inspect the towing invoice in packet 03. Keep the
+            proposed repair amount distinct from actual invoiced charges.
+          </li>
+          <li>
+            Only after review, <strong>Build analyzer</strong> with a new unique
+            <code>..._router</code> ID. Do not overwrite the classification-only
+            analyzer. Wait for status <strong>ready</strong> and record this
+            exact ID and the resource endpoint for step 5.
+          </li>
+        </ol>
+        <p class="done">
+          Checkpoint: a tested, ready router links every non-Other category to
+          extraction.
+        </p>
+        <p>
+          <strong>Workbench:</strong> now follow <a href="#step5">step 5</a> to
+          install and explicitly launch the separate app.
+        </p>
+      </section>
+
+      <section id="step5">
+        <h2>5 / Connect to your separate Insurance Workbench App</h2>
+        <p class="input">
+          <strong>App input:</strong> all ten full PDFs in
+          <code>data\packets</code> (122 pages total). The app loads these
+          automatically; no manual upload is needed. The completed native
+          results in <code>data\results</code> let you explore without
+          submitting analysis.
+          <a
+            href="https://contentunderstanding.ai.azure.com/build"
+            target="_blank"
+            rel="noopener"
+            >CU Studio Build</a
+          >
+          remains your authoring tool; the
+          <a
+            href="https://contentunderstanding.ai.azure.com/discover"
+            target="_blank"
+            rel="noopener"
+            >prebuilt-analyzer gallery</a
+          >
+          remains in Studio.
+        </p>
+        <h3>Install once, then launch the app yourself</h3>
+        <p>
+          Open PowerShell in the repository root (the folder containing
+          <code>src</code>, <code>data</code>, and <code>infra</code>). Run the
+          single setup script. It installs a supported Node runtime if needed,
+          Azure CLI if missing (using Windows App Installer/winget), and the app
+          dependencies. An internet connection and any installer approval are
+          required. It does <strong>not</strong> sign you in, create cloud
+          resources, or launch the app.
+        </p>
+        <pre><code>powershell -ExecutionPolicy Bypass -File .\infra\setup.ps1
+
+# YOU now launch the separate app. Keep this terminal open.
+powershell -ExecutionPolicy Bypass -File .\infra\launch-workbench.ps1</code></pre>
+        <p>
+          Open
+          <a href="http://127.0.0.1:8791/" target="_blank" rel="noopener"
+            >Insurance Workbench App - http://127.0.0.1:8791/</a
+          >
+          in another browser tab. Do not open
+          <code>workbench.html</code> directly. Stop the app with
+          <strong>Ctrl+C</strong>. This lab page can remain open independently
+          of the app.
+        </p>
+        <h3>Explore the included results first - no Azure analysis</h3>
+        <ol>
+          <li>
+            In <strong>Cache Results</strong>, select the included completed
+            <strong>10/10</strong> run and click <strong>Load</strong>. The
+            Cached badge identifies historical native CU JSON, not a fresh run
+            or your new analyzer. Its tooltip preserves the original analyzer,
+            API version, timestamp, and dataset fingerprint.
+          </li>
+          <li>
+            Start with <strong>Classification</strong>. Each row is one
+            customer; each check is a returned document instance and page range.
+            Click a check or field value to open its full source PDF at that
+            page. Other is hidden from this grid, not removed from the response.
+          </li>
+          <li>
+            Switch to <strong>ID</strong>, <strong>1099-A</strong>,
+            <strong>Repair Estimate</strong>, <strong>Towing Invoice</strong>,
+            and <strong>Rental Invoice</strong>. Only returned types appear.
+            Repair defaults show vendor, vehicle, VIN, total, tax, and line
+            items; use <strong>All fields</strong> for odometer.
+          </li>
+          <li>
+            Turn on <strong>Confidence</strong> to inspect returned scores.
+            Blank means the service omitted a score, not zero. Click line items
+            for source boxes or their table icon for the item popup. Drag column
+            edges or the PDF divider to resize. Double-click a field to focus at
+            300%; double-click again to fit. Use wheel zoom, drag-to-pan, and
+            the bottom page controls.
+          </li>
+          <li>
+            Use <strong>{ }</strong> to download the complete native JSON for
+            the selected customer. Compare it with the source PDF; values,
+            geometry, and confidence come from CU, not fabricated app output.
+          </li>
+        </ol>
+        <h3>Connect your own built analyzer and run live</h3>
+        <p>
+          Stop the app first. Sign in with Azure CLI; browser Studio sign-in
+          does not authenticate this Node app. Choose the subscription
+          containing <strong>your approved CU resource</strong>. Use its
+          resource-root endpoint, not a Studio or Foundry project URL. Your
+          identity needs permission to list and invoke its analyzers.
+        </p>
+        <pre><code>az login
+az account set --subscription "YOUR-SUBSCRIPTION-ID"
+
+powershell -ExecutionPolicy Bypass -File .\infra\launch-workbench.ps1 `
+  -Endpoint "https://YOUR-APPROVED-RESOURCE.services.ai.azure.com"</code></pre>
+        <ol>
+          <li>
+            Reopen or reload
+            <a href="http://127.0.0.1:8791/" target="_blank" rel="noopener"
+              >Insurance Workbench App</a
+            >. In <strong>Analyzer</strong>, select the exact
+            <code>..._router</code> ID you built in step 4. The list contains
+            ready custom logical classifiers/routers, not standalone prebuilts.
+            If missing, check the endpoint, permissions, API version, and that
+            the analyzer was built successfully.
+          </li>
+          <li>
+            Click <strong>Run live</strong>. Read the confirmation for ten
+            packets / 122 pages; only confirm when you intend to incur Azure
+            charges. The app verifies the existing analyzer and linked
+            extractors; it does not deploy models or create analyzers.
+          </li>
+          <li>
+            Watch progress and elapsed time. Each native response is saved under
+            <code>data\results\RUN-ID</code> before results are derived.
+            Completed results become a new cache entry. A failed run remains
+            visibly failed; inspect its error before explicitly starting another
+            billable run.
+          </li>
+          <li>
+            Compare your live extraction with the PDFs and the saved run. To see
+            classification alone, select your step 3
+            <code>..._classifier</code> and explicitly start a separate billable
+            run. Fields appear only when extraction routes actually returned
+            them.
+          </li>
+        </ol>
+        <p class="done">
+          Checkpoint: you authored and tested in Studio, then connected that
+          published analyzer to a separate application.
+        </p>
+        <details>
+          <summary>Where the files are</summary>
+          <p>
+            <code>instructions\lab.html</code> is this single guide.
+            <code>infra\setup.ps1</code> installs dependencies;
+            <code>infra\launch-workbench.ps1</code> launches only the app.
+            <code>src\workbench</code> contains the minimal app runtime, not
+            another lab guide.
+          </p>
+          <p>
+            <code>data\packets</code>: 10 complete customer PDFs.
+            <code>data\documents\packet-01</code> through
+            <code>packet-10</code>: 90 individual logical-document PDFs,
+            extracted from the authored page groups. <code>data\samples</code>:
+            five small Studio specimens. <code>data\packets.json</code>: source
+            hashes and authored page ranges. <code>data\results</code>: one
+            included completed run with its original manifest and ten native
+            JSON responses; future live runs save here too.
+          </p>
+          <p>
+            <code>data\step1</code> through <code>data\step4</code> are
+            convenience copies of the recommended inputs, not a second dataset.
+            The app uses the canonical PDFs under <code>data</code>. Full packet
+            01 contains rental billing; full packet 03 contains towing. The
+            authored four-class reference labels both as Other, while the
+            six-class routed run gives them separate invoice categories.
+          </p>
+          <p>
+            <strong>Included cache provenance:</strong> run
+            <code>243f1c06-caf3-4375-b409-afe130136867</code>, analyzer
+            <code>lab664_anatolip_scus_routerg5</code>, API
+            <code>2026-06-01-preview</code>, started
+            <code>2026-10-14T01:18:12.689Z</code>. The original manifest and raw
+            responses are unchanged; this is a historical demonstration, not a
+            claim about your new analyzer.
+          </p>
+        </details>
+      </section>
+    </main>
+    <footer>
+      All people and documents are synthetic. This lab demonstrates document
+      processing, not government-ID validation, tax advice, coverage
+      determination, liability, payment approval, or an insurance claim
+      decision. A person must review the actual source.
+    </footer>
+  </body>
+</html>

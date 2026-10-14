@@ -39,6 +39,13 @@ Add your session description here. Keep it concise — 2-3 sentences about what 
 
 ### 🚀 Getting started
 
+For this lab, clone or download the repository and open
+[`instructions/lab.html`](instructions/lab.html) locally in your browser.
+This single five-step guide covers CU Studio authoring and testing, followed by
+setup and launch of the separate Insurance Workbench App. Runtime installers
+are in [`infra/`](infra/README.md); application source is in
+[`src/workbench/`](src/workbench/).
+
 #### In a guided session
 
 If you're following along during a live session:
