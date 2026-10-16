@@ -5,9 +5,9 @@
     "location": {
       "type": "string",
       "metadata": {
-        "description": "Location into which all resources will be deployed. The default supports Content Understanding and both model deployments."
+        "description": "Location into which all resources will be deployed. The default supports Content Understanding and all model deployments."
       },
-      "defaultValue": "swedencentral",
+      "defaultValue": "southcentralus",
       "allowedValues": [
         "australiaeast",
         "canadacentral",
@@ -26,19 +26,48 @@
     "uniqueSuffix": {
       "type": "string",
       "metadata": {
-        "description": "A short unique suffix to append to resource names (no spaces, for example '001' or 'contoso')."
+        "description": "A short unique suffix to append to resource names. By default, a stable suffix is generated from the subscription and resource group. Overrides must use lowercase letters, numbers, and hyphens only."
       },
+      "defaultValue": "[uniqueString(subscription().subscriptionId, resourceGroup().id)]",
       "minLength": 1,
       "maxLength": 20
+    },
+    "azureSearchSku": {
+      "type": "string",
+      "metadata": {
+        "description": "The pricing tier for the Azure AI Search service used by Foundry IQ."
+      },
+      "defaultValue": "basic",
+      "allowedValues": [
+        "basic",
+        "standard",
+        "standard2",
+        "standard3"
+      ]
     }
   },
   "variables": {
     "accountName": "[concat('aifoundry-', parameters('uniqueSuffix'))]",
     "projectName": "[concat('project-', parameters('uniqueSuffix'))]",
-    "contentUnderstandingAccountName": "[concat('content-understanding-', parameters('uniqueSuffix'))]",
     "storageAccountName": "[concat('st', uniqueString(resourceGroup().id, parameters('uniqueSuffix')))]",
+    "searchServiceName": "[toLower(concat('search-', parameters('uniqueSuffix')))]",
+    "configureContentUnderstandingDefaultsScriptName": "[concat('configure-cu-defaults-', parameters('uniqueSuffix'))]",
+    "cognitiveServicesUserRoleDefinitionId": "a97b65f3-24c7-4388-baec-2e87135dc908",
     "gpt54MiniDeploymentName": "[concat('gpt-5-4-mini-', parameters('uniqueSuffix'))]",
-    "gpt52DeploymentName": "[concat('gpt-5-2-', parameters('uniqueSuffix'))]"
+    "gpt52DeploymentName": "[concat('gpt-5-2-', parameters('uniqueSuffix'))]",
+    "gpt55DeploymentName": "[concat('gpt-5-5-', parameters('uniqueSuffix'))]",
+    "gpt61SolDeploymentName": "[concat('gpt-6-1-sol-', parameters('uniqueSuffix'))]",
+    "gpt6LunaDeploymentName": "[concat('gpt-6-luna-', parameters('uniqueSuffix'))]",
+    "textEmbedding3LargeDeploymentName": "[concat('text-embedding-3-large-', parameters('uniqueSuffix'))]",
+    "contentUnderstandingDefaults": {
+      "modelDeployments": {
+        "text-embedding-3-large": "[variables('textEmbedding3LargeDeploymentName')]",
+        "gpt-5.2": "[variables('gpt52DeploymentName')]",
+        "prebuilt-analyzer-completion": "[variables('gpt52DeploymentName')]",
+        "prebuilt-analyzer-completion-mini": "[variables('gpt54MiniDeploymentName')]",
+        "prebuilt-analyzer-embedding": "[variables('textEmbedding3LargeDeploymentName')]"
+      }
+    }
   },
   "resources": [
     {
@@ -88,7 +117,7 @@
       ],
       "sku": {
         "name": "GlobalStandard",
-        "capacity": 150
+        "capacity": 500
       },
       "properties": {
         "model": {
@@ -97,7 +126,7 @@
           "version": "2026-03-17"
         },
         "versionUpgradeOption": "OnceNewDefaultVersionAvailable",
-        "currentCapacity": 150,
+        "currentCapacity": 500,
         "raiPolicyName": "Microsoft.DefaultV2"
       }
     },
@@ -110,7 +139,7 @@
       ],
       "sku": {
         "name": "GlobalStandard",
-        "capacity": 150
+        "capacity": 500
       },
       "properties": {
         "model": {
@@ -119,8 +148,95 @@
           "version": "2025-12-11"
         },
         "versionUpgradeOption": "OnceNewDefaultVersionAvailable",
-        "currentCapacity": 150,
+        "currentCapacity": 500,
         "raiPolicyName": "Microsoft.DefaultV2"
+      }
+    },
+    {
+      "type": "Microsoft.CognitiveServices/accounts/deployments",
+      "apiVersion": "2025-06-01",
+      "name": "[concat(variables('accountName'), '/', variables('gpt55DeploymentName'))]",
+      "dependsOn": [
+        "[resourceId('Microsoft.CognitiveServices/accounts/deployments', variables('accountName'), variables('gpt52DeploymentName'))]"
+      ],
+      "sku": {
+        "name": "GlobalStandard",
+        "capacity": 500
+      },
+      "properties": {
+        "model": {
+          "format": "OpenAI",
+          "name": "gpt-5.5",
+          "version": "2026-04-24"
+        },
+        "versionUpgradeOption": "OnceNewDefaultVersionAvailable",
+        "currentCapacity": 500,
+        "raiPolicyName": "Microsoft.DefaultV2"
+      }
+    },
+    {
+      "type": "Microsoft.CognitiveServices/accounts/deployments",
+      "apiVersion": "2025-06-01",
+      "name": "[concat(variables('accountName'), '/', variables('gpt61SolDeploymentName'))]",
+      "dependsOn": [
+        "[resourceId('Microsoft.CognitiveServices/accounts/deployments', variables('accountName'), variables('gpt55DeploymentName'))]"
+      ],
+      "sku": {
+        "name": "GlobalStandard",
+        "capacity": 500
+      },
+      "properties": {
+        "model": {
+          "format": "OpenAI",
+          "name": "gpt-6.1-sol",
+          "version": "2026-09-29"
+        },
+        "versionUpgradeOption": "OnceNewDefaultVersionAvailable",
+        "currentCapacity": 500,
+        "raiPolicyName": "Microsoft.DefaultV2"
+      }
+    },
+    {
+      "type": "Microsoft.CognitiveServices/accounts/deployments",
+      "apiVersion": "2025-06-01",
+      "name": "[concat(variables('accountName'), '/', variables('gpt6LunaDeploymentName'))]",
+      "dependsOn": [
+        "[resourceId('Microsoft.CognitiveServices/accounts/deployments', variables('accountName'), variables('gpt61SolDeploymentName'))]"
+      ],
+      "sku": {
+        "name": "GlobalStandard",
+        "capacity": 500
+      },
+      "properties": {
+        "model": {
+          "format": "OpenAI",
+          "name": "gpt-6-luna",
+          "version": "2026-09-22"
+        },
+        "versionUpgradeOption": "OnceNewDefaultVersionAvailable",
+        "currentCapacity": 500,
+        "raiPolicyName": "Microsoft.DefaultV2"
+      }
+    },
+    {
+      "type": "Microsoft.CognitiveServices/accounts/deployments",
+      "apiVersion": "2025-06-01",
+      "name": "[concat(variables('accountName'), '/', variables('textEmbedding3LargeDeploymentName'))]",
+      "dependsOn": [
+        "[resourceId('Microsoft.CognitiveServices/accounts/deployments', variables('accountName'), variables('gpt6LunaDeploymentName'))]"
+      ],
+      "sku": {
+        "name": "GlobalStandard",
+        "capacity": 500
+      },
+      "properties": {
+        "model": {
+          "format": "OpenAI",
+          "name": "text-embedding-3-large",
+          "version": "1"
+        },
+        "versionUpgradeOption": "OnceNewDefaultVersionAvailable",
+        "currentCapacity": 500
       }
     },
     {
@@ -153,27 +269,78 @@
       }
     },
     {
-      "type": "Microsoft.CognitiveServices/accounts",
-      "apiVersion": "2025-06-01",
-      "name": "[variables('contentUnderstandingAccountName')]",
+      "type": "Microsoft.Search/searchServices",
+      "apiVersion": "2025-05-01",
+      "name": "[variables('searchServiceName')]",
       "location": "[parameters('location')]",
       "sku": {
-        "name": "S0"
+        "name": "[parameters('azureSearchSku')]"
       },
-      "kind": "AIServices",
       "identity": {
         "type": "SystemAssigned"
       },
       "properties": {
-        "customSubDomainName": "[variables('contentUnderstandingAccountName')]",
-        "networkAcls": {
-          "defaultAction": "Allow",
-          "virtualNetworkRules": [],
+        "authOptions": {
+          "aadOrApiKey": {
+            "aadAuthFailureMode": "http401WithBearerChallenge"
+          }
+        },
+        "disableLocalAuth": false,
+        "hostingMode": "default",
+        "networkRuleSet": {
           "ipRules": []
         },
-        "allowProjectManagement": false,
+        "partitionCount": 1,
         "publicNetworkAccess": "Enabled",
-        "disableLocalAuth": false
+        "replicaCount": 1
+      }
+    },
+    {
+      "type": "Microsoft.Authorization/roleAssignments",
+      "apiVersion": "2022-04-01",
+      "name": "[guid(resourceId('Microsoft.CognitiveServices/accounts', variables('accountName')), variables('searchServiceName'), variables('cognitiveServicesUserRoleDefinitionId'))]",
+      "scope": "[resourceId('Microsoft.CognitiveServices/accounts', variables('accountName'))]",
+      "dependsOn": [
+        "[resourceId('Microsoft.CognitiveServices/accounts', variables('accountName'))]",
+        "[resourceId('Microsoft.Search/searchServices', variables('searchServiceName'))]"
+      ],
+      "properties": {
+        "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', variables('cognitiveServicesUserRoleDefinitionId'))]",
+        "principalId": "[reference(resourceId('Microsoft.Search/searchServices', variables('searchServiceName')), '2025-05-01', 'Full').identity.principalId]",
+        "principalType": "ServicePrincipal"
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deploymentScripts",
+      "apiVersion": "2023-08-01",
+      "name": "[variables('configureContentUnderstandingDefaultsScriptName')]",
+      "location": "[parameters('location')]",
+      "kind": "AzureCLI",
+      "dependsOn": [
+        "[resourceId('Microsoft.CognitiveServices/accounts/deployments', variables('accountName'), variables('gpt52DeploymentName'))]",
+        "[resourceId('Microsoft.CognitiveServices/accounts/deployments', variables('accountName'), variables('gpt54MiniDeploymentName'))]",
+        "[resourceId('Microsoft.CognitiveServices/accounts/deployments', variables('accountName'), variables('textEmbedding3LargeDeploymentName'))]"
+      ],
+      "properties": {
+        "azCliVersion": "2.52.0",
+        "cleanupPreference": "OnSuccess",
+        "environmentVariables": [
+          {
+            "name": "CU_ENDPOINT",
+            "value": "[concat('https://', variables('accountName'), '.services.ai.azure.com')]"
+          },
+          {
+            "name": "CU_DEFAULTS_BODY",
+            "value": "[string(variables('contentUnderstandingDefaults'))]"
+          },
+          {
+            "name": "CU_API_KEY",
+            "secureValue": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts', variables('accountName')), '2025-06-01').key1]"
+          }
+        ],
+        "retentionInterval": "P1D",
+        "scriptContent": "set -euo pipefail\ncurl --fail --show-error --silent --retry 5 --retry-delay 10 --retry-all-errors --request PATCH \"${CU_ENDPOINT}/contentunderstanding/defaults?api-version=2025-11-01\" --header \"Ocp-Apim-Subscription-Key: ${CU_API_KEY}\" --header \"Content-Type: application/json\" --data \"${CU_DEFAULTS_BODY}\"\nprintf '{\"configured\":true}' > \"${AZ_SCRIPTS_OUTPUT_PATH}\"",
+        "timeout": "PT10M"
       }
     }
   ],
@@ -194,13 +361,37 @@
       "type": "string",
       "value": "[resourceId('Microsoft.CognitiveServices/accounts/deployments', variables('accountName'), variables('gpt52DeploymentName'))]"
     },
+    "gpt55DeploymentResourceId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.CognitiveServices/accounts/deployments', variables('accountName'), variables('gpt55DeploymentName'))]"
+    },
+    "gpt61SolDeploymentResourceId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.CognitiveServices/accounts/deployments', variables('accountName'), variables('gpt61SolDeploymentName'))]"
+    },
+    "gpt6LunaDeploymentResourceId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.CognitiveServices/accounts/deployments', variables('accountName'), variables('gpt6LunaDeploymentName'))]"
+    },
+    "textEmbedding3LargeDeploymentResourceId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.CognitiveServices/accounts/deployments', variables('accountName'), variables('textEmbedding3LargeDeploymentName'))]"
+    },
     "storageAccountResourceId": {
       "type": "string",
       "value": "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
     },
-    "contentUnderstandingResourceId": {
+    "searchServiceResourceId": {
       "type": "string",
-      "value": "[resourceId('Microsoft.CognitiveServices/accounts', variables('contentUnderstandingAccountName'))]"
+      "value": "[resourceId('Microsoft.Search/searchServices', variables('searchServiceName'))]"
+    },
+    "searchServiceEndpoint": {
+      "type": "string",
+      "value": "[concat('https://', variables('searchServiceName'), '.search.windows.net')]"
+    },
+    "searchServicePrincipalId": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.Search/searchServices', variables('searchServiceName')), '2025-05-01', 'Full').identity.principalId]"
     }
   }
 }
