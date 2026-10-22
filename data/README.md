@@ -26,3 +26,18 @@ claim packets and individual PDFs. All names and claim details are fictional.
 </a>
 
 Select the image to open the sample PDF.
+## Rental review policy corpus
+
+Synthetic Texas and Washington rental-review SOPs and a shared evidence standard
+are in [`policies/rental/`](policies/rental/manifest.json), with editable DOCX
+originals and PDF ingestion copies. See the
+[scenario guide](../docs/rental-review.md) and
+[recommended agent question](../docs/rental-review-agent-question.md).
+Keep claim packets and expected evaluation outcomes separate from policy knowledge.
+
+The separate [v2 OCR/table corpus](policies/rental/ocr-comparison-v2/manifest.json)
+covers all ten dataset states. It includes eleven scan-based SOP PDFs, editable
+DOCX originals and identical selectable-text controls. See the
+[comparison design and limitations](../docs/rental-ocr-comparison.md).
+It is not yet deployed; keep its evaluation fixtures and text controls out of
+the scan knowledge index.

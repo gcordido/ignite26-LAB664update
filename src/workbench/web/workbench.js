@@ -1,5 +1,8 @@
 import { previewPdf, resetPreview } from "./pdf-preview.js";
 import { resizeColumns, splitPreview } from "./column-resize.js";
+import { createSessionApi } from "./session-api.js";
+import { createPolicyChat } from "./policy-chat.js";
+import { createPolicyDocument } from "./policy-document.js";
 import {
   typeNames,
   availableTypes,
@@ -32,6 +35,17 @@ let clickTimer;
 let focusedCell = "";
 let focusedZoom = 1;
 let catalog;
+let policyStatus;
+let policyBusy = false;
+let policyMode = "ungrounded";
+let policySource;
+let policyPaneMode = "result";
+const policyResults = new Map();
+const policyResultScroll = new Map();
+const policyChecks = [
+  "Rental eligibility and need", "Daily rate", "Duration and repair alignment",
+  "Charges and reimbursement calculation", "Authorization and payment readiness",
+];
 const columnWidths = new Map();
 const textMeasure = document.createElement("canvas").getContext("2d");
 function textWidth(value, bold = false) {
@@ -43,19 +57,22 @@ document.querySelector("main").addEventListener("pane-resize", () => {
   if (run) renderTable();
 });
 
-async function api(route, body) {
-  const response = await fetch(`/api/${route}`, {
-    method: body ? "POST" : "GET",
-    headers: {
-      "Content-Type": "application/json",
-      ...(sessionId ? { "x-labmachine-session": sessionId } : {}),
-    },
-    ...(body ? { body: JSON.stringify(body) } : {}),
-  });
-  const value = await response.json();
-  if (!response.ok) throw new Error(value.error ?? `HTTP ${response.status}`);
-  return value;
-}
+const api = createSessionApi({
+  selectedRun: () => run?.id,
+  onSession: (id) => { sessionId = id; },
+  onRestored: () => {
+    policyChat.reset();
+    queueMicrotask(() => {
+      if (view === "policy" && policyPaneMode === "chat") renderPolicyOutput();
+    });
+    get("error").hidden = true;
+    get("session-status").textContent = "Private session restored; saved results reloaded. Chat history was reset. No live operation was retried.";
+  },
+});
+const policyChat = createPolicyChat({
+  container: get("policy-chat"), api, onSource: openPolicySource, onError: fail,
+});
+const policyDocument = createPolicyDocument({ api, previewPdf, get });
 function updateElapsed() {
   if (!run) return;
   const end =
@@ -96,6 +113,7 @@ function controls() {
     busy || !sessionId || !catalog || !get("analyzer").value.trim();
   get("load-cache").disabled = busy || !get("cache").value;
   get("refresh-cache").disabled = busy || !sessionId;
+  get("policy-run").disabled = busy || policyBusy || !run || !policyStatus?.configured;
 }
 async function caches() {
   const savedRuns = await api("cache");
@@ -134,7 +152,11 @@ async function renderRun(nextRun, nextOrigin) {
     ++selectionVersion;
     selectedPacket = "";
     results.clear();
+    policyResults.clear();
+    policyResultScroll.clear();
+    policyChat.reset();
     resetPreview();
+    showPolicyPanel(view === "policy");
     get("array-dialog").close();
   }
   get("batch").hidden = false;
@@ -165,6 +187,7 @@ async function renderRun(nextRun, nextOrigin) {
       }),
   );
   if (run?.id !== runId) return;
+  if (changed) await refreshPolicy();
   renderTable();
   if (run.status === "failed") {
     const failure = run.items.find((item) => item.error);
@@ -208,6 +231,7 @@ async function analyzers() {
   controls();
 }
 function selectRow(id) {
+  policySource = undefined;
   selectedPacket = id;
   for (const row of get("packet-table").querySelectorAll("tbody tr"))
     row.classList.toggle("selected", row.dataset.packet === id);
@@ -265,7 +289,7 @@ function confidence(parent, value) {
 }
 function renderTable() {
   const values = run.items.map((item) => results.get(item.id)).filter(Boolean);
-  const types = availableTypes(values);
+  const types = [...availableTypes(values), "policy"];
   if (!types.includes(view)) {
     view = "classification";
     allFields = false;
@@ -273,6 +297,12 @@ function renderTable() {
   for (const button of get("view-types").querySelectorAll("[data-view]")) {
     button.hidden = !types.includes(button.dataset.view);
     button.setAttribute("aria-pressed", String(button.dataset.view === view));
+  }
+  get("policy-toolbar").hidden = view !== "policy";
+  get("show-confidence").closest("label").hidden = view === "policy";
+  if (view === "policy") {
+    renderPolicyTable();
+    return;
   }
   const classification = view === "classification";
   const columns = classification
@@ -423,8 +453,10 @@ function renderTable() {
           spinner.setAttribute("aria-label", "Analyzing");
           customer.append(spinner);
         }
-        if (item.error || result?.reviewError)
-          customer.append(warning(item.error ?? result.reviewError));
+        if (item.error || result?.reviewError || result?.packetJsonError)
+          customer.append(
+            warning(item.error ?? result.reviewError ?? result.packetJsonError),
+          );
         const selected = firstEntry(result, view);
         if (!classification && selected.count > 1)
           customer.append(
@@ -548,6 +580,7 @@ async function showCustomer(id, options) {
   await inspect(id, segment, field, document, options);
 }
 async function inspect(id, segment, field, document, options) {
+  showPolicyPanel(false);
   const current = ++selectionVersion;
   selectRow(id);
   const regions = fieldRegions(field, document);
@@ -647,9 +680,14 @@ function showArray(id, entry, field) {
 }
 for (const button of get("view-types").querySelectorAll("[data-view]"))
   button.onclick = () => {
+    clearTimeout(clickTimer);
+    ++selectionVersion;
     view = button.dataset.view;
     allFields = false;
+    showPolicyPanel(view === "policy");
     renderTable();
+    if (view === "policy") renderPolicyOutput();
+    else if (selectedPacket) showCustomer(selectedPacket).catch(fail);
   };
 get("all-fields").onchange = () => {
   allFields = get("all-fields").checked;
@@ -758,7 +796,251 @@ api("session", {})
       caches(),
       analyzers(),
       api("packets").then((data) => (catalog = data)),
+      api("policy/status").then((value) => {
+        policyStatus = value;
+        get("policy-mode").replaceChildren();
+        if (value.configured) {
+          const modes = Object.keys(value.modes);
+          get("policy-mode").replaceChildren(...modes.map((mode) => {
+            const option = element("option", policyModeLabel(mode));
+            option.value = mode;
+            return option;
+          }));
+          if (!modes.includes(policyMode)) policyMode = modes[0];
+          get("policy-mode").value = policyMode;
+        }
+        get("policy-mode").disabled = !value.configured;
+        policyMessage();
+      }),
     ]);
     controls();
   })
-  .catch(fail);
+  .catch((error) => {
+    get("policy-mode").replaceChildren();
+    get("policy-mode").disabled = true;
+    fail(error);
+  });
+
+function showPolicyPanel(show) {
+  policyDocument.close();
+  policySource = undefined;
+  get("policy-source-toolbar").hidden = true;
+  get("download").hidden = false;
+  get("policy-pane-modes").hidden = !show;
+  get("policy-output").hidden = !show || policyPaneMode !== "result";
+  get("policy-chat").hidden = !show || policyPaneMode !== "chat";
+  get("pdf-scroll").hidden = show;
+  if (show) {
+    resetPreview();
+    get("pdf-controls").hidden = true;
+    get("pdf-status").hidden = true;
+  }
+}
+function policyMessage() {
+  const mode = policyStatus?.modes?.[policyMode];
+  get("policy-status").textContent = mode
+    ? `${mode.indexName ?? "No policy retrieval"} · ${policyStatus.message}`
+    : (policyStatus?.message ?? "Policy configuration is loading.");
+}
+function policyModeLabel(mode = policyMode) {
+  return mode === "search" ? "Azure Search retrieval" : "No policy retrieval";
+}
+async function refreshPolicy(mode = policyMode) {
+  if (!run) return;
+  const id = run.id;
+  const value = await api(`policy/results?mode=${mode}`);
+  if (run?.id !== id || value.runId !== id) return;
+  if (value.configurationMessage) {
+    policyStatus = { configured: false, message: value.configurationMessage };
+    policyMessage();
+    controls();
+  }
+  policyResults.set(mode, value);
+  if (view === "policy" && mode === policyMode) {
+    renderTable();
+    renderPolicyOutput();
+  }
+}
+function renderPolicyTable() {
+  get("field-setting").hidden = true;
+  const table = get("packet-table");
+  const keys = ["customer", ...policyChecks.map((check) => `policy:${check}`)];
+  const widths = keys.map((key, index) => columnWidths.get(key) ?? (index ? 185 : 190));
+  table.style.width = `${widths.reduce((sum, width) => sum + width, 0)}px`;
+  table.querySelector("colgroup").replaceChildren(...widths.map((width) => {
+    const col = element("col"); col.style.width = `${width}px`; return col;
+  }));
+  const head = element("tr");
+  head.append(element("th", "Customer/Packet"));
+  for (const label of policyChecks) {
+    const cell = element("th", label); cell.title = label; head.append(cell);
+  }
+  table.querySelector("thead").replaceChildren(head);
+  resizeColumns(table, widths, (index, width) => columnWidths.set(keys[index], width));
+  const items = policyResults.get(policyMode)?.items ?? [];
+  table.querySelector("tbody").replaceChildren(...run.items.map((packet, index) => {
+    const row = element("tr");
+    row.dataset.packet = packet.id;
+    row.classList.toggle("selected", selectedPacket === packet.id);
+    const item = items.find((item) => item.id === packet.id);
+    const customer = customerName(results.get(packet.id));
+    const label = element("td");
+    const name = element("button", `#${index + 1} ${customer || packet.id}`, "cell-content");
+    name.onclick = () => { selectRow(packet.id); renderPolicyOutput(); };
+    label.append(name);
+    label.append(element("span", results.get(packet.id)?.claimSummaryPrepared
+      ? "Claim fields prepared" : "Claim fields not prepared", "policy-preparation"));
+    row.append(label);
+    for (let column = 0; column < policyChecks.length; column++) {
+      const cell = element("td");
+      const check = item?.result?.Checks[column];
+      const text = check ? check.Outcome === "NotApplicable" ? "Not applicable" : check.ReviewRequired ? "Review required" : "Satisfied"
+        : item?.status === "failed" ? "Run error"
+          : ({ pending: "Queued", extracting: "Extracting claim", reviewing: "Checking rules" }[item?.status] ?? "Not run");
+      const button = element("button", text, "cell-content");
+      const state = element("span", text, `policy-state ${check ? check.Outcome === "NotApplicable" ? "policy-na" : check.ReviewRequired ? "policy-review" : "policy-satisfied" : item?.error ? "policy-error" : ""}`);
+      button.replaceChildren(state);
+      button.title = check?.Reason ?? item?.error ?? "Run policy checks explicitly for this extraction mode.";
+      button.onclick = () => { selectRow(packet.id); renderPolicyOutput(column); };
+      cell.append(button);
+      row.append(cell);
+    }
+    return row;
+  }));
+}
+function renderPolicyOutput(focused) {
+  if (view !== "policy" || policySource) return;
+  showPolicyPanel(true);
+  if (policyPaneMode === "chat" && selectedPacket) {
+    const item = policyResults.get(policyMode)?.items.find((item) => item.id === selectedPacket);
+    policyChat.show({ runId: run.id, mode: policyMode, packetId: selectedPacket,
+      resultId: `${item?.inputHash ?? ""}:${item?.completedAt ?? ""}:${item?.indexName ?? ""}` }).catch(fail);
+  }
+  const panel = get("policy-output");
+  panel.replaceChildren(element("h2", "Policy checks"));
+  if (!selectedPacket) {
+    panel.append(element("p", "Select a case to see the agent's checks, reasons and rule sources."));
+    return;
+  }
+  const item = policyResults.get(policyMode)?.items.find((item) => item.id === selectedPacket);
+  panel.append(element("p", `${customerName(results.get(selectedPacket)) || selectedPacket} · ${policyModeLabel()}`));
+  if (!item?.result) {
+    panel.append(element("p", item?.error ?? (item && item.status !== "not run"
+      ? `Status: ${item.status}` : "Not run for this mode and packet. Select Run policy checks to evaluate."), item?.error ? "error" : "muted"));
+    return;
+  }
+  panel.append(element("p", `${item.cached ? "Cached" : "Live"} · ${item.indexName ?? "No policy retrieval"}`, "muted"));
+  panel.append(element("p", `Evaluated ${new Date(item.completedAt).toLocaleString()}. Satisfied does not mean coverage or payment approval.`, "muted"));
+  for (const [index, check] of item.result.Checks.entries()) {
+    const section = element("section", undefined, "policy-check");
+    section.id = `policy-check-${index}`;
+    section.append(element("h3", `${index + 1}. ${check.Check}`));
+    section.append(element("span", check.Outcome === "NotApplicable" ? "Not applicable" : check.ReviewRequired ? "Review required" : "Satisfied",
+      `policy-state ${check.Outcome === "NotApplicable" ? "policy-na" : check.ReviewRequired ? "policy-review" : "policy-satisfied"}`));
+    const values = element("dl", undefined, "policy-values");
+    for (const [label, value] of [["Expected", check.ExpectedValue], ["Actual", check.ActualValue]]) {
+      const description = element("dd");
+      description.append(element("strong", value));
+      values.append(element("dt", `${label}:`), description);
+    }
+    section.append(values);
+    const reasoning = element("p", undefined, "policy-reasoning");
+    reasoning.append(element("em", `Reasoning: ${check.Reason}`));
+    section.append(reasoning, element("p", "Source:", "policy-source-label"));
+    const citations = item.citations?.[index] ?? [];
+    if (!citations.length) section.append(element("p", "No applicable rule source cited.", "muted"));
+    for (const citation of citations) {
+      const label = `${citation.DocumentId} v${citation.Version.replace(/^v(?=\d)/, "")} · ${citation.RuleId} · ${citation.Section}`;
+      if (citation.href?.startsWith("/data/policies/rental/")) {
+        const link = element("a", label);
+        link.href = citation.href;
+        link.onclick = (event) => {
+          event.preventDefault();
+          openPolicySource(citation, link).catch(fail);
+        };
+        section.append(link);
+      } else section.append(element("p", `${label} — source not verified; no link generated.`, "muted"));
+    }
+    panel.append(section);
+  }
+  const details = element("details");
+  details.append(element("summary", "Full structured agent output"), element("pre", JSON.stringify(item.result, null, 2)));
+  panel.append(details);
+  if (focused !== undefined && policyPaneMode === "result") get(`policy-check-${focused}`)?.scrollIntoView({ block: "nearest" });
+}
+async function openPolicySource(citation, link) {
+  const match = /^\/data\/policies\/rental\/((?:ocr-comparison-v2\/)?[a-z0-9-]+\.pdf)#page=([1-9]\d*)$/.exec(citation.href);
+  if (!match) throw new Error("The policy source link is not a verified local PDF.");
+  policySource = { link, scrollTop: get(policyPaneMode === "chat" ? "policy-chat" : "policy-output").scrollTop };
+  get("policy-output").hidden = true;
+  get("policy-chat").hidden = true;
+  get("policy-pane-modes").hidden = true;
+  get("pdf-scroll").hidden = false;
+  get("policy-source-toolbar").hidden = false;
+  get("policy-source-title").textContent = `${citation.DocumentId} · ${citation.RuleId} · ${citation.Section}`;
+  get("download").hidden = true;
+  get("policy-source-back").textContent = policyPaneMode === "chat" ? "Back to chat" : "Back to policy checks";
+  get("policy-source-back").focus();
+  await policyDocument.open(`/data/policies/rental/${match[1]}`, Number(match[2]));
+}
+get("policy-source-back").onclick = () => {
+  const previous = policySource;
+  showPolicyPanel(true);
+  get(policyPaneMode === "chat" ? "policy-chat" : "policy-output").scrollTop = previous?.scrollTop ?? 0;
+  previous?.link.focus({ preventScroll: true });
+};
+for (const mode of ["result", "chat"]) get(`policy-${mode}-mode`).onclick = () => {
+  const key = `${run?.id}:${policyMode}:${selectedPacket}`;
+  if (policyPaneMode === "result") policyResultScroll.set(key, get("policy-output").scrollTop);
+  policyPaneMode = mode;
+  for (const value of ["result", "chat"]) {
+    const button = get(`policy-${value}-mode`);
+    button.setAttribute("aria-pressed", String(value === mode));
+    button.classList.toggle("secondary", value !== mode);
+  }
+  showPolicyPanel(true);
+  renderPolicyOutput();
+  if (mode === "result") get("policy-output").scrollTop = policyResultScroll.get(key) ?? 0;
+};
+get("policy-mode").onchange = async () => {
+  policyMode = get("policy-mode").value;
+  showPolicyPanel(true);
+  policyMessage();
+  renderTable();
+  renderPolicyOutput();
+  try { await refreshPolicy(); } catch (error) { fail(error); }
+};
+get("policy-run").onclick = () => {
+  get("policy-confirm-summary").textContent =
+    `${run.items.filter((item) => item.rawSaved).length} cases · ${policyModeLabel()}.`;
+  get("policy-confirmation").showModal();
+};
+get("cancel-policy").onclick = () => get("policy-confirmation").close();
+get("confirm-policy").onclick = async () => {
+  if (busy || policyBusy) return;
+  get("policy-confirmation").close();
+  policyBusy = true; busy = true;
+  controls();
+  const mode = policyMode;
+  const id = run.id;
+  try {
+    const job = await api("policy/batch", { mode, live: true });
+    policyResults.set(mode, job);
+    while (run?.id === id) {
+      if (view === "policy" && mode === policyMode) { renderTable(); renderPolicyOutput(); }
+      await new Promise((resolve) => setTimeout(resolve, 1400));
+      await refreshPolicy(mode);
+      const status = policyResults.get(mode);
+      const completed = status.items.filter((item) => ["completed", "failed"].includes(item.status)).length;
+      get("policy-status").textContent = `${completed}/${status.items.length} cases · ${mode} · ${status.status}`;
+      if (status.status !== "running") break;
+    }
+    if (run?.id === id) {
+      await Promise.all(run.items.filter((item) => item.rawSaved).map(async ({ id }) => {
+        const value = await api(`packet/${id}`);
+        if (run?.id === value.packetJson?.analysis.run_id) results.set(id, value);
+      }));
+    }
+  } catch (error) { fail(error); }
+  finally { policyBusy = false; busy = false; controls(); }
+};

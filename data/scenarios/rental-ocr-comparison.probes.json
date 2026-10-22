@@ -1,0 +1,423 @@
+{
+  "synthetic": true,
+  "executed": false,
+  "includeInKnowledgeIndex": false,
+  "purpose": "Score extraction/retrieval independently of claim-field completeness.",
+  "scoring": "One point per complete expected object (32 total). Unknown/missing retrieval must abstain/review, not guess. Report correct, abstained and incorrect separately. Record citations and whether scanned rule text was actually retrieved.",
+  "experiments": [
+    "Standard versus Minimal on identical manifest PDFs (mixed figure/table/scan comparison).",
+    "Standard versus Minimal on identical text controls (WA OCR control; AZ figure remains raster)."
+  ],
+  "probes": [
+    {
+      "id": "TX-routine-boundary",
+      "source": "tx-rental-review-sop-v2.pdf",
+      "page": 3,
+      "ruleId": "TX-R2",
+      "question": "What routine daily base limit applies in TX, and does equality pass? Distinguish that internal limit from the supplied $85/day contractual cap.",
+      "expected": {
+        "routineUsdPerDay": "75.00",
+        "inclusive": true,
+        "policyCapUsdPerDay": "85.00",
+        "atRoutineBoundary": "Satisfied"
+      },
+      "score": "One point only if value, inclusivity and independent contractual cap all match."
+    },
+    {
+      "id": "TX-duration-and-exception",
+      "source": "tx-rental-review-sop-v2.pdf",
+      "page": 3,
+      "ruleId": "TX-R3",
+      "question": "How many rental days can TX handle routinely, and can a supervisor approve an extension beyond the remaining policy benefit?",
+      "expected": {
+        "routineDays": 7,
+        "inclusive": true,
+        "supervisorCanExceedRemainingPolicyDays": false
+      },
+      "score": "One point only if correct duration row and non-waivable contractual boundary match."
+    },
+    {
+      "id": "WA-routine-boundary",
+      "source": "wa-rental-review-sop-v2.pdf",
+      "page": 3,
+      "ruleId": "WA-R2",
+      "question": "What routine daily base limit applies in WA, and does equality pass? Distinguish that internal limit from the supplied $85/day contractual cap.",
+      "expected": {
+        "routineUsdPerDay": "60.00",
+        "inclusive": true,
+        "policyCapUsdPerDay": "85.00",
+        "atRoutineBoundary": "Satisfied"
+      },
+      "score": "One point only if value, inclusivity and independent contractual cap all match."
+    },
+    {
+      "id": "WA-duration-and-exception",
+      "source": "wa-rental-review-sop-v2.pdf",
+      "page": 3,
+      "ruleId": "WA-R3",
+      "question": "How many rental days can WA handle routinely, and can a supervisor approve an extension beyond the remaining policy benefit?",
+      "expected": {
+        "routineDays": 5,
+        "inclusive": true,
+        "supervisorCanExceedRemainingPolicyDays": false
+      },
+      "score": "One point only if correct duration row and non-waivable contractual boundary match."
+    },
+    {
+      "id": "AZ-routine-boundary",
+      "source": "az-rental-review-sop-v2.pdf",
+      "page": 3,
+      "ruleId": "AZ-R2",
+      "question": "What routine daily base limit applies in AZ, and does equality pass? Distinguish that internal limit from the supplied $85/day contractual cap.",
+      "expected": {
+        "routineUsdPerDay": "70.00",
+        "inclusive": true,
+        "policyCapUsdPerDay": "85.00",
+        "atRoutineBoundary": "Satisfied"
+      },
+      "score": "One point only if value, inclusivity and independent contractual cap all match."
+    },
+    {
+      "id": "AZ-duration-and-exception",
+      "source": "az-rental-review-sop-v2.pdf",
+      "page": 3,
+      "ruleId": "AZ-R3",
+      "question": "How many rental days can AZ handle routinely, and can a supervisor approve an extension beyond the remaining policy benefit?",
+      "expected": {
+        "routineDays": 5,
+        "inclusive": true,
+        "supervisorCanExceedRemainingPolicyDays": false
+      },
+      "score": "One point only if correct duration row and non-waivable contractual boundary match."
+    },
+    {
+      "id": "CO-routine-boundary",
+      "source": "co-rental-review-sop-v2.pdf",
+      "page": 3,
+      "ruleId": "CO-R2",
+      "question": "What routine daily base limit applies in CO, and does equality pass? Distinguish that internal limit from the supplied $85/day contractual cap.",
+      "expected": {
+        "routineUsdPerDay": "80.00",
+        "inclusive": true,
+        "policyCapUsdPerDay": "85.00",
+        "atRoutineBoundary": "Satisfied"
+      },
+      "score": "One point only if value, inclusivity and independent contractual cap all match."
+    },
+    {
+      "id": "CO-duration-and-exception",
+      "source": "co-rental-review-sop-v2.pdf",
+      "page": 3,
+      "ruleId": "CO-R3",
+      "question": "How many rental days can CO handle routinely, and can a supervisor approve an extension beyond the remaining policy benefit?",
+      "expected": {
+        "routineDays": 5,
+        "inclusive": true,
+        "supervisorCanExceedRemainingPolicyDays": false
+      },
+      "score": "One point only if correct duration row and non-waivable contractual boundary match."
+    },
+    {
+      "id": "FL-routine-boundary",
+      "source": "fl-rental-review-sop-v2.pdf",
+      "page": 3,
+      "ruleId": "FL-R2",
+      "question": "What routine daily base limit applies in FL, and does equality pass? Distinguish that internal limit from the supplied $85/day contractual cap.",
+      "expected": {
+        "routineUsdPerDay": "75.00",
+        "inclusive": true,
+        "policyCapUsdPerDay": "85.00",
+        "atRoutineBoundary": "Satisfied"
+      },
+      "score": "One point only if value, inclusivity and independent contractual cap all match."
+    },
+    {
+      "id": "FL-duration-and-exception",
+      "source": "fl-rental-review-sop-v2.pdf",
+      "page": 3,
+      "ruleId": "FL-R3",
+      "question": "How many rental days can FL handle routinely, and can a supervisor approve an extension beyond the remaining policy benefit?",
+      "expected": {
+        "routineDays": 7,
+        "inclusive": true,
+        "supervisorCanExceedRemainingPolicyDays": false
+      },
+      "score": "One point only if correct duration row and non-waivable contractual boundary match."
+    },
+    {
+      "id": "IL-routine-boundary",
+      "source": "il-rental-review-sop-v2.pdf",
+      "page": 3,
+      "ruleId": "IL-R2",
+      "question": "What routine daily base limit applies in IL, and does equality pass? Distinguish that internal limit from the supplied $85/day contractual cap.",
+      "expected": {
+        "routineUsdPerDay": "80.00",
+        "inclusive": true,
+        "policyCapUsdPerDay": "85.00",
+        "atRoutineBoundary": "Satisfied"
+      },
+      "score": "One point only if value, inclusivity and independent contractual cap all match."
+    },
+    {
+      "id": "IL-duration-and-exception",
+      "source": "il-rental-review-sop-v2.pdf",
+      "page": 3,
+      "ruleId": "IL-R3",
+      "question": "How many rental days can IL handle routinely, and can a supervisor approve an extension beyond the remaining policy benefit?",
+      "expected": {
+        "routineDays": 5,
+        "inclusive": true,
+        "supervisorCanExceedRemainingPolicyDays": false
+      },
+      "score": "One point only if correct duration row and non-waivable contractual boundary match."
+    },
+    {
+      "id": "LA-routine-boundary",
+      "source": "la-rental-review-sop-v2.pdf",
+      "page": 3,
+      "ruleId": "LA-R2",
+      "question": "What routine daily base limit applies in LA, and does equality pass? Distinguish that internal limit from the supplied $85/day contractual cap.",
+      "expected": {
+        "routineUsdPerDay": "70.00",
+        "inclusive": true,
+        "policyCapUsdPerDay": "85.00",
+        "atRoutineBoundary": "Satisfied"
+      },
+      "score": "One point only if value, inclusivity and independent contractual cap all match."
+    },
+    {
+      "id": "LA-duration-and-exception",
+      "source": "la-rental-review-sop-v2.pdf",
+      "page": 3,
+      "ruleId": "LA-R3",
+      "question": "How many rental days can LA handle routinely, and can a supervisor approve an extension beyond the remaining policy benefit?",
+      "expected": {
+        "routineDays": 5,
+        "inclusive": true,
+        "supervisorCanExceedRemainingPolicyDays": false
+      },
+      "score": "One point only if correct duration row and non-waivable contractual boundary match."
+    },
+    {
+      "id": "CA-routine-boundary",
+      "source": "ca-rental-review-sop-v2.pdf",
+      "page": 3,
+      "ruleId": "CA-R2",
+      "question": "What routine daily base limit applies in CA, and does equality pass? Distinguish that internal limit from the supplied $85/day contractual cap.",
+      "expected": {
+        "routineUsdPerDay": "85.00",
+        "inclusive": true,
+        "policyCapUsdPerDay": "85.00",
+        "atRoutineBoundary": "Satisfied"
+      },
+      "score": "One point only if value, inclusivity and independent contractual cap all match."
+    },
+    {
+      "id": "CA-duration-and-exception",
+      "source": "ca-rental-review-sop-v2.pdf",
+      "page": 3,
+      "ruleId": "CA-R3",
+      "question": "How many rental days can CA handle routinely, and can a supervisor approve an extension beyond the remaining policy benefit?",
+      "expected": {
+        "routineDays": 3,
+        "inclusive": true,
+        "supervisorCanExceedRemainingPolicyDays": false
+      },
+      "score": "One point only if correct duration row and non-waivable contractual boundary match."
+    },
+    {
+      "id": "NY-routine-boundary",
+      "source": "ny-rental-review-sop-v2.pdf",
+      "page": 3,
+      "ruleId": "NY-R2",
+      "question": "What routine daily base limit applies in NY, and does equality pass? Distinguish that internal limit from the supplied $85/day contractual cap.",
+      "expected": {
+        "routineUsdPerDay": "75.00",
+        "inclusive": true,
+        "policyCapUsdPerDay": "85.00",
+        "atRoutineBoundary": "Satisfied"
+      },
+      "score": "One point only if value, inclusivity and independent contractual cap all match."
+    },
+    {
+      "id": "NY-duration-and-exception",
+      "source": "ny-rental-review-sop-v2.pdf",
+      "page": 3,
+      "ruleId": "NY-R3",
+      "question": "How many rental days can NY handle routinely, and can a supervisor approve an extension beyond the remaining policy benefit?",
+      "expected": {
+        "routineDays": 5,
+        "inclusive": true,
+        "supervisorCanExceedRemainingPolicyDays": false
+      },
+      "score": "One point only if correct duration row and non-waivable contractual boundary match."
+    },
+    {
+      "id": "OH-routine-boundary",
+      "source": "oh-rental-review-sop-v2.pdf",
+      "page": 3,
+      "ruleId": "OH-R2",
+      "question": "What routine daily base limit applies in OH, and does equality pass? Distinguish that internal limit from the supplied $85/day contractual cap.",
+      "expected": {
+        "routineUsdPerDay": "80.00",
+        "inclusive": true,
+        "policyCapUsdPerDay": "85.00",
+        "atRoutineBoundary": "Satisfied"
+      },
+      "score": "One point only if value, inclusivity and independent contractual cap all match."
+    },
+    {
+      "id": "OH-duration-and-exception",
+      "source": "oh-rental-review-sop-v2.pdf",
+      "page": 3,
+      "ruleId": "OH-R3",
+      "question": "How many rental days can OH handle routinely, and can a supervisor approve an extension beyond the remaining policy benefit?",
+      "expected": {
+        "routineDays": 5,
+        "inclusive": true,
+        "supervisorCanExceedRemainingPolicyDays": false
+      },
+      "score": "One point only if correct duration row and non-waivable contractual boundary match."
+    },
+    {
+      "id": "WA-rate-exception",
+      "source": "wa-rental-review-sop-v2.pdf",
+      "page": 3,
+      "ruleId": "WA-R2",
+      "question": "WA rental base is $61/day; contract cap $85/day; no supervisor approval. Is the rate check satisfied, and why?",
+      "expected": {
+        "Outcome": "ReviewRequired",
+        "routineUsdPerDay": "60.00",
+        "policyCapExceeded": false,
+        "requiredAuthority": "rental supervisor"
+      }
+    },
+    {
+      "id": "WA-generic-levy",
+      "source": "wa-rental-review-sop-v2.pdf",
+      "page": 3,
+      "ruleId": "WA-R4",
+      "question": "WA invoice arithmetic reconciles but includes $5.49 of generically described local rental levies with no mandatory-status support. Does arithmetic alone satisfy R4?",
+      "expected": {
+        "Outcome": "ReviewRequired",
+        "reason": "Mandatory status needs clarification"
+      }
+    },
+    {
+      "id": "FL-tow-identity",
+      "source": "fl-rental-review-sop-v2.pdf",
+      "page": 3,
+      "ruleId": "FL-R2",
+      "question": "A confirmed towing-only FL packet has a $283 flat tow bill and an $85/day rental benefit limit, but no rental request. Is $283 an over-limit rental rate?",
+      "expected": {
+        "Outcome": "NotApplicable",
+        "towChargeIsRentalRate": false
+      }
+    },
+    {
+      "id": "OH-commercial-scope",
+      "source": "oh-rental-review-sop-v2.pdf",
+      "page": 1,
+      "ruleId": "OH-R1",
+      "question": "Does the OH SOP automatically exclude commercial delivery vehicles that have an express rental endorsement? Does fleet downtime alone establish a rental request?",
+      "expected": {
+        "commercialRentalEndorsementInScope": true,
+        "downtimeIsRentalRequest": false
+      },
+      "supportingPage": 4
+    },
+    {
+      "id": "shared-unknown-not-na",
+      "source": "shared-rental-evidence-standard-v2.pdf",
+      "page": 2,
+      "ruleId": "E-02",
+      "question": "The extraction has no rental fields and does not establish the request type. Can the agent select NotApplicable?",
+      "expected": {
+        "Outcome": "ReviewRequired",
+        "missingFieldsProveNoRequest": false
+      }
+    },
+    {
+      "id": "shared-checkbox-state",
+      "source": "shared-rental-evidence-standard-v2.pdf",
+      "page": 2,
+      "ruleId": "E-04",
+      "question": "A payment-authority checkbox is blank. Does that mean payment was denied, approved, or that the answer is unknown?",
+      "expected": {
+        "checkboxMeaning": "Unknown / unanswered",
+        "impliesApproval": false
+      }
+    },
+    {
+      "id": "AZ-figure-scheduled-only",
+      "source": "az-rental-review-sop-v2.pdf",
+      "page": 5,
+      "ruleId": "AZ-R1",
+      "question": "A linked AZ rental request has valid coverage and routing. The vehicle is drivable and has only scheduled repairs, with no actual shop intake/release. Follow Figure 1: what is the eligibility outcome?",
+      "expected": {
+        "Outcome": "ReviewRequired",
+        "scheduledRepairsEstablishNeed": false
+      }
+    },
+    {
+      "id": "AZ-figure-non-drivable",
+      "source": "az-rental-review-sop-v2.pdf",
+      "page": 5,
+      "ruleId": "AZ-R1",
+      "question": "A linked AZ rental request has confirmed routing, express benefit and valid policy dates. Non-drivable evidence supports loss of use; shop dates are absent. Follow Figure 1: does AZ-R1 pass, and does that approve all five checks?",
+      "expected": {
+        "Outcome": "Satisfied",
+        "allFiveChecksApproved": false
+      }
+    },
+    {
+      "id": "AZ-figure-no-request",
+      "source": "az-rental-review-sop-v2.pdf",
+      "page": 5,
+      "ruleId": "AZ-R1",
+      "question": "Full AZ packet evidence confirms towing only and no rental request. Which Figure 1 terminal applies: Satisfied, NotApplicable or ReviewRequired?",
+      "expected": {
+        "Outcome": "NotApplicable",
+        "rentalApproved": false
+      }
+    },
+    {
+      "id": "TX-blank-authority-band",
+      "source": "tx-rental-review-sop-v2.pdf",
+      "page": 3,
+      "ruleId": "TX-R3",
+      "question": "In TX Schedule A, the row allowing more than 7 days has a blank Authority band cell. Which band applies and who must approve the duration exception?",
+      "expected": {
+        "authorityBand": "Internal exception",
+        "requiredAuthority": "rental supervisor",
+        "remainingPolicyDaysStillApply": true
+      }
+    },
+    {
+      "id": "TX-blank-duration-cell",
+      "source": "tx-rental-review-sop-v2.pdf",
+      "page": 3,
+      "ruleId": "TX-R3",
+      "question": "TX has a documented rate-only exception for $80/day within an $85 cap. Its Schedule A Days and approver cell is blank. Does that also authorize 9 days within a 14-day remaining policy benefit?",
+      "expected": {
+        "Outcome": "ReviewRequired",
+        "blankMeansUnlimitedDays": false,
+        "routineDaysStillApply": 7,
+        "durationApprovalRequired": true
+      }
+    },
+    {
+      "id": "TX-blank-rate-cell",
+      "source": "tx-rental-review-sop-v2.pdf",
+      "page": 3,
+      "ruleId": "TX-R2",
+      "question": "TX has a documented duration-only exception for 9 days. That Schedule A row has a blank Daily base rate cell. Does that also authorize $80/day below an $85/day contractual cap, without rate approval?",
+      "expected": {
+        "Outcome": "ReviewRequired",
+        "blankMeansUnlimitedRate": false,
+        "routineUsdPerDayStillApply": "75.00",
+        "rateApprovalRequired": true
+      }
+    }
+  ]
+}

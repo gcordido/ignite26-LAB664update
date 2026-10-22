@@ -380,6 +380,131 @@ body.resizing-column * {
   font-weight: 600;
   color: #29475a;
 }
+#policy-toolbar {
+  padding: 8px 0;
+}
+#policy-toolbar p {
+  margin: 6px 0;
+  font-size: 12px;
+}
+#policy-output {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 18px;
+}
+#policy-pane-modes {
+  padding: 10px 12px;
+  border-bottom: 1px solid #cbd4dc;
+  flex-shrink: 0;
+}
+#policy-pane-modes button[aria-pressed="true"] {
+  outline: 2px solid #173e61;
+  outline-offset: 2px;
+}
+#policy-chat {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 12px;
+}
+.policy-chat-case {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.policy-chat-case h2 {
+  margin: 0 0 6px;
+  font-size: 16px;
+}
+.policy-chat-case p {
+  margin: 6px 0;
+  font-size: 12px;
+}
+.policy-chat-case details {
+  margin: 6px 0 12px;
+}
+.policy-chat-case pre {
+  max-height: 240px;
+  overflow: auto;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 12px;
+}
+.policy-chat-case deep-chat {
+  display: block;
+  flex: 1;
+  min-height: 280px;
+}
+#policy-output h2 {
+  margin-top: 0;
+}
+.policy-check {
+  padding: 12px 0;
+  border-top: 1px solid #d6dce2;
+}
+.policy-check h3 {
+  margin: 0 0 6px;
+  font-size: 14px;
+}
+.policy-check p {
+  margin: 6px 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.policy-check a {
+  display: block;
+  margin: 5px 0;
+  text-decoration: underline;
+}
+.policy-values {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: 8px 12px;
+  margin: 16px 0 10px;
+  overflow-wrap: anywhere;
+}
+.policy-values dt {
+  color: #526674;
+}
+.policy-values dd {
+  margin: 0;
+  white-space: pre-wrap;
+}
+.policy-reasoning {
+  color: #526674;
+}
+.policy-source-label {
+  font-weight: 600;
+}
+.policy-review {
+  color: #8a5300;
+  background: #fff4d4;
+}
+.policy-satisfied {
+  color: #226740;
+  background: #e6f3e9;
+}
+.policy-error {
+  color: #922c2c;
+  background: #ffeded;
+}
+.policy-state {
+  border-radius: 4px;
+  padding: 4px 7px;
+}
+.policy-preparation {
+  display: block;
+  color: #627783;
+  padding: 0 8px 4px;
+  font-size: 11px;
+}
+#policy-output pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 12px;
+}
 .badge {
   margin-left: auto;
   background: #e8eff5;
@@ -454,6 +579,7 @@ progress::-moz-progress-bar {
 .workspace {
   flex: 1;
   min-height: 0;
+  min-width: 0;
   display: flex;
 }
 .workspace .table-area {
@@ -461,6 +587,7 @@ progress::-moz-progress-bar {
   flex-direction: column;
   flex: 1;
   min-height: 0;
+  min-width: 0;
 }
 .columns-toolbar {
   flex-shrink: 0;
@@ -696,6 +823,16 @@ tr:last-child td {
   background: white;
   border: 1px solid #cbd4dc;
 }
+#policy-source-toolbar {
+  padding: 12px;
+  border-bottom: 1px solid #cbd4dc;
+}
+#policy-source-title {
+  display: block;
+  margin-top: 8px;
+  overflow-wrap: anywhere;
+  font-size: 13px;
+}
 #pdf-scroll {
   width: 100%;
   flex: 1;
@@ -860,7 +997,8 @@ dialog h2 {
     display: none;
   }
   .workspace {
-    grid-template-columns: 1fr;
+    flex: none;
+    width: 100%;
   }
   #preview {
     position: static;
@@ -905,4 +1043,48 @@ dialog h2 {
   .spinner {
     animation-duration: 2s;
   }
+}
+#policy-document-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 8px 12px;
+  border-bottom: 1px solid #cbd4dc;
+}
+#policy-document-status {
+  padding: 6px 14px;
+  margin: 0;
+  font-size: 12px;
+}
+#policy-document-content {
+  min-height: 0;
+  flex: 1;
+  overflow: auto;
+  padding: 14px;
+  overflow-wrap: anywhere;
+  line-height: 1.5;
+}
+#policy-document-content table {
+  width: max-content;
+  min-width: 100%;
+  table-layout: auto;
+  border-collapse: collapse;
+}
+#policy-document-content th,
+#policy-document-content td {
+  white-space: normal;
+  height: auto;
+  padding: 8px;
+  border: 1px solid #cbd4dc;
+  max-width: 360px;
+  min-width: 80px;
+  position: static;
+}
+#policy-document-content pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.policy-na {
+  color: #405969;
+  background: #edf2f6;
 }

@@ -16,7 +16,10 @@ export class CuClient {
     this.credential,
     "https://cognitiveservices.azure.com/.default",
   );
-  constructor(private settings = configuration()) {}
+  constructor(
+    private settings = configuration(),
+    private operationTimeoutMs = 300_000,
+  ) {}
   private async request(
     target: string,
     init: RequestInit = {},
@@ -53,7 +56,7 @@ export class CuClient {
   private async poll(response: Response): Promise<unknown> {
     const location = response.headers.get("operation-location");
     if (!location) return response.json();
-    const deadline = Date.now() + 300_000;
+    const deadline = Date.now() + this.operationTimeoutMs;
     while (Date.now() < deadline) {
       await setTimeout(1500);
       const value: unknown = await (await this.request(location)).json();
@@ -71,7 +74,7 @@ export class CuClient {
     }
     throw new LabError(
       504,
-      "CU exceeded five minutes; no successful result was assumed.",
+      `CU exceeded ${this.operationTimeoutMs / 60_000} minutes; no successful result was assumed.`,
     );
   }
   async detail(id: string): Promise<unknown | null> {

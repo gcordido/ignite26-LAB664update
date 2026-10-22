@@ -38,6 +38,7 @@ function centerAnchor() {
   );
 }
 async function render({ anchor, reset = false, focus } = {}) {
+  if (scroll.hidden) return;
   const current = ++version;
   renderTask?.cancel();
   scroll.setAttribute("aria-busy", "true");
@@ -82,6 +83,7 @@ async function render({ anchor, reset = false, focus } = {}) {
     throw error;
   }
   if (current !== version) return;
+  if (scroll.hidden) return;
   const stage = get("pdf-stage");
   stage.style.width = `${viewport.width}px`;
   stage.style.height = `${viewport.height}px`;

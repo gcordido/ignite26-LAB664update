@@ -1,0 +1,46 @@
+[
+  {
+    "documentId": "TX-RENTAL-001",
+    "version": "1.0",
+    "pdf": "tx-rental-review-sop.pdf",
+    "sha256": "33697baa63dc88bb85a63c14cdc68398991c914a21d2a32a8cbf5bf9430e6d9a",
+    "ruleIds": ["TX-R1", "TX-R2", "TX-R3", "TX-R4", "TX-R5"],
+    "sections": {
+      "1. Scope and authority": 1,
+      "2. Five-rule decision matrix": 2,
+      "3. Evidence and calculation instructions": 3,
+      "4. Reviewer worksheet and examples": 4
+    }
+  },
+  {
+    "documentId": "WA-RENTAL-001",
+    "version": "1.0",
+    "pdf": "wa-rental-review-sop.pdf",
+    "sha256": "4481ebd6eb9aea1cc4f3d4b14e1bf78bcf718da8e0efb3541c1f129293211b75",
+    "ruleIds": ["WA-R1", "WA-R2", "WA-R3", "WA-R4", "WA-R5"],
+    "sections": {
+      "1. Scope and authority": 1,
+      "2. Five-rule decision matrix": 2,
+      "3. Evidence and calculation instructions": 3,
+      "4. Reviewer worksheet and examples": 4
+    }
+  },
+  {
+    "documentId": "SHARED-EVIDENCE-001",
+    "version": "1.0",
+    "pdf": "shared-evidence-standard.pdf",
+    "sha256": "f85ea2593b73c207be8345603b0d4a773f49e4f3f9a26e8102ef456771d516a5",
+    "ruleIds": ["E-01", "E-02", "E-03", "E-04", "E-05", "E-06"],
+    "sections": {
+      "1. Applicability and source selection": 1,
+      "2. Evidence hierarchy and reconciliation": 2,
+      "3. Entity matching and output contract": 3,
+      "E-01: Select by normalized attributes, not similarity alone": 1,
+      "E-02: Preserve the boundary between facts and rules": 1,
+      "E-03: Reconcile chronology without erasing contradictions": 2,
+      "E-04: Read checkboxes with their labels": 2,
+      "E-05: Match the right claim, rental and vehicle": 3,
+      "E-06: Five cited results and an honest recommendation": 3
+    }
+  }
+]

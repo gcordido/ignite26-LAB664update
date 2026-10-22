@@ -1,0 +1,213 @@
+[
+  {
+    "documentId": "TX-RENTAL-002",
+    "version": "2.0",
+    "pdf": "tx-rental-review-sop-v2.pdf",
+    "sha256": "989e10efa85a0318c3e7eaa77a3aae7d45f88b34e36c61da6d40862d6b6ef557",
+    "ruleIds": [
+      "TX-R1",
+      "TX-R2",
+      "TX-R3",
+      "TX-R4",
+      "TX-R5"
+    ],
+    "sections": {
+      "1. Scope and authority": 1,
+      "2. Five-rule decision matrix": 2,
+      "3. Rate, duration and charge schedules": 3,
+      "4. Applicability and reviewer worksheet": 4
+    }
+  },
+  {
+    "documentId": "WA-RENTAL-002",
+    "version": "2.0",
+    "pdf": "wa-rental-review-sop-v2.pdf",
+    "sha256": "f9ec01eaa0b67ca0485347112f1a4addb1ea7f914e468553a676b58d7c1e38c9",
+    "ruleIds": [
+      "WA-R1",
+      "WA-R2",
+      "WA-R3",
+      "WA-R4",
+      "WA-R5"
+    ],
+    "sections": {
+      "1. Scope and authority": 1,
+      "2. Five-rule decision matrix": 2,
+      "3. Rate, duration and charge schedules": 3,
+      "4. Applicability and reviewer worksheet": 4
+    }
+  },
+  {
+    "documentId": "AZ-RENTAL-002",
+    "version": "2.0",
+    "pdf": "az-rental-review-sop-v2.pdf",
+    "sha256": "fa1096a3b183a70b5c361fa86d7b12f4f06cd0ffe79cbc505bc24b525cfa41fe",
+    "ruleIds": [
+      "AZ-R1",
+      "AZ-R2",
+      "AZ-R3",
+      "AZ-R4",
+      "AZ-R5"
+    ],
+    "sections": {
+      "1. Scope and authority": 1,
+      "2. Five-rule decision matrix": 2,
+      "3. Rate, duration and charge schedules": 3,
+      "4. Applicability and reviewer worksheet": 4,
+      "5. Figure 1: rental eligibility (AZ-R1)": 5
+    }
+  },
+  {
+    "documentId": "CO-RENTAL-002",
+    "version": "2.0",
+    "pdf": "co-rental-review-sop-v2.pdf",
+    "sha256": "6efd1efbfdb500520503e17d389c6debfb7b67fe5edb949caa376db91d497d68",
+    "ruleIds": [
+      "CO-R1",
+      "CO-R2",
+      "CO-R3",
+      "CO-R4",
+      "CO-R5"
+    ],
+    "sections": {
+      "1. Scope and authority": 1,
+      "2. Five-rule decision matrix": 2,
+      "3. Rate, duration and charge schedules": 3,
+      "4. Applicability and reviewer worksheet": 4
+    }
+  },
+  {
+    "documentId": "FL-RENTAL-002",
+    "version": "2.0",
+    "pdf": "fl-rental-review-sop-v2.pdf",
+    "sha256": "1e5798905228220e83296ff49098b859e5e2ec0890a656647743434f3b3ca332",
+    "ruleIds": [
+      "FL-R1",
+      "FL-R2",
+      "FL-R3",
+      "FL-R4",
+      "FL-R5"
+    ],
+    "sections": {
+      "1. Scope and authority": 1,
+      "2. Five-rule decision matrix": 2,
+      "3. Rate, duration and charge schedules": 3,
+      "4. Applicability and reviewer worksheet": 4
+    }
+  },
+  {
+    "documentId": "IL-RENTAL-002",
+    "version": "2.0",
+    "pdf": "il-rental-review-sop-v2.pdf",
+    "sha256": "25c2629650e1581cb13d9188e89155ca69be9efc4edd2e76d43a68b0885fb210",
+    "ruleIds": [
+      "IL-R1",
+      "IL-R2",
+      "IL-R3",
+      "IL-R4",
+      "IL-R5"
+    ],
+    "sections": {
+      "1. Scope and authority": 1,
+      "2. Five-rule decision matrix": 2,
+      "3. Rate, duration and charge schedules": 3,
+      "4. Applicability and reviewer worksheet": 4
+    }
+  },
+  {
+    "documentId": "LA-RENTAL-002",
+    "version": "2.0",
+    "pdf": "la-rental-review-sop-v2.pdf",
+    "sha256": "7f24982d2c5c03a3a670a2dbd6f1ad4ce79a562faf84f599bb4cb17e307a4659",
+    "ruleIds": [
+      "LA-R1",
+      "LA-R2",
+      "LA-R3",
+      "LA-R4",
+      "LA-R5"
+    ],
+    "sections": {
+      "1. Scope and authority": 1,
+      "2. Five-rule decision matrix": 2,
+      "3. Rate, duration and charge schedules": 3,
+      "4. Applicability and reviewer worksheet": 4
+    }
+  },
+  {
+    "documentId": "CA-RENTAL-002",
+    "version": "2.0",
+    "pdf": "ca-rental-review-sop-v2.pdf",
+    "sha256": "1c3c81ba86648256342d27ce6fd43ac39fdfe42a21a09baf7399bb0ef46af045",
+    "ruleIds": [
+      "CA-R1",
+      "CA-R2",
+      "CA-R3",
+      "CA-R4",
+      "CA-R5"
+    ],
+    "sections": {
+      "1. Scope and authority": 1,
+      "2. Five-rule decision matrix": 2,
+      "3. Rate, duration and charge schedules": 3,
+      "4. Applicability and reviewer worksheet": 4
+    }
+  },
+  {
+    "documentId": "NY-RENTAL-002",
+    "version": "2.0",
+    "pdf": "ny-rental-review-sop-v2.pdf",
+    "sha256": "54f1426891afada4dd7105574cd695c9895b228ee33e5a1b8e52f8be042a94bd",
+    "ruleIds": [
+      "NY-R1",
+      "NY-R2",
+      "NY-R3",
+      "NY-R4",
+      "NY-R5"
+    ],
+    "sections": {
+      "1. Scope and authority": 1,
+      "2. Five-rule decision matrix": 2,
+      "3. Rate, duration and charge schedules": 3,
+      "4. Applicability and reviewer worksheet": 4
+    }
+  },
+  {
+    "documentId": "OH-RENTAL-002",
+    "version": "2.0",
+    "pdf": "oh-rental-review-sop-v2.pdf",
+    "sha256": "34eacaae00e58c6a33b092a0433949f8be8fe47eb8b12089fa0a534f50327c1f",
+    "ruleIds": [
+      "OH-R1",
+      "OH-R2",
+      "OH-R3",
+      "OH-R4",
+      "OH-R5"
+    ],
+    "sections": {
+      "1. Scope and authority": 1,
+      "2. Five-rule decision matrix": 2,
+      "3. Rate, duration and charge schedules": 3,
+      "4. Applicability and reviewer worksheet": 4
+    }
+  },
+  {
+    "documentId": "SHARED-EVIDENCE-002",
+    "version": "2.0",
+    "pdf": "shared-rental-evidence-standard-v2.pdf",
+    "sha256": "0985f27475a260e65df2e3ee09f38dfd1676afed16914519edb4678cd548fc24",
+    "ruleIds": [
+      "E-01",
+      "E-02",
+      "E-03",
+      "E-04",
+      "E-05",
+      "E-06"
+    ],
+    "sections": {
+      "1. Scope and authority": 1,
+      "2. Five-rule decision matrix": 2,
+      "3. Rate, duration and charge schedules": 3,
+      "4. Applicability and reviewer worksheet": 4
+    }
+  }
+]
