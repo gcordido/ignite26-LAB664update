@@ -36,10 +36,10 @@ export function createApp(
   app.disable("x-powered-by");
   app.use(express.json({ limit: "20kb" }));
   app.get(["/", "/index.html"], (_req, res) =>
-    res.sendFile(path.join(root, "web", "workbench.html")),
+    res.sendFile("workbench.html", { root: path.join(root, "web") }),
   );
   app.get("/lab.html", (_req, res) =>
-    res.sendFile(path.join(repositoryRoot, "instructions", "lab.html")),
+    res.sendFile("lab.html", { root: path.join(repositoryRoot, "instructions") }),
   );
   app.use(
     "/data",
@@ -66,9 +66,9 @@ export function createApp(
     }),
   );
   app.get("/vendor/marked.js", (_req, res) =>
-    res.sendFile(path.join(root, "node_modules", "marked", "lib", "marked.esm.js")));
+    res.sendFile("marked.esm.js", { root: path.join(root, "node_modules", "marked", "lib") }));
   app.get("/vendor/purify.js", (_req, res) =>
-    res.sendFile(path.join(root, "node_modules", "dompurify", "dist", "purify.es.mjs")));
+    res.sendFile("purify.es.mjs", { root: path.join(root, "node_modules", "dompurify", "dist") }));
   app.use(
     "/vendor/pdfjs-fonts",
     express.static(
