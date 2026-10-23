@@ -252,7 +252,7 @@ function confidence(parent, value) {
   parent.dataset.confidence = String(value);
   if (!showConfidence) return;
   const percent = Math.round(value * 100);
-  const level = percent >= 90 ? "high" : percent >= 70 ? "medium" : "low";
+  const level = percent > 80 ? "high" : percent >= 50 ? "medium" : "low";
   const badge = element(
     "span",
     `${percent}%`,
