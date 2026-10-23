@@ -6,7 +6,7 @@ Follow these five steps in order: try prebuilts, customize extraction, classify 
 
 Use [CU Studio](https://contentunderstanding.ai.azure.com/) for steps 1-4. Sign in and select your approved Azure resource. You need permission to use Content Understanding, build analyzers, and use the resource's configured models. Studio tests and live app analysis incur Azure charges.
 
-> [!Alert] **Model choice:** use the Preview workflow with **GPT-5 for classification/segmentation** and **GPT-5.5 for custom and prebuilt extraction**. Ask the lab owner to configure those models if unavailable; do not change shared resource deployments or defaults yourself. The app uses `2026-06-01-preview` for this flow.
+> [!Alert] **Model choice:** use the Preview workflow with **GPT-5 for classification/segmentation**, **GPT-5.5 for custom repair extraction**, and **GPT-5.2 for prebuilt extraction**. Ask the lab owner to configure those models if unavailable; do not change shared resource deployments or defaults yourself. The app uses `2026-06-01-preview` for this flow.
 
 - [1. Prebuilt](#step-1-explore-prebuilt-analyzers)
 - [2. Custom](#step-2-build-a-custom-repair-extractor)
@@ -18,7 +18,7 @@ Use [CU Studio](https://contentunderstanding.ai.azure.com/) for steps 1-4. Sign 
 
 ## Step 1: Explore prebuilt analyzers
 
-> [!Note] **Upload from `data\step1`:** [towing-invoice.pdf](../data/step1/towing-invoice.pdf) (2 pages), [demo-id.pdf](../data/step1/demo-id.pdf) (1 page), and [form-1099a.pdf](../data/step1/form-1099a.pdf) (1 page). Use one file at a time as shown below.
+> [!Note] **Upload from `data\step1`:** [towing-invoice.pdf](../data/step1/towing-invoice.pdf) (1 page), [demo-id.pdf](../data/step1/demo-id.pdf) (1 page), and [form-1099a.pdf](../data/step1/form-1099a.pdf) (1 page). Use one file at a time as shown below.
 
 1. [] Open the [CU Studio prebuilt-analyzer gallery](https://contentunderstanding.ai.azure.com/discover). Select the document prebuilt named in each row, choose your resource if prompted, upload the indicated PDF, and run analysis.
 2. [] Inspect the document and the actual response together. Click a returned field or table value to inspect its source; compare layout-only output with domain-specific extraction.
@@ -61,7 +61,7 @@ Use [CU Studio](https://contentunderstanding.ai.azure.com/) for steps 1-4. Sign 
 
 ## Step 3: Classify and split a packet, without extraction
 
-> [!Note] **Start with `data\step3`:** [classification-packet.pdf](../data/step3/classification-packet.pdf) (3 pages). Then use [packet-01.pdf](../data/step3/packet-01.pdf) (Danielle, 13 pages) and [packet-03.pdf](../data/step3/packet-03.pdf) (13 pages) for realistic logical-document boundaries.
+> [!Note] **Start with `data\step3`:** [classification-packet.pdf](../data/step3/classification-packet.pdf) (3 pages). Then use [packet-01.pdf](../data/step3/packet-01.pdf) (Danielle, 13 pages) and [packet-03.pdf](../data/step3/packet-03.pdf) (12 pages) for realistic logical-document boundaries.
 
 1. [] In [CU Studio Build](https://contentunderstanding.ai.azure.com/build), create a Preview **Classification** project with **GPT-5**. Add the four category keys and descriptions below. **Do not assign child analyzer IDs yet.** The [prebuilt-analyzer gallery](https://contentunderstanding.ai.azure.com/discover) will be used for extraction routes in step 4, not this classification-only test.
 2. [] Enable segmentation and choose **Auto segment content**. Leave **Allow in-page segments** off. Do not choose **Segment by page**; keep parent content. The settings are `enableSegment=true`, `allowInPageSegments=false`, `segmentPerPage=false`, `omitContent=false`.
@@ -89,7 +89,7 @@ Use [CU Studio](https://contentunderstanding.ai.azure.com/) for steps 1-4. Sign 
 > [!Note] **Use the same inputs from `data\step4`:** [classification-packet.pdf](../data/step4/classification-packet.pdf), [packet-01.pdf](../data/step4/packet-01.pdf) (rental invoice), and [packet-03.pdf](../data/step4/packet-03.pdf) (towing invoice). This makes the before/after comparison about routing, not a changed source.
 
 1. [] Reopen your step 3 project in [CU Studio Build](https://contentunderstanding.ai.azure.com/build). Keep the classifier on **GPT-5** and the same logical-segmentation settings. Link the first three categories below to the indicated analyzers. Select prebuilts from the [prebuilt-analyzer gallery](https://contentunderstanding.ai.azure.com/discover); use your actual custom repair ID.
-2. [] Add `towing_invoice` and `rental_invoice`, using the descriptions below, and route both to Invoice. Update Other's description to the new version. Custom extraction and the resource's `prebuilt-analyzer-completion` mapping must use **GPT-5.5**; verify with the lab owner rather than changing a shared mapping.
+2. [] Add `towing_invoice` and `rental_invoice`, using the descriptions below, and route both to Invoice. Update Other's description to the new version. Keep the custom repair extractor on **GPT-5.5**. The resource's `prebuilt-analyzer-completion` mapping must use **GPT-5.2**; verify with the lab owner rather than changing a shared mapping.
 
 | Category key | Extraction route | Description change |
 |:---|:---|:---|
@@ -112,7 +112,7 @@ Use [CU Studio](https://contentunderstanding.ai.azure.com/) for steps 1-4. Sign 
 
 ## Step 5: Connect to your separate Insurance Workbench App
 
-> [!Note] **App input:** all ten full PDFs in `data\packets` (122 pages total). The app loads these automatically; no manual upload is needed. The completed native results in `data\results` let you explore without submitting analysis. [CU Studio Build](https://contentunderstanding.ai.azure.com/build) remains your authoring tool; the [prebuilt-analyzer gallery](https://contentunderstanding.ai.azure.com/discover) remains in Studio.
+> [!Note] **App input:** all ten full PDFs in `data\packets` (120 pages total). The app loads these automatically; no manual upload is needed. The completed native results in `data\results` let you explore without submitting analysis. [CU Studio Build](https://contentunderstanding.ai.azure.com/build) remains your authoring tool; the [prebuilt-analyzer gallery](https://contentunderstanding.ai.azure.com/discover) remains in Studio.
 
 ### Install once, then launch the app yourself
 
@@ -148,7 +148,7 @@ powershell -ExecutionPolicy Bypass -File .\infra\launch-workbench.ps1 `
 ```
 
 1. [] Reopen or reload [Insurance Workbench App](http://127.0.0.1:8791/). In **Analyzer**, select the exact `..._router` ID you built in step 4. The list contains ready custom logical classifiers/routers, not standalone prebuilts. If missing, check the endpoint, permissions, API version, and that the analyzer was built successfully.
-2. [] Click **Run live**. Read the confirmation for ten packets / 122 pages; only confirm when you intend to incur Azure charges. The app verifies the existing analyzer and linked extractors; it does not deploy models or create analyzers.
+2. [] Click **Run live**. Read the confirmation for ten packets / 120 pages; only confirm when you intend to incur Azure charges. The app verifies the existing analyzer and linked extractors; it does not deploy models or create analyzers.
 3. [] Watch progress and elapsed time. Each native response is saved under `data\results\RUN-ID` before results are derived. Completed results become a new cache entry. A failed run remains visibly failed; inspect its error before explicitly starting another billable run.
 4. [] Compare your live extraction with the PDFs and the saved run. To see classification alone, select your step 3 `..._classifier` and explicitly start a separate billable run. Fields appear only when extraction routes actually returned them.
 
@@ -161,8 +161,6 @@ powershell -ExecutionPolicy Bypass -File .\infra\launch-workbench.ps1 `
 > `data\packets`: 10 complete customer PDFs. `data\documents\packet-01` through `packet-10`: 90 individual logical-document PDFs, extracted from the authored page groups. `data\samples`: five small Studio specimens. `data\packets.json`: source hashes and authored page ranges. `data\results`: one included completed run with its original manifest and ten native JSON responses; future live runs save here too.
 >
 > `data\step1` through `data\step4` are convenience copies of the recommended inputs, not a second dataset. The app uses the canonical PDFs under `data`. Full packet 01 contains rental billing; full packet 03 contains towing. The authored four-class reference labels both as Other, while the six-class routed run gives them separate invoice categories.
->
-> **Included cache provenance:** run `243f1c06-caf3-4375-b409-afe130136867`, analyzer `lab664_anatolip_scus_routerg5`, API `2026-06-01-preview`, started `2026-10-14T01:18:12.689Z`. The original manifest and raw responses are unchanged; this is a historical demonstration, not a claim about your new analyzer.
 
 ---
 

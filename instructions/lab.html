@@ -185,10 +185,11 @@
       </p>
       <p class="note">
         <strong>Model choice:</strong> use the Preview workflow with
-        <strong>GPT-5 for classification/segmentation</strong> and
-        <strong>GPT-5.5 for custom and prebuilt extraction</strong>. Ask the lab
-        owner to configure those models if unavailable; do not change shared
-        resource deployments or defaults yourself. The app uses
+        <strong>GPT-5 for classification/segmentation</strong>,
+        <strong>GPT-5.5 for custom repair extraction</strong>, and
+        <strong>GPT-5.2 for prebuilt extraction</strong>. Ask the lab owner to
+        configure those models if unavailable; do not change shared resource
+        deployments or defaults yourself. The app uses
         <code>2026-06-01-preview</code> for this flow.
       </p>
       <nav aria-label="Five lab steps">
@@ -204,8 +205,8 @@
         <h2>1 / Explore prebuilt analyzers</h2>
         <p class="input">
           <strong>Upload from <code>data\step1</code>:</strong>
-          <a href="../data/step1/towing-invoice.pdf">towing-invoice.pdf</a> (2
-          pages), <a href="../data/step1/demo-id.pdf">demo-id.pdf</a> (1 page),
+          <a href="../data/step1/towing-invoice.pdf">towing-invoice.pdf</a> (1
+          page), <a href="../data/step1/demo-id.pdf">demo-id.pdf</a> (1 page),
           and <a href="../data/step1/form-1099a.pdf">form-1099a.pdf</a> (1
           page). Use one file at a time as shown below.
         </p>
@@ -406,7 +407,7 @@
           >
           (3 pages). Then use
           <a href="../data/step3/packet-01.pdf">packet-01.pdf</a> (Danielle, 13
-          pages) and <a href="../data/step3/packet-03.pdf">packet-03.pdf</a> (13
+          pages) and <a href="../data/step3/packet-03.pdf">packet-03.pdf</a> (12
           pages) for realistic logical-document boundaries.
         </p>
         <ol>
@@ -569,9 +570,10 @@
           <li>
             Add <code>towing_invoice</code> and <code>rental_invoice</code>,
             using the descriptions below, and route both to Invoice. Update
-            Other's description to the new version. Custom extraction and the
-            resource's <code>prebuilt-analyzer-completion</code> mapping must
-            use <strong>GPT-5.5</strong>; verify with the lab owner rather than
+            Other's description to the new version. Keep the custom repair
+            extractor on <strong>GPT-5.5</strong>. The resource's
+            <code>prebuilt-analyzer-completion</code> mapping must use
+            <strong>GPT-5.2</strong>; verify with the lab owner rather than
             changing a shared mapping.
           </li>
         </ol>
@@ -678,7 +680,7 @@
         <h2>5 / Connect to your separate Insurance Workbench App</h2>
         <p class="input">
           <strong>App input:</strong> all ten full PDFs in
-          <code>data\packets</code> (122 pages total). The app loads these
+          <code>data\packets</code> (120 pages total). The app loads these
           automatically; no manual upload is needed. The completed native
           results in <code>data\results</code> let you explore without
           submitting analysis.
@@ -783,7 +785,7 @@ powershell -ExecutionPolicy Bypass -File .\infra\launch-workbench.ps1 `
           </li>
           <li>
             Click <strong>Run live</strong>. Read the confirmation for ten
-            packets / 122 pages; only confirm when you intend to incur Azure
+            packets / 120 pages; only confirm when you intend to incur Azure
             charges. The app verifies the existing analyzer and linked
             extractors; it does not deploy models or create analyzers.
           </li>
@@ -832,15 +834,6 @@ powershell -ExecutionPolicy Bypass -File .\infra\launch-workbench.ps1 `
             01 contains rental billing; full packet 03 contains towing. The
             authored four-class reference labels both as Other, while the
             six-class routed run gives them separate invoice categories.
-          </p>
-          <p>
-            <strong>Included cache provenance:</strong> run
-            <code>243f1c06-caf3-4375-b409-afe130136867</code>, analyzer
-            <code>lab664_anatolip_scus_routerg5</code>, API
-            <code>2026-06-01-preview</code>, started
-            <code>2026-10-14T01:18:12.689Z</code>. The original manifest and raw
-            responses are unchanged; this is a historical demonstration, not a
-            claim about your new analyzer.
           </p>
         </details>
       </section>
