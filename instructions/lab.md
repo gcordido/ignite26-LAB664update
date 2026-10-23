@@ -2,7 +2,7 @@ Content Understanding / hands-on lab
 
 # From documents to an Insurance Workbench
 
-Follow these five steps in order: try prebuilts, customize extraction, classify a packet, add extraction routes, and connect your analyzer to a **separate application**. This guide contains all lab instructions.
+Follow these five steps in order: try prebuilts, customize extraction, classify a packet, add extraction routes, and use a **separate application** to compare policy checks with and without Azure Search retrieval. This guide contains all lab instructions.
 
 Use [CU Studio](https://contentunderstanding.ai.azure.com/) for steps 1-4. Sign in and select your approved Azure resource. You need permission to use Content Understanding, build analyzers, and use the resource's configured models. Studio tests and live app analysis incur Azure charges.
 
@@ -116,7 +116,9 @@ Use [CU Studio](https://contentunderstanding.ai.azure.com/) for steps 1-4. Sign 
 
 ### Install once, then launch the app yourself
 
-Open PowerShell in the repository root (the folder containing `src`, `data`, and `infra`). Run the single setup script. It installs a supported Node runtime if needed, Azure CLI if missing (using Windows App Installer/winget), and the app dependencies. An internet connection and any installer approval are required. It does **not** sign you in, create cloud resources, or launch the app.
+Install **Python 3.10 or later** with pip and venv. Open PowerShell in the repository root (the folder containing `src`, `data`, and `infra`). Run the setup script. It installs a supported Node runtime if needed, Azure CLI if missing (using Windows App Installer/winget), the locked npm dependencies including **Deep Chat**, and the **Python Agent Framework** dependencies in `.tools\policy-venv`. An internet connection and any installer approval are required. It does **not** sign you in, create cloud resources, or launch the app.
+
+After pulling updates, stop the app, rerun setup, and restart it. The launcher selects the local Python environment automatically. Agent Framework is installed through pip, not npm; its core and OpenAI packages have independent version numbers. For package mirrors or an explicit Python path, see [infrastructure setup](../infra/README.md#lab-machines-with-package-mirrors).
 
 ```PowerShell
 powershell -ExecutionPolicy Bypass -File .\infra\setup.ps1
@@ -135,6 +137,39 @@ Open [Insurance Workbench App - http://127.0.0.1:8791/](http://127.0.0.1:8791/) 
 4. [] Turn on **Confidence** to inspect returned scores. Blank means the service omitted a score, not zero. Click line items for source boxes or their table icon for the item popup. Drag column edges or the PDF divider to resize. Double-click a field to focus at 300%; double-click again to fit. Use wheel zoom, drag-to-pan, and the bottom page controls.
 5. [] Use **{ }** to download the complete native JSON for the selected customer. Compare it with the source PDF; values, geometry, and confidence come from CU, not fabricated app output.
 
+### Compare policy checks with and without retrieval
+
+Use the prepared lab configuration for this exercise. The lab owner must complete [policy setup](../docs/policy-setup.md) before the session; installing dependencies alone doesn't configure an index. Sign in with `az login` using your approved lab identity. Saved CU results avoid rerunning the Studio router, but policy checks still call Azure and incur charges, including missing claim-summary extraction.
+
+1. [] With the included completed **10/10** run loaded, select **Policy checks**.
+2. [] In **Policy retrieval**, select **No policy retrieval**. Select **Run policy checks** and confirm the operation for all loaded cases. Wait for completion. Inspect packet **01**'s **Daily rate**: without the SOP, it must remain **Review required**, without invented thresholds or citations.
+3. [] Change the dropdown to **Azure Search retrieval**, select **Run policy checks** again, and confirm. Changing the dropdown alone doesn't submit a new run.
+4. [] Compare **Daily rate** for packets **01** and **02**. Select each check to read **Expected**, **Actual** and **Reasoning** in the right-hand panel.
+
+| Case | CU daily base | Contractual daily cap | Retrieved SOP routine authority | Expected result |
+|:---|---:|---:|---:|:---|
+| Packet 01 / Texas | $54 | $85 | $75, inclusive | **Satisfied**: within both limits |
+| Packet 02 / Washington | $61 | $85 | $60, inclusive | **Review required**: routine authority exceeded; supervisor exception evidence missing |
+
+5. [] For packet **01**, select the Texas **Source** link. Inspect **TX-R2** on page 2 and **Schedule A** on page 3 of `tx-rental-review-sop-v2.pdf`. The $75 value is internal routine handling authority, not the $85 contractual cap. Blank cells in the exception table don't grant extra authority.
+6. [] In the source viewer, compare **Document**, **CU Layout** and **Digital parse**. Then select **Back to policy checks**. Optionally inspect Washington's scanned SOP or Arizona's image-based eligibility flowchart. A missing extraction has an explicit billable generation action; switching tabs alone doesn't call CU.
+7. [] Optionally select **Chat** and ask, "Explain this case's daily-rate result. Cite the SOP and distinguish routine authority from the contractual cap." Chat uses the selected case and mode; each submitted question can incur Azure charges.
+
+The same agent and claim facts are used in both modes; retrieval supplies the otherwise missing rules. These are source-based expectations, not guaranteed model answers. Inspect differing results, missing facts or errors rather than forcing a pass. **Satisfied** for daily rate doesn't approve the claim or authorize payment; other checks can still require review.
+
+### Optional: inspect Search, policy files and the agent
+
+| Inspect | Where to look | What to learn |
+|:---|:---|:---|
+| Active Search index | Note the index below **Policy retrieval**. In the [Azure portal](https://portal.azure.com/), open the Search resource matching `searchEndpoint` in `.tools\policy-agent-framework.json`, then **Indexes** > the active index > **Search explorer**. Search `rental daily rate`. | Chunks carry policy text, document identity, version and page information. The agent filters to the loss state and verified source generation. |
+| Original policy files | Open the [v2 corpus](../data/policies/rental/ocr-comparison-v2/), especially the [Texas SOP](../data/policies/rental/ocr-comparison-v2/tx-rental-review-sop-v2.pdf) and [manifest](../data/policies/rental/ocr-comparison-v2/manifest.json). | CU must preserve table structure, blank cells, scanned text and figures so rules can be retrieved and cited. |
+| Blob ingestion, if deployed | In Search, inspect the matching **Data source**, **Indexer** and **Skillset**. Follow the actual container to the storage account's **Storage browser**. | Managed ingestion reads policy PDFs from Blob Storage, runs the CU skill and indexes chunks. The Layout index alone doesn't prove this pipeline exists. |
+| Agent Framework | Open [`infra/policy-framework-agent.py`](../infra/policy-framework-agent.py). Find `Agent`, `OpenAIChatClient` and `search_policy_rules`. | The workbench invokes a Python agent; the Search tool is attached only in retrieval mode. |
+
+For shared-resource names and subscriptions, see [under the hood](../docs/policy-checks.md#optional-look-under-the-hood). Don't change roles, networking or shared resources during this exercise.
+
+This teaches search-backed grounding related to **Foundry IQ**, but this PR queries an ordinary Azure AI Search index directly, not a Foundry IQ knowledge base. Read the actual extraction label: the currently configured shared index uses **CU Layout**. The optional [managed CU pipeline](../docs/policy-setup.md) provides semantic extraction only after successful setup. **CU Layout** and **Digital parse** document tabs are separate cached representations, not proof that Search-managed Standard extraction is active.
+
 ### Connect your own built analyzer and run live
 
 Stop the app first. Sign in with Azure CLI; browser Studio sign-in does not authenticate this Node app. Choose the subscription containing **your approved CU resource**. Use its resource-root endpoint, not a Studio or Foundry project URL. Your identity needs permission to list and invoke its analyzers.
@@ -152,7 +187,7 @@ powershell -ExecutionPolicy Bypass -File .\infra\launch-workbench.ps1 `
 3. [] Watch progress and elapsed time. Each native response is saved under `data\results\RUN-ID` before results are derived. Completed results become a new cache entry. A failed run remains visibly failed; inspect its error before explicitly starting another billable run.
 4. [] Compare your live extraction with the PDFs and the saved run. To see classification alone, select your step 3 `..._classifier` and explicitly start a separate billable run. Fields appear only when extraction routes actually returned them.
 
-> [!Note] **Checkpoint:** you authored and tested in Studio, then connected that published analyzer to a separate application.
+> [!Note] **Checkpoint:** you connected CU results to a separate application, compared policy checks with and without retrieval, and traced a daily-rate result to its SOP.
 
 > [+Note] **Where the files are**
 >

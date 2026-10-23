@@ -7,14 +7,126 @@ processing demo, not a coverage decision or permission to pay a claim.
 The workflow has three parts:
 
 1. **Claim facts:** Content Understanding extracts structured facts from a packet.
-2. **Policy rules:** Azure AI Search indexes the synthetic SOP PDFs using a
-   managed Content Understanding ingestion pipeline.
+2. **Policy rules:** Azure AI Search holds searchable chunks of the synthetic
+   SOP PDFs. The active configuration identifies the index and extraction mode.
 3. **Review:** A Python Microsoft Agent Framework agent evaluates five checks
    and answers follow-up questions using the selected retrieval mode.
 
 Use the [setup guide](policy-setup.md) and
 [setup notebook](../infra/policy-agent-framework-setup.ipynb) to prepare
 the policy index on your existing Search service.
+
+## Compare packets 01 and 02
+
+Start here on a prepared lab machine. You don't need to inspect or redeploy
+Azure resources before trying the agent.
+
+1. In the workbench's **Cache Results**, load the included completed **10/10**
+   run. Select **Policy checks**.
+2. In **Policy retrieval**, select **No policy retrieval**. Select **Run policy
+   checks** and confirm. This runs the Agent Framework agent against saved CU
+   claim facts, not just a local rules engine. Azure charges apply, including
+   any missing claim-summary extraction; the confirmation covers all loaded
+   cases, not only the selected row.
+3. Select packet **01**, then its **Daily rate** check. Without an SOP, the
+   agent must report **Review required** rather than invent a rate threshold.
+4. Change **Policy retrieval** to **Azure Search retrieval**. Select **Run policy
+   checks** again and confirm. Merely changing the dropdown doesn't rerun the
+   agent. Wait for the batch to finish.
+5. Compare **Daily rate** for packets **01** and **02**, using the expected
+   evidence below. Select each check to inspect **Expected**, **Actual** and
+   **Reasoning** in the right-hand panel.
+6. For packet **01**, select the Texas **Source** link. In the **Document** tab,
+   inspect rule **TX-R2** on page 2 and **Schedule A** on page 3 of
+   `tx-rental-review-sop-v2.pdf`. Select **Back to policy checks** to return.
+
+| Case | Extracted daily base | Contractual daily cap | Retrieved routine authority | Expected daily-rate result |
+|---|---:|---:|---:|---|
+| Packet 01 / Texas | $54 | $85 | $75, inclusive | **Satisfied**: below both limits |
+| Packet 02 / Washington | $61 | $85 | $60, inclusive | **Review required**: above routine authority; supervisor exception evidence is missing |
+
+These are source-based expectations, not hardcoded agent answers. If returned
+facts, routing or citations differ, inspect the evidence and errors rather than
+forcing a pass. Neither daily-rate result approves the entire claim or payment;
+other checks can still require review.
+
+In the source viewer, compare **CU Layout** and **Digital parse** with the PDF.
+Texas's page 3 table deliberately contains blank cells: a blank rate or duration
+doesn't grant extra authority. Washington's SOP is entirely scanned, so Digital
+parse may have no readable text. Arizona adds an image-based eligibility
+flowchart. These examples show why understanding tables, scans and figures
+matters to retrieval. A missing representation has an explicit, billable
+generation action; switching tabs alone doesn't run CU.
+
+Optionally, return to the result and select **Chat**. Ask: "Explain this case's
+daily-rate result. Cite the applicable rule and separate the contractual cap
+from routine handling authority." Each chat turn
+uses the selected case and retrieval mode; it isn't a new batch comparison.
+
+## Optional: look under the hood
+
+The lab demonstrates search-backed policy grounding, a pattern related to
+Foundry IQ. **This implementation queries an ordinary Azure AI Search index
+directly; it doesn't create or invoke a Foundry IQ knowledge base or knowledge
+source.** Claim extraction, policy ingestion and agent reasoning are separate
+steps.
+
+### Inspect the deployed Search index
+
+1. Note the active index name shown below **Policy retrieval**, or read
+   `.tools\policy-agent-framework.json` locally. Its `searchEndpoint`,
+   `indexName` and `extractionMode` are the source of truth; don't assume a name
+   copied from another machine.
+2. In the [Azure portal](https://portal.azure.com/), open the Search resource
+   matching that endpoint. In the current shared environment it is
+   **mmi-sample-ai-search**, in resource group **mmi-sample-vendors**,
+   subscription **609bbde3-d152-4d7d-a12b-005e38ac4f27**.
+3. Open **Indexes**, select the exact active index and open **Search explorer**.
+   Search for `rental daily rate`. Inspect the returned content and source
+   identity: `file`, `documentId`, `version` and page information. The current
+   Layout index also includes `stateCodes` and `section`; managed index chunks
+   use page ranges. The agent restricts retrieval to the loss state and verified
+   corpus generation rather than searching every policy indiscriminately.
+
+At the time this walkthrough was updated, the shared environment used
+`lab664-rental-v2-agent-framework-3428a1feb437`, labeled **CU Layout**.
+Don't describe it as Standard extraction. The
+[managed CU ingestion setup](policy-setup.md) activates a replacement only
+after ingestion and source verification succeed.
+
+### Inspect the policy files and Blob Storage
+
+Open the [v2 policy folder](../data/policies/rental/ocr-comparison-v2/) and its
+[manifest](../data/policies/rental/ocr-comparison-v2/manifest.json). The PDFs are
+the knowledge sources; the manifest carries state, version and hash metadata.
+The expected-answer fixtures aren't indexed. Start with the
+[Texas SOP](../data/policies/rental/ocr-comparison-v2/tx-rental-review-sop-v2.pdf),
+[Washington SOP](../data/policies/rental/ocr-comparison-v2/wa-rental-review-sop-v2.pdf)
+and [shared evidence standard](../data/policies/rental/ocr-comparison-v2/shared-rental-evidence-standard-v2.pdf).
+
+For a **successfully applied managed ingestion pipeline**, open the matching
+Search **Data source**, note its actual container, then inspect that container
+under **Storage browser** in the configured storage account. The setup script
+targets **mmiusw3bbstore**, resource group **mmi-usw3-eft**, subscription
+**3b393ccb-47e3-4dea-9004-0c1085b5aba6**. Expect the manifest-listed PDFs,
+including the Texas, Washington and shared SOPs. Inspect the corresponding
+**Indexer** and **Skillset** to follow Blob PDFs through the CU skill to chunks.
+
+The existing Layout index doesn't prove that this Blob/indexer pipeline has
+been deployed. If only Layout is active or no matching data source exists, use
+the repository PDFs for this optional inspection. Ask the lab owner about the
+reported ingestion prerequisites; don't assign roles or create resources during
+the attendee walkthrough.
+
+### Inspect the agent
+
+Open [`infra/policy-framework-agent.py`](../infra/policy-framework-agent.py).
+Find `Agent`, `OpenAIChatClient` and `search_policy_rules`. The Search tool is
+attached only in retrieval mode; both modes use the same claim fields and
+review question. The
+[workbench policy service](../src/workbench/src/policy-service.ts) starts this
+Python agent and validates results and citations. This isn't an npm Agent
+Framework implementation or a hosted Foundry agent.
 
 ## Run policy checks
 

@@ -39,30 +39,56 @@ Add your session description here. Keep it concise — 2-3 sentences about what 
 
 ### 🚀 Getting started
 
-For this lab, clone or download the repository and open
+Clone or download the repository, then open
 [`instructions/lab.html`](instructions/lab.html) locally in your browser.
-This single five-step guide covers CU Studio authoring and testing, followed by
-setup and launch of the separate Insurance Workbench App. Runtime installers
-are in [`infra/`](infra/README.md); application source is in
-[`src/workbench/`](src/workbench/).
+The five-step guide covers Content Understanding extraction in CU Studio,
+then policy checks in the separate Insurance Workbench App.
 
-#### In a guided session
+#### Set up or update the workbench
 
-If you're following along during a live session:
+On Windows, install **Python 3.10 or later** with pip and venv. In PowerShell
+at the repository root, run:
 
-1. Step 1
-2. Step 2
-3. Open [`instructions/`](instructions/README.md) when this session includes
-   attendee step-by-step guidance
+```powershell
+powershell -ExecutionPolicy Bypass -File .\infra\setup.ps1
+az login
+powershell -ExecutionPolicy Bypass -File .\infra\launch-workbench.ps1
+```
 
-#### On your own
+Setup restores the locked npm packages, including **Deep Chat**, and installs
+the **Python Microsoft Agent Framework** and Azure Search dependencies into
+`.tools\policy-venv`. It installs a supported Node runtime and Azure CLI if
+needed, but doesn't sign you in or create cloud resources. Stop the app and
+rerun setup after pulling updates; no individual package installs are needed.
+For managed package mirrors or a specific Python path, see
+[`infra/README.md`](infra/README.md#lab-machines-with-package-mirrors).
 
-If you're learning at your own pace:
+Open [http://127.0.0.1:8791/](http://127.0.0.1:8791/). Keep the launch terminal
+open. Without a CU endpoint, use the included completed results; this doesn't
+make policy checks offline or free. Policy runs use Azure credentials and a
+prepared index configuration.
 
-1. Clone this repository
-2. Set up your environment
-3. Follow the session guidance in [`instructions/`](instructions/README.md), or
-   use the linked docs-site entry point when this repository uses that pattern
+#### Try the policy-check comparison
+
+On a prepared lab machine, load the included **10/10** cached run, select
+**Policy checks**, and compare **No policy retrieval** with **Azure Search
+retrieval**. Select **Run policy checks** and confirm in each mode. Inspect
+packet **01**'s **Satisfied** daily rate ($54 against Texas's $75 routine
+authority) versus packet **02**'s **Review required** daily rate ($61 against
+Washington's $60). Open the cited SOP in the right-hand panel to inspect the rule.
+These are expected evidence-based results, not payment approval.
+
+For guided and self-paced sessions, follow
+[step 5: compare policy checks](instructions/lab.html#policy-checks).
+Optional under-the-hood guidance covers the deployed Search index, policy PDFs,
+Blob ingestion and the Agent Framework implementation. This PR uses an ordinary
+Search index directly, not a Foundry IQ knowledge base.
+
+**Lab owners:** a fresh clone doesn't include the machine-local policy
+configuration. Complete [policy index setup](docs/policy-setup.md) before the
+session. The existing CU Layout index remains valid while optional managed
+Standard ingestion prerequisites are unresolved; don't label it Standard.
+The setup notebook walks through ingestion on the existing Search service.
 
 ### 🎯 Learning outcomes
 

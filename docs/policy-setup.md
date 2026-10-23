@@ -31,6 +31,12 @@ change networking, use account keys or weaken access controls.
 
 ## Run setup
 
+For a lab machine, first run `.\infra\setup.ps1`. This restores Deep Chat and
+the other npm packages and installs the Python agent requirements into
+`.tools\policy-venv`. Agent Framework is a Python dependency, not an npm package.
+The launcher automatically uses this environment. Stop the app and rerun setup
+after pulling dependency updates.
+
 Open the [Python setup notebook](../infra/policy-agent-framework-setup.ipynb)
 for a step-by-step walkthrough. The notebook calls the same Python functions
 as the automatic script.
@@ -38,15 +44,14 @@ as the automatic script.
 From the repository root:
 
 ```powershell
-python -m pip install --pre -r .\infra\requirements-policy-agent-framework.txt
-python .\infra\setup-policy-index.py
+.\.tools\policy-venv\Scripts\python.exe .\infra\setup-policy-index.py
 ```
 
 An existing workbench configuration supplies the current model and analyzer
 names. Without it, use explicit existing-resource settings:
 
 ```powershell
-python .\infra\setup-policy-index.py --model-deployment gpt-5 --claim-analyzer-id lab664_policy_checks_claim_summary
+.\.tools\policy-venv\Scripts\python.exe .\infra\setup-policy-index.py --model-deployment gpt-5 --claim-analyzer-id lab664_policy_checks_claim_summary
 ```
 
 These names match this lab environment; substitute the names in your
@@ -57,7 +62,7 @@ The default operation validates inputs and checks prerequisites without
 creating or changing Azure resources. Inspect its report before applying.
 
 ```powershell
-python .\infra\setup-policy-index.py --apply
+.\.tools\policy-venv\Scripts\python.exe .\infra\setup-policy-index.py --apply
 ```
 
 The explicit apply operation can incur Blob, Search, CU and model charges.
@@ -70,6 +75,18 @@ If permissions or required service features are missing, the current working
 index and configuration remain active. Resolve the reported prerequisites,
 then rerun setup. Existing Azure agents, knowledge bases and other indexes
 aren't deleted.
+
+On a fresh clone, `.tools\policy-agent-framework.json` is absent because it is
+machine-local and git-ignored. Installing packages alone won't enable **Run
+policy checks**. The lab owner must prepare a verified index and configuration
+before attendees arrive. An existing Layout configuration on another machine
+isn't automatically available on a newly deployed lab VM.
+
+For the shared environment, the last preflight reported that the Search managed
+identity lacked **Storage Blob Data Reader** on the policy storage account and
+**Cognitive Services User** on the Foundry resource. These are administrator
+prerequisites, not attendee setup tasks. Rerun preflight for current status;
+until apply succeeds, retain the working Layout index and label it accurately.
 
 ## Understand Standard extraction
 

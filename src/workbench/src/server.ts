@@ -41,6 +41,17 @@ export function createApp(
   app.get("/lab.html", (_req, res) =>
     res.sendFile("lab.html", { root: path.join(repositoryRoot, "instructions") }),
   );
+  for (const [folder, filename] of [
+    ["docs", "policy-checks.md"],
+    ["docs", "policy-setup.md"],
+    ["infra", "README.md"],
+    ["infra", "policy-framework-agent.py"],
+    ["infra", "policy-agent-framework-setup.ipynb"],
+  ]) {
+    app.get(`/${folder}/${filename}`, (_req, res) =>
+      res.sendFile(filename, { root: path.join(repositoryRoot, folder) }),
+    );
+  }
   app.use(
     "/data",
     express.static(dataRoot, { dotfiles: "deny", index: false }),

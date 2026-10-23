@@ -14,6 +14,13 @@ if (-not (Get-Command node.exe -ErrorAction SilentlyContinue) -or
     -not (Test-Path -LiteralPath (Join-Path $repositoryRoot 'src\workbench\node_modules\tsx\dist\cli.mjs'))) {
     throw 'Run .\infra\setup.ps1 from the repository root first to install the workbench dependencies.'
 }
+if (-not $env:POLICY_PYTHON) {
+    $policyPython = Join-Path $repositoryRoot '.tools\policy-venv\Scripts\python.exe'
+    if (-not (Test-Path -LiteralPath $policyPython)) {
+        throw 'Run .\infra\setup.ps1 first to install the Python policy agent, or set POLICY_PYTHON to your prepared python.exe.'
+    }
+    $env:POLICY_PYTHON = $policyPython
+}
 if ($Endpoint) {
     $uri = $null
     if (-not [Uri]::TryCreate($Endpoint, [UriKind]::Absolute, [ref]$uri) -or
@@ -28,7 +35,7 @@ $env:CU_API_VERSION = $ApiVersion
 $env:PORT = [string]$Port
 Write-Host "Starting the separate Insurance Workbench App at http://127.0.0.1:$Port/"
 if (-not $Endpoint) {
-    Write-Host 'Cache-only mode: no Azure endpoint configured. Load the included completed results.'
+    Write-Host 'CU cache-only mode: load the included completed results. Configured policy checks still call Azure and incur charges.'
 }
 Write-Host 'Keep this terminal open. Press Ctrl+C to stop. No document analysis is submitted on launch.'
 Push-Location (Join-Path $repositoryRoot 'src\workbench')
