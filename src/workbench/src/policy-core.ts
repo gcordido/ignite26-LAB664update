@@ -83,9 +83,8 @@ const citationMapSchema = z.array(z.object({
   sha256: hash, ruleIds: z.array(z.string()),
   sections: z.record(z.string(), z.number().int().positive()),
 }));
-export async function resolveCitations(output: { Checks: { Citation: z.infer<typeof citationSchema>[] }[] },
-  version: "legacy" | "v2" = "legacy") {
-  const relative = version === "v2" ? "policies/rental/ocr-comparison-v2" : "policies/rental";
+export async function resolveCitations(output: { Checks: { Citation: z.infer<typeof citationSchema>[] }[] }) {
+  const relative = "policies/rental/ocr-comparison-v2";
   const folder = path.join(repositoryRoot, "data", relative);
   const maps = citationMapSchema.parse(JSON.parse(
     await readFile(path.join(folder, "citations.json"), "utf8"),

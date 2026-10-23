@@ -65,3 +65,13 @@ index, a reachable model deployment and Azure permissions. Follow
 missing permissions rather than granting roles. The
 [policy walkthrough](../docs/policy-checks.md#compare-packets-01-and-02)
 then starts with the app, not Azure provisioning.
+
+## Regenerate the policy corpus
+
+The optional [`generate-rental-sop-corpus.py`](generate-rental-sop-corpus.py)
+script uses separate
+[`requirements-rental-sop-corpus.txt`](requirements-rental-sop-corpus.txt)
+dependencies and Windows Segoe UI fonts. Attendees don't need these packages
+to use the existing PDFs. Follow the
+[corpus regeneration guidance](../docs/rental-ocr-comparison.md#activation-boundaries)
+when changing policy rules or expected outcomes.

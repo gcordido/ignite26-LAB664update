@@ -110,7 +110,7 @@ export async function frameworkReview(raw: unknown, mode: FrameworkMode, config:
   if (mode === "ungrounded" && result.Checks.some((check) => check.Outcome !== "ReviewRequired" || check.Citation.length))
     throw new LabError(502, "No-retrieval baseline must disclose missing rules, without invented citations or passes.");
   verifyCitations(result.Checks.flatMap((check) => check.Citation), value);
-  const citations = await resolveCitations(result, "v2");
+  const citations = await resolveCitations(result);
   if (citations.flat().some((citation) => !citation.href))
     throw new LabError(502, "Agent cited an unverified policy PDF or section.");
   return { result, citations };
@@ -365,7 +365,7 @@ export class PolicyService {
     const value = parseFrameworkResult(raw, mode, config);
     const parsed = chatAnswerSchema.parse(value.result);
     verifyCitations(parsed.Citation, value);
-    const [citations] = await resolveCitations({ Checks: [{ Citation: parsed.Citation }] }, "v2");
+    const [citations] = await resolveCitations({ Checks: [{ Citation: parsed.Citation }] });
     if (citations.some((citation) => !citation.href)) throw new LabError(502, "Unverified chat citation.");
     return { text: parsed.Answer, citations };
   }

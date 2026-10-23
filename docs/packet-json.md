@@ -85,7 +85,7 @@ arithmetic.
 ## Using the export with the rental agent
 
 Paste the copied Markdown alongside the
-[rental review question](rental-review-agent-question.md).
+[current rental review question](rental-review-agent-question-v2.md).
 Before policy preparation, state, coverage, downtime and authorization may only
 appear in the original extracted text, which is deliberately excluded from the
 copied summary. The policy batch extracts those facts into structured fields

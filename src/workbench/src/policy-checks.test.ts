@@ -228,7 +228,7 @@ test("claim preparation preserves zero/false/unknowns and reuses extraction acro
 
 test("citations accept only exact source files, versions, rules and sections", async () => {
   const value = result("search", await config()).result;
-  const link = (await resolveCitations(value, "v2"))[1][0].href;
+  const link = (await resolveCitations(value))[1][0].href;
   assert.match(link ?? "", /tx-rental-review-sop-v2\.pdf#page=3$/);
   for (const patch of [
     { File: "../tx-rental-review-sop-v2.pdf" }, { File: "javascript:alert(1)" },
@@ -237,7 +237,7 @@ test("citations accept only exact source files, versions, rules and sections", a
   ]) {
     const changed = structuredClone(value);
     Object.assign(changed.Checks[1].Citation[0], patch);
-    assert.equal((await resolveCitations(changed, "v2"))[1][0].href, null);
+    assert.equal((await resolveCitations(changed))[1][0].href, null);
   }
 });
 

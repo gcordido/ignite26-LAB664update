@@ -22,7 +22,7 @@ from reportlab.platypus import Paragraph, Table, TableStyle
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "data" / "policies" / "rental" / "ocr-comparison-v2"
-RUN = "243f1c06-caf3-4375-b409-afe130136867"
+RUN = "6e3b62d2-abe5-4ea7-9898-d2d11f4dc5f1"
 VERSION = "2.0"
 STATES = [
     ("TX", "Texas", "75.00", 7, "Personal collision", "Named mandatory rental tax"),
@@ -434,14 +434,18 @@ def build_document(document_id: str, stem: str, texts: list[str],
 
 def expected_fixture() -> dict:
     meta = json.loads((ROOT / "data" / "packets.json").read_text(encoding="utf-8"))
+    source_run = json.loads(
+        (ROOT / "data" / "results" / RUN / "manifest.json").read_text(encoding="utf-8"))
+    if source_run["status"] != "completed" or source_run["datasetHash"] != meta["datasetHash"]:
+        raise ValueError("The fixture source run must be completed and match the current packet dataset.")
     non_rental = {
-        "packet-03": ("Recovery towing and security supplement", [10, 11]),
-        "packet-04": ("Planned PDR quality control worksheet", [9, 10]),
-        "packet-05": ("Towing / recovery invoice and suspension supplement", [8, 9]),
-        "packet-06": ("Liability-dispute and repair evidence; no rental supplier bill", [10, 11]),
-        "packet-07": ("Comparable valuation / proposed settlement", [10, 11]),
-        "packet-08": ("Mobile glass / camera quote and service record", [8, 9]),
-        "packet-10": ("Fleet downtime and cargo classification worksheet", [11]),
+        "packet-03": ("07-invoice",),
+        "packet-04": ("07-claim_form",),
+        "packet-05": ("07-invoice",),
+        "packet-06": ("03-claim_form", "07-claim_form"),
+        "packet-07": ("07-invoice",),
+        "packet-08": ("07-invoice",),
+        "packet-10": ("07-claim_form",),
     }
     results = []
     names = ["Rental eligibility and need", "Daily rate", "Duration and repair alignment",
@@ -477,15 +481,17 @@ def expected_fixture() -> dict:
     }
     for packet in meta["packets"]:
         packet_id, state = packet["id"], packet["region"]
+        documents = {document["sourceId"]: document for document in packet["expectedDocuments"]}
+        evidence = [documents[source_id] for source_id in non_rental.get(packet_id, ("07-invoice",))]
+        pages = sorted({page for document in evidence
+                        for page in range(document["start"], document["end"] + 1)})
         if packet_id in non_rental:
-            label, pages = non_rental[packet_id]
+            label = "; ".join(document["title"] for document in evidence)
             outcomes = ["NotApplicable"] * 5
             explanations = [f"Confirmed {label}; no rental request. Do not treat policy premium, "
                             "limit or non-rental invoice as rental charges."] * 5
         else:
             outcomes, explanations = statuses[packet_id], reasons[packet_id]
-            pages = [g for g in packet["expectedDocuments"] if g["sourceId"] == "07-invoice"][0]
-            pages = list(range(pages["start"], pages["end"] + 1))
         checks = []
         for index, (name, outcome, reason) in enumerate(zip(names, outcomes, explanations), 1):
             checks.append({
@@ -501,11 +507,11 @@ def expected_fixture() -> dict:
         })
     return {
         "synthetic": True, "corpusId": "lab664-rental-ocr-comparison-v2",
-        "sourceRun": RUN, "executedAgentEvaluation": False,
-        "evidenceBasis": "Original packet document inventory and saved root OCR, not an assertion "
+        "sourceRun": RUN, "sourceDatasetHash": meta["datasetHash"], "executedAgentEvaluation": False,
+        "evidenceBasis": "Current packet document inventory and saved root OCR, not an assertion "
         "that the current field-only claim-summary extraction is complete or correct.",
-        "criticalCaveat": "Seven packets have no rental request in source evidence. Current CU summaries "
-        "misplace non-rental values under Rental for several packets. Until corrected, those "
+        "criticalCaveat": "Seven packets have no rental request in source evidence. Field-only CU summaries "
+        "can misplace non-rental values under Rental. Until resolved, those "
         "contradictions require review, NOT NotApplicable. Do not insert this fixture into claim facts.",
         "target": {
             "cases": 10, "confirmedNonRentalCases": 7, "rentalCasesRequiringReview": 3,

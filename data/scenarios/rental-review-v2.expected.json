@@ -1,10 +1,11 @@
 {
   "synthetic": true,
   "corpusId": "lab664-rental-ocr-comparison-v2",
-  "sourceRun": "243f1c06-caf3-4375-b409-afe130136867",
+  "sourceRun": "6e3b62d2-abe5-4ea7-9898-d2d11f4dc5f1",
+  "sourceDatasetHash": "94f17cd9ac8ecf44c39a92c2244c6546e5a81d297d339689c61b29b0148c9bf2",
   "executedAgentEvaluation": false,
-  "evidenceBasis": "Original packet document inventory and saved root OCR, not an assertion that the current field-only claim-summary extraction is complete or correct.",
-  "criticalCaveat": "Seven packets have no rental request in source evidence. Current CU summaries misplace non-rental values under Rental for several packets. Until corrected, those contradictions require review, NOT NotApplicable. Do not insert this fixture into claim facts.",
+  "evidenceBasis": "Current packet document inventory and saved root OCR, not an assertion that the current field-only claim-summary extraction is complete or correct.",
+  "criticalCaveat": "Seven packets have no rental request in source evidence. Field-only CU summaries can misplace non-rental values under Rental. Until resolved, those contradictions require review, NOT NotApplicable. Do not insert this fixture into claim facts.",
   "target": {
     "cases": 10,
     "confirmedNonRentalCases": 7,
@@ -25,7 +26,7 @@
         10,
         11
       ],
-      "sourceCu": "../results/243f1c06-caf3-4375-b409-afe130136867/packet-01.cu.json",
+      "sourceCu": "../results/6e3b62d2-abe5-4ea7-9898-d2d11f4dc5f1/packet-01.cu.json",
       "outcome": "ReviewRequired",
       "checks": [
         {
@@ -74,7 +75,7 @@
         8,
         9
       ],
-      "sourceCu": "../results/243f1c06-caf3-4375-b409-afe130136867/packet-02.cu.json",
+      "sourceCu": "../results/6e3b62d2-abe5-4ea7-9898-d2d11f4dc5f1/packet-02.cu.json",
       "outcome": "ReviewRequired",
       "checks": [
         {
@@ -120,45 +121,44 @@
       "stateSop": "AZ-RENTAL-002",
       "version": "2.0",
       "sourcePages": [
-        10,
-        11
+        10
       ],
-      "sourceCu": "../results/243f1c06-caf3-4375-b409-afe130136867/packet-03.cu.json",
+      "sourceCu": "../results/6e3b62d2-abe5-4ea7-9898-d2d11f4dc5f1/packet-03.cu.json",
       "outcome": "NotApplicable",
       "checks": [
         {
           "Check": "Rental eligibility and need",
           "Outcome": "NotApplicable",
           "ReviewRequired": false,
-          "Reason": "Confirmed Recovery towing and security supplement; no rental request. Do not treat policy premium, limit or non-rental invoice as rental charges.",
+          "Reason": "Confirmed Recovery towing invoice (page 1 excerpt); no rental request. Do not treat policy premium, limit or non-rental invoice as rental charges.",
           "RuleId": "AZ-R1"
         },
         {
           "Check": "Daily rate",
           "Outcome": "NotApplicable",
           "ReviewRequired": false,
-          "Reason": "Confirmed Recovery towing and security supplement; no rental request. Do not treat policy premium, limit or non-rental invoice as rental charges.",
+          "Reason": "Confirmed Recovery towing invoice (page 1 excerpt); no rental request. Do not treat policy premium, limit or non-rental invoice as rental charges.",
           "RuleId": "AZ-R2"
         },
         {
           "Check": "Duration and repair alignment",
           "Outcome": "NotApplicable",
           "ReviewRequired": false,
-          "Reason": "Confirmed Recovery towing and security supplement; no rental request. Do not treat policy premium, limit or non-rental invoice as rental charges.",
+          "Reason": "Confirmed Recovery towing invoice (page 1 excerpt); no rental request. Do not treat policy premium, limit or non-rental invoice as rental charges.",
           "RuleId": "AZ-R3"
         },
         {
           "Check": "Charges and reimbursement calculation",
           "Outcome": "NotApplicable",
           "ReviewRequired": false,
-          "Reason": "Confirmed Recovery towing and security supplement; no rental request. Do not treat policy premium, limit or non-rental invoice as rental charges.",
+          "Reason": "Confirmed Recovery towing invoice (page 1 excerpt); no rental request. Do not treat policy premium, limit or non-rental invoice as rental charges.",
           "RuleId": "AZ-R4"
         },
         {
           "Check": "Authorization and payment readiness",
           "Outcome": "NotApplicable",
           "ReviewRequired": false,
-          "Reason": "Confirmed Recovery towing and security supplement; no rental request. Do not treat policy premium, limit or non-rental invoice as rental charges.",
+          "Reason": "Confirmed Recovery towing invoice (page 1 excerpt); no rental request. Do not treat policy premium, limit or non-rental invoice as rental charges.",
           "RuleId": "AZ-R5"
         }
       ]
@@ -172,42 +172,42 @@
         9,
         10
       ],
-      "sourceCu": "../results/243f1c06-caf3-4375-b409-afe130136867/packet-04.cu.json",
+      "sourceCu": "../results/6e3b62d2-abe5-4ea7-9898-d2d11f4dc5f1/packet-04.cu.json",
       "outcome": "NotApplicable",
       "checks": [
         {
           "Check": "Rental eligibility and need",
           "Outcome": "NotApplicable",
           "ReviewRequired": false,
-          "Reason": "Confirmed Planned PDR quality control worksheet; no rental request. Do not treat policy premium, limit or non-rental invoice as rental charges.",
+          "Reason": "Confirmed PDR panel supplement and quality control; no rental request. Do not treat policy premium, limit or non-rental invoice as rental charges.",
           "RuleId": "CO-R1"
         },
         {
           "Check": "Daily rate",
           "Outcome": "NotApplicable",
           "ReviewRequired": false,
-          "Reason": "Confirmed Planned PDR quality control worksheet; no rental request. Do not treat policy premium, limit or non-rental invoice as rental charges.",
+          "Reason": "Confirmed PDR panel supplement and quality control; no rental request. Do not treat policy premium, limit or non-rental invoice as rental charges.",
           "RuleId": "CO-R2"
         },
         {
           "Check": "Duration and repair alignment",
           "Outcome": "NotApplicable",
           "ReviewRequired": false,
-          "Reason": "Confirmed Planned PDR quality control worksheet; no rental request. Do not treat policy premium, limit or non-rental invoice as rental charges.",
+          "Reason": "Confirmed PDR panel supplement and quality control; no rental request. Do not treat policy premium, limit or non-rental invoice as rental charges.",
           "RuleId": "CO-R3"
         },
         {
           "Check": "Charges and reimbursement calculation",
           "Outcome": "NotApplicable",
           "ReviewRequired": false,
-          "Reason": "Confirmed Planned PDR quality control worksheet; no rental request. Do not treat policy premium, limit or non-rental invoice as rental charges.",
+          "Reason": "Confirmed PDR panel supplement and quality control; no rental request. Do not treat policy premium, limit or non-rental invoice as rental charges.",
           "RuleId": "CO-R4"
         },
         {
           "Check": "Authorization and payment readiness",
           "Outcome": "NotApplicable",
           "ReviewRequired": false,
-          "Reason": "Confirmed Planned PDR quality control worksheet; no rental request. Do not treat policy premium, limit or non-rental invoice as rental charges.",
+          "Reason": "Confirmed PDR panel supplement and quality control; no rental request. Do not treat policy premium, limit or non-rental invoice as rental charges.",
           "RuleId": "CO-R5"
         }
       ]
@@ -218,45 +218,44 @@
       "stateSop": "FL-RENTAL-002",
       "version": "2.0",
       "sourcePages": [
-        8,
-        9
+        8
       ],
-      "sourceCu": "../results/243f1c06-caf3-4375-b409-afe130136867/packet-05.cu.json",
+      "sourceCu": "../results/6e3b62d2-abe5-4ea7-9898-d2d11f4dc5f1/packet-05.cu.json",
       "outcome": "NotApplicable",
       "checks": [
         {
           "Check": "Rental eligibility and need",
           "Outcome": "NotApplicable",
           "ReviewRequired": false,
-          "Reason": "Confirmed Towing / recovery invoice and suspension supplement; no rental request. Do not treat policy premium, limit or non-rental invoice as rental charges.",
+          "Reason": "Confirmed Towing invoice (page 1 excerpt); no rental request. Do not treat policy premium, limit or non-rental invoice as rental charges.",
           "RuleId": "FL-R1"
         },
         {
           "Check": "Daily rate",
           "Outcome": "NotApplicable",
           "ReviewRequired": false,
-          "Reason": "Confirmed Towing / recovery invoice and suspension supplement; no rental request. Do not treat policy premium, limit or non-rental invoice as rental charges.",
+          "Reason": "Confirmed Towing invoice (page 1 excerpt); no rental request. Do not treat policy premium, limit or non-rental invoice as rental charges.",
           "RuleId": "FL-R2"
         },
         {
           "Check": "Duration and repair alignment",
           "Outcome": "NotApplicable",
           "ReviewRequired": false,
-          "Reason": "Confirmed Towing / recovery invoice and suspension supplement; no rental request. Do not treat policy premium, limit or non-rental invoice as rental charges.",
+          "Reason": "Confirmed Towing invoice (page 1 excerpt); no rental request. Do not treat policy premium, limit or non-rental invoice as rental charges.",
           "RuleId": "FL-R3"
         },
         {
           "Check": "Charges and reimbursement calculation",
           "Outcome": "NotApplicable",
           "ReviewRequired": false,
-          "Reason": "Confirmed Towing / recovery invoice and suspension supplement; no rental request. Do not treat policy premium, limit or non-rental invoice as rental charges.",
+          "Reason": "Confirmed Towing invoice (page 1 excerpt); no rental request. Do not treat policy premium, limit or non-rental invoice as rental charges.",
           "RuleId": "FL-R4"
         },
         {
           "Check": "Authorization and payment readiness",
           "Outcome": "NotApplicable",
           "ReviewRequired": false,
-          "Reason": "Confirmed Towing / recovery invoice and suspension supplement; no rental request. Do not treat policy premium, limit or non-rental invoice as rental charges.",
+          "Reason": "Confirmed Towing invoice (page 1 excerpt); no rental request. Do not treat policy premium, limit or non-rental invoice as rental charges.",
           "RuleId": "FL-R5"
         }
       ]
@@ -267,45 +266,46 @@
       "stateSop": "IL-RENTAL-002",
       "version": "2.0",
       "sourcePages": [
-        10,
+        5,
+        6,
         11
       ],
-      "sourceCu": "../results/243f1c06-caf3-4375-b409-afe130136867/packet-06.cu.json",
+      "sourceCu": "../results/6e3b62d2-abe5-4ea7-9898-d2d11f4dc5f1/packet-06.cu.json",
       "outcome": "NotApplicable",
       "checks": [
         {
           "Check": "Rental eligibility and need",
           "Outcome": "NotApplicable",
           "ReviewRequired": false,
-          "Reason": "Confirmed Liability-dispute and repair evidence; no rental supplier bill; no rental request. Do not treat policy premium, limit or non-rental invoice as rental charges.",
+          "Reason": "Confirmed Loss intake and assessment; Evidence chronology and liability review; no rental request. Do not treat policy premium, limit or non-rental invoice as rental charges.",
           "RuleId": "IL-R1"
         },
         {
           "Check": "Daily rate",
           "Outcome": "NotApplicable",
           "ReviewRequired": false,
-          "Reason": "Confirmed Liability-dispute and repair evidence; no rental supplier bill; no rental request. Do not treat policy premium, limit or non-rental invoice as rental charges.",
+          "Reason": "Confirmed Loss intake and assessment; Evidence chronology and liability review; no rental request. Do not treat policy premium, limit or non-rental invoice as rental charges.",
           "RuleId": "IL-R2"
         },
         {
           "Check": "Duration and repair alignment",
           "Outcome": "NotApplicable",
           "ReviewRequired": false,
-          "Reason": "Confirmed Liability-dispute and repair evidence; no rental supplier bill; no rental request. Do not treat policy premium, limit or non-rental invoice as rental charges.",
+          "Reason": "Confirmed Loss intake and assessment; Evidence chronology and liability review; no rental request. Do not treat policy premium, limit or non-rental invoice as rental charges.",
           "RuleId": "IL-R3"
         },
         {
           "Check": "Charges and reimbursement calculation",
           "Outcome": "NotApplicable",
           "ReviewRequired": false,
-          "Reason": "Confirmed Liability-dispute and repair evidence; no rental supplier bill; no rental request. Do not treat policy premium, limit or non-rental invoice as rental charges.",
+          "Reason": "Confirmed Loss intake and assessment; Evidence chronology and liability review; no rental request. Do not treat policy premium, limit or non-rental invoice as rental charges.",
           "RuleId": "IL-R4"
         },
         {
           "Check": "Authorization and payment readiness",
           "Outcome": "NotApplicable",
           "ReviewRequired": false,
-          "Reason": "Confirmed Liability-dispute and repair evidence; no rental supplier bill; no rental request. Do not treat policy premium, limit or non-rental invoice as rental charges.",
+          "Reason": "Confirmed Loss intake and assessment; Evidence chronology and liability review; no rental request. Do not treat policy premium, limit or non-rental invoice as rental charges.",
           "RuleId": "IL-R5"
         }
       ]
@@ -319,42 +319,42 @@
         10,
         11
       ],
-      "sourceCu": "../results/243f1c06-caf3-4375-b409-afe130136867/packet-07.cu.json",
+      "sourceCu": "../results/6e3b62d2-abe5-4ea7-9898-d2d11f4dc5f1/packet-07.cu.json",
       "outcome": "NotApplicable",
       "checks": [
         {
           "Check": "Rental eligibility and need",
           "Outcome": "NotApplicable",
           "ReviewRequired": false,
-          "Reason": "Confirmed Comparable valuation / proposed settlement; no rental request. Do not treat policy premium, limit or non-rental invoice as rental charges.",
+          "Reason": "Confirmed Comparable valuation and proposed settlement; no rental request. Do not treat policy premium, limit or non-rental invoice as rental charges.",
           "RuleId": "LA-R1"
         },
         {
           "Check": "Daily rate",
           "Outcome": "NotApplicable",
           "ReviewRequired": false,
-          "Reason": "Confirmed Comparable valuation / proposed settlement; no rental request. Do not treat policy premium, limit or non-rental invoice as rental charges.",
+          "Reason": "Confirmed Comparable valuation and proposed settlement; no rental request. Do not treat policy premium, limit or non-rental invoice as rental charges.",
           "RuleId": "LA-R2"
         },
         {
           "Check": "Duration and repair alignment",
           "Outcome": "NotApplicable",
           "ReviewRequired": false,
-          "Reason": "Confirmed Comparable valuation / proposed settlement; no rental request. Do not treat policy premium, limit or non-rental invoice as rental charges.",
+          "Reason": "Confirmed Comparable valuation and proposed settlement; no rental request. Do not treat policy premium, limit or non-rental invoice as rental charges.",
           "RuleId": "LA-R3"
         },
         {
           "Check": "Charges and reimbursement calculation",
           "Outcome": "NotApplicable",
           "ReviewRequired": false,
-          "Reason": "Confirmed Comparable valuation / proposed settlement; no rental request. Do not treat policy premium, limit or non-rental invoice as rental charges.",
+          "Reason": "Confirmed Comparable valuation and proposed settlement; no rental request. Do not treat policy premium, limit or non-rental invoice as rental charges.",
           "RuleId": "LA-R4"
         },
         {
           "Check": "Authorization and payment readiness",
           "Outcome": "NotApplicable",
           "ReviewRequired": false,
-          "Reason": "Confirmed Comparable valuation / proposed settlement; no rental request. Do not treat policy premium, limit or non-rental invoice as rental charges.",
+          "Reason": "Confirmed Comparable valuation and proposed settlement; no rental request. Do not treat policy premium, limit or non-rental invoice as rental charges.",
           "RuleId": "LA-R5"
         }
       ]
@@ -368,42 +368,42 @@
         8,
         9
       ],
-      "sourceCu": "../results/243f1c06-caf3-4375-b409-afe130136867/packet-08.cu.json",
+      "sourceCu": "../results/6e3b62d2-abe5-4ea7-9898-d2d11f4dc5f1/packet-08.cu.json",
       "outcome": "NotApplicable",
       "checks": [
         {
           "Check": "Rental eligibility and need",
           "Outcome": "NotApplicable",
           "ReviewRequired": false,
-          "Reason": "Confirmed Mobile glass / camera quote and service record; no rental request. Do not treat policy premium, limit or non-rental invoice as rental charges.",
+          "Reason": "Confirmed Mobile glass billing and camera check; no rental request. Do not treat policy premium, limit or non-rental invoice as rental charges.",
           "RuleId": "CA-R1"
         },
         {
           "Check": "Daily rate",
           "Outcome": "NotApplicable",
           "ReviewRequired": false,
-          "Reason": "Confirmed Mobile glass / camera quote and service record; no rental request. Do not treat policy premium, limit or non-rental invoice as rental charges.",
+          "Reason": "Confirmed Mobile glass billing and camera check; no rental request. Do not treat policy premium, limit or non-rental invoice as rental charges.",
           "RuleId": "CA-R2"
         },
         {
           "Check": "Duration and repair alignment",
           "Outcome": "NotApplicable",
           "ReviewRequired": false,
-          "Reason": "Confirmed Mobile glass / camera quote and service record; no rental request. Do not treat policy premium, limit or non-rental invoice as rental charges.",
+          "Reason": "Confirmed Mobile glass billing and camera check; no rental request. Do not treat policy premium, limit or non-rental invoice as rental charges.",
           "RuleId": "CA-R3"
         },
         {
           "Check": "Charges and reimbursement calculation",
           "Outcome": "NotApplicable",
           "ReviewRequired": false,
-          "Reason": "Confirmed Mobile glass / camera quote and service record; no rental request. Do not treat policy premium, limit or non-rental invoice as rental charges.",
+          "Reason": "Confirmed Mobile glass billing and camera check; no rental request. Do not treat policy premium, limit or non-rental invoice as rental charges.",
           "RuleId": "CA-R4"
         },
         {
           "Check": "Authorization and payment readiness",
           "Outcome": "NotApplicable",
           "ReviewRequired": false,
-          "Reason": "Confirmed Mobile glass / camera quote and service record; no rental request. Do not treat policy premium, limit or non-rental invoice as rental charges.",
+          "Reason": "Confirmed Mobile glass billing and camera check; no rental request. Do not treat policy premium, limit or non-rental invoice as rental charges.",
           "RuleId": "CA-R5"
         }
       ]
@@ -417,7 +417,7 @@
         9,
         10
       ],
-      "sourceCu": "../results/243f1c06-caf3-4375-b409-afe130136867/packet-09.cu.json",
+      "sourceCu": "../results/6e3b62d2-abe5-4ea7-9898-d2d11f4dc5f1/packet-09.cu.json",
       "outcome": "ReviewRequired",
       "checks": [
         {
@@ -465,42 +465,42 @@
       "sourcePages": [
         11
       ],
-      "sourceCu": "../results/243f1c06-caf3-4375-b409-afe130136867/packet-10.cu.json",
+      "sourceCu": "../results/6e3b62d2-abe5-4ea7-9898-d2d11f4dc5f1/packet-10.cu.json",
       "outcome": "NotApplicable",
       "checks": [
         {
           "Check": "Rental eligibility and need",
           "Outcome": "NotApplicable",
           "ReviewRequired": false,
-          "Reason": "Confirmed Fleet downtime and cargo classification worksheet; no rental request. Do not treat policy premium, limit or non-rental invoice as rental charges.",
+          "Reason": "Confirmed Fleet downtime and cargo classification; no rental request. Do not treat policy premium, limit or non-rental invoice as rental charges.",
           "RuleId": "OH-R1"
         },
         {
           "Check": "Daily rate",
           "Outcome": "NotApplicable",
           "ReviewRequired": false,
-          "Reason": "Confirmed Fleet downtime and cargo classification worksheet; no rental request. Do not treat policy premium, limit or non-rental invoice as rental charges.",
+          "Reason": "Confirmed Fleet downtime and cargo classification; no rental request. Do not treat policy premium, limit or non-rental invoice as rental charges.",
           "RuleId": "OH-R2"
         },
         {
           "Check": "Duration and repair alignment",
           "Outcome": "NotApplicable",
           "ReviewRequired": false,
-          "Reason": "Confirmed Fleet downtime and cargo classification worksheet; no rental request. Do not treat policy premium, limit or non-rental invoice as rental charges.",
+          "Reason": "Confirmed Fleet downtime and cargo classification; no rental request. Do not treat policy premium, limit or non-rental invoice as rental charges.",
           "RuleId": "OH-R3"
         },
         {
           "Check": "Charges and reimbursement calculation",
           "Outcome": "NotApplicable",
           "ReviewRequired": false,
-          "Reason": "Confirmed Fleet downtime and cargo classification worksheet; no rental request. Do not treat policy premium, limit or non-rental invoice as rental charges.",
+          "Reason": "Confirmed Fleet downtime and cargo classification; no rental request. Do not treat policy premium, limit or non-rental invoice as rental charges.",
           "RuleId": "OH-R4"
         },
         {
           "Check": "Authorization and payment readiness",
           "Outcome": "NotApplicable",
           "ReviewRequired": false,
-          "Reason": "Confirmed Fleet downtime and cargo classification worksheet; no rental request. Do not treat policy premium, limit or non-rental invoice as rental charges.",
+          "Reason": "Confirmed Fleet downtime and cargo classification; no rental request. Do not treat policy premium, limit or non-rental invoice as rental charges.",
           "RuleId": "OH-R5"
         }
       ]

@@ -3,27 +3,29 @@
 This corpus supports a five-check rental reimbursement review using Content
 Understanding claim facts and retrieved SOP knowledge. All state differences
 are **fictional internal procedures**, not state law or insurer contract terms.
-This reference describes the original v1 scenario assets. For the current
+This historical reference describes the original v1 scenarios; their policy
+files and ZIP archive have been removed. For the current
 all-state corpus and application, use the [v2 corpus guide](rental-ocr-comparison.md)
 and [policy checks workflow](policy-checks.md).
 
 ## Documents
 
-| Source | Editable original | Search ingestion copy |
-|---|---|---|
-| Texas SOP: TX-RENTAL-001 v1.0 | [DOCX](../data/policies/rental/tx-rental-review-sop.docx) | [PDF](../data/policies/rental/tx-rental-review-sop.pdf) |
-| Washington SOP: WA-RENTAL-001 v1.0 | [DOCX](../data/policies/rental/wa-rental-review-sop.docx) | [PDF](../data/policies/rental/wa-rental-review-sop.pdf) |
-| Shared standard: SHARED-EVIDENCE-001 v1.0 | [DOCX](../data/policies/rental/shared-evidence-standard.docx) | [PDF](../data/policies/rental/shared-evidence-standard.pdf) |
+| Retired source | Current replacement |
+|---|---|
+| Texas SOP: TX-RENTAL-001 v1.0 | [TX-RENTAL-002 v2.0](../data/policies/rental/ocr-comparison-v2/tx-rental-review-sop-v2.pdf) |
+| Washington SOP: WA-RENTAL-001 v1.0 | [WA-RENTAL-002 v2.0](../data/policies/rental/ocr-comparison-v2/wa-rental-review-sop-v2.pdf) |
+| Shared standard: SHARED-EVIDENCE-001 v1.0 | [SHARED-EVIDENCE-002 v2.0](../data/policies/rental/ocr-comparison-v2/shared-rental-evidence-standard-v2.pdf) |
 
 The documents contain decision tables with merged title/exception rows,
 multi-level headers, checkbox worksheets and checked illustrations, stable
 rule IDs, numbered sections, authorization roles and boundary examples.
 Worksheets and examples are explicitly not claim evidence.
 
-Use the [recommended agent question and input contract](rental-review-agent-question.md).
-The [corpus manifest](../data/policies/rental/manifest.json) carries routing
-metadata. The [expected packet outcomes](../data/scenarios/rental-review.expected.json)
-are evaluation fixtures, not knowledge sources.
+The [original agent question and input contract](rental-review-agent-question.md)
+and [expected packet outcomes](../data/scenarios/rental-review.expected.json)
+remain historical references, not knowledge sources. For current routing metadata,
+use the [v2 corpus manifest](../data/policies/rental/ocr-comparison-v2/manifest.json)
+with the [v2 agent question](rental-review-agent-question-v2.md).
 
 ## Five checks and state differences
 
@@ -70,7 +72,8 @@ automatic payment recommendation.
 
 ## Search ingestion guidance
 
-Index **only the three policy PDFs**, one representation per document version.
+The original v1 workflow indexed only its three policy PDFs. The current workflow
+indexes only the eleven PDFs listed in the v2 manifest, one representation per document version.
 Keep DOCX originals as editable sources, not duplicate indexed documents.
 Do not index this guide, the agent question, evaluation fixtures, claim packets
 or CU outputs into the policy knowledge corpus.
@@ -90,6 +93,7 @@ distinction between decision instructions, blank checklists and examples.
 No relevant matching SOP, ambiguous scope or multiple matching versions means
 review, not fallback to a semantically similar state's rule.
 
-When revising a source DOCX, regenerate its PDF and update the manifest/version
-and expected outcomes together. The PDF and DOCX must contain equivalent rule
-content; their page numbering may differ.
+For the current corpus, revise the definitions in
+`infra/generate-rental-sop-corpus.py` and regenerate the PDFs, DOCX exports,
+controls, manifest and expected outcomes together. The DOCX exports are not
+inputs to PDF generation.

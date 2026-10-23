@@ -85,12 +85,13 @@ test("parallel duplicate requests share one analysis; unrelated extraction confl
   } finally { await rm(folder, { recursive: true, force: true }); }
 });
 
-test("only exact manifest PDF paths are accepted, including v2; extraction endpoint requires private session and explicit live consent", async () => {
+test("only exact v2 manifest PDF paths are accepted; extraction endpoint requires private session and explicit live consent", async () => {
   const documents = new PolicyDocuments();
   const files = await documents.files();
-  assert.equal(files.length, 14);
+  assert.equal(files.length, 11);
   assert.ok(files.includes("policies/rental/ocr-comparison-v2/az-rental-review-sop-v2.pdf"));
-  for (const file of ["../.tools/policy-checks.json", "policies/rental/../rental/tx-rental-review-sop.pdf",
+  for (const file of ["../.tools/policy-checks.json", "policies/rental/tx-rental-review-sop.pdf",
+    "policies/rental/../rental/ocr-comparison-v2/tx-rental-review-sop-v2.pdf",
     "policies/rental/ocr-comparison-v2/controls/tx-rental-review-sop-v2-text-control.pdf"]) {
     await assert.rejects(documents.get(file, "layout"), /manifest-listed/);
   }
@@ -159,7 +160,7 @@ test("document tabs use cache-only reads, retain PDF page, ignore stale extracti
   });
   vm.runInContext(`${source.slice(source.indexOf("export function createPolicyDocument")).replace("export function", "function")}
     const controller = createPolicyDocument({api, previewPdf, get});`, context);
-  await vm.runInContext("controller.open('/data/policies/rental/tx-rental-review-sop.pdf', 2)", context);
+  await vm.runInContext("controller.open('/data/policies/rental/ocr-comparison-v2/tx-rental-review-sop-v2.pdf', 2)", context);
   const layout = buttons[1].onclick!();
   await buttons[2].onclick!();
   finish({ markdown: "STALE", analyzer: "prebuilt-layout", createdAt: "2026-01-01", cached: true });
@@ -169,7 +170,7 @@ test("document tabs use cache-only reads, retain PDF page, ignore stale extracti
   assert.ok(calls.every((call) => call.body === undefined));
   assert.equal(get("pdf-controls").hidden, true);
   await buttons[0].onclick!();
-  assert.deepEqual(previews.at(-1), ["/data/policies/rental/tx-rental-review-sop.pdf", 3]);
+  assert.deepEqual(previews.at(-1), ["/data/policies/rental/ocr-comparison-v2/tx-rental-review-sop-v2.pdf", 3]);
   vm.runInContext("controller.close()", context);
   assert.equal(get("policy-document-tabs").hidden, true);
   assert.equal(get("policy-document-content").hidden, true);

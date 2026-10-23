@@ -1,8 +1,9 @@
 {
   "synthetic": true,
   "purpose": "Baseline evaluation fixtures; do not ingest into the policy knowledge index.",
-  "sourceRun": "243f1c06-caf3-4375-b409-afe130136867",
-  "sourceStatus": "Expected outcomes from authored synthetic SOPs and saved CU evidence, not a record of an executed agent evaluation.",
+  "sourceRun": "6e3b62d2-abe5-4ea7-9898-d2d11f4dc5f1",
+  "sourceDatasetHash": "94f17cd9ac8ecf44c39a92c2244c6546e5a81d297d339689c61b29b0148c9bf2",
+  "sourceStatus": "Historical v1 rule-set expectations checked against the included cached CU evidence, not a record of an executed agent evaluation. Use rental-review-v2.expected.json for the current corpus.",
   "assumptions": [
     "Normalization confirms loss state, product, collision coverage and loss date with packet evidence.",
     "No additional repair downtime, prior-usage or authorization evidence is supplied.",
@@ -16,7 +17,7 @@
       "version": "1.0",
       "sharedStandard": "SHARED-EVIDENCE-001",
       "packetPdf": "../packets/packet-01.pdf",
-      "cuResult": "../results/243f1c06-caf3-4375-b409-afe130136867/packet-01.cu.json",
+      "cuResult": "../results/6e3b62d2-abe5-4ea7-9898-d2d11f4dc5f1/packet-01.cu.json",
       "checks": [
         {
           "ruleId": "TX-R1",
@@ -69,7 +70,7 @@
       "version": "1.0",
       "sharedStandard": "SHARED-EVIDENCE-001",
       "packetPdf": "../packets/packet-02.pdf",
-      "cuResult": "../results/243f1c06-caf3-4375-b409-afe130136867/packet-02.cu.json",
+      "cuResult": "../results/6e3b62d2-abe5-4ea7-9898-d2d11f4dc5f1/packet-02.cu.json",
       "checks": [
         {
           "ruleId": "WA-R1",

@@ -11,8 +11,8 @@ from the root README.
 
 ## Rental reimbursement review
 
-The [rental scenario guide](rental-review.md) links the synthetic Texas and
-Washington SOPs, shared evidence standard and expected packet outcomes.
+The [current rental scenario guide](rental-ocr-comparison.md) links the synthetic
+SOPs for all ten dataset states, the shared evidence standard and expected packet outcomes.
 Use the [current agent question](rental-review-agent-question-v2.md) with normalized
 Content Understanding claim facts.
 
@@ -29,6 +29,10 @@ fully scanned Washington PDFs, comparison controls, 32 source-only probes
 and a distinct Not applicable outcome. Its
 [v2 agent question](rental-review-agent-question-v2.md) expands product/peril
 routing and is used by the index-backed Framework agent.
+
+The [original scenario guide](rental-review.md) and
+[original agent question](rental-review-agent-question.md) remain historical
+references for the retired v1 rule set, not current workbench instructions.
 
 ## Packet Markdown representation
 

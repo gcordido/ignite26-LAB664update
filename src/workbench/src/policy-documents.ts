@@ -44,7 +44,7 @@ export class PolicyDocuments {
 
   async files() {
     const files: string[] = [];
-    for (const folder of ["policies/rental", "policies/rental/ocr-comparison-v2"]) {
+    for (const folder of ["policies/rental/ocr-comparison-v2"]) {
       const manifest = record(JSON.parse(await readFile(path.join(dataRoot, folder, "manifest.json"), "utf8")));
       if (!Array.isArray(manifest?.documents)) throw new LabError(500, "Invalid policy manifest.");
       for (const value of manifest.documents) {

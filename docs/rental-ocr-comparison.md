@@ -4,7 +4,7 @@ The [v2 corpus manifest](../data/policies/rental/ocr-comparison-v2/manifest.json
 contains ten state SOPs and one shared evidence standard covering every state
 in the existing ten-packet dataset. These are fictional internal processing
 rules, not state law, new contractual benefits or permission to pay a claim.
-Original Texas/Washington v1 files remain available as authored references.
+The retired Texas/Washington v1 files and their ZIP archive have been removed.
 The v2 PDFs are indexed in the current Layout-based policy index. The
 [managed extraction setup](policy-setup.md) prepares the semantic extraction
 pipeline separately and activates it only after verification.
@@ -75,7 +75,9 @@ For example, Washington's `$61/day` request must be read against the `$60/day`
 must retain the exception-approval condition and must not take the exception
 row's authority as permission to exceed the contract.
 
-The `editable/` folder contains DOCX sources. The `controls/` folder contains
+The `editable/` folder contains generated DOCX exports, not PDF-generation inputs.
+The generator retains them for editable reference and validates their tables,
+blank cells and embedded figure. The `controls/` folder contains
 pre-scan PDFs: Washington and the eight cover-only documents retain their
 original digital text there. Arizona's flowchart intentionally remains an image
 in its control too, and Texas is already digital; these two controls do not
@@ -106,10 +108,13 @@ Having a rental benefit on the policy is not evidence that it was claimed.
 The [conditional expected outcomes](../data/scenarios/rental-review-v2.expected.json)
 are **35 Not applicable, 5 Satisfied and 10 Review required** out of 50 checks:
 40 checks have no rental-review action. They are expectations from the source
-document inventory and saved root OCR, not executed agent results.
+document inventory and saved root OCR from included run
+`6e3b62d2-abe5-4ea7-9898-d2d11f4dc5f1`, not executed agent results.
+The fixture records the dataset fingerprint, and its page references follow the
+current packet manifest rather than the retired dataset's page ordering.
 
-The existing field-only CU summaries contain contradictions: some towing,
-repair, premium and policy-limit values appear under `Rental`. Arizona, for
+Earlier field-only CU claim summaries contained contradictions: some towing,
+repair, premium and policy-limit values appeared under `Rental`. Arizona, for
 example, contains a `$237` flat recovery/towing charge, not a `$237/day` rental;
 Florida's `$283` tow bill is also not a daily rental rate. Some routing dates
 are inconsistent with the packet chronology. A missing `Rental` field or
@@ -169,12 +174,17 @@ Review caches aren't reused across source generations.
 Regenerate the local assets without cloud calls using:
 
 ```powershell
+python -m pip install -r .\infra\requirements-rental-sop-corpus.txt
 python .\infra\generate-rental-sop-corpus.py
 ```
 
-The script uses the already available `python-docx`, `reportlab` and `PyMuPDF`
-libraries and Windows Segoe UI fonts. It validates all state coverage, source
+The optional generator dependencies (`python-docx`, `reportlab` and `PyMuPDF`)
+are separate from the attendee workbench setup. The script also needs Windows
+Segoe UI fonts and the included completed CU run matching `data/packets.json`.
+It stops if that run's dataset fingerprint no longer matches; review the new
+evidence and expected outcomes before updating the source run.
+It validates all state coverage, source
 identities, page counts, state-specific text/image profiles, image/control
 equivalence, blank table cells, embedded flowchart, rule IDs, DOCX tables,
 PDF hashes and exact oracle counts. It writes only the
-v2 corpus and its two evaluation fixtures; it preserves existing v1 artifacts.
+v2 corpus and its two evaluation fixtures.

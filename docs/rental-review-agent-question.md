@@ -1,8 +1,9 @@
 # Rental review agent question
 
-Use this question with the copied Content Understanding packet summary and access
-to the [rental SOP corpus](../data/policies/rental/manifest.json). Supply claim
-facts as context, not inside the policy knowledge index.
+This historical question describes the retired v1 corpus, whose policy files
+have been removed. Use the [v2 agent question](rental-review-agent-question-v2.md)
+with the [current corpus](../data/policies/rental/ocr-comparison-v2/manifest.json)
+for the workbench. Supply claim facts as context, not inside the policy knowledge index.
 
 ## Recommended question
 
