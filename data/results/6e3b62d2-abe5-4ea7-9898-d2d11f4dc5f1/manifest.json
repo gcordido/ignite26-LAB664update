@@ -1,5 +1,5 @@
 {
-  "id": "243f1c06-caf3-4375-b409-afe130136867",
+  "id": "6e3b62d2-abe5-4ea7-9898-d2d11f4dc5f1",
   "origin": "Live CU",
   "status": "completed",
   "endpoint": "https://ignite-anatolip-test-scus.services.ai.azure.com",
@@ -1393,79 +1393,92 @@
     "fingerprint": "ae8056c9b381c89ce8a8f660f46e9ad865d05d6f0f22350cd861bb381fbed9cc",
     "verifiedReadOnly": true
   },
-  "datasetHash": "2fc7820b38640a8cfb0d16273e47fdb1afc3b2b8745d967fe8ca0d6376b27e71",
-  "startedAt": "2026-10-14T01:18:12.689Z",
+  "datasetHash": "94f17cd9ac8ecf44c39a92c2244c6546e5a81d297d339689c61b29b0148c9bf2",
+  "startedAt": "2026-10-23T03:09:35.031Z",
   "maxInFlight": 5,
   "items": [
     {
       "id": "packet-01",
       "status": "completed",
-      "startedAt": "2026-10-14T01:18:12.694Z",
+      "startedAt": "2026-10-23T03:09:35.034Z",
       "rawSaved": true,
-      "completedAt": "2026-10-14T01:19:08.312Z"
+      "completedAt": "2026-10-23T03:10:21.565Z",
+      "reusedFromRunId": "0f315c28-63a6-4e58-9dff-192540423be5"
     },
     {
       "id": "packet-02",
       "status": "completed",
-      "startedAt": "2026-10-14T01:18:12.694Z",
+      "startedAt": "2026-10-23T03:09:35.034Z",
       "rawSaved": true,
-      "completedAt": "2026-10-14T01:19:09.287Z"
+      "completedAt": "2026-10-23T03:10:21.342Z",
+      "reusedFromRunId": "0f315c28-63a6-4e58-9dff-192540423be5"
     },
     {
       "id": "packet-03",
       "status": "completed",
-      "startedAt": "2026-10-14T01:18:12.694Z",
+      "startedAt": "2026-10-23T04:32:03.722Z",
       "rawSaved": true,
-      "completedAt": "2026-10-14T01:19:10.780Z"
+      "completedAt": "2026-10-23T04:32:48.746Z",
+      "responseFromTargetedRunId": "e4e94ddb-b291-4fdb-b647-08d2270ff507"
     },
     {
       "id": "packet-04",
       "status": "completed",
-      "startedAt": "2026-10-14T01:18:12.694Z",
+      "startedAt": "2026-10-23T03:12:51.919Z",
       "rawSaved": true,
-      "completedAt": "2026-10-14T01:19:03.691Z"
+      "completedAt": "2026-10-23T03:14:02.031Z",
+      "reusedFromRunId": "0f315c28-63a6-4e58-9dff-192540423be5"
     },
     {
       "id": "packet-05",
       "status": "completed",
-      "startedAt": "2026-10-14T01:18:12.694Z",
+      "startedAt": "2026-10-23T04:33:22.858Z",
       "rawSaved": true,
-      "completedAt": "2026-10-14T01:19:03.861Z"
+      "completedAt": "2026-10-23T04:34:04.170Z",
+      "responseFromTargetedRunId": "e4e94ddb-b291-4fdb-b647-08d2270ff507"
     },
     {
       "id": "packet-06",
       "status": "completed",
-      "startedAt": "2026-10-14T01:19:03.699Z",
+      "startedAt": "2026-10-23T03:14:46.573Z",
       "rawSaved": true,
-      "completedAt": "2026-10-14T01:19:45.779Z"
+      "completedAt": "2026-10-23T03:15:42.402Z",
+      "reusedFromRunId": "0f315c28-63a6-4e58-9dff-192540423be5"
     },
     {
       "id": "packet-07",
       "status": "completed",
-      "startedAt": "2026-10-14T01:19:03.865Z",
+      "startedAt": "2026-10-23T03:37:39.786Z",
       "rawSaved": true,
-      "completedAt": "2026-10-14T01:19:56.334Z"
+      "completedAt": "2026-10-23T03:38:28.339Z",
+      "responseFromTargetedRunId": "aa38d622-f1ba-4b81-8600-4432253f5083",
+      "reusedFromRunId": "0f315c28-63a6-4e58-9dff-192540423be5"
     },
     {
       "id": "packet-08",
       "status": "completed",
-      "startedAt": "2026-10-14T01:19:08.316Z",
+      "startedAt": "2026-10-23T04:05:32.273Z",
       "rawSaved": true,
-      "completedAt": "2026-10-14T01:20:03.484Z"
+      "completedAt": "2026-10-23T04:06:20.209Z",
+      "responseFromTargetedRunId": "798bc209-dd08-4a81-b13f-0c1ca788833b",
+      "reusedFromRunId": "0f315c28-63a6-4e58-9dff-192540423be5"
     },
     {
       "id": "packet-09",
       "status": "completed",
-      "startedAt": "2026-10-14T01:19:09.291Z",
+      "startedAt": "2026-10-23T04:06:20.212Z",
       "rawSaved": true,
-      "completedAt": "2026-10-14T01:20:19.093Z"
+      "completedAt": "2026-10-23T04:07:06.505Z",
+      "responseFromTargetedRunId": "798bc209-dd08-4a81-b13f-0c1ca788833b",
+      "reusedFromRunId": "0f315c28-63a6-4e58-9dff-192540423be5"
     },
     {
       "id": "packet-10",
       "status": "completed",
-      "startedAt": "2026-10-14T01:19:10.785Z",
+      "startedAt": "2026-10-23T03:19:08.335Z",
       "rawSaved": true,
-      "completedAt": "2026-10-14T01:19:51.052Z"
+      "completedAt": "2026-10-23T03:20:04.343Z",
+      "reusedFromRunId": "0f315c28-63a6-4e58-9dff-192540423be5"
     }
   ],
   "source": [
@@ -1475,7 +1488,7 @@
       "claimId": "CMM-26-467202",
       "file": "packets/packet-01.pdf",
       "pages": 13,
-      "sha256": "6a9b8f81434e8b1fac677b65547c2d7b96d0f4b02c714f536fac27c0e23c5d27",
+      "sha256": "87ef2277c0d1273790a47439cbfcb4d1f5a93eb0e3fc2e576ba185b92cc63fd4",
       "expectedDocuments": [
         {
           "sourceId": "01-card",
@@ -1553,7 +1566,7 @@
       "claimId": "ASA-25-615743",
       "file": "packets/packet-02.pdf",
       "pages": 11,
-      "sha256": "5004adbbeb43c3a3e21df4ccfa349a3f0629a4979612d2758eab82bc092b396b",
+      "sha256": "9539d6fe4047c0f445ca202fed235dbe8ffc86d020ffd9c8fa0af2a6c2d20265",
       "expectedDocuments": [
         {
           "sourceId": "01-card",
@@ -1630,8 +1643,8 @@
       "sourceBatch": "auto-claim-batch-3",
       "claimId": "SCI-25-526383",
       "file": "packets/packet-03.pdf",
-      "pages": 13,
-      "sha256": "e70dfebd08d7f0ecd0b0cbe26196e7c7a3dc3fcfd84ba04acc1d37622ac55475",
+      "pages": 12,
+      "sha256": "1520565c146195965263ffc9ccdb4e42dcd9f1f48679a39541fdae051a0839b0",
       "expectedDocuments": [
         {
           "sourceId": "01-card",
@@ -1677,24 +1690,24 @@
         },
         {
           "sourceId": "07-invoice",
-          "title": "Recovery towing and security supplement",
+          "title": "Recovery towing invoice (page 1 excerpt)",
           "category": "other",
           "start": 10,
-          "end": 11
+          "end": 10
         },
         {
           "sourceId": "08-inspection",
           "title": "Workshop damage inspection",
           "category": "other",
-          "start": 12,
-          "end": 12
+          "start": 11,
+          "end": 11
         },
         {
           "sourceId": "09-form-1099-a",
           "title": "2025 Form 1099-A supplemental tax test",
           "category": "tax_1099a",
-          "start": 13,
-          "end": 13
+          "start": 12,
+          "end": 12
         }
       ],
       "expectedRepair": {
@@ -1709,7 +1722,7 @@
       "claimId": "ARC-26-739979",
       "file": "packets/packet-04.pdf",
       "pages": 12,
-      "sha256": "69f3a2c7baf7b702759b09abd0f605d38013749a318e1e9b6e60b0cba9ec2e28",
+      "sha256": "1c6b787bdc91f8b12211bfeb1762b9c14e2c68a85726a6e70c687db1bc088ebc",
       "expectedDocuments": [
         {
           "sourceId": "01-card",
@@ -1786,8 +1799,8 @@
       "sourceBatch": "auto-claim-batch-5",
       "claimId": "PRC-25-862846",
       "file": "packets/packet-05.pdf",
-      "pages": 11,
-      "sha256": "c01aeb14ac2956f43d29c08a2d55e141037049d4726c28915efa0bfe3053d979",
+      "pages": 10,
+      "sha256": "6c7104afd8a160719c26e7dc6c93483132356f2b9659097fe9901121dfec8bce",
       "expectedDocuments": [
         {
           "sourceId": "01-card",
@@ -1833,24 +1846,24 @@
         },
         {
           "sourceId": "07-invoice",
-          "title": "Towing billing and wheel inspection",
+          "title": "Towing invoice (page 1 excerpt)",
           "category": "other",
           "start": 8,
-          "end": 9
+          "end": 8
         },
         {
           "sourceId": "08-inspection",
           "title": "Workshop damage inspection",
           "category": "other",
-          "start": 10,
-          "end": 10
+          "start": 9,
+          "end": 9
         },
         {
           "sourceId": "09-form-1099-a",
           "title": "2025 Form 1099-A supplemental tax test",
           "category": "tax_1099a",
-          "start": 11,
-          "end": 11
+          "start": 10,
+          "end": 10
         }
       ],
       "expectedRepair": {
@@ -1865,7 +1878,7 @@
       "claimId": "PMM-26-321506",
       "file": "packets/packet-06.pdf",
       "pages": 13,
-      "sha256": "24938c2af735701a8e3c6e6141f677afa7e1f9cb1a6b74d9fe4e896a55587d83",
+      "sha256": "2914140cf5167e60fdf980bae3e4723bf17fe808245b02eeb1beb8e28945fb50",
       "expectedDocuments": [
         {
           "sourceId": "01-card",
@@ -1943,7 +1956,7 @@
       "claimId": "CDA-25-239878",
       "file": "packets/packet-07.pdf",
       "pages": 13,
-      "sha256": "72b913609d33eff9f183094687005af43527331d5fe0228734338960c5837336",
+      "sha256": "5eb468325e0f55c66e9b2e911a16decc2d66ae62ec67ff322a77d0111126d35e",
       "expectedDocuments": [
         {
           "sourceId": "01-card",
@@ -2021,40 +2034,40 @@
       "claimId": "SLI-26-394117",
       "file": "packets/packet-08.pdf",
       "pages": 11,
-      "sha256": "280ef9ac8d3fbb91e532be93a318d1e9b41c8bf3efe428d1b19c769183137f2a",
+      "sha256": "480f2d980c722c098453c5e29ac36cdc5d61ca4d72f44ef8dc079978eb4a0984",
       "expectedDocuments": [
+        {
+          "sourceId": "05-estimate",
+          "title": "Itemized repair assessment",
+          "category": "repair_estimate",
+          "start": 1,
+          "end": 1
+        },
         {
           "sourceId": "01-card",
           "title": "Roadside membership card",
           "category": "id_document",
-          "start": 1,
-          "end": 1
+          "start": 2,
+          "end": 2
         },
         {
           "sourceId": "02-policy",
           "title": "Policy declarations and endorsements",
           "category": "other",
-          "start": 2,
-          "end": 3
+          "start": 3,
+          "end": 4
         },
         {
           "sourceId": "03-claim_form",
           "title": "Loss intake and assessment",
           "category": "other",
-          "start": 4,
-          "end": 4
+          "start": 5,
+          "end": 5
         },
         {
           "sourceId": "04-incident_report",
           "title": "Customer-reported incident record",
           "category": "other",
-          "start": 5,
-          "end": 5
-        },
-        {
-          "sourceId": "05-estimate",
-          "title": "Itemized repair assessment",
-          "category": "repair_estimate",
           "start": 6,
           "end": 6
         },
@@ -2073,16 +2086,16 @@
           "end": 9
         },
         {
-          "sourceId": "08-inspection",
-          "title": "Workshop damage inspection",
-          "category": "other",
+          "sourceId": "09-form-1099-a",
+          "title": "2025 Form 1099-A supplemental tax test",
+          "category": "tax_1099a",
           "start": 10,
           "end": 10
         },
         {
-          "sourceId": "09-form-1099-a",
-          "title": "2025 Form 1099-A supplemental tax test",
-          "category": "tax_1099a",
+          "sourceId": "08-inspection",
+          "title": "Workshop damage inspection",
+          "category": "other",
           "start": 11,
           "end": 11
         }
@@ -2099,40 +2112,40 @@
       "claimId": "MCM-25-998392",
       "file": "packets/packet-09.pdf",
       "pages": 12,
-      "sha256": "34f023b291f660c1d39dd3859c27695f18bbc9c0f8e8387fd81ee7b04d47e4d5",
+      "sha256": "70c7491429f5a9297bb1a03dbf7b46346863a0108faf5554eb29f035658742db",
       "expectedDocuments": [
+        {
+          "sourceId": "05-estimate",
+          "title": "Itemized repair assessment",
+          "category": "repair_estimate",
+          "start": 1,
+          "end": 1
+        },
         {
           "sourceId": "01-card",
           "title": "Roadside membership card",
           "category": "id_document",
-          "start": 1,
-          "end": 1
+          "start": 2,
+          "end": 2
         },
         {
           "sourceId": "02-policy",
           "title": "Policy declarations and endorsements",
           "category": "other",
-          "start": 2,
-          "end": 3
+          "start": 3,
+          "end": 4
         },
         {
           "sourceId": "03-claim_form",
           "title": "Loss intake and assessment",
           "category": "other",
-          "start": 4,
-          "end": 5
+          "start": 5,
+          "end": 6
         },
         {
           "sourceId": "04-incident_report",
           "title": "Police incident record",
           "category": "other",
-          "start": 6,
-          "end": 6
-        },
-        {
-          "sourceId": "05-estimate",
-          "title": "Itemized repair assessment",
-          "category": "repair_estimate",
           "start": 7,
           "end": 7
         },
@@ -2151,16 +2164,16 @@
           "end": 10
         },
         {
-          "sourceId": "08-inspection",
-          "title": "Workshop damage inspection",
-          "category": "other",
+          "sourceId": "09-form-1099-a",
+          "title": "2025 Form 1099-A supplemental tax test",
+          "category": "tax_1099a",
           "start": 11,
           "end": 11
         },
         {
-          "sourceId": "09-form-1099-a",
-          "title": "2025 Form 1099-A supplemental tax test",
-          "category": "tax_1099a",
+          "sourceId": "08-inspection",
+          "title": "Workshop damage inspection",
+          "category": "other",
           "start": 12,
           "end": 12
         }
@@ -2177,7 +2190,7 @@
       "claimId": "BTU-26-717497",
       "file": "packets/packet-10.pdf",
       "pages": 13,
-      "sha256": "7513ab3213ad9f6cc3f274e85d9a2c187cdd621c31abce47c7657b510a455e7c",
+      "sha256": "408b92ebe2d82646b8a381712143d92860cee9c6432bda69f8bf89350ac866c8",
       "expectedDocuments": [
         {
           "sourceId": "01-card",
@@ -2250,5 +2263,266 @@
       }
     }
   ],
-  "completedAt": "2026-10-14T01:20:19.097Z"
+  "resumeHistory": [
+    {
+      "startedAt": "2026-10-23T03:12:00.080Z",
+      "concurrency": 1,
+      "reason": "Retry only unresolved packets after initial CU DeploymentIdNotFound responses while the new GPT-5.2 deployment reported Succeeded.",
+      "previousStatus": "failed",
+      "previousCompletedAt": "2026-10-23T03:10:21.571Z",
+      "previousItems": [
+        {
+          "id": "packet-03",
+          "status": "failed",
+          "startedAt": "2026-10-23T03:09:35.034Z",
+          "error": "CU HTTP 400: {\"error\":{\"code\":\"InvalidRequest\",\"message\":\"Invalid request.\",\"innererror\":{\"code\":\"DeploymentIdNotFound\",\"message\":\"Validation of existing deployment failed: the OpenAI deployment 'gpt-5.2' does not exist. Please update your defaults to remove this entry.\"}}}",
+          "completedAt": "2026-10-23T03:09:36.359Z"
+        },
+        {
+          "id": "packet-04",
+          "status": "failed",
+          "startedAt": "2026-10-23T03:09:35.034Z",
+          "error": "CU HTTP 400: {\"error\":{\"code\":\"InvalidRequest\",\"message\":\"Invalid request.\",\"innererror\":{\"code\":\"DeploymentIdNotFound\",\"message\":\"Validation of existing deployment failed: the OpenAI deployment 'gpt-5.2' does not exist. Please update your defaults to remove this entry.\"}}}",
+          "completedAt": "2026-10-23T03:09:36.565Z"
+        },
+        {
+          "id": "packet-05",
+          "status": "failed",
+          "startedAt": "2026-10-23T03:09:35.034Z",
+          "error": "CU HTTP 400: {\"error\":{\"code\":\"InvalidRequest\",\"message\":\"Invalid request.\",\"innererror\":{\"code\":\"DeploymentIdNotFound\",\"message\":\"Validation of existing deployment failed: the OpenAI deployment 'gpt-5.2' does not exist. Please update your defaults to remove this entry.\"}}}",
+          "completedAt": "2026-10-23T03:09:36.413Z"
+        },
+        {
+          "id": "packet-06",
+          "status": "not processed"
+        },
+        {
+          "id": "packet-07",
+          "status": "not processed"
+        },
+        {
+          "id": "packet-08",
+          "status": "not processed"
+        },
+        {
+          "id": "packet-09",
+          "status": "not processed"
+        },
+        {
+          "id": "packet-10",
+          "status": "not processed"
+        }
+      ],
+      "status": "failed",
+      "error": "CU HTTP 500: { \"statusCode\": 500, \"message\": \"Internal server error\", \"activityId\": \"a7eaf976-cec8-48e2-b670-f79727965d2a\" }",
+      "completedAt": "2026-10-23T03:15:42.599Z"
+    },
+    {
+      "startedAt": "2026-10-23T03:16:31.692Z",
+      "concurrency": 1,
+      "reason": "Resume only four unresolved packets after transient CU HTTP 500 (activityId a7eaf976-cec8-48e2-b670-f79727965d2a); six completed native responses retained without resubmission.",
+      "previousStatus": "failed",
+      "previousCompletedAt": "2026-10-23T03:15:42.599Z",
+      "previousItems": [
+        {
+          "id": "packet-07",
+          "status": "failed",
+          "startedAt": "2026-10-23T03:15:42.410Z",
+          "error": "CU HTTP 500: { \"statusCode\": 500, \"message\": \"Internal server error\", \"activityId\": \"a7eaf976-cec8-48e2-b670-f79727965d2a\" }",
+          "completedAt": "2026-10-23T03:15:42.592Z"
+        },
+        {
+          "id": "packet-08",
+          "status": "not processed"
+        },
+        {
+          "id": "packet-09",
+          "status": "not processed"
+        },
+        {
+          "id": "packet-10",
+          "status": "not processed"
+        }
+      ],
+      "status": "completed",
+      "completedAt": "2026-10-23T03:20:04.349Z"
+    }
+  ],
+  "completedAt": "2026-10-23T04:34:04.170Z",
+  "parentRunId": "0f315c28-63a6-4e58-9dff-192540423be5",
+  "originDescription": "Selective refresh for compact one-page towing excerpts in packets 03 and 05: removed-page objects/images excluded, retained visible page streams unchanged, eight unrelated native responses reused unchanged.",
+  "refreshHistory": [
+    {
+      "comparisonId": "aa38d622-f1ba-4b81-8600-4432253f5083",
+      "sourceRunId": "5f9955a4-d650-4f27-b113-d6b97538bd6d",
+      "startedAt": "2026-10-23T03:36:54.925Z",
+      "completedAt": "2026-10-23T03:38:28.344Z",
+      "refreshedPacketIds": [
+        "packet-03",
+        "packet-07"
+      ],
+      "reusedPacketIds": [
+        "packet-01",
+        "packet-02",
+        "packet-04",
+        "packet-05",
+        "packet-06",
+        "packet-08",
+        "packet-09",
+        "packet-10"
+      ],
+      "sameDatasetHash": true,
+      "sameAnalyzerFingerprint": true
+    },
+    {
+      "comparisonId": "798bc209-dd08-4a81-b13f-0c1ca788833b",
+      "sourceRunId": "b7d4663e-3063-46e4-a448-db1b2e8168aa",
+      "startedAt": "2026-10-23T04:05:31.820Z",
+      "completedAt": "2026-10-23T04:07:06.507Z",
+      "sourceDatasetHash": "c9ef58832becdaf083ede2dc04032ce96282f3f34d852bf09bfd36fef4b7db76",
+      "datasetHash": "8e2b1c7f7c61450f3d43c6e70fea5771419f4cf776fbd7792b1964490a85632e",
+      "refreshedPacketIds": [
+        "packet-08",
+        "packet-09"
+      ],
+      "reusedPacketIds": [
+        "packet-01",
+        "packet-02",
+        "packet-03",
+        "packet-04",
+        "packet-05",
+        "packet-06",
+        "packet-07",
+        "packet-10"
+      ],
+      "documentOrder": [
+        "05-estimate",
+        "01-card",
+        "02-policy",
+        "03-claim_form",
+        "04-incident_report",
+        "06-handwriting",
+        "07-invoice",
+        "09-form-1099-a",
+        "08-inspection"
+      ],
+      "sourceContentsUnchanged": true,
+      "reusedSourceHashesVerified": true,
+      "categoryPolicy": "User selected publish reordered only: retain Ethan standalone estimate and separate supplemental quote as native repair instances; do not change classifier or source reference categories."
+    },
+    {
+      "comparisonId": "ce7cf41c-9dc2-4da5-9159-fa1de4cd8852",
+      "sourceRunId": "19acb92a-89ba-43ce-8cad-ecea5e1d4f09",
+      "startedAt": "2026-10-23T04:24:06.125Z",
+      "completedAt": "2026-10-23T04:25:30.012Z",
+      "sourceDatasetHash": "8e2b1c7f7c61450f3d43c6e70fea5771419f4cf776fbd7792b1964490a85632e",
+      "datasetHash": "d7285741de8cef9004f31f9a05d75a1494eb63c704d42b18a3868331bbadd4bd",
+      "refreshedPacketIds": [
+        "packet-03",
+        "packet-05"
+      ],
+      "reusedPacketIds": [
+        "packet-01",
+        "packet-02",
+        "packet-04",
+        "packet-06",
+        "packet-07",
+        "packet-08",
+        "packet-09",
+        "packet-10"
+      ],
+      "removedPages": [
+        {
+          "packet": "packet-03",
+          "document": "07-invoice",
+          "originalDocumentPage": 2,
+          "originalPacketPage": 11
+        },
+        {
+          "packet": "packet-05",
+          "document": "07-invoice",
+          "originalDocumentPage": 2,
+          "originalPacketPage": 9
+        }
+      ],
+      "allRetainedPageStreamsIdentical": true,
+      "reusedSourceHashesVerified": true
+    },
+    {
+      "comparisonId": "e4e94ddb-b291-4fdb-b647-08d2270ff507",
+      "sourceRunId": "0f315c28-63a6-4e58-9dff-192540423be5",
+      "startedAt": "2026-10-23T04:32:03.461Z",
+      "completedAt": "2026-10-23T04:34:04.170Z",
+      "sourceDatasetHash": "d7285741de8cef9004f31f9a05d75a1494eb63c704d42b18a3868331bbadd4bd",
+      "datasetHash": "94f17cd9ac8ecf44c39a92c2244c6546e5a81d297d339689c61b29b0148c9bf2",
+      "refreshedPacketIds": [
+        "packet-03",
+        "packet-05"
+      ],
+      "reusedPacketIds": [
+        "packet-01",
+        "packet-02",
+        "packet-04",
+        "packet-06",
+        "packet-07",
+        "packet-08",
+        "packet-09",
+        "packet-10"
+      ],
+      "orphanedRemovedPageAssetsExcluded": true,
+      "retainedPageStreamsIdentical": true,
+      "compactedFiles": [
+        {
+          "file": "documents/packet-03/07-invoice.pdf",
+          "oldBytes": 3171996,
+          "newBytes": 1567701,
+          "pages": 1,
+          "retainedPageStreamsIdentical": true
+        },
+        {
+          "file": "packets/packet-03.pdf",
+          "oldBytes": 17460470,
+          "newBytes": 15856148,
+          "pages": 12,
+          "retainedPageStreamsIdentical": true
+        },
+        {
+          "file": "documents/packet-05/07-invoice.pdf",
+          "oldBytes": 3512712,
+          "newBytes": 1755137,
+          "pages": 1,
+          "retainedPageStreamsIdentical": true
+        },
+        {
+          "file": "packets/packet-05.pdf",
+          "oldBytes": 15690414,
+          "newBytes": 13932833,
+          "pages": 10,
+          "retainedPageStreamsIdentical": true
+        }
+      ],
+      "retryHistory": [
+        {
+          "reason": "Retry only packet-05 after transient HTTP 500, activityId 18f9a272-71ad-46f7-ad8d-6a0fe7eb2cf1. Successful packet-03 was not resubmitted.",
+          "startedAt": "2026-10-23T04:33:22.857Z",
+          "previousItem": {
+            "id": "packet-05",
+            "status": "failed",
+            "oldSha256": "47050f0019e78ea50deb1391570bd5e1af1f9b0613dc3ebdbd5102af0a3d69f9",
+            "newSha256": "6c7104afd8a160719c26e7dc6c93483132356f2b9659097fe9901121dfec8bce",
+            "pages": 10,
+            "expectedTowing": [
+              {
+                "start": 8,
+                "end": 8
+              }
+            ],
+            "startedAt": "2026-10-23T04:32:48.747Z",
+            "error": "CU HTTP 500: { \"statusCode\": 500, \"message\": \"Internal server error\", \"activityId\": \"18f9a272-71ad-46f7-ad8d-6a0fe7eb2cf1\" }"
+          },
+          "status": "completed"
+        }
+      ]
+    }
+  ]
 }

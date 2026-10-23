@@ -1,8 +1,8 @@
 {
-  "source": "auto-claims-v3",
+  "source": "auto-claims-v3-gptimage2",
   "synthetic": true,
-  "datasetHash": "2fc7820b38640a8cfb0d16273e47fdb1afc3b2b8745d967fe8ca0d6376b27e71",
-  "labelOrigin": "Source manifest document groups and authored case facts; not model predictions or proof that every service split is semantically wrong when groups differ.",
+  "datasetHash": "94f17cd9ac8ecf44c39a92c2244c6546e5a81d297d339689c61b29b0148c9bf2",
+  "labelOrigin": "Source manifest document groups and authored case facts; not model predictions or proof that every service split is semantically wrong when groups differ. The eight claim-document groups per customer use the regenerated gpt-image-2 source. Supplemental 1099-A forms are retained unchanged from the previous lab dataset and appended as the ninth group. The towing invoice groups in packet-03 and packet-05 retain only their first source page; the repair-estimate continuation pages were intentionally omitted.",
   "packets": [
     {
       "id": "packet-01",
@@ -13,7 +13,7 @@
       "scenario": "rear-end-collision",
       "file": "packets/packet-01.pdf",
       "pages": 13,
-      "sha256": "6a9b8f81434e8b1fac677b65547c2d7b96d0f4b02c714f536fac27c0e23c5d27",
+      "sha256": "87ef2277c0d1273790a47439cbfcb4d1f5a93eb0e3fc2e576ba185b92cc63fd4",
       "expectedDocuments": [
         {
           "sourceId": "01-card",
@@ -94,7 +94,7 @@
       "scenario": "parking-hit-and-run",
       "file": "packets/packet-02.pdf",
       "pages": 11,
-      "sha256": "5004adbbeb43c3a3e21df4ccfa349a3f0629a4979612d2758eab82bc092b396b",
+      "sha256": "9539d6fe4047c0f445ca202fed235dbe8ffc86d020ffd9c8fa0af2a6c2d20265",
       "expectedDocuments": [
         {
           "sourceId": "01-card",
@@ -174,8 +174,8 @@
       "region": "AZ",
       "scenario": "theft-recovery",
       "file": "packets/packet-03.pdf",
-      "pages": 13,
-      "sha256": "e70dfebd08d7f0ecd0b0cbe26196e7c7a3dc3fcfd84ba04acc1d37622ac55475",
+      "pages": 12,
+      "sha256": "1520565c146195965263ffc9ccdb4e42dcd9f1f48679a39541fdae051a0839b0",
       "expectedDocuments": [
         {
           "sourceId": "01-card",
@@ -221,24 +221,24 @@
         },
         {
           "sourceId": "07-invoice",
-          "title": "Recovery towing and security supplement",
+          "title": "Recovery towing invoice (page 1 excerpt)",
           "category": "other",
           "start": 10,
-          "end": 11
+          "end": 10
         },
         {
           "sourceId": "08-inspection",
           "title": "Workshop damage inspection",
           "category": "other",
-          "start": 12,
-          "end": 12
+          "start": 11,
+          "end": 11
         },
         {
           "sourceId": "09-form-1099-a",
           "title": "2025 Form 1099-A supplemental tax test",
           "category": "tax_1099a",
-          "start": 13,
-          "end": 13
+          "start": 12,
+          "end": 12
         }
       ],
       "expectedRepair": {
@@ -256,7 +256,7 @@
       "scenario": "hail-paintless-repair",
       "file": "packets/packet-04.pdf",
       "pages": 12,
-      "sha256": "69f3a2c7baf7b702759b09abd0f605d38013749a318e1e9b6e60b0cba9ec2e28",
+      "sha256": "1c6b787bdc91f8b12211bfeb1762b9c14e2c68a85726a6e70c687db1bc088ebc",
       "expectedDocuments": [
         {
           "sourceId": "01-card",
@@ -336,8 +336,8 @@
       "region": "FL",
       "scenario": "curb-and-suspension",
       "file": "packets/packet-05.pdf",
-      "pages": 11,
-      "sha256": "c01aeb14ac2956f43d29c08a2d55e141037049d4726c28915efa0bfe3053d979",
+      "pages": 10,
+      "sha256": "6c7104afd8a160719c26e7dc6c93483132356f2b9659097fe9901121dfec8bce",
       "expectedDocuments": [
         {
           "sourceId": "01-card",
@@ -383,24 +383,24 @@
         },
         {
           "sourceId": "07-invoice",
-          "title": "Towing billing and wheel inspection",
+          "title": "Towing invoice (page 1 excerpt)",
           "category": "other",
           "start": 8,
-          "end": 9
+          "end": 8
         },
         {
           "sourceId": "08-inspection",
           "title": "Workshop damage inspection",
           "category": "other",
-          "start": 10,
-          "end": 10
+          "start": 9,
+          "end": 9
         },
         {
           "sourceId": "09-form-1099-a",
           "title": "2025 Form 1099-A supplemental tax test",
           "category": "tax_1099a",
-          "start": 11,
-          "end": 11
+          "start": 10,
+          "end": 10
         }
       ],
       "expectedRepair": {
@@ -418,7 +418,7 @@
       "scenario": "intersection-liability-dispute",
       "file": "packets/packet-06.pdf",
       "pages": 13,
-      "sha256": "24938c2af735701a8e3c6e6141f677afa7e1f9cb1a6b74d9fe4e896a55587d83",
+      "sha256": "2914140cf5167e60fdf980bae3e4723bf17fe808245b02eeb1beb8e28945fb50",
       "expectedDocuments": [
         {
           "sourceId": "01-card",
@@ -499,7 +499,7 @@
       "scenario": "flood-total-loss-assessment",
       "file": "packets/packet-07.pdf",
       "pages": 13,
-      "sha256": "72b913609d33eff9f183094687005af43527331d5fe0228734338960c5837336",
+      "sha256": "5eb468325e0f55c66e9b2e911a16decc2d66ae62ec67ff322a77d0111126d35e",
       "expectedDocuments": [
         {
           "sourceId": "01-card",
@@ -580,40 +580,40 @@
       "scenario": "windshield-and-calibration",
       "file": "packets/packet-08.pdf",
       "pages": 11,
-      "sha256": "280ef9ac8d3fbb91e532be93a318d1e9b41c8bf3efe428d1b19c769183137f2a",
+      "sha256": "480f2d980c722c098453c5e29ac36cdc5d61ca4d72f44ef8dc079978eb4a0984",
       "expectedDocuments": [
+        {
+          "sourceId": "05-estimate",
+          "title": "Itemized repair assessment",
+          "category": "repair_estimate",
+          "start": 1,
+          "end": 1
+        },
         {
           "sourceId": "01-card",
           "title": "Roadside membership card",
           "category": "id_document",
-          "start": 1,
-          "end": 1
+          "start": 2,
+          "end": 2
         },
         {
           "sourceId": "02-policy",
           "title": "Policy declarations and endorsements",
           "category": "other",
-          "start": 2,
-          "end": 3
+          "start": 3,
+          "end": 4
         },
         {
           "sourceId": "03-claim_form",
           "title": "Loss intake and assessment",
           "category": "other",
-          "start": 4,
-          "end": 4
+          "start": 5,
+          "end": 5
         },
         {
           "sourceId": "04-incident_report",
           "title": "Customer-reported incident record",
           "category": "other",
-          "start": 5,
-          "end": 5
-        },
-        {
-          "sourceId": "05-estimate",
-          "title": "Itemized repair assessment",
-          "category": "repair_estimate",
           "start": 6,
           "end": 6
         },
@@ -632,16 +632,16 @@
           "end": 9
         },
         {
-          "sourceId": "08-inspection",
-          "title": "Workshop damage inspection",
-          "category": "other",
+          "sourceId": "09-form-1099-a",
+          "title": "2025 Form 1099-A supplemental tax test",
+          "category": "tax_1099a",
           "start": 10,
           "end": 10
         },
         {
-          "sourceId": "09-form-1099-a",
-          "title": "2025 Form 1099-A supplemental tax test",
-          "category": "tax_1099a",
+          "sourceId": "08-inspection",
+          "title": "Workshop damage inspection",
+          "category": "other",
           "start": 11,
           "end": 11
         }
@@ -661,40 +661,40 @@
       "scenario": "animal-strike",
       "file": "packets/packet-09.pdf",
       "pages": 12,
-      "sha256": "34f023b291f660c1d39dd3859c27695f18bbc9c0f8e8387fd81ee7b04d47e4d5",
+      "sha256": "70c7491429f5a9297bb1a03dbf7b46346863a0108faf5554eb29f035658742db",
       "expectedDocuments": [
+        {
+          "sourceId": "05-estimate",
+          "title": "Itemized repair assessment",
+          "category": "repair_estimate",
+          "start": 1,
+          "end": 1
+        },
         {
           "sourceId": "01-card",
           "title": "Roadside membership card",
           "category": "id_document",
-          "start": 1,
-          "end": 1
+          "start": 2,
+          "end": 2
         },
         {
           "sourceId": "02-policy",
           "title": "Policy declarations and endorsements",
           "category": "other",
-          "start": 2,
-          "end": 3
+          "start": 3,
+          "end": 4
         },
         {
           "sourceId": "03-claim_form",
           "title": "Loss intake and assessment",
           "category": "other",
-          "start": 4,
-          "end": 5
+          "start": 5,
+          "end": 6
         },
         {
           "sourceId": "04-incident_report",
           "title": "Police incident record",
           "category": "other",
-          "start": 6,
-          "end": 6
-        },
-        {
-          "sourceId": "05-estimate",
-          "title": "Itemized repair assessment",
-          "category": "repair_estimate",
           "start": 7,
           "end": 7
         },
@@ -713,16 +713,16 @@
           "end": 10
         },
         {
-          "sourceId": "08-inspection",
-          "title": "Workshop damage inspection",
-          "category": "other",
+          "sourceId": "09-form-1099-a",
+          "title": "2025 Form 1099-A supplemental tax test",
+          "category": "tax_1099a",
           "start": 11,
           "end": 11
         },
         {
-          "sourceId": "09-form-1099-a",
-          "title": "2025 Form 1099-A supplemental tax test",
-          "category": "tax_1099a",
+          "sourceId": "08-inspection",
+          "title": "Workshop damage inspection",
+          "category": "other",
           "start": 12,
           "end": 12
         }
@@ -742,7 +742,7 @@
       "scenario": "commercial-delivery-downtime",
       "file": "packets/packet-10.pdf",
       "pages": 13,
-      "sha256": "7513ab3213ad9f6cc3f274e85d9a2c187cdd621c31abce47c7657b510a455e7c",
+      "sha256": "408b92ebe2d82646b8a381712143d92860cee9c6432bda69f8bf89350ac866c8",
       "expectedDocuments": [
         {
           "sourceId": "01-card",
