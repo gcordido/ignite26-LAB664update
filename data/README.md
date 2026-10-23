@@ -2,4 +2,27 @@
 
 <!-- IGNITE TEMPLATE PLACEHOLDER: remove this folder when the session needs no data files. -->
 
-Use this folder for sample data or inputs required by the session.
+Synthetic auto-insurance claim data for this lab, provided as ten complete
+claim packets and individual PDFs. All names and claim details are fictional.
+
+## Documents included
+
+- [Roadside membership cards (demo IDs)](documents/packet-01/01-card.pdf)
+- [Policy declarations and endorsements](documents/packet-01/02-policy.pdf)
+- [Claim forms and assessments](documents/packet-01/03-claim_form.pdf)
+- [Police and incident reports](documents/packet-01/04-incident_report.pdf)
+- [Repair estimates](documents/packet-01/05-estimate.pdf)
+- [Handwritten statements](documents/packet-01/06-handwriting.pdf)
+- [Towing invoices](documents/packet-03/07-invoice.pdf),
+  [rental invoices](documents/packet-01/07-invoice.pdf), and
+  [supporting quotes](documents/packet-08/07-invoice.pdf)
+- [Vehicle inspection reports](documents/packet-01/08-inspection.pdf)
+- [Supplemental Form 1099-A documents](documents/packet-01/09-form-1099-a.pdf)
+
+## Example repair estimate
+
+<a href="documents/packet-01/05-estimate.pdf">
+  <img src="example-repair-estimate.jpg" alt="Example synthetic repair estimate" width="480">
+</a>
+
+Select the image to open the sample PDF.
