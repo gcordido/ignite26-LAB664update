@@ -1,0 +1,442 @@
+{
+  "corpusId": "lab664-rental-ocr-comparison-v2",
+  "synthetic": true,
+  "description": "Fictional figure/table/OCR test corpus; not law, policy benefits or payment approval.",
+  "defaultIndexFormat": "pdf",
+  "applicabilityDateField": "loss_date",
+  "effectiveDateBounds": "inclusive",
+  "status": "local-artifacts-not-deployed",
+  "ingestOnly": "The eleven manifest pdf paths; not editable/, controls/, fixture or guides.",
+  "documents": [
+    {
+      "documentId": "TX-RENTAL-002",
+      "version": "2.0",
+      "documentType": "state_sop",
+      "states": [
+        "TX"
+      ],
+      "productScope": "Personal collision",
+      "benefit": "rental_reimbursement",
+      "effectiveFrom": "2024-01-01",
+      "effectiveThrough": "2026-12-31",
+      "pdf": "tx-rental-review-sop-v2.pdf",
+      "sha256": "989e10efa85a0318c3e7eaa77a3aae7d45f88b34e36c61da6d40862d6b6ef557",
+      "docx": "editable/tx-rental-review-sop-v2.docx",
+      "textControl": "controls/tx-rental-review-sop-v2-text-control.pdf",
+      "textControlSha256": "d29716a5a362c89917d96e0644a00940e2e21afd71556b25786ea7ef3b498c2b",
+      "ruleIds": [
+        "TX-R1",
+        "TX-R2",
+        "TX-R3",
+        "TX-R4",
+        "TX-R5"
+      ],
+      "requires": [
+        "SHARED-EVIDENCE-002"
+      ],
+      "routineAuthority": {
+        "dailyBaseRateUsd": "75.00",
+        "rentalDays": 7,
+        "inclusive": true,
+        "contractualBenefit": false
+      },
+      "rulePages": [
+        2,
+        3,
+        4
+      ],
+      "pdfTextLayer": "digital-text-with-intentional-blank-table-cells"
+    },
+    {
+      "documentId": "WA-RENTAL-002",
+      "version": "2.0",
+      "documentType": "state_sop",
+      "states": [
+        "WA"
+      ],
+      "productScope": "Personal collision",
+      "benefit": "rental_reimbursement",
+      "effectiveFrom": "2024-01-01",
+      "effectiveThrough": "2026-12-31",
+      "pdf": "wa-rental-review-sop-v2.pdf",
+      "sha256": "f9ec01eaa0b67ca0485347112f1a4addb1ea7f914e468553a676b58d7c1e38c9",
+      "docx": "editable/wa-rental-review-sop-v2.docx",
+      "textControl": "controls/wa-rental-review-sop-v2-text-control.pdf",
+      "textControlSha256": "afdb3fc42146089750cbe17aa3e556869ed61603472d574fab19c6e5bf8e63d9",
+      "ruleIds": [
+        "WA-R1",
+        "WA-R2",
+        "WA-R3",
+        "WA-R4",
+        "WA-R5"
+      ],
+      "requires": [
+        "SHARED-EVIDENCE-002"
+      ],
+      "routineAuthority": {
+        "dailyBaseRateUsd": "60.00",
+        "rentalDays": 5,
+        "inclusive": true,
+        "contractualBenefit": false
+      },
+      "rulePages": [
+        2,
+        3,
+        4
+      ],
+      "pdfTextLayer": "none"
+    },
+    {
+      "documentId": "AZ-RENTAL-002",
+      "version": "2.0",
+      "documentType": "state_sop",
+      "states": [
+        "AZ"
+      ],
+      "productScope": "Personal comprehensive / theft",
+      "benefit": "rental_reimbursement",
+      "effectiveFrom": "2024-01-01",
+      "effectiveThrough": "2026-12-31",
+      "pdf": "az-rental-review-sop-v2.pdf",
+      "sha256": "fa1096a3b183a70b5c361fa86d7b12f4f06cd0ffe79cbc505bc24b525cfa41fe",
+      "docx": "editable/az-rental-review-sop-v2.docx",
+      "textControl": "controls/az-rental-review-sop-v2-text-control.pdf",
+      "textControlSha256": "50b5d9cbc2f434b22f6c91dac7c99de15dec80cbb4a374894d12f1e3df799898",
+      "ruleIds": [
+        "AZ-R1",
+        "AZ-R2",
+        "AZ-R3",
+        "AZ-R4",
+        "AZ-R5"
+      ],
+      "requires": [
+        "SHARED-EVIDENCE-002"
+      ],
+      "routineAuthority": {
+        "dailyBaseRateUsd": "70.00",
+        "rentalDays": 5,
+        "inclusive": true,
+        "contractualBenefit": false
+      },
+      "rulePages": [
+        2,
+        3,
+        4,
+        5
+      ],
+      "pdfTextLayer": "digital-text-with-raster-eligibility-figure"
+    },
+    {
+      "documentId": "CO-RENTAL-002",
+      "version": "2.0",
+      "documentType": "state_sop",
+      "states": [
+        "CO"
+      ],
+      "productScope": "Personal comprehensive / hail",
+      "benefit": "rental_reimbursement",
+      "effectiveFrom": "2024-01-01",
+      "effectiveThrough": "2026-12-31",
+      "pdf": "co-rental-review-sop-v2.pdf",
+      "sha256": "6efd1efbfdb500520503e17d389c6debfb7b67fe5edb949caa376db91d497d68",
+      "docx": "editable/co-rental-review-sop-v2.docx",
+      "textControl": "controls/co-rental-review-sop-v2-text-control.pdf",
+      "textControlSha256": "3e7329c4e402ccc0051be88b3f61a4e662c44f527c6b1079358c51c5e01f716b",
+      "ruleIds": [
+        "CO-R1",
+        "CO-R2",
+        "CO-R3",
+        "CO-R4",
+        "CO-R5"
+      ],
+      "requires": [
+        "SHARED-EVIDENCE-002"
+      ],
+      "routineAuthority": {
+        "dailyBaseRateUsd": "80.00",
+        "rentalDays": 5,
+        "inclusive": true,
+        "contractualBenefit": false
+      },
+      "rulePages": [
+        2,
+        3,
+        4
+      ],
+      "pdfTextLayer": "routing-cover-only"
+    },
+    {
+      "documentId": "FL-RENTAL-002",
+      "version": "2.0",
+      "documentType": "state_sop",
+      "states": [
+        "FL"
+      ],
+      "productScope": "Personal collision",
+      "benefit": "rental_reimbursement",
+      "effectiveFrom": "2024-01-01",
+      "effectiveThrough": "2026-12-31",
+      "pdf": "fl-rental-review-sop-v2.pdf",
+      "sha256": "1e5798905228220e83296ff49098b859e5e2ec0890a656647743434f3b3ca332",
+      "docx": "editable/fl-rental-review-sop-v2.docx",
+      "textControl": "controls/fl-rental-review-sop-v2-text-control.pdf",
+      "textControlSha256": "75aadec61cb8c9478efd97a148cc841e83d00a8f67893e1a953c4a4b1d0c9672",
+      "ruleIds": [
+        "FL-R1",
+        "FL-R2",
+        "FL-R3",
+        "FL-R4",
+        "FL-R5"
+      ],
+      "requires": [
+        "SHARED-EVIDENCE-002"
+      ],
+      "routineAuthority": {
+        "dailyBaseRateUsd": "75.00",
+        "rentalDays": 7,
+        "inclusive": true,
+        "contractualBenefit": false
+      },
+      "rulePages": [
+        2,
+        3,
+        4
+      ],
+      "pdfTextLayer": "routing-cover-only"
+    },
+    {
+      "documentId": "IL-RENTAL-002",
+      "version": "2.0",
+      "documentType": "state_sop",
+      "states": [
+        "IL"
+      ],
+      "productScope": "Personal collision",
+      "benefit": "rental_reimbursement",
+      "effectiveFrom": "2024-01-01",
+      "effectiveThrough": "2026-12-31",
+      "pdf": "il-rental-review-sop-v2.pdf",
+      "sha256": "25c2629650e1581cb13d9188e89155ca69be9efc4edd2e76d43a68b0885fb210",
+      "docx": "editable/il-rental-review-sop-v2.docx",
+      "textControl": "controls/il-rental-review-sop-v2-text-control.pdf",
+      "textControlSha256": "0c3f9fe02de265dfc4b2694663b2bd99f5a3f65fc272e6c83f0ed23bca1df162",
+      "ruleIds": [
+        "IL-R1",
+        "IL-R2",
+        "IL-R3",
+        "IL-R4",
+        "IL-R5"
+      ],
+      "requires": [
+        "SHARED-EVIDENCE-002"
+      ],
+      "routineAuthority": {
+        "dailyBaseRateUsd": "80.00",
+        "rentalDays": 5,
+        "inclusive": true,
+        "contractualBenefit": false
+      },
+      "rulePages": [
+        2,
+        3,
+        4
+      ],
+      "pdfTextLayer": "routing-cover-only"
+    },
+    {
+      "documentId": "LA-RENTAL-002",
+      "version": "2.0",
+      "documentType": "state_sop",
+      "states": [
+        "LA"
+      ],
+      "productScope": "Personal comprehensive / flood",
+      "benefit": "rental_reimbursement",
+      "effectiveFrom": "2024-01-01",
+      "effectiveThrough": "2026-12-31",
+      "pdf": "la-rental-review-sop-v2.pdf",
+      "sha256": "7f24982d2c5c03a3a670a2dbd6f1ad4ce79a562faf84f599bb4cb17e307a4659",
+      "docx": "editable/la-rental-review-sop-v2.docx",
+      "textControl": "controls/la-rental-review-sop-v2-text-control.pdf",
+      "textControlSha256": "1173163ea242df58b33911f1028feb9bec808db2e4e68d4fe752c959b9ec4efb",
+      "ruleIds": [
+        "LA-R1",
+        "LA-R2",
+        "LA-R3",
+        "LA-R4",
+        "LA-R5"
+      ],
+      "requires": [
+        "SHARED-EVIDENCE-002"
+      ],
+      "routineAuthority": {
+        "dailyBaseRateUsd": "70.00",
+        "rentalDays": 5,
+        "inclusive": true,
+        "contractualBenefit": false
+      },
+      "rulePages": [
+        2,
+        3,
+        4
+      ],
+      "pdfTextLayer": "routing-cover-only"
+    },
+    {
+      "documentId": "CA-RENTAL-002",
+      "version": "2.0",
+      "documentType": "state_sop",
+      "states": [
+        "CA"
+      ],
+      "productScope": "Personal comprehensive / glass",
+      "benefit": "rental_reimbursement",
+      "effectiveFrom": "2024-01-01",
+      "effectiveThrough": "2026-12-31",
+      "pdf": "ca-rental-review-sop-v2.pdf",
+      "sha256": "1c3c81ba86648256342d27ce6fd43ac39fdfe42a21a09baf7399bb0ef46af045",
+      "docx": "editable/ca-rental-review-sop-v2.docx",
+      "textControl": "controls/ca-rental-review-sop-v2-text-control.pdf",
+      "textControlSha256": "bf1124054f291203e36bf2e26779e61f336aa73acd18710016ad5d92954a18de",
+      "ruleIds": [
+        "CA-R1",
+        "CA-R2",
+        "CA-R3",
+        "CA-R4",
+        "CA-R5"
+      ],
+      "requires": [
+        "SHARED-EVIDENCE-002"
+      ],
+      "routineAuthority": {
+        "dailyBaseRateUsd": "85.00",
+        "rentalDays": 3,
+        "inclusive": true,
+        "contractualBenefit": false
+      },
+      "rulePages": [
+        2,
+        3,
+        4
+      ],
+      "pdfTextLayer": "routing-cover-only"
+    },
+    {
+      "documentId": "NY-RENTAL-002",
+      "version": "2.0",
+      "documentType": "state_sop",
+      "states": [
+        "NY"
+      ],
+      "productScope": "Personal comprehensive / animal strike",
+      "benefit": "rental_reimbursement",
+      "effectiveFrom": "2024-01-01",
+      "effectiveThrough": "2026-12-31",
+      "pdf": "ny-rental-review-sop-v2.pdf",
+      "sha256": "54f1426891afada4dd7105574cd695c9895b228ee33e5a1b8e52f8be042a94bd",
+      "docx": "editable/ny-rental-review-sop-v2.docx",
+      "textControl": "controls/ny-rental-review-sop-v2-text-control.pdf",
+      "textControlSha256": "b74b967c961da52ba3ae6268f262e85b8d4cf33712254fa885a42c4af5cf9133",
+      "ruleIds": [
+        "NY-R1",
+        "NY-R2",
+        "NY-R3",
+        "NY-R4",
+        "NY-R5"
+      ],
+      "requires": [
+        "SHARED-EVIDENCE-002"
+      ],
+      "routineAuthority": {
+        "dailyBaseRateUsd": "75.00",
+        "rentalDays": 5,
+        "inclusive": true,
+        "contractualBenefit": false
+      },
+      "rulePages": [
+        2,
+        3,
+        4
+      ],
+      "pdfTextLayer": "routing-cover-only"
+    },
+    {
+      "documentId": "OH-RENTAL-002",
+      "version": "2.0",
+      "documentType": "state_sop",
+      "states": [
+        "OH"
+      ],
+      "productScope": "Commercial delivery with rental endorsement",
+      "benefit": "rental_reimbursement",
+      "effectiveFrom": "2024-01-01",
+      "effectiveThrough": "2026-12-31",
+      "pdf": "oh-rental-review-sop-v2.pdf",
+      "sha256": "34eacaae00e58c6a33b092a0433949f8be8fe47eb8b12089fa0a534f50327c1f",
+      "docx": "editable/oh-rental-review-sop-v2.docx",
+      "textControl": "controls/oh-rental-review-sop-v2-text-control.pdf",
+      "textControlSha256": "7b07e097c49a6571ec30cbb4476165b7554313b0728faeeedbe47c27803e77f3",
+      "ruleIds": [
+        "OH-R1",
+        "OH-R2",
+        "OH-R3",
+        "OH-R4",
+        "OH-R5"
+      ],
+      "requires": [
+        "SHARED-EVIDENCE-002"
+      ],
+      "routineAuthority": {
+        "dailyBaseRateUsd": "80.00",
+        "rentalDays": 5,
+        "inclusive": true,
+        "contractualBenefit": false
+      },
+      "rulePages": [
+        2,
+        3,
+        4
+      ],
+      "pdfTextLayer": "routing-cover-only"
+    },
+    {
+      "documentId": "SHARED-EVIDENCE-002",
+      "version": "2.0",
+      "documentType": "shared_standard",
+      "states": [
+        "TX",
+        "WA",
+        "AZ",
+        "CO",
+        "FL",
+        "IL",
+        "LA",
+        "CA",
+        "NY",
+        "OH"
+      ],
+      "benefit": "rental_reimbursement",
+      "effectiveFrom": "2024-01-01",
+      "effectiveThrough": "2026-12-31",
+      "pdf": "shared-rental-evidence-standard-v2.pdf",
+      "sha256": "0985f27475a260e65df2e3ee09f38dfd1676afed16914519edb4678cd548fc24",
+      "docx": "editable/shared-rental-evidence-standard-v2.docx",
+      "textControl": "controls/shared-rental-evidence-standard-v2-text-control.pdf",
+      "textControlSha256": "e096ce5573a6c03e90c9ee28b6a399f587fb2e2df82c36dcc42ac2da8f31e779",
+      "ruleIds": [
+        "E-01",
+        "E-02",
+        "E-03",
+        "E-04",
+        "E-05",
+        "E-06"
+      ],
+      "rulePages": [
+        2,
+        3,
+        4
+      ],
+      "pdfTextLayer": "routing-cover-only"
+    }
+  ]
+}

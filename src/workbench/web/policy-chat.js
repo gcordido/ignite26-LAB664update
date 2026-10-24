@@ -1,0 +1,142 @@
+const escapeHtml = (value) => String(value).replace(/[&<>"']/g, (character) =>
+  ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[character]);
+
+export function chatMessageHtml(text, citations = []) {
+  const sources = citations.map((citation) => {
+    const label = `${citation.DocumentId} · ${citation.RuleId} · ${citation.Section}`;
+    return /^\/data\/policies\/rental\/(?:ocr-comparison-v2\/)?[a-z0-9-]+\.pdf#page=[1-9]\d*$/.test(citation.href ?? "")
+      ? `<p><a href="${escapeHtml(citation.href)}" data-rule="${escapeHtml(citation.RuleId)}">${escapeHtml(label)}</a></p>`
+      : `<p>${escapeHtml(label)} — source not verified</p>`;
+  }).join("");
+  return `<div style="white-space:pre-wrap;overflow-wrap:anywhere">${escapeHtml(text)}</div>${sources}`;
+}
+
+export function resultChatText(result) {
+  return result.Checks.map((check, index) =>
+    `${index + 1}. ${check.Check}\n${check.Outcome === "NotApplicable" ? "Not applicable" : check.ReviewRequired ? "Review required" : "Satisfied"}\n` +
+    `Expected: ${check.ExpectedValue}\nActual: ${check.ActualValue}\nReason: ${check.Reason}`).join("\n\n");
+}
+
+export function createPolicyChat({ container, api, onSource, onError }) {
+  const widgets = new Map();
+  let selectionKey = "";
+  let generation = 0;
+  function reset() {
+    generation++;
+    selectionKey = "";
+    widgets.clear();
+    container.textContent = "Select a reviewed case to ask follow-up questions.";
+  }
+  async function show(selection) {
+    const key = JSON.stringify(selection);
+    selectionKey = key;
+    const revision = generation;
+    for (const [otherKey, widget] of widgets) widget.hidden = otherKey !== key;
+    if (widgets.has(key)) return;
+    if (!widgets.size) container.replaceChildren();
+    const holder = document.createElement("div");
+    holder.className = "policy-chat-case";
+    holder.textContent = "Loading the original prompt and saved policy result…";
+    container.append(holder);
+    widgets.set(key, holder);
+    try {
+      const context = await api(`policy/chat?mode=${encodeURIComponent(selection.mode)}&packetId=${encodeURIComponent(selection.packetId)}&runId=${encodeURIComponent(selection.runId)}`);
+      await loadComponent();
+      if (revision !== generation) return;
+      const heading = document.createElement("h2");
+      heading.textContent = `Policy chat · ${selection.packetId}`;
+      const reload = document.createElement("button");
+      reload.className = "secondary";
+      reload.textContent = "Reload chat";
+      reload.onclick = () => {
+        widgets.delete(key);
+        holder.remove();
+        show(selection).catch(onError);
+      };
+      const notice = document.createElement("p");
+      notice.className = "muted";
+      notice.textContent = `${context.agent.indexName ?? "No policy retrieval"}. ` +
+        "Follow-ups use Azure and may be billed. Chat does not change the saved checks. History lasts for this private session.";
+      const original = document.createElement("details");
+      const summary = document.createElement("summary");
+      summary.textContent = "Exact original prompt and claim fields";
+      const prompt = document.createElement("pre");
+      prompt.textContent = context.prompt;
+      original.append(summary, prompt);
+      const chat = document.createElement("deep-chat");
+      chat.setAttribute("aria-label", "Policy review follow-up conversation");
+      const citations = [...context.citations.flat(), ...context.replies.flatMap((reply) => reply.citations)];
+      const originalSources = context.citations.flat();
+      chat.history = [
+        { role: "user", html: `<details><summary>Original policy-review prompt and claim fields</summary>${chatMessageHtml(context.prompt)}</details>` },
+        { role: "ai", html: chatMessageHtml(resultChatText(context.result), originalSources) },
+        ...context.messages.slice(2).map((message, index) => ({
+          role: message.role === "assistant" ? "ai" : "user",
+          html: chatMessageHtml(message.content, message.role === "assistant"
+            ? context.replies[Math.floor(index / 2)]?.citations ?? [] : []),
+        })),
+      ];
+      chat.chatStyle = { width: "100%", height: "100%", border: "none", backgroundColor: "#fff", fontFamily: "Segoe UI, sans-serif" };
+      chat.messageStyles = { default: { shared: { bubble: { maxWidth: "96%", fontSize: "13px" } } } };
+      chat.textInput = { placeholder: { text: "Ask about this case or a policy rule…" } };
+      chat.requestBodyLimits = { maxMessages: 1 };
+      chat.remarkable = { html: false };
+      chat.errorMessages = { displayServiceErrorMessages: true };
+      chat.connect = { handler: async (body, signals) => {
+        reload.disabled = true;
+        try {
+          const message = body.messages?.at(-1)?.text;
+          if (typeof message !== "string" || !message.trim()) throw new Error("Enter a follow-up question.");
+          const reply = await api("policy/chat", { mode: selection.mode, packetId: selection.packetId,
+            runId: selection.runId, contextId: context.contextId, message, live: true });
+          citations.push(...reply.citations);
+          await signals.onResponse({ html: chatMessageHtml(reply.text, reply.citations) });
+        } catch (error) {
+          await signals.onResponse({ error: error instanceof Error ? error.message : String(error) });
+        } finally { reload.disabled = false; signals.onClose(); }
+      } };
+      let listening = false;
+      chat.onComponentRender = () => {
+        if (listening || !chat.shadowRoot) return;
+        listening = true;
+        chat.shadowRoot?.addEventListener("click", (event) => {
+          const link = event.target instanceof Element ? event.target.closest("a") : null;
+          if (!link) return;
+          event.preventDefault();
+          const citation = citations.find((value) => value.href === link.getAttribute("href") &&
+            value.RuleId === link.getAttribute("data-rule"));
+          if (citation?.href) onSource(citation, link).catch(onError);
+        });
+      };
+      const toolbar = document.createElement("div");
+      toolbar.className = "actions";
+      toolbar.append(heading, reload);
+      holder.replaceChildren(toolbar, notice, original, chat);
+      holder.hidden = selectionKey !== key;
+    } catch (error) {
+      if (revision !== generation) return;
+      holder.replaceChildren();
+      const message = document.createElement("p");
+      message.className = "error";
+      message.textContent = error instanceof Error ? error.message : String(error);
+      const retry = document.createElement("button");
+      retry.textContent = "Reload chat";
+      retry.onclick = () => {
+        widgets.delete(key);
+        holder.remove();
+        show(selection).catch(onError);
+      };
+      holder.append(message, retry);
+    }
+  }
+  return { show, reset };
+}
+
+let component;
+function loadComponent() {
+  if (!component) component = import("/vendor/deep-chat/deepChat.bundle.js").catch((error) => {
+    component = undefined;
+    throw error;
+  });
+  return component;
+}

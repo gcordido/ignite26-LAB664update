@@ -42,6 +42,7 @@
         </div>
       </div>
       <p id="error" class="error" role="alert" hidden></p>
+      <p id="session-status" class="muted" role="status"></p>
       <dialog id="run-confirmation">
         <h2>Run live?</h2>
         <p id="confirm-summary"></p>
@@ -75,8 +76,21 @@
             <button data-view="rental_invoice" aria-pressed="false" hidden>
               Rental Invoice
             </button>
+            <button data-view="policy" aria-pressed="false">
+              Policy checks
+            </button>
           </div>
           <span id="origin" class="badge"></span>
+        </div>
+        <div id="policy-toolbar" hidden>
+          <div class="actions">
+            <label for="policy-mode">Policy retrieval</label>
+            <select id="policy-mode" disabled>
+              <option value="">Loading policy configuration...</option>
+            </select>
+            <button id="policy-run" disabled>Run policy checks</button>
+          </div>
+          <p id="policy-status" class="muted" role="status"></p>
         </div>
         <div class="workspace">
           <div class="table-area">
@@ -125,6 +139,28 @@
         title="Drag to resize preview"
       ></div>
       <aside id="preview" aria-label="Document preview">
+        <div id="policy-pane-modes" class="actions" aria-label="Policy sidebar mode" hidden>
+          <button id="policy-result-mode" aria-pressed="true">Result</button>
+          <button id="policy-chat-mode" class="secondary" aria-pressed="false">Chat</button>
+        </div>
+        <div id="policy-source-toolbar" hidden>
+          <button id="policy-source-back" class="secondary">Back to policy checks</button>
+          <span id="policy-source-title"></span>
+        </div>
+        <div id="policy-document-tabs" role="tablist" aria-label="Policy document representation" hidden>
+          <button id="policy-document-pdf-tab" role="tab" data-representation="pdf" aria-selected="true" aria-controls="pdf-scroll">Document</button>
+          <button id="policy-document-layout-tab" role="tab" data-representation="layout" aria-selected="false" aria-controls="policy-document-content" tabindex="-1" class="secondary">CU Layout</button>
+          <button id="policy-document-digital-tab" role="tab" data-representation="digital" aria-selected="false" aria-controls="policy-document-content" tabindex="-1" class="secondary">Digital parse</button>
+        </div>
+        <p id="policy-document-status" class="muted" role="status" hidden></p>
+        <section id="policy-document-content" role="tabpanel" aria-label="Extracted policy document" hidden></section>
+        <section id="policy-output" aria-label="Policy check output" hidden>
+          <h2>Policy checks</h2>
+          <p>Select a case to see the agent's checks, reasons and rule sources.</p>
+        </section>
+        <section id="policy-chat" aria-label="Policy check chat" hidden>
+          <p>Select a reviewed case to ask follow-up questions.</p>
+        </section>
         <div id="pdf-scroll" title="Mouse wheel to zoom; drag to pan">
           <div id="preview-empty" aria-hidden="true">
             <svg viewBox="0 0 48 48">
@@ -211,6 +247,17 @@
         </div>
         <p id="pdf-status" role="status" hidden></p>
       </aside>
+      <dialog id="policy-confirmation">
+        <h2>Run policy checks?</h2>
+        <p id="policy-confirm-summary"></p>
+        <p>Missing claim summaries are extracted once with Content Understanding.
+          Each uncached case is then sent to the selected policy agent.
+          Azure charges apply. Existing matching results are reused.</p>
+        <div class="actions">
+          <button id="confirm-policy">Run</button>
+          <button id="cancel-policy" class="secondary">Cancel</button>
+        </div>
+      </dialog>
       <dialog id="array-dialog">
         <div class="dialog-toolbar">
           <h2 id="array-title"></h2>

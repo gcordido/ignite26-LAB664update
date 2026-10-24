@@ -72,9 +72,13 @@ export function splitPreview(main, handle) {
     return left;
   };
   const layout = () => {
-    if (window.innerWidth <= 1000) return;
-    main.style.height = `${Math.max(360, window.innerHeight - main.offsetTop)}px`;
-    apply(contentWidth() * ratio);
+    if (window.innerWidth <= 1000) {
+      main.style.removeProperty("height");
+      main.style.removeProperty("--left-pane");
+    } else {
+      main.style.height = `${Math.max(360, window.innerHeight - main.offsetTop)}px`;
+      apply(contentWidth() * ratio);
+    }
     main.dispatchEvent(new Event("pane-resize"));
   };
   handle.onpointerdown = (event) => {

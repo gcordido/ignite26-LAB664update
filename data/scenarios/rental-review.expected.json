@@ -1,0 +1,126 @@
+{
+  "synthetic": true,
+  "purpose": "Baseline evaluation fixtures; do not ingest into the policy knowledge index.",
+  "sourceRun": "6e3b62d2-abe5-4ea7-9898-d2d11f4dc5f1",
+  "sourceDatasetHash": "94f17cd9ac8ecf44c39a92c2244c6546e5a81d297d339689c61b29b0148c9bf2",
+  "sourceStatus": "Historical v1 rule-set expectations checked against the included cached CU evidence, not a record of an executed agent evaluation. Use rental-review-v2.expected.json for the current corpus.",
+  "assumptions": [
+    "Normalization confirms loss state, product, collision coverage and loss date with packet evidence.",
+    "No additional repair downtime, prior-usage or authorization evidence is supplied.",
+    "Amounts are decimal USD strings.",
+    "Pass is check-specific, never approval of coverage or payment."
+  ],
+  "scenarios": [
+    {
+      "packetId": "packet-01",
+      "stateSop": "TX-RENTAL-001",
+      "version": "1.0",
+      "sharedStandard": "SHARED-EVIDENCE-001",
+      "packetPdf": "../packets/packet-01.pdf",
+      "cuResult": "../results/6e3b62d2-abe5-4ea7-9898-d2d11f4dc5f1/packet-01.cu.json",
+      "checks": [
+        {
+          "ruleId": "TX-R1",
+          "status": "Review required",
+          "packetPages": [2, 3, 5, 6, 8, 12],
+          "reason": "Drivable with repairs only scheduled; actual repair-related loss of use is not established."
+        },
+        {
+          "ruleId": "TX-R2",
+          "status": "Pass",
+          "packetPages": [2, 3, 10, 11],
+          "reason": "54.00 daily base is within the 85.00 policy cap and 75.00 routine-authority threshold."
+        },
+        {
+          "ruleId": "TX-R3",
+          "status": "Review required",
+          "packetPages": [3, 6, 8, 10, 11, 12],
+          "reason": "Four days meets the numeric threshold, but actual downtime alignment and prior rental usage are not established."
+        },
+        {
+          "ruleId": "TX-R4",
+          "status": "Pass",
+          "packetPages": [2, 3, 11],
+          "reason": "4 x 54.00 = 216.00; plus 21.60 identified mandatory rental tax = 237.60. Arithmetic and stated policy tax treatment match; this is not legal tax-rate verification."
+        },
+        {
+          "ruleId": "TX-R5",
+          "status": "Review required",
+          "packetPages": [10, 11],
+          "reason": "Final return/billing evidence does not establish insurer authorization; the final bill states None."
+        }
+      ],
+      "billedAmounts": {
+        "currency": "USD",
+        "days": 4,
+        "dailyBase": "54.00",
+        "base": "216.00",
+        "tax": "21.60",
+        "total": "237.60"
+      },
+      "overallStatus": "Review required",
+      "routing": [
+        "Claim adjuster: obtain insurer authorization and prior rental usage for the loss.",
+        "Repair facility: provide actual intake/release and supported downtime."
+      ]
+    },
+    {
+      "packetId": "packet-02",
+      "stateSop": "WA-RENTAL-001",
+      "version": "1.0",
+      "sharedStandard": "SHARED-EVIDENCE-001",
+      "packetPdf": "../packets/packet-02.pdf",
+      "cuResult": "../results/6e3b62d2-abe5-4ea7-9898-d2d11f4dc5f1/packet-02.cu.json",
+      "checks": [
+        {
+          "ruleId": "WA-R1",
+          "status": "Review required",
+          "packetPages": [2, 3, 4, 6, 10],
+          "reason": "Drivable vehicle; scheduled repair is not explicit confirmation of actual downtime."
+        },
+        {
+          "ruleId": "WA-R2",
+          "status": "Review required",
+          "packetPages": [2, 3, 8, 9],
+          "reason": "61.00 daily base is within the 85.00 policy cap but exceeds 60.00 routine authority; no approved exception is established."
+        },
+        {
+          "ruleId": "WA-R3",
+          "status": "Review required",
+          "packetPages": [2, 3, 6, 8, 9, 10],
+          "reason": "Five days meets the numeric threshold, but actual downtime alignment and prior rental usage are not established."
+        },
+        {
+          "ruleId": "WA-R4",
+          "status": "Review required",
+          "packetPages": [2, 3, 9],
+          "reason": "Arithmetic reconciles, but mandatory status/basis of the 5.49 quoted local rental levies requires supplier clarification."
+        },
+        {
+          "ruleId": "WA-R5",
+          "status": "Review required",
+          "packetPages": [8, 9],
+          "reason": "No insurer authorization; above-threshold rate also needs supervisor exception sign-off."
+        }
+      ],
+      "billedAmounts": {
+        "currency": "USD",
+        "days": 5,
+        "dailyBase": "61.00",
+        "base": "305.00",
+        "quotedRetailSalesTax": "30.50",
+        "stateRentalCarTax": "18.00",
+        "quotedLocalRentalLevies": "5.49",
+        "taxesTotal": "53.99",
+        "total": "358.99"
+      },
+      "overallStatus": "Review required",
+      "routing": [
+        "Claim adjuster: obtain insurer authorization and prior rental usage for the loss.",
+        "Repair facility: explicitly confirm actual unavailable dates.",
+        "Rental supervisor: review the 61.00 daily rate exception.",
+        "Rental supplier: clarify local levy basis and mandatory status."
+      ]
+    }
+  ]
+}

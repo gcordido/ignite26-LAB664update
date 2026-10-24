@@ -12,6 +12,11 @@ import {
 } from "./config.ts";
 import { CuClient, CuOperationError } from "./cu.ts";
 import { verifyAnalyzer } from "./definitions.ts";
+import { packetJson } from "./packet-json.ts";
+import { PolicyService, type PolicyJob } from "./policy-service.ts";
+import { modeSchema } from "./policy-core.ts";
+import { type PolicyChatState } from "./policy-chat.ts";
+import { PolicyDocuments, representationSchema } from "./policy-documents.ts";
 import {
   Cache,
   dataset,
@@ -25,17 +30,28 @@ import {
 export function createApp(
   client: Pick<CuClient, "detail" | "analyze"> &
     Partial<Pick<CuClient, "list">> = new CuClient(),
-  options: { cache?: Cache } = {},
+  options: { cache?: Cache; policy?: PolicyService; documents?: PolicyDocuments } = {},
 ) {
   const app = express();
   app.disable("x-powered-by");
   app.use(express.json({ limit: "20kb" }));
   app.get(["/", "/index.html"], (_req, res) =>
-    res.sendFile(path.join(root, "web", "workbench.html")),
+    res.sendFile("workbench.html", { root: path.join(root, "web") }),
   );
   app.get("/lab.html", (_req, res) =>
-    res.sendFile(path.join(repositoryRoot, "instructions", "lab.html")),
+    res.sendFile("lab.html", { root: path.join(repositoryRoot, "instructions") }),
   );
+  for (const [folder, filename] of [
+    ["docs", "policy-checks.md"],
+    ["docs", "policy-setup.md"],
+    ["infra", "README.md"],
+    ["infra", "policy-framework-agent.py"],
+    ["infra", "policy-agent-framework-setup.ipynb"],
+  ]) {
+    app.get(`/${folder}/${filename}`, (_req, res) =>
+      res.sendFile(filename, { root: path.join(repositoryRoot, folder) }),
+    );
+  }
   app.use(
     "/data",
     express.static(dataRoot, { dotfiles: "deny", index: false }),
@@ -48,12 +64,22 @@ export function createApp(
     }),
   );
   app.use(
+    "/vendor/deep-chat",
+    express.static(path.join(root, "node_modules", "deep-chat", "dist"), {
+      dotfiles: "deny", index: false,
+    }),
+  );
+  app.use(
     "/vendor/pdfjs",
     express.static(path.join(root, "node_modules", "pdfjs-dist", "build"), {
       dotfiles: "deny",
       index: false,
     }),
   );
+  app.get("/vendor/marked.js", (_req, res) =>
+    res.sendFile("marked.esm.js", { root: path.join(root, "node_modules", "marked", "lib") }));
+  app.get("/vendor/purify.js", (_req, res) =>
+    res.sendFile("purify.es.mjs", { root: path.join(root, "node_modules", "dompurify", "dist") }));
   app.use(
     "/vendor/pdfjs-fonts",
     express.static(
@@ -70,9 +96,14 @@ export function createApp(
     run?: Run;
     busy: boolean;
     error?: string;
+    policyJob?: PolicyJob;
+    policyChats?: Map<string, PolicyChatState>;
+    chatBusy?: boolean;
   };
   const sessions = new Map<string, Session>();
   const cache = options.cache ?? new Cache();
+  const policy = options.policy ?? new PolicyService();
+  const documents = options.documents ?? new PolicyDocuments();
   let batchActive = false;
   function session(req: Request) {
     const id = req.header("x-labmachine-session");
@@ -93,9 +124,17 @@ export function createApp(
       endpoint: configuration().endpoint,
     }),
   );
-  app.post("/api/session", (_req, res) => {
+  app.post("/api/session", (req, res) => {
+    const existingId = req.header("x-labmachine-session");
+    const existing = existingId ? sessions.get(existingId) : undefined;
+    if (existing) {
+      existing.touched = Date.now();
+      res.json({ sessionId: existingId, runId: existing.run?.id,
+        policyMode: existing.policyJob?.mode });
+      return;
+    }
     for (const [id, value] of sessions)
-      if (!value.busy && Date.now() - value.touched > 60 * 60_000)
+      if (!value.busy && !value.chatBusy && Date.now() - value.touched > 60 * 60_000)
         sessions.delete(id);
     if (sessions.size >= 20)
       throw new LabError(
@@ -134,7 +173,7 @@ export function createApp(
   });
   app.post("/api/connect", async (req, res) => {
     const s = session(req);
-    if (s.busy) throw new LabError(409, "Wait for current analysis.");
+    if (s.busy || s.chatBusy) throw new LabError(409, "Wait for the current analysis or chat.");
     const { analyzerId } = z
       .object({
         analyzerId: z.string().regex(/^[A-Za-z0-9_-]{3,64}$/),
@@ -153,9 +192,131 @@ export function createApp(
     session(req);
     res.json(await cache.list());
   });
+  app.get("/api/policy/status", async (req, res) => {
+    session(req);
+    res.json(await policy.status());
+  });
+  const documentSelection = z.object({
+    file: z.string().max(180), mode: representationSchema,
+  }).strict();
+  app.get("/api/policy/document", async (req, res) => {
+    session(req);
+    const { file, mode } = documentSelection.parse(req.query);
+    res.json(await documents.get(file, mode));
+  });
+  app.post("/api/policy/document", async (req, res) => {
+    session(req);
+    const { file, mode } = documentSelection.extend({ live: z.literal(true) }).parse(req.body);
+    res.json(await documents.get(file, mode, true));
+  });
+  const chatSelection = z.object({
+    mode: modeSchema, packetId: z.string().regex(/^packet-\d{2}$/), runId: z.string().uuid(),
+  });
+  async function chatContext(s: Session, mode: z.infer<typeof modeSchema>, packetId: string) {
+    if (!s.run) throw new LabError(409, "Load Content Understanding results first.");
+    const run = s.run;
+    const context = await policy.chatContext(run, mode, packetId, (id) => cache.raw(run.id, id));
+    s.policyChats ??= new Map();
+    let state = s.policyChats.get(context.contextId);
+    if (!state) {
+      if (s.policyChats.size >= 30) throw new LabError(409, "Chat limit reached for this private session. Reload to start a new session.");
+      state = { contextId: context.contextId, busy: false, replies: [], messages: [
+        { role: "user", content: context.prompt },
+        { role: "assistant", content: JSON.stringify(context.result) },
+      ] };
+      s.policyChats.set(context.contextId, state);
+    }
+    return { context, state };
+  }
+  app.get("/api/policy/chat", async (req, res) => {
+    const s = session(req);
+    const { mode, packetId, runId } = chatSelection.parse(req.query);
+    if (s.run?.id !== runId) throw new LabError(409, "The selected CU run changed. Reload this chat.");
+    const { context, state } = await chatContext(s, mode, packetId);
+    res.json({ ...context, messages: state.messages, replies: state.replies, busy: state.busy });
+  });
+  app.post("/api/policy/chat", async (req, res) => {
+    const s = session(req);
+    const { mode, packetId, runId, contextId, message } = chatSelection.extend({
+      contextId: z.string().regex(/^[a-f0-9]{64}$/),
+      message: z.string().trim().min(1).max(6000), live: z.literal(true),
+    }).strict().parse(req.body);
+    if (s.busy || s.chatBusy) throw new LabError(409, "Wait for the current policy request.");
+    if (s.run?.id !== runId) throw new LabError(409, "The selected CU run changed. Reload this chat.");
+    s.chatBusy = true;
+    try {
+      const { context, state } = await chatContext(s, mode, packetId);
+      if (context.contextId !== contextId) throw new LabError(409, "Claim, result or agent changed. Reload this chat.");
+      if (state.messages.length >= 42) throw new LabError(409, "This chat reached 20 follow-ups. Start a new private session to continue.");
+      state.busy = true;
+      try {
+        const reply = await policy.followup(mode, message, state.messages, context.agent);
+        state.messages.push({ role: "user", content: message },
+          { role: "assistant", content: reply.text });
+        state.replies.push(reply);
+        res.json(reply);
+      } finally { state.busy = false; }
+    } catch (error) {
+      console.error(JSON.stringify({ event: "policy_chat_failed", message: String(error) }));
+      throw error;
+    } finally { s.chatBusy = false; }
+  });
+  app.get("/api/policy/results", async (req, res) => {
+    const s = session(req);
+    if (!s.run) throw new LabError(409, "Load Content Understanding results first.");
+    const mode = modeSchema.parse(req.query.mode);
+    const readiness = await policy.status();
+    if (!readiness.configured) {
+      res.json({ runId: s.run.id, mode, status: "completed",
+        configurationMessage: readiness.message,
+        items: s.run.items.map(({ id }) => ({ id, status: "not run" })) });
+      return;
+    }
+    if (s.policyJob?.runId === s.run.id && s.policyJob.mode === mode && s.policyJob.status === "running") {
+      res.json(s.policyJob);
+      return;
+    }
+    const run = s.run;
+    const items = await policy.snapshot(run, mode, (id) => cache.raw(run.id, id));
+    if (s.policyJob?.runId === run.id && s.policyJob.mode === mode)
+      for (const item of s.policyJob.items) {
+        const index = items.findIndex((value) => value.id === item.id);
+        if (index < 0) continue;
+        if (item.status === "failed" && items[index].status !== "completed") items[index] = item;
+        else if (item.inputHash === items[index].inputHash &&
+          item.provider === items[index].provider && item.indexName === items[index].indexName)
+          items[index].cached = item.cached;
+      }
+    res.json({ runId: run.id, mode, status: "completed", items });
+  });
+  app.post("/api/policy/batch", async (req, res) => {
+    const s = session(req);
+    const { mode } = z.object({ mode: modeSchema, live: z.literal(true) }).parse(req.body);
+    if (!s.run) throw new LabError(409, "Load Content Understanding results first.");
+    if (s.policyJob?.status === "running" && s.policyJob.runId === s.run.id && s.policyJob.mode === mode) {
+      res.status(202).json(s.policyJob);
+      return;
+    }
+    if (s.busy || s.chatBusy) throw new LabError(409, "Wait for the current batch or chat.");
+    s.busy = true;
+    const run = s.run;
+    try {
+      const { job, task } = await policy.start(run, mode, (id) => cache.raw(run.id, id));
+      s.policyJob = job;
+      void task.catch((error) => {
+        console.error(JSON.stringify({ event: "policy_batch_failed", message: String(error) }));
+        job.status = "completed";
+        for (const item of job.items) if (!["completed", "failed"].includes(item.status)) {
+          item.status = "failed";
+          item.error = "Policy batch stopped. Check the server error log.";
+        }
+      }).finally(() => { s.busy = false; });
+      res.status(202).json(job);
+    } catch (error) { s.busy = false; throw error; }
+  });
   app.post("/api/cache/load", async (req, res) => {
     const s = session(req);
-    if (s.busy) throw new LabError(409, "Wait for the current analysis.");
+    if (s.busy || s.chatBusy) throw new LabError(409, "Wait for the current analysis or chat.");
     const { runId } = z.object({ runId: z.string().uuid() }).parse(req.body);
     const run = await cache.load(runId);
     const data = await dataset();
@@ -189,10 +350,34 @@ export function createApp(
       );
     const response = await cache.raw(s.run.id, packetId);
     try {
+      const review = summarize(response, packet, s.run.analyzer.mode);
+      let exportValue: ReturnType<typeof packetJson> | null = null;
+      let packetJsonError: string | undefined;
+      let markdown: string | null = null;
+      let claimSummaryPrepared = false;
+      try {
+        exportValue = packetJson(response, packet, s.run, review);
+        markdown = await policy.markdown(s.run, packet, response);
+        claimSummaryPrepared = await policy.summaryPrepared(packet);
+      } catch (error) {
+        markdown = null;
+        packetJsonError = error instanceof Error ? error.message : String(error);
+        console.error(
+          JSON.stringify({
+            event: "lab_packet_export_failed",
+            packetId,
+            message: packetJsonError,
+          }),
+        );
+      }
       res.json({
         packet,
         response,
-        review: summarize(response, packet, s.run.analyzer.mode),
+        review,
+        packetJson: exportValue,
+        packetMarkdown: markdown,
+        claimSummaryPrepared,
+        packetJsonError,
       });
     } catch (error) {
       if (!(error instanceof LabError) || error.status !== 422) throw error;
@@ -229,7 +414,7 @@ export function createApp(
     z.object({ live: z.literal(true) }).parse(req.body);
     if (!s.analyzer)
       throw new LabError(409, "Connect an existing Studio analyzer first.");
-    if (batchActive || s.busy)
+    if (batchActive || s.busy || s.chatBusy)
       throw new LabError(
         409,
         "A live analysis is already running. Parallel batches are disabled to prevent double charges.",

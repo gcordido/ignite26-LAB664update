@@ -1,10 +1,16 @@
 [CmdletBinding()]
-param()
+param(
+    [string]$PythonExecutable = 'python',
+    [string]$NpmRegistry,
+    [string]$PythonIndexUrl
+)
 
 $ErrorActionPreference = 'Stop'
 $repositoryRoot = Split-Path -Parent $PSScriptRoot
 $tools = Join-Path $repositoryRoot '.tools'
 $portableNode = Join-Path $tools 'node'
+$policyEnvironment = Join-Path $tools 'policy-venv'
+$policyPython = Join-Path $policyEnvironment 'Scripts\python.exe'
 
 function Update-ToolPath {
     $env:Path = "$portableNode;$env:Path;$([Environment]::GetEnvironmentVariable('Path', 'Machine'));$([Environment]::GetEnvironmentVariable('Path', 'User'))"
@@ -14,7 +20,7 @@ Update-ToolPath
 $nodeReady = $false
 if (Get-Command node.exe -ErrorAction SilentlyContinue) {
     & node.exe -e "process.exit(Number(process.versions.node.split('.')[0]) > 22 || (Number(process.versions.node.split('.')[0]) === 22 && Number(process.versions.node.split('.')[1]) >= 12) ? 0 : 1)"
-    $nodeReady = $LASTEXITCODE -eq 0
+    $nodeReady = $LASTEXITCODE -eq 0 -and [bool](Get-Command npm.cmd -ErrorAction SilentlyContinue)
 }
 if (-not $nodeReady) {
     if ($env:PROCESSOR_ARCHITECTURE -ne 'AMD64') {
@@ -40,7 +46,12 @@ if (-not $nodeReady) {
         throw 'Node download checksum mismatch; the archive was not installed.'
     }
     Expand-Archive -LiteralPath $zip -DestinationPath $tools -Force
-    Move-Item -LiteralPath (Join-Path $tools $name) -Destination $portableNode
+    if (Test-Path -LiteralPath $portableNode) {
+        Copy-Item -Path (Join-Path $tools "$name\*") -Destination $portableNode -Recurse -Force
+    }
+    else {
+        Move-Item -LiteralPath (Join-Path $tools $name) -Destination $portableNode
+    }
     Remove-Item -LiteralPath $zip
     Update-ToolPath
 }
@@ -58,14 +69,44 @@ if (-not (Get-Command az.cmd -ErrorAction SilentlyContinue)) {
     }
 }
 
+if (-not (Get-Command $PythonExecutable -ErrorAction SilentlyContinue)) {
+    throw 'Python is missing. Install Python 3.10 or later with pip and venv, then rerun setup.ps1. Use -PythonExecutable with its full python.exe path if needed.'
+}
+& $PythonExecutable -c "import sys; sys.exit(0 if sys.version_info >= (3, 10) else 1)"
+if ($LASTEXITCODE -ne 0) { throw 'Policy checks require Python 3.10 or later. Set -PythonExecutable to a supported python.exe.' }
+if (-not (Test-Path -LiteralPath $policyPython)) {
+    Write-Host 'Creating the local policy agent Python environment...'
+    & $PythonExecutable -m venv $policyEnvironment
+    if ($LASTEXITCODE -ne 0) { throw "Python environment creation failed (exit $LASTEXITCODE). Check that Python includes venv." }
+}
+$pipArguments = @('-m', 'pip', 'install', '-r', (Join-Path $PSScriptRoot 'requirements-policy-agent-framework.txt'))
+if ($PythonIndexUrl) { $pipArguments += @('--index-url', $PythonIndexUrl) }
+Write-Host 'Installing Python Agent Framework and Azure Search dependencies...'
+& $policyPython @pipArguments
+if ($LASTEXITCODE -ne 0) {
+    throw "Python dependency installation failed (exit $LASTEXITCODE). Check the configured pip index and access to the pinned versions. Use -PythonIndexUrl only with an approved package index."
+}
+& $policyPython -m pip check
+if ($LASTEXITCODE -ne 0) { throw "Python dependencies are incompatible (exit $LASTEXITCODE)." }
+& $policyPython -c "from agent_framework import Agent, Message, tool; from agent_framework.openai import OpenAIChatClient; from azure.identity import AzureCliCredential; from azure.search.documents import SearchClient; from openai import AsyncOpenAI"
+if ($LASTEXITCODE -ne 0) { throw "Policy agent imports failed (exit $LASTEXITCODE). Rerun setup after resolving the Python dependency error." }
+
 Push-Location (Join-Path $repositoryRoot 'src\workbench')
 try {
-    & npm.cmd ci --no-audit --no-fund
-    if ($LASTEXITCODE -ne 0) { throw "Workbench dependency installation failed (exit $LASTEXITCODE)." }
+    $npmArguments = @('ci', '--no-audit', '--no-fund')
+    if ($NpmRegistry) { $npmArguments += @('--registry', $NpmRegistry) }
+    & npm.cmd @npmArguments
+    if ($LASTEXITCODE -ne 0) {
+        throw "Workbench dependency installation failed (exit $LASTEXITCODE). Check the configured npm registry and package-lock.json. Use -NpmRegistry only with an approved registry; do not install individual packages or delete the lockfile."
+    }
+    & node.exe --input-type=module -e "import { existsSync } from 'node:fs'; for (const p of ['tsx','express','deep-chat','@azure/identity']) { const f = import.meta.resolve(p); if (!existsSync(new URL(f))) throw new Error('Missing package: ' + p); }"
+    if ($LASTEXITCODE -ne 0) { throw "Workbench dependency verification failed (exit $LASTEXITCODE)." }
 }
 finally { Pop-Location }
 
 Write-Host ''
 Write-Host 'Setup complete. Open instructions\lab.html and follow steps 1-5.'
 Write-Host 'The separate Insurance Workbench App has NOT been launched.'
+Write-Host 'Python agent: .tools\policy-venv\Scripts\python.exe (selected automatically by the launcher).'
+Write-Host 'Policy checks also need Azure CLI sign-in and a prepared policy index; see docs\policy-setup.md.'
 Write-Host 'Launch it yourself from the repository root in step 5: .\infra\launch-workbench.ps1'

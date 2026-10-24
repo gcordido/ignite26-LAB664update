@@ -26,3 +26,19 @@ claim packets and individual PDFs. All names and claim details are fictional.
 </a>
 
 Select the image to open the sample PDF.
+
+## Rental review policy corpus
+
+Synthetic rental-review SOPs for ten states and a shared evidence standard
+are in the [v2 corpus](policies/rental/ocr-comparison-v2/manifest.json), with
+editable DOCX exports and PDF ingestion copies. See the
+[scenario guide](../docs/rental-ocr-comparison.md) and
+[recommended agent question](../docs/rental-review-agent-question-v2.md).
+Keep claim packets and expected evaluation outcomes separate from policy knowledge.
+
+The corpus includes eleven mixed digital/scanned PDFs, editable DOCX exports
+and pre-scan PDF controls. The Python generator creates these assets from its
+rule definitions; the DOCX exports are not inputs to PDF generation. The controls
+and DOCX exports are used by generation validation and extraction comparisons.
+Index only the manifest-listed ingestion PDFs, not evaluation fixtures or controls.
+The retired v1 corpus and its ZIP archive have been removed.
