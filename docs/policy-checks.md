@@ -18,21 +18,27 @@ the policy index on your existing Search service.
 
 ## Compare packets 01 and 02
 
+The workbench now enables **Run policy checks** only when **Azure Search
+retrieval** is selected. **No policy retrieval** remains available to inspect
+previously saved baseline results, but a new baseline run can't be started from
+the app.
+
 Start here on a prepared lab machine. You don't need to inspect or redeploy
 Azure resources before trying the agent.
 
 1. In the workbench's **Cache Results**, load the included completed **10/10**
    run. Select **Policy checks**.
-2. In **Policy retrieval**, select **No policy retrieval**. Select **Run policy
+2. In **Policy retrieval**, select **Azure Search retrieval**. Select **Run policy
    checks** and confirm. This runs the Agent Framework agent against saved CU
    claim facts, not just a local rules engine. Azure charges apply, including
    any missing claim-summary extraction; the confirmation covers all loaded
    cases, not only the selected row.
-3. Select packet **01**, then its **Daily rate** check. Without an SOP, the
-   agent must report **Review required** rather than invent a rate threshold.
-4. Change **Policy retrieval** to **Azure Search retrieval**. Select **Run policy
-   checks** again and confirm. Merely changing the dropdown doesn't rerun the
-   agent. Wait for the batch to finish.
+3. Wait for the batch to finish. The status line shows the active case and
+   whether CU is extracting claim fields or the agent is checking policy rules.
+4. Optionally select **No policy retrieval** to inspect a previously saved
+   baseline. Without an SOP, the agent must not invent a rate threshold.
+   Return to **Azure Search retrieval** to inspect this run. Changing the
+   dropdown doesn't submit another batch.
 5. Compare **Daily rate** for packets **01** and **02**, using the expected
    evidence below. Select each check to inspect **Expected**, **Actual** and
    **Reasoning** in the right-hand panel.
@@ -48,7 +54,10 @@ Azure resources before trying the agent.
 These are source-based expectations, not hardcoded agent answers. If returned
 facts, routing or citations differ, inspect the evidence and errors rather than
 forcing a pass. Neither daily-rate result approves the entire claim or payment;
-other checks can still require review.
+other checks can still require review. For example, the refreshed packet 01 CU
+summary can omit the contractual daily cap. Even though $54 is below Texas's
+$75 routine authority, the agent must return **Review required** until the
+claim's contractual cap is established; the SOP can't supply that missing fact.
 
 In the source viewer, compare **CU Layout** and **Digital parse** with the PDF.
 Texas's page 3 table deliberately contains blank cells: a blank rate or duration
@@ -132,11 +141,11 @@ Framework implementation or a hosted Foundry agent.
 
 1. Launch the workbench with `.\infra\launch-workbench.ps1`.
 2. Load saved CU results, or explicitly run your connected analyzer.
-3. In **Policy checks**, select **No policy retrieval** or
-   **Azure Search retrieval**.
+3. In **Policy checks**, select **Azure Search retrieval**.
 4. Select **Run policy checks** and confirm the Azure operation.
 5. Select a check in the grid to see the complete review in the sidebar.
-6. Switch retrieval mode and run again to compare the same claim inputs.
+6. Optionally switch to **No policy retrieval** to inspect saved baseline
+   results. The app doesn't start new runs in this mode.
 
 Both modes use the same model, field-only claim Markdown and
 [review question](rental-review-agent-question-v2.md). Selecting a mode, case,
@@ -154,6 +163,26 @@ routing or evidence remains explicit; a similar state's SOP isn't substituted.
 Claim preparation runs only when explicitly requested by a policy batch and
 reuses matching saved extraction. The Studio classifier/router isn't changed,
 and missing claim facts aren't filled in from policy rules or local answer guides.
+
+### Follow batch progress
+
+Both retrieval modes need prepared claim fields. With newly refreshed packets,
+the first run can show **Extracting claim fields with CU**, even in **No policy
+retrieval** mode. The ten cases run sequentially; the status line shows completed
+cases, the active case, its extraction/review phase and total elapsed time.
+No retrieval means no SOP lookup, not no Azure calls.
+
+Refreshing the same browser tab reconnects to its private session, reloads its
+selected CU run and resumes policy progress without submitting another batch.
+Keep that tab open; a different private session can't take over its job.
+The app disables another run while a batch is active. Repeated start requests
+for the same session, run and mode return the existing job rather than charging
+for a duplicate.
+
+If a progress request fails, reload the same tab to reconnect. Restarting the
+server clears in-memory jobs and private chat; it doesn't automatically rerun
+them or cancel CU work already submitted to Azure. Completed extraction caches
+remain available for the next explicitly confirmed run.
 
 ## Read the five checks
 

@@ -142,8 +142,8 @@ Open [Insurance Workbench App - http://127.0.0.1:8791/](http://127.0.0.1:8791/) 
 Use the prepared lab configuration for this exercise. The lab owner must complete [policy setup](../docs/policy-setup.md) before the session; installing dependencies alone doesn't configure an index. Sign in with `az login` using your approved lab identity. Saved CU results avoid rerunning the Studio router, but policy checks still call Azure and incur charges, including missing claim-summary extraction.
 
 1. [] With the included completed **10/10** run loaded, select **Policy checks**.
-2. [] In **Policy retrieval**, select **No policy retrieval**. Select **Run policy checks** and confirm the operation for all loaded cases. Wait for completion. Inspect packet **01**'s **Daily rate**: without the SOP, it must remain **Review required**, without invented thresholds or citations.
-3. [] Change the dropdown to **Azure Search retrieval**, select **Run policy checks** again, and confirm. Changing the dropdown alone doesn't submit a new run.
+2. [] In **Policy retrieval**, select **Azure Search retrieval**. Select **Run policy checks** and confirm the operation for all loaded cases. Wait for completion; the status line shows claim extraction and agent review progress.
+3. [] Optionally select **No policy retrieval** to inspect a saved baseline, then return to **Azure Search retrieval**. New runs require Search. Changing the dropdown alone doesn't submit a new run.
 4. [] Compare **Daily rate** for packets **01** and **02**. Select each check to read **Expected**, **Actual** and **Reasoning** in the right-hand panel.
 
 | Case | CU daily base | Contractual daily cap | Retrieved SOP routine authority | Expected result |
@@ -155,7 +155,7 @@ Use the prepared lab configuration for this exercise. The lab owner must complet
 6. [] In the source viewer, compare **Document**, **CU Layout** and **Digital parse**. Then select **Back to policy checks**. Optionally inspect Washington's scanned SOP or Arizona's image-based eligibility flowchart. A missing extraction has an explicit billable generation action; switching tabs alone doesn't call CU.
 7. [] Optionally select **Chat** and ask, "Explain this case's daily-rate result. Cite the SOP and distinguish routine authority from the contractual cap." Chat uses the selected case and mode; each submitted question can incur Azure charges.
 
-The same agent and claim facts are used in both modes; retrieval supplies the otherwise missing rules. These are source-based expectations, not guaranteed model answers. Inspect differing results, missing facts or errors rather than forcing a pass. **Satisfied** for daily rate doesn't approve the claim or authorize payment; other checks can still require review.
+The same agent and claim facts are used in both modes; retrieval supplies the otherwise missing rules. These are source-based expectations, not guaranteed model answers. Inspect differing results, missing facts or errors rather than forcing a pass. If CU omits packet 01's contractual cap, **Daily rate** correctly remains **Review required** despite being below Texas's $75 routine authority. The SOP must not fill in missing claim facts. **Satisfied** for daily rate doesn't approve the claim or authorize payment; other checks can still require review.
 
 ### Optional: inspect Search, policy files and the agent
 

@@ -124,7 +124,15 @@ export function createApp(
       endpoint: configuration().endpoint,
     }),
   );
-  app.post("/api/session", (_req, res) => {
+  app.post("/api/session", (req, res) => {
+    const existingId = req.header("x-labmachine-session");
+    const existing = existingId ? sessions.get(existingId) : undefined;
+    if (existing) {
+      existing.touched = Date.now();
+      res.json({ sessionId: existingId, runId: existing.run?.id,
+        policyMode: existing.policyJob?.mode });
+      return;
+    }
     for (const [id, value] of sessions)
       if (!value.busy && !value.chatBusy && Date.now() - value.touched > 60 * 60_000)
         sessions.delete(id);
@@ -285,6 +293,10 @@ export function createApp(
     const s = session(req);
     const { mode } = z.object({ mode: modeSchema, live: z.literal(true) }).parse(req.body);
     if (!s.run) throw new LabError(409, "Load Content Understanding results first.");
+    if (s.policyJob?.status === "running" && s.policyJob.runId === s.run.id && s.policyJob.mode === mode) {
+      res.status(202).json(s.policyJob);
+      return;
+    }
     if (s.busy || s.chatBusy) throw new LabError(409, "Wait for the current batch or chat.");
     s.busy = true;
     const run = s.run;

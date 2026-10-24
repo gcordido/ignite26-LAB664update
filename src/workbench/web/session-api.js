@@ -3,8 +3,10 @@ export function createSessionApi({
   selectedRun = () => undefined,
   onSession = () => {},
   onRestored = () => {},
+  storage,
 } = {}) {
-  let sessionId = "";
+  const storageKey = "lab664-private-session";
+  let sessionId = storage?.getItem(storageKey) ?? "";
   let restoring;
 
   async function send(route, body, id = sessionId) {
@@ -23,10 +25,11 @@ export function createSessionApi({
     return value;
   }
   async function start() {
-    const value = checked(await send("session", {}, ""));
+    const value = checked(await send("session", {}));
     if (typeof value.sessionId !== "string" || !value.sessionId)
       throw new Error("The workbench returned no private session ID.");
     sessionId = value.sessionId;
+    storage?.setItem(storageKey, sessionId);
     onSession(sessionId);
     return value;
   }

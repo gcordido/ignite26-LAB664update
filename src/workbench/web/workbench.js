@@ -37,6 +37,7 @@ let focusedZoom = 1;
 let catalog;
 let policyStatus;
 let policyBusy = false;
+let policyAvailabilityTimer;
 let policyMode = "ungrounded";
 let policySource;
 let policyPaneMode = "result";
@@ -58,6 +59,7 @@ document.querySelector("main").addEventListener("pane-resize", () => {
 });
 
 const api = createSessionApi({
+  storage: window.sessionStorage,
   selectedRun: () => run?.id,
   onSession: (id) => { sessionId = id; },
   onRestored: () => {
@@ -111,9 +113,11 @@ function arrayLabel(field) {
 function controls() {
   get("analyze").disabled =
     busy || !sessionId || !catalog || !get("analyzer").value.trim();
-  get("load-cache").disabled = busy || !get("cache").value;
+  get("load-cache").disabled = busy || policyBusy || !get("cache").value;
   get("refresh-cache").disabled = busy || !sessionId;
-  get("policy-run").disabled = busy || policyBusy || !run || !policyStatus?.configured;
+  get("policy-run").disabled = policyMode !== "search" || busy || policyBusy || policyStatus?.batchRunning || !run || !policyStatus?.configured;
+  get("policy-run").title = policyMode === "search" ? "" : "Select Azure Search retrieval to run policy checks.";
+  get("policy-mode").disabled = !policyStatus?.configured;
 }
 async function caches() {
   const savedRuns = await api("cache");
@@ -187,7 +191,11 @@ async function renderRun(nextRun, nextOrigin) {
       }),
   );
   if (run?.id !== runId) return;
-  if (changed) await refreshPolicy();
+  if (changed) {
+    await refreshPolicy();
+    const job = policyResults.get(policyMode);
+    if (job?.status === "running") void watchPolicy(job).catch(fail);
+  }
   renderTable();
   if (run.status === "failed") {
     const failure = run.items.find((item) => item.error);
@@ -792,6 +800,7 @@ get("download").onclick = async () => {
 api("session", {})
   .then(async (value) => {
     sessionId = value.sessionId;
+    if (value.policyMode) { policyMode = value.policyMode; view = "policy"; }
     await Promise.all([
       caches(),
       analyzers(),
@@ -813,6 +822,11 @@ api("session", {})
         policyMessage();
       }),
     ]);
+    if (value.runId) {
+      const current = await api("batch");
+      if (current.run) await renderRun(current.run, "cached");
+    }
+    if (policyStatus?.batchRunning && !policyBusy) void updatePolicyAvailability().catch(fail);
     controls();
   })
   .catch((error) => {
@@ -838,12 +852,23 @@ function showPolicyPanel(show) {
 }
 function policyMessage() {
   const mode = policyStatus?.modes?.[policyMode];
-  get("policy-status").textContent = mode
+  get("policy-status").textContent = policyStatus?.batchRunning && !policyBusy
+    ? "A policy batch is already running. Waiting for it to finish; no duplicate will be submitted. Reload this tab to reconnect to its progress."
+    : mode
     ? `${mode.indexName ?? "No policy retrieval"} · ${policyStatus.message}`
     : (policyStatus?.message ?? "Policy configuration is loading.");
 }
 function policyModeLabel(mode = policyMode) {
   return mode === "search" ? "Azure Search retrieval" : "No policy retrieval";
+}
+async function updatePolicyAvailability() {
+  clearTimeout(policyAvailabilityTimer);
+  policyStatus = await api("policy/status");
+  controls();
+  if (policyStatus.batchRunning && !policyBusy) {
+    policyMessage();
+    policyAvailabilityTimer = setTimeout(() => updatePolicyAvailability().catch(fail), 2500);
+  } else if (!policyBusy) policyMessage();
 }
 async function refreshPolicy(mode = policyMode) {
   if (!run) return;
@@ -859,6 +884,38 @@ async function refreshPolicy(mode = policyMode) {
   if (view === "policy" && mode === policyMode) {
     renderTable();
     renderPolicyOutput();
+  }
+}
+async function watchPolicy(job) {
+  if (policyBusy) return;
+  policyBusy = true;
+  controls();
+  const { mode, runId } = job;
+  try {
+    while (run?.id === runId) {
+      const status = policyResults.get(mode);
+      const completed = status.items.filter((item) => ["completed", "failed"].includes(item.status)).length;
+      const active = status.items.find((item) => ["extracting", "reviewing"].includes(item.status));
+      const elapsed = Math.max(0, Math.floor((Date.now() - Date.parse(job.startedAt)) / 1000));
+      get("policy-status").textContent = `${completed}/${status.items.length} cases · ${policyModeLabel(mode)} · ${status.status}` +
+        (active ? ` · ${active.id}: ${active.status === "extracting" ? "Extracting claim fields with CU (also required without retrieval)" : "Agent checking rules"}` : "") +
+        ` · ${Math.floor(elapsed / 60)}m ${elapsed % 60}s elapsed`;
+      if (status.status !== "running") break;
+      await new Promise((resolve) => setTimeout(resolve, 1400));
+      await refreshPolicy(mode);
+    }
+    if (run?.id === runId) {
+      await Promise.all(run.items.filter((item) => item.rawSaved).map(async ({ id }) => {
+        const value = await api(`packet/${id}`);
+        if (run?.id === value.packetJson?.analysis.run_id) results.set(id, value);
+      }));
+      renderTable();
+    }
+  } catch (error) {
+    throw new Error(`Policy progress could not be refreshed: ${error.message}. The server batch may still be running. Reload this tab to reconnect; do not submit another batch.`);
+  } finally {
+    policyBusy = false;
+    await updatePolicyAvailability();
   }
 }
 function renderPolicyTable() {
@@ -1004,6 +1061,7 @@ for (const mode of ["result", "chat"]) get(`policy-${mode}-mode`).onclick = () =
 };
 get("policy-mode").onchange = async () => {
   policyMode = get("policy-mode").value;
+  controls();
   showPolicyPanel(true);
   policyMessage();
   renderTable();
@@ -1011,36 +1069,29 @@ get("policy-mode").onchange = async () => {
   try { await refreshPolicy(); } catch (error) { fail(error); }
 };
 get("policy-run").onclick = () => {
+  if (get("policy-run").disabled) return;
   get("policy-confirm-summary").textContent =
-    `${run.items.filter((item) => item.rawSaved).length} cases · ${policyModeLabel()}.`;
+    `${run.items.filter((item) => item.rawSaved).length} cases · ${policyModeLabel()}. ` +
+    "Cases run sequentially. Missing claim fields are extracted with CU first, even without policy retrieval.";
   get("policy-confirmation").showModal();
 };
 get("cancel-policy").onclick = () => get("policy-confirmation").close();
 get("confirm-policy").onclick = async () => {
-  if (busy || policyBusy) return;
+  if (policyMode !== "search" || busy || policyBusy) return;
   get("policy-confirmation").close();
-  policyBusy = true; busy = true;
+  busy = true;
+  get("error").hidden = true;
   controls();
   const mode = policyMode;
-  const id = run.id;
   try {
     const job = await api("policy/batch", { mode, live: true });
     policyResults.set(mode, job);
-    while (run?.id === id) {
-      if (view === "policy" && mode === policyMode) { renderTable(); renderPolicyOutput(); }
-      await new Promise((resolve) => setTimeout(resolve, 1400));
-      await refreshPolicy(mode);
-      const status = policyResults.get(mode);
-      const completed = status.items.filter((item) => ["completed", "failed"].includes(item.status)).length;
-      get("policy-status").textContent = `${completed}/${status.items.length} cases · ${mode} · ${status.status}`;
-      if (status.status !== "running") break;
-    }
-    if (run?.id === id) {
-      await Promise.all(run.items.filter((item) => item.rawSaved).map(async ({ id }) => {
-        const value = await api(`packet/${id}`);
-        if (run?.id === value.packetJson?.analysis.run_id) results.set(id, value);
-      }));
-    }
+    if (view === "policy") { renderTable(); renderPolicyOutput(); }
+    await watchPolicy(job);
   } catch (error) { fail(error); }
-  finally { policyBusy = false; busy = false; controls(); }
+  finally {
+    policyBusy = false; busy = false;
+    try { await updatePolicyAvailability(); } catch (error) { fail(error); }
+    controls();
+  }
 };

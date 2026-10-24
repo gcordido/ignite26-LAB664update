@@ -4,6 +4,7 @@ import importlib.util
 from pathlib import Path
 import sys
 import unittest
+from pydantic import ValidationError
 
 spec = importlib.util.spec_from_file_location(
     "policy_framework", Path(__file__).with_name("policy-framework-agent.py"),
@@ -14,6 +15,20 @@ spec.loader.exec_module(runtime)
 
 
 class FrameworkTests(unittest.TestCase):
+    def test_model_schema_requires_exact_check_names_and_five_results(self):
+        schema = runtime.Review.model_json_schema()
+        self.assertEqual(schema["$defs"]["Check"]["properties"]["Check"]["enum"], runtime.CHECKS)
+        self.assertEqual(schema["properties"]["Checks"]["minItems"], 5)
+        self.assertEqual(schema["properties"]["Checks"]["maxItems"], 5)
+        value = self.review().model_dump()
+        value["Checks"][0]["Check"] += "."
+        with self.assertRaises(ValidationError):
+            runtime.Review.model_validate(value)
+        value = self.review().model_dump()
+        value["Checks"].pop()
+        with self.assertRaises(ValidationError):
+            runtime.Review.model_validate(value)
+
     def review(self):
         return runtime.Review(Checks=[
             runtime.Check(

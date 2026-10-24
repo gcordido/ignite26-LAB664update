@@ -14,6 +14,11 @@ import { savePolicyCache } from "./policy-service.ts";
 import { chatMessageHtml, resultChatText } from "../web/policy-chat.js";
 
 const base = path.join(repositoryRoot, "data", "policies", "rental", "ocr-comparison-v2");
+async function includedRunId(cache: Cache) {
+  const run = (await cache.list()).find((entry) => entry.status === "completed");
+  assert.ok(run, "An included completed CU run is required");
+  return run.id;
+}
 async function config(): Promise<FrameworkConfig> {
   return {
     schemaVersion: 1, provider: "agent-framework",
@@ -79,7 +84,7 @@ test("Framework modes share prepared claim inputs but isolate review caches, cha
   try {
     const value = await config();
     const cache = new Cache();
-    const run = await cache.load("243f1c06-caf3-4375-b409-afe130136867");
+    const run = await cache.load(await includedRunId(cache));
     run.items = run.items.filter((item) => item.id === "packet-01");
     run.source = run.source.filter((item) => item.id === "packet-01");
     const packet = run.source[0];
@@ -178,7 +183,7 @@ test("claim preparation preserves zero/false/unknowns and reuses extraction acro
   const folder = await mkdtemp(path.join(os.tmpdir(), "policy-claims-"));
   t.after(() => rm(folder, { recursive: true, force: true }));
   const cache = new Cache();
-  const run = await cache.load("243f1c06-caf3-4375-b409-afe130136867");
+  const run = await cache.load(await includedRunId(cache));
   run.items = run.items.slice(0, 1); run.source = run.source.slice(0, 1);
   const packet = run.source[0];
   const definition = { status: "ready", baseAnalyzerId: "prebuilt-document",
@@ -245,7 +250,7 @@ test("private API chats preserve history, isolate cases and never replay failed 
   const folder = await mkdtemp(path.join(os.tmpdir(), "policy-api-"));
   t.after(() => rm(folder, { recursive: true, force: true }));
   const settings = await config();
-  const cache = new Cache(), runId = "243f1c06-caf3-4375-b409-afe130136867";
+  const cache = new Cache(), runId = await includedRunId(cache);
   const original = await cache.load(runId);
   const run = { ...original, items: original.items.slice(0, 1), source: original.source.slice(0, 1) };
   const claimKey = digest(JSON.stringify({
@@ -339,7 +344,7 @@ test("private API chats preserve history, isolate cases and never replay failed 
 test("missing configuration leaves claim views usable and exposes an actionable setup message", async () => {
   const service = new PolicyService({ config: async () => undefined });
   assert.equal((await service.status()).configured, false);
-  const cache = new Cache(), run = await cache.load("243f1c06-caf3-4375-b409-afe130136867");
+  const cache = new Cache(), run = await cache.load(await includedRunId(cache));
   const markdown = await service.markdown(run, run.source[0], await cache.raw(run.id, run.source[0].id));
   assert.ok(markdown.length > 0);
   assert.equal(await service.summaryPrepared(run.source[0]), false);

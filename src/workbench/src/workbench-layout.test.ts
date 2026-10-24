@@ -153,6 +153,7 @@ test("policy status helper is callable from module scope during startup and mode
   const context = vm.createContext({
     get: () => status,
     policyMode: "ungrounded",
+    policyBusy: false,
     policyStatus: { configured: false, message: "Setup required." },
   });
   vm.runInContext(`${helpers}\npolicyMessage();`, context);
@@ -173,6 +174,55 @@ test("retrieval choices are disabled placeholders until verified configuration l
   assert.match(select[1], /Loading policy configuration/);
   assert.ok(!select[1].includes('value="standard"'));
   assert.ok(!select[1].includes('value="minimal"'));
+});
+
+test("policy progress watcher is callable outside refreshPolicy after a page reload", async () => {
+  const source = await readFile(new URL("../web/workbench.js", import.meta.url), "utf8");
+  const helpers = source.slice(source.indexOf("async function refreshPolicy("), source.indexOf("function renderPolicyTable("));
+  let restoredAvailability = 0;
+  const context = vm.createContext({
+    policyBusy: false,
+    run: { id: "saved-run", items: [] },
+    policyResults: new Map([["search", { status: "completed", items: [] }]]),
+    controls: () => {},
+    get: () => ({ textContent: "" }),
+    policyModeLabel: () => "Azure Search retrieval",
+    renderTable: () => {},
+    updatePolicyAvailability: async () => { restoredAvailability++; },
+  });
+  vm.runInContext(helpers, context);
+  assert.equal(vm.runInContext("typeof watchPolicy", context), "function");
+  await vm.runInContext('watchPolicy({runId:"saved-run",mode:"search",startedAt:new Date().toISOString()})', context);
+  assert.equal(restoredAvailability, 1);
+  assert.equal(vm.runInContext("policyBusy", context), false);
+});
+
+test("policy Run requires Search but busy batches don't disable the retrieval dropdown", async () => {
+  const source = await readFile(new URL("../web/workbench.js", import.meta.url), "utf8");
+  const nodes = new Map<string, { value: string; disabled?: boolean; title?: string }>();
+  const context = vm.createContext({
+    get: (id: string) => {
+      if (!nodes.has(id)) nodes.set(id, { value: "available" });
+      return nodes.get(id);
+    },
+    busy: false, sessionId: "session", catalog: {}, run: { id: "saved-run" },
+    policyMode: "ungrounded", policyBusy: false, policyStatus: { configured: true, batchRunning: false },
+  });
+  vm.runInContext(source.slice(source.indexOf("function controls("), source.indexOf("async function caches(")), context);
+  vm.runInContext("controls()", context);
+  assert.equal(nodes.get("policy-run")!.disabled, true);
+  assert.equal(nodes.get("policy-mode")!.disabled, false);
+  vm.runInContext('policyMode = "search"; controls()', context);
+  assert.equal(nodes.get("policy-run")!.disabled, false);
+  vm.runInContext("policyBusy = true; controls()", context);
+  assert.equal(nodes.get("policy-run")!.disabled, true);
+  assert.equal(nodes.get("policy-mode")!.disabled, false);
+  vm.runInContext("policyBusy = false; policyStatus.batchRunning = true; controls()", context);
+  assert.equal(nodes.get("policy-run")!.disabled, true);
+  assert.equal(nodes.get("policy-mode")!.disabled, false);
+  vm.runInContext("policyStatus = { configured: false }; controls()", context);
+  assert.equal(nodes.get("policy-run")!.disabled, true);
+  assert.equal(nodes.get("policy-mode")!.disabled, true);
 });
 
 test("pane layout refreshes a narrow grid initially and clears desktop sizing when resized", async () => {

@@ -8,10 +8,15 @@ import { packetJson } from "./packet-json.ts";
 import { createApp } from "./server.ts";
 import { packetMarkdown } from "./packet-markdown.ts";
 
-const runId = "243f1c06-caf3-4375-b409-afe130136867";
+async function includedRunId() {
+  const run = (await new Cache().list()).find((item) => item.status === "completed");
+  assert.ok(run, "An included completed CU run is required.");
+  return run.id;
+}
 
 test("all saved packets export extracted evidence without authored reference facts", async () => {
   const cache = new Cache();
+  const runId = await includedRunId();
   const run = await cache.load(runId);
   assert.equal(run.source.length, 10);
   for (const packet of run.source) {
@@ -49,6 +54,7 @@ test("all saved packets export extracted evidence without authored reference fac
 });
 
 test("packet API exposes the standard export only for the session's saved run", async (t) => {
+  const runId = await includedRunId();
   const noAzureCall = async () => {
     throw new Error("This check must not call Azure.");
   };
@@ -88,6 +94,7 @@ test("packet API exposes the standard export only for the session's saved run", 
 });
 
 test("nested objects, arrays, null, false, zero and provenance survive export", async () => {
+  const runId = await includedRunId();
   const run = await new Cache().load(runId);
   const packet = run.source[0];
   const raw = JSON.parse(

@@ -202,7 +202,8 @@ export class PolicyService {
       const config = await this.frameworkConfig();
       if (!config) return { configured: false, message: "Run infra/setup-policy-index.py to check policy setup prerequisites." };
       return {
-        configured: true, modes: Object.fromEntries((["ungrounded", "search"] as const).map((mode) => {
+        configured: true, batchRunning: this.running,
+        modes: Object.fromEntries((["ungrounded", "search"] as const).map((mode) => {
           const agent = this.agent(config, mode);
           return [mode, { provider: agent.provider, indexName: agent.indexName,
             extractionMode: agent.extractionMode }];

@@ -71,12 +71,14 @@ prepared index configuration.
 #### Try the policy-check comparison
 
 On a prepared lab machine, load the included **10/10** cached run, select
-**Policy checks**, and compare **No policy retrieval** with **Azure Search
-retrieval**. Select **Run policy checks** and confirm in each mode. Inspect
-packet **01**'s **Satisfied** daily rate ($54 against Texas's $75 routine
+**Policy checks**, and select **Azure Search retrieval**. Select **Run policy
+checks** and confirm. New runs require Search; **No policy retrieval** only
+displays saved baseline results. Compare
+packet **01**'s expected **Satisfied** daily rate ($54 against Texas's $75 routine
 authority) versus packet **02**'s **Review required** daily rate ($61 against
 Washington's $60). Open the cited SOP in the right-hand panel to inspect the rule.
-These are expected evidence-based results, not payment approval.
+These are expected evidence-based results, not payment approval. Missing CU
+fields, including the contractual cap, correctly keep a check in review.
 
 For guided and self-paced sessions, follow
 [step 5: compare policy checks](instructions/lab.html#policy-checks).

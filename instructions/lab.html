@@ -788,16 +788,15 @@ powershell -ExecutionPolicy Bypass -File .\infra\launch-workbench.ps1</code></pr
           </li>
           <li>
             In <strong>Policy retrieval</strong>, select
-            <strong>No policy retrieval</strong>. Select
+            <strong>Azure Search retrieval</strong>. Select
             <strong>Run policy checks</strong> and confirm the operation for
-            all loaded cases. Wait for completion. Inspect packet
-            <strong>01</strong>'s <strong>Daily rate</strong>: without the SOP,
-            it must remain <strong>Review required</strong>, without invented
-            thresholds or citations.
+            all loaded cases. Wait for completion; the status line shows claim
+            extraction and agent review progress.
           </li>
           <li>
-            Change the dropdown to <strong>Azure Search retrieval</strong>,
-            select <strong>Run policy checks</strong> again, and confirm.
+            Optionally select <strong>No policy retrieval</strong> to inspect
+            a saved baseline, then return to <strong>Azure Search retrieval</strong>.
+            New runs require Search.
             Changing the dropdown alone doesn't submit a new run.
           </li>
           <li>
@@ -867,6 +866,10 @@ powershell -ExecutionPolicy Bypass -File .\infra\launch-workbench.ps1</code></pr
           supplies the otherwise missing rules. These are source-based
           expectations, not guaranteed model answers. Inspect differing
           results, missing facts or errors rather than forcing a pass.
+          If CU omits packet 01's contractual cap, <strong>Daily rate</strong>
+          correctly remains <strong>Review required</strong> despite being
+          below Texas's $75 routine authority. The SOP must not fill in missing
+          claim facts.
           <strong>Satisfied</strong> for daily rate doesn't approve the claim
           or authorize payment; other checks can still require review.
         </p>

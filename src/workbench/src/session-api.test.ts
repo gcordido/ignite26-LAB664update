@@ -16,7 +16,7 @@ function server() {
       calls.push({ route, body, session });
       let status = 200, value: unknown;
       if (route === "/api/session") {
-        active = `session-${++counter}`;
+        if (!active || session !== active) active = `session-${++counter}`;
         value = { sessionId: active };
       } else if (alwaysExpired || !active || session !== active) {
         status = 401;
@@ -43,6 +43,7 @@ test("expired reads renew one private session, restore the selected run and retr
     fetch: fake.fetch, selectedRun: () => "saved-run",
     onSession: (id: string) => ids.push(id), onRestored: () => { restored++; },
   });
+
   await api("session", {});
   fake.expire();
   const values = await Promise.all([api("packet/packet-01"), api("policy/results?mode=existing")]);
@@ -51,6 +52,26 @@ test("expired reads renew one private session, restore the selected run and retr
   assert.equal(restored, 1);
   assert.equal(fake.calls.filter((call) => call.route === "/api/cache/load").length, 1);
   assert.ok(fake.calls.filter((call) => call.route !== "/api/session").every((call) => call.session));
+});
+
+test("refresh reuses the tab's private session without replaying a batch", async () => {
+  const fake = server();
+  const values = new Map<string, string>();
+  const storage = {
+    getItem: (key: string) => values.get(key) ?? null,
+    setItem: (key: string, value: string) => { values.set(key, value); },
+  };
+  const first = createSessionApi({ fetch: fake.fetch, storage });
+  assert.equal((await first("session", {})).sessionId, "session-1");
+  const refreshed = createSessionApi({ fetch: fake.fetch, storage });
+  assert.equal((await refreshed("session", {})).sessionId, "session-1");
+  await refreshed("policy/results?mode=ungrounded");
+  assert.equal(fake.calls.at(-1)?.session, "session-1");
+  assert.ok(!fake.calls.some((call) => call.route === "/api/policy/batch"));
+  fake.expire();
+  const restarted = createSessionApi({ fetch: fake.fetch, storage });
+  assert.equal((await restarted("session", {})).sessionId, "session-2");
+  assert.equal(values.get("lab664-private-session"), "session-2");
 });
 
 test("expired sessions never silently replay live writes", async () => {
