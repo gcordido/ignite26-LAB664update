@@ -1,0 +1,48 @@
+{
+  "fieldSchema": {
+    "fields": {
+      "claimant_name": {
+        "type": "string",
+        "method": "extract",
+        "description": "Name explicitly identifying the claimant or insured vehicle owner. Do not substitute a witness, other driver, adjuster, or recipient. Leave unset if unclear.",
+        "estimateSourceAndConfidence": true
+      },
+      "incident_date": {
+        "type": "date",
+        "method": "extract",
+        "description": "Date the reported incident occurred, not the date the statement or email was written or sent. Leave unset if absent.",
+        "estimateSourceAndConfidence": true
+      },
+      "incident_location": {
+        "type": "string",
+        "method": "extract",
+        "description": "Location explicitly reported for the incident. Leave unset if absent.",
+        "estimateSourceAndConfidence": true
+      },
+      "vehicle": {
+        "type": "string",
+        "method": "extract",
+        "description": "Claimant vehicle as one string, including year, make, model, and trim when stated. Do not include color or the other vehicle. Do not infer unstated details.",
+        "estimateSourceAndConfidence": true
+      },
+      "vin": {
+        "type": "string",
+        "method": "extract",
+        "description": "Exact VIN explicitly stated for the claimant vehicle. Do not decode, correct, or infer it; leave unset if absent.",
+        "estimateSourceAndConfidence": true
+      },
+      "reported_damage": {
+        "type": "string",
+        "method": "generate",
+        "description": "Generate a concise description of damage reported by the claimant, combining mentions across the statement or email. Use only stated information. Do not present reported damage as inspected or verified, or infer damage, cause, fault, coverage, liability, or payment. Leave unset if no damage is reported.",
+        "estimateSourceAndConfidence": true
+      },
+      "summary": {
+        "type": "string",
+        "method": "generate",
+        "description": "Generate a concise summary of the claimant's narrative using only information in this statement or email. Preserve uncertainty and distinguish reported events from verified facts. Do not infer missing details, fault, coverage, liability, or payment.",
+        "estimateSourceAndConfidence": true
+      }
+    }
+  }
+}

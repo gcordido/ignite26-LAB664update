@@ -1,16 +1,16 @@
 {
-  "id": "cfca8379-5330-48cd-86e5-a76319e99a21",
+  "id": "9ae9c908-5018-4f43-9ec1-5d48e0099eef",
   "status": "Succeeded",
   "result": {
-    "analyzerId": "lab664_anatolip_scus_routerg5",
+    "analyzerId": "lab664_statement_router_0699239b9914",
     "apiVersion": "2026-06-01-preview",
-    "createdAt": "2026-10-23T03:12:52Z",
+    "createdAt": "2026-10-23T07:11:30Z",
     "stringEncoding": "codePoint",
     "warnings": [],
     "infos": [
       {
         "code": "LLMStats",
-        "message": "completion calls: 5; avg completion latency: 6.91s; total completion latency: 34.55s"
+        "message": "completion calls: 6; avg completion latency: 4.88s; total completion latency: 29.31s"
       }
     ],
     "contents": [
@@ -58504,7 +58504,7 @@
             "startPageNumber": 4,
             "endPageNumber": 4,
             "category": "other",
-            "confidence": 0.9
+            "confidence": 0.84
           },
           {
             "span": {
@@ -58515,7 +58515,7 @@
             "startPageNumber": 5,
             "endPageNumber": 5,
             "category": "other",
-            "confidence": 0.9
+            "confidence": 0.84
           },
           {
             "span": {
@@ -58526,7 +58526,7 @@
             "startPageNumber": 6,
             "endPageNumber": 7,
             "category": "repair_estimate",
-            "confidence": 0.95
+            "confidence": 0.93
           },
           {
             "span": {
@@ -58536,8 +58536,8 @@
             "segmentId": "segment6",
             "startPageNumber": 8,
             "endPageNumber": 8,
-            "category": "other",
-            "confidence": 0.88
+            "category": "statement",
+            "confidence": 0.95
           },
           {
             "span": {
@@ -58559,7 +58559,7 @@
             "startPageNumber": 11,
             "endPageNumber": 11,
             "category": "other",
-            "confidence": 0.78
+            "confidence": 0.82
           },
           {
             "span": {
@@ -58570,14 +58570,14 @@
             "startPageNumber": 12,
             "endPageNumber": 12,
             "category": "tax_1099a",
-            "confidence": 0.98
+            "confidence": 0.97
           }
         ],
         "metadata": {
           "contentType": "application/pdf",
           "pageCount": "12"
         },
-        "analyzerId": "lab664_anatolip_scus_routerg5",
+        "analyzerId": "lab664_statement_router_0699239b9914",
         "mimeType": "application/pdf"
       },
       {
@@ -58586,7 +58586,8 @@
         "markdown": "Alpine Mile Club\n\nMembership Assistance\nAvailable 24/7\n\nMEMBERSHIP NUMBER\nMR-748312\n\nMEMBER NAME\nMarcus Coleman\n\nVALID FROM\n11/14/2025\n\nVALID UNTIL\n11/14/2026\n\nVEHICLE\n2024 Mazda CX-5 2.5 S Preferred\n\nCOLOR\nRed\n\nMEMBER ADDRESS\n304 Linden Terrace\nAspen Hollow, CO 80525\n\nRoadside assistance is available for the\nmember, vehicle and immediate family.\n\nMember\n",
         "fields": {
           "CountryRegion": {
-            "type": "string"
+            "type": "string",
+            "valueString": "USA"
           },
           "Region": {
             "type": "string"
@@ -58644,7 +58645,7 @@
                 "length": 22
               }
             ],
-            "confidence": 0.635,
+            "confidence": 0.753,
             "source": "D(1,1.1070,6.3667,3.6926,6.3589,3.6934,6.6212,1.1078,6.6291);D(1,1.1019,6.7400,4.3183,6.7055,4.3216,7.0068,1.1051,7.0413)"
           },
           "BirthDate": {
@@ -59585,14 +59586,10 @@
               {
                 "offset": 46,
                 "length": 38
-              },
-              {
-                "offset": 340,
-                "length": 42
               }
             ],
-            "confidence": 0.549,
-            "source": "D(6,1.3167,1.8218,3.3934,1.8287,3.3929,1.9728,1.3162,1.9659);D(6,5.0291,1.7550,7.1179,1.7371,7.1191,1.8792,5.0303,1.8971)"
+            "confidence": 0.715,
+            "source": "D(6,1.3167,1.8218,3.3934,1.8287,3.3929,1.9728,1.3162,1.9659)"
           },
           "CustomerAddress": {
             "type": "string",
@@ -59685,7 +59682,7 @@
                         "length": 26
                       }
                     ],
-                    "confidence": 0.748,
+                    "confidence": 0.718,
                     "source": "D(6,1.2711,5.1034,2.4249,5.1111,2.4238,5.2756,1.2700,5.2679)"
                   },
                   "ProductCode": {
@@ -59701,7 +59698,7 @@
                         "length": 1
                       }
                     ],
-                    "confidence": 0.542,
+                    "confidence": 0.526,
                     "source": "D(6,3.7208,5.1278,3.7852,5.1310,3.7852,5.2498,3.7208,5.2482)"
                   },
                   "QuantityUnit": {
@@ -59737,7 +59734,7 @@
                             "length": 6
                           }
                         ],
-                        "confidence": 0.845,
+                        "confidence": 0.836,
                         "source": "D(6,6.9229,5.1170,7.2798,5.1145,7.2798,5.2548,6.9229,5.2535)"
                       },
                       "CurrencyCode": {
@@ -59801,7 +59798,7 @@
                         "length": 26
                       }
                     ],
-                    "confidence": 0.748,
+                    "confidence": 0.718,
                     "source": "D(6,1.2669,5.4685,2.4085,5.4775,2.4072,5.6440,1.2656,5.6351)"
                   },
                   "ProductCode": {
@@ -59817,7 +59814,7 @@
                         "length": 1
                       }
                     ],
-                    "confidence": 0.555,
+                    "confidence": 0.547,
                     "source": "D(6,3.7271,5.4893,3.7852,5.4859,3.7852,5.6042,3.7271,5.6091)"
                   },
                   "QuantityUnit": {
@@ -59853,7 +59850,7 @@
                             "length": 6
                           }
                         ],
-                        "confidence": 0.875,
+                        "confidence": 0.858,
                         "source": "D(6,6.9312,5.4764,7.2839,5.4781,7.2839,5.6174,6.9312,5.6139)"
                       },
                       "CurrencyCode": {
@@ -59917,7 +59914,7 @@
                         "length": 21
                       }
                     ],
-                    "confidence": 0.756,
+                    "confidence": 0.721,
                     "source": "D(6,1.2584,5.8389,2.2288,5.8379,2.2290,5.9921,1.2586,5.9931)"
                   },
                   "ProductCode": {
@@ -59933,7 +59930,7 @@
                         "length": 1
                       }
                     ],
-                    "confidence": 0.703,
+                    "confidence": 0.684,
                     "source": "D(6,3.7271,5.8496,3.7789,5.8503,3.7789,5.9685,3.7271,5.9678)"
                   },
                   "QuantityUnit": {
@@ -59969,7 +59966,7 @@
                             "length": 6
                           }
                         ],
-                        "confidence": 0.841,
+                        "confidence": 0.834,
                         "source": "D(6,6.9353,5.8383,7.2922,5.8388,7.2922,5.9785,6.9353,5.9779)"
                       },
                       "CurrencyCode": {
@@ -60033,7 +60030,7 @@
                         "length": 18
                       }
                     ],
-                    "confidence": 0.75,
+                    "confidence": 0.718,
                     "source": "D(6,1.2465,6.2060,2.1354,6.2022,2.1361,6.3565,1.2472,6.3603)"
                   },
                   "ProductCode": {
@@ -60049,7 +60046,7 @@
                         "length": 1
                       }
                     ],
-                    "confidence": 0.589,
+                    "confidence": 0.56,
                     "source": "D(6,3.7167,6.2144,3.7769,6.2144,3.7769,6.3362,3.7167,6.3369)"
                   },
                   "QuantityUnit": {
@@ -60085,7 +60082,7 @@
                             "length": 6
                           }
                         ],
-                        "confidence": 0.819,
+                        "confidence": 0.804,
                         "source": "D(6,6.9436,6.2038,7.3005,6.2086,7.3005,6.3535,6.9436,6.3428)"
                       },
                       "CurrencyCode": {
@@ -60149,7 +60146,7 @@
                         "length": 23
                       }
                     ],
-                    "confidence": 0.826,
+                    "confidence": 0.816,
                     "source": "D(6,1.2389,6.5675,2.3637,6.5682,2.3636,6.7200,1.2388,6.7193)"
                   },
                   "ProductCode": {
@@ -60165,7 +60162,7 @@
                         "length": 1
                       }
                     ],
-                    "confidence": 0.53,
+                    "confidence": 0.509,
                     "source": "D(6,3.7188,6.5742,3.7769,6.5742,3.7769,6.7034,3.7188,6.7023)"
                   },
                   "QuantityUnit": {
@@ -60201,7 +60198,7 @@
                             "length": 6
                           }
                         ],
-                        "confidence": 0.828,
+                        "confidence": 0.816,
                         "source": "D(6,6.9561,6.5739,7.3171,6.5740,7.3171,6.7218,6.9561,6.7191)"
                       },
                       "CurrencyCode": {
@@ -70591,7 +70588,7 @@
             "startPageNumber": 6,
             "endPageNumber": 7,
             "category": "repair_estimate",
-            "confidence": 0.95
+            "confidence": 0.93
           }
         ],
         "metadata": {
@@ -70599,6 +70596,2450 @@
           "pageCount": "12"
         },
         "analyzerId": "lab664_anatolip_scus_repair"
+      },
+      {
+        "path": "input1/segment6",
+        "category": "statement",
+        "markdown": "<!-- PageHeader: Claim: ARC-26-739979 -->\n<!-- PageHeader: Statement Date: 06/13/2026 -->\n\nOn 06/12/2026 at about 4:18PM, I was at Juniper\nCenter in Aspen Hollow for a short appointment . I parked\nin the uncovered lot on the south side of the building.\nWithin a few minutes, a strong storm moved in with\nheavy rain and hail.\n\nI stayed indoors until the storm passed. When I returned\nto my vehicle, I noticed small dents across the hood,\nroof and on the upper panels of the left side. The left\nfront fender and the upper portions of the left doors\nhave the most visible marks. The glass (windshield,\nwindows and rear glass) appears to be intact.\n\nThere was no contact with any other vehicle or object\nto my knowledge. No one else was involved and the\npolice were not called.\n\nI started the vehicle and it ran normally. The vehicle\nremained drivable after the storm on 06/12/2026.\nI drove home without issue.\n\nI am reporting hail damage only. No injuries.\nPhotos were taken at the scene and at home.\n\nThis account is true to the best of my knowledge.\n\nSincerely,\nM.C.\n\nMarcus Coleman\n\n<!-- PageBreak -->\n\n",
+        "fields": {
+          "claimant_name": {
+            "type": "string",
+            "valueString": "Marcus Coleman",
+            "spans": [
+              {
+                "offset": 1067,
+                "length": 14
+              }
+            ],
+            "confidence": 0.891,
+            "source": "D(8,1.1187,10.1805,2.6853,10.1343,2.6925,10.3773,1.1259,10.4235)"
+          },
+          "incident_date": {
+            "type": "date",
+            "valueDate": "2026-06-12",
+            "spans": [
+              {
+                "offset": 94,
+                "length": 10
+              }
+            ],
+            "confidence": 0.926,
+            "source": "D(8,1.8107,1.4960,3.0334,1.5592,3.0275,1.7790,1.8030,1.7153)"
+          },
+          "incident_location": {
+            "type": "string",
+            "valueString": "Juniper\nCenter in Aspen Hollow",
+            "spans": [
+              {
+                "offset": 131,
+                "length": 7
+              },
+              {
+                "offset": 139,
+                "length": 22
+              }
+            ],
+            "confidence": 0.89,
+            "source": "D(8,6.3069,1.7091,6.9893,1.7382,6.9893,1.9537,6.3058,1.9258);D(8,1.3668,1.7828,3.7450,1.9025,3.7336,2.1274,1.3554,2.0077)"
+          },
+          "vehicle": {
+            "type": "string",
+            "confidence": 0.8
+          },
+          "vin": {
+            "type": "string",
+            "confidence": 0.8
+          },
+          "reported_damage": {
+            "type": "string",
+            "valueString": "small dents across the hood,\nroof and on the upper panels of the left side. The left\nfront fender and the upper portions of the left doors\nhave the most visible marks. The glass (windshield,\nwindows and rear glass) appears to be intact",
+            "spans": [
+              {
+                "offset": 408,
+                "length": 28
+              },
+              {
+                "offset": 437,
+                "length": 55
+              },
+              {
+                "offset": 493,
+                "length": 53
+              },
+              {
+                "offset": 547,
+                "length": 51
+              },
+              {
+                "offset": 599,
+                "length": 44
+              }
+            ],
+            "confidence": 0.862,
+            "source": "D(8,4.1070,3.6224,7.0108,3.6330,7.0100,3.8605,4.1062,3.8499);D(8,1.3331,3.8893,7.1395,3.9091,7.1387,4.1561,1.3323,4.1363);D(8,1.3105,4.1854,6.9027,4.1992,6.9021,4.4450,1.3099,4.4312);D(8,1.3142,4.4878,6.7319,4.4780,6.7323,4.7250,1.3146,4.7348);D(8,1.3134,4.7889,6.0798,4.7666,6.0810,5.0250,1.3146,5.0472)"
+          },
+          "summary": {
+            "type": "string",
+            "valueString": "On 06/12/2026 at about 4:18PM, I was at Juniper\nCenter in Aspen Hollow for a short appointment . I parked\nin the uncovered lot on the south side of the building.\nWithin a few minutes, a strong storm moved in with\nheavy rain and hail.\n\nI stayed indoors until the storm passed. When I returned\nto my vehicle, I noticed small dents across the hood,\nroof and on the upper panels of the left side. The left\nfront fender and the upper portions of the left doors\nhave the most visible marks. The glass (windshield,\nwindows and rear glass) appears to be intact.\n\nThere was no contact with any other vehicle or object\nto my knowledge. No one else was involved and the\npolice were not called.\n\nI started the vehicle and it ran normally. The vehicle\nremained drivable after the storm on 06/12/2026.\nI drove home without issue.\n\nI am reporting hail damage only. No injuries.\nPhotos were taken at the scene and at home",
+            "spans": [
+              {
+                "offset": 91,
+                "length": 47
+              },
+              {
+                "offset": 139,
+                "length": 57
+              },
+              {
+                "offset": 197,
+                "length": 55
+              },
+              {
+                "offset": 253,
+                "length": 50
+              },
+              {
+                "offset": 304,
+                "length": 20
+              },
+              {
+                "offset": 326,
+                "length": 56
+              },
+              {
+                "offset": 383,
+                "length": 53
+              },
+              {
+                "offset": 437,
+                "length": 55
+              },
+              {
+                "offset": 493,
+                "length": 53
+              },
+              {
+                "offset": 547,
+                "length": 51
+              },
+              {
+                "offset": 599,
+                "length": 45
+              },
+              {
+                "offset": 646,
+                "length": 53
+              },
+              {
+                "offset": 700,
+                "length": 49
+              },
+              {
+                "offset": 750,
+                "length": 23
+              },
+              {
+                "offset": 775,
+                "length": 54
+              },
+              {
+                "offset": 830,
+                "length": 48
+              },
+              {
+                "offset": 879,
+                "length": 27
+              },
+              {
+                "offset": 908,
+                "length": 45
+              },
+              {
+                "offset": 954,
+                "length": 43
+              }
+            ],
+            "confidence": 0.601,
+            "source": "D(8,1.3572,1.4725,6.9995,1.7366,6.9888,1.9654,1.3465,1.7014);D(8,1.3665,1.7881,7.1140,2.0135,7.1046,2.2544,1.3571,2.0290);D(8,1.3699,2.0966,7.0051,2.2896,6.9973,2.5167,1.3622,2.3237);D(8,1.3707,2.3985,6.9004,2.5651,6.8930,2.8102,1.3633,2.6436);D(8,1.3772,2.7213,3.5530,2.7620,3.5485,3.0016,1.3727,2.9608);D(8,1.3655,3.2724,7.2868,3.3454,7.2836,3.5990,1.3624,3.5260);D(8,1.3385,3.5862,7.0119,3.6344,7.0099,3.8728,1.3365,3.8246);D(8,1.3331,3.8893,7.1395,3.9091,7.1387,4.1561,1.3323,4.1363);D(8,1.3105,4.1854,6.9027,4.1992,6.9021,4.4450,1.3099,4.4312);D(8,1.3142,4.4878,6.7319,4.4780,6.7323,4.7250,1.3146,4.7348);D(8,1.3134,4.7889,6.1384,4.7664,6.1396,5.0247,1.3146,5.0472);D(8,1.3155,5.3588,6.9976,5.3301,6.9989,5.5824,1.3168,5.6110);D(8,1.2807,5.6853,6.7822,5.6017,6.7860,5.8524,1.2845,5.9359);D(8,1.2653,6.0021,3.7143,5.9327,3.7211,6.1735,1.2721,6.2429);D(8,1.2730,6.5121,6.9187,6.4101,6.9231,6.6530,1.2774,6.7550);D(8,1.2702,6.8239,6.6405,6.7014,6.6456,6.9222,1.2753,7.0447);D(8,1.2560,7.1219,4.3869,7.0526,4.3917,7.2691,1.2608,7.3384);D(8,1.2203,7.6979,6.1963,7.5636,6.2036,7.8355,1.2276,7.9698);D(8,1.1982,8.0221,6.1216,7.8602,6.1291,8.0895,1.2057,8.2515)"
+          }
+        },
+        "kind": "document",
+        "startPageNumber": 8,
+        "endPageNumber": 8,
+        "unit": "inch",
+        "pages": [
+          {
+            "pageNumber": 8,
+            "angle": -0.1912,
+            "width": 8.5,
+            "height": 11,
+            "spans": [
+              {
+                "offset": 0,
+                "length": 1103
+              }
+            ],
+            "words": [
+              {
+                "content": "Claim",
+                "span": {
+                  "offset": 17,
+                  "length": 5
+                },
+                "confidence": 0.994,
+                "source": "D(8,1.4474,0.9094,1.8021,0.91,1.8011,1.0559,1.4474,1.0547)"
+              },
+              {
+                "content": ":",
+                "span": {
+                  "offset": 22,
+                  "length": 1
+                },
+                "confidence": 0.999,
+                "source": "D(8,1.8166,0.91,1.848,0.9101,1.8469,1.0561,1.8156,1.056)"
+              },
+              {
+                "content": "ARC",
+                "span": {
+                  "offset": 24,
+                  "length": 3
+                },
+                "confidence": 0.997,
+                "source": "D(8,1.9179,0.9102,2.2219,0.9115,2.2198,1.0578,1.9166,1.0563)"
+              },
+              {
+                "content": "-",
+                "span": {
+                  "offset": 27,
+                  "length": 1
+                },
+                "confidence": 0.999,
+                "source": "D(8,2.2268,0.9115,2.275,0.9118,2.2727,1.0581,2.2246,1.0579)"
+              },
+              {
+                "content": "26-739979",
+                "span": {
+                  "offset": 28,
+                  "length": 9
+                },
+                "confidence": 0.994,
+                "source": "D(8,2.275,0.9118,2.953,0.9165,2.9489,1.0626,2.2727,1.0581)"
+              },
+              {
+                "content": "Statement",
+                "span": {
+                  "offset": 59,
+                  "length": 9
+                },
+                "confidence": 0.996,
+                "source": "D(8,5.5117,1.0572,6.1382,1.0562,6.1382,1.2056,5.5117,1.2033)"
+              },
+              {
+                "content": "Date",
+                "span": {
+                  "offset": 69,
+                  "length": 4
+                },
+                "confidence": 0.997,
+                "source": "D(8,6.1852,1.056,6.4725,1.0543,6.4725,1.2044,6.1852,1.2055)"
+              },
+              {
+                "content": ":",
+                "span": {
+                  "offset": 73,
+                  "length": 1
+                },
+                "confidence": 0.999,
+                "source": "D(8,6.4848,1.0542,6.5146,1.054,6.5146,1.2043,6.4848,1.2044)"
+              },
+              {
+                "content": "06/13/2026",
+                "span": {
+                  "offset": 75,
+                  "length": 10
+                },
+                "confidence": 0.994,
+                "source": "D(8,6.5715,1.0537,7.2549,1.0469,7.2549,1.1969,6.5715,1.2041)"
+              },
+              {
+                "content": "On",
+                "span": {
+                  "offset": 91,
+                  "length": 2
+                },
+                "confidence": 0.965,
+                "source": "D(8,1.3572,1.4725,1.6837,1.4894,1.6759,1.7087,1.3489,1.6916)"
+              },
+              {
+                "content": "06/12/2026",
+                "span": {
+                  "offset": 94,
+                  "length": 10
+                },
+                "confidence": 0.947,
+                "source": "D(8,1.8107,1.496,3.0334,1.5592,3.0275,1.779,1.803,1.7153)"
+              },
+              {
+                "content": "at",
+                "span": {
+                  "offset": 105,
+                  "length": 2
+                },
+                "confidence": 0.996,
+                "source": "D(8,3.1821,1.5669,3.4144,1.5781,3.409,1.7979,3.1764,1.7868)"
+              },
+              {
+                "content": "about",
+                "span": {
+                  "offset": 108,
+                  "length": 5
+                },
+                "confidence": 0.976,
+                "source": "D(8,3.5341,1.5837,4.0894,1.6099,4.085,1.8293,3.5289,1.8035)"
+              },
+              {
+                "content": "4",
+                "span": {
+                  "offset": 114,
+                  "length": 1
+                },
+                "confidence": 0.94,
+                "source": "D(8,4.2127,1.6157,4.347,1.6221,4.343,1.8413,4.2086,1.8351)"
+              },
+              {
+                "content": ":",
+                "span": {
+                  "offset": 115,
+                  "length": 1
+                },
+                "confidence": 0.989,
+                "source": "D(8,4.3615,1.6227,4.4305,1.626,4.4266,1.8452,4.3576,1.842)"
+              },
+              {
+                "content": "18PM",
+                "span": {
+                  "offset": 116,
+                  "length": 4
+                },
+                "confidence": 0.476,
+                "source": "D(8,4.4522,1.627,4.9422,1.6501,4.9391,1.869,4.4484,1.8462)"
+              },
+              {
+                "content": ",",
+                "span": {
+                  "offset": 120,
+                  "length": 1
+                },
+                "confidence": 0.967,
+                "source": "D(8,4.9567,1.6508,5.0401,1.6547,5.0372,1.8736,4.9536,1.8697)"
+              },
+              {
+                "content": "I",
+                "span": {
+                  "offset": 122,
+                  "length": 1
+                },
+                "confidence": 0.928,
+                "source": "D(8,5.1599,1.6602,5.316,1.6668,5.3134,1.8853,5.1571,1.8789)"
+              },
+              {
+                "content": "was",
+                "span": {
+                  "offset": 124,
+                  "length": 3
+                },
+                "confidence": 0.945,
+                "source": "D(8,5.4358,1.6719,5.7987,1.6874,5.7969,1.905,5.4334,1.8902)"
+              },
+              {
+                "content": "at",
+                "span": {
+                  "offset": 128,
+                  "length": 2
+                },
+                "confidence": 0.988,
+                "source": "D(8,5.9548,1.6941,6.198,1.7045,6.1968,1.9213,5.9532,1.9114)"
+              },
+              {
+                "content": "Juniper",
+                "span": {
+                  "offset": 131,
+                  "length": 7
+                },
+                "confidence": 0.876,
+                "source": "D(8,6.3069,1.7091,6.9893,1.7382,6.9893,1.9537,6.3058,1.9258)"
+              },
+              {
+                "content": "Center",
+                "span": {
+                  "offset": 139,
+                  "length": 6
+                },
+                "confidence": 0.958,
+                "source": "D(8,1.3665,1.7881,2.0111,1.8205,2.0037,2.0401,1.3582,2.0075)"
+              },
+              {
+                "content": "in",
+                "span": {
+                  "offset": 146,
+                  "length": 2
+                },
+                "confidence": 0.992,
+                "source": "D(8,2.1343,1.8266,2.3298,1.8364,2.3229,2.0563,2.1271,2.0464)"
+              },
+              {
+                "content": "Aspen",
+                "span": {
+                  "offset": 149,
+                  "length": 5
+                },
+                "confidence": 0.991,
+                "source": "D(8,2.4566,1.8428,3.0433,1.8722,3.0373,2.0923,2.4498,2.0627)"
+              },
+              {
+                "content": "Hollow",
+                "span": {
+                  "offset": 155,
+                  "length": 6
+                },
+                "confidence": 0.991,
+                "source": "D(8,3.1809,1.8791,3.7388,1.9022,3.7339,2.1222,3.1751,2.0993)"
+              },
+              {
+                "content": "for",
+                "span": {
+                  "offset": 162,
+                  "length": 3
+                },
+                "confidence": 0.994,
+                "source": "D(8,3.8511,1.9066,4.1374,1.9179,4.133,2.1377,3.8464,2.1265)"
+              },
+              {
+                "content": "a",
+                "span": {
+                  "offset": 166,
+                  "length": 1
+                },
+                "confidence": 0.997,
+                "source": "D(8,4.2352,1.9218,4.3511,1.9264,4.3471,2.146,4.231,2.1415)"
+              },
+              {
+                "content": "short",
+                "span": {
+                  "offset": 168,
+                  "length": 5
+                },
+                "confidence": 0.986,
+                "source": "D(8,4.449,1.9303,4.9164,1.9487,4.9131,2.1679,4.4451,2.1498)"
+              },
+              {
+                "content": "appointment",
+                "span": {
+                  "offset": 174,
+                  "length": 11
+                },
+                "confidence": 0.978,
+                "source": "D(8,5.0033,1.9522,6.1051,1.986,6.1036,2.2035,5.0002,2.1713)"
+              },
+              {
+                "content": ".",
+                "span": {
+                  "offset": 186,
+                  "length": 1
+                },
+                "confidence": 0.989,
+                "source": "D(8,6.0978,1.9858,6.174,1.988,6.1726,2.2054,6.0964,2.2033)"
+              },
+              {
+                "content": "I",
+                "span": {
+                  "offset": 188,
+                  "length": 1
+                },
+                "confidence": 0.984,
+                "source": "D(8,6.2646,1.9906,6.4132,1.9949,6.4122,2.2119,6.2633,2.2079)"
+              },
+              {
+                "content": "parked",
+                "span": {
+                  "offset": 190,
+                  "length": 6
+                },
+                "confidence": 0.979,
+                "source": "D(8,6.5074,1.9976,7.1055,2.0149,7.1055,2.2307,6.5065,2.2145)"
+              },
+              {
+                "content": "in",
+                "span": {
+                  "offset": 197,
+                  "length": 2
+                },
+                "confidence": 0.984,
+                "source": "D(8,1.3696,2.1063,1.5681,2.114,1.5641,2.3152,1.3655,2.3069)"
+              },
+              {
+                "content": "the",
+                "span": {
+                  "offset": 200,
+                  "length": 3
+                },
+                "confidence": 0.994,
+                "source": "D(8,1.683,2.1184,2.0312,2.1318,2.0275,2.3345,1.6791,2.32)"
+              },
+              {
+                "content": "uncovered",
+                "span": {
+                  "offset": 204,
+                  "length": 9
+                },
+                "confidence": 0.986,
+                "source": "D(8,2.1496,2.1364,3.121,2.1739,3.1182,2.38,2.146,2.3395)"
+              },
+              {
+                "content": "lot",
+                "span": {
+                  "offset": 214,
+                  "length": 3
+                },
+                "confidence": 0.991,
+                "source": "D(8,3.2499,2.1788,3.5076,2.1872,3.505,2.3946,3.2471,2.3853)"
+              },
+              {
+                "content": "on",
+                "span": {
+                  "offset": 218,
+                  "length": 2
+                },
+                "confidence": 0.988,
+                "source": "D(8,3.626,2.191,3.8454,2.1982,3.8431,2.4068,3.6235,2.3989)"
+              },
+              {
+                "content": "the",
+                "span": {
+                  "offset": 221,
+                  "length": 3
+                },
+                "confidence": 0.992,
+                "source": "D(8,3.9429,2.2013,4.2494,2.2113,4.2473,2.4213,3.9406,2.4103)"
+              },
+              {
+                "content": "south",
+                "span": {
+                  "offset": 225,
+                  "length": 5
+                },
+                "confidence": 0.982,
+                "source": "D(8,4.3678,2.2151,4.8832,2.2319,4.8817,2.4441,4.3658,2.4256)"
+              },
+              {
+                "content": "side",
+                "span": {
+                  "offset": 231,
+                  "length": 4
+                },
+                "confidence": 0.983,
+                "source": "D(8,4.9703,2.2347,5.3221,2.245,5.3208,2.4587,4.9688,2.4472)"
+              },
+              {
+                "content": "of",
+                "span": {
+                  "offset": 236,
+                  "length": 2
+                },
+                "confidence": 0.985,
+                "source": "D(8,5.4301,2.2478,5.6565,2.2538,5.6555,2.4688,5.4289,2.462)"
+              },
+              {
+                "content": "the",
+                "span": {
+                  "offset": 239,
+                  "length": 3
+                },
+                "confidence": 0.988,
+                "source": "D(8,5.7331,2.2558,6.0501,2.2642,6.0494,2.4807,5.7322,2.4711)"
+              },
+              {
+                "content": "building",
+                "span": {
+                  "offset": 243,
+                  "length": 8
+                },
+                "confidence": 0.947,
+                "source": "D(8,6.1511,2.2669,6.9314,2.2876,6.9313,2.5073,6.1505,2.4837)"
+              },
+              {
+                "content": ".",
+                "span": {
+                  "offset": 251,
+                  "length": 1
+                },
+                "confidence": 0.923,
+                "source": "D(8,6.9244,2.2874,6.9976,2.2893,6.9976,2.5093,6.9244,2.5071)"
+              },
+              {
+                "content": "Within",
+                "span": {
+                  "offset": 253,
+                  "length": 6
+                },
+                "confidence": 0.958,
+                "source": "D(8,1.3707,2.3985,2.0197,2.4227,2.015,2.6497,1.3655,2.6226)"
+              },
+              {
+                "content": "a",
+                "span": {
+                  "offset": 260,
+                  "length": 1
+                },
+                "confidence": 0.997,
+                "source": "D(8,2.1585,2.4278,2.301,2.4332,2.2965,2.6614,2.1539,2.6555)"
+              },
+              {
+                "content": "few",
+                "span": {
+                  "offset": 262,
+                  "length": 3
+                },
+                "confidence": 0.991,
+                "source": "D(8,2.4286,2.4379,2.7624,2.4503,2.7583,2.6807,2.4242,2.6668)"
+              },
+              {
+                "content": "minutes",
+                "span": {
+                  "offset": 266,
+                  "length": 7
+                },
+                "confidence": 0.983,
+                "source": "D(8,2.8787,2.4546,3.6216,2.4798,3.6182,2.7115,2.8747,2.6855)"
+              },
+              {
+                "content": ",",
+                "span": {
+                  "offset": 273,
+                  "length": 1
+                },
+                "confidence": 0.997,
+                "source": "D(8,3.6366,2.4802,3.7041,2.4823,3.7008,2.7139,3.6332,2.7119)"
+              },
+              {
+                "content": "a",
+                "span": {
+                  "offset": 275,
+                  "length": 1
+                },
+                "confidence": 0.996,
+                "source": "D(8,3.8467,2.4868,3.9743,2.4907,3.9712,2.7218,3.8435,2.7181)"
+              },
+              {
+                "content": "strong",
+                "span": {
+                  "offset": 277,
+                  "length": 6
+                },
+                "confidence": 0.981,
+                "source": "D(8,4.0981,2.4946,4.6985,2.5132,4.6961,2.743,4.0952,2.7254)"
+              },
+              {
+                "content": "storm",
+                "span": {
+                  "offset": 284,
+                  "length": 5
+                },
+                "confidence": 0.991,
+                "source": "D(8,4.8185,2.517,5.3251,2.531,5.3234,2.758,4.8163,2.7466)"
+              },
+              {
+                "content": "moved",
+                "span": {
+                  "offset": 290,
+                  "length": 5
+                },
+                "confidence": 0.986,
+                "source": "D(8,5.449,2.5341,6.0382,2.5488,6.0372,2.77,5.4474,2.7601)"
+              },
+              {
+                "content": "in",
+                "span": {
+                  "offset": 296,
+                  "length": 2
+                },
+                "confidence": 0.989,
+                "source": "D(8,6.162,2.5519,6.3609,2.5568,6.3603,2.7755,6.1612,2.7721)"
+              },
+              {
+                "content": "with",
+                "span": {
+                  "offset": 299,
+                  "length": 4
+                },
+                "confidence": 0.976,
+                "source": "D(8,6.451,2.5591,6.8938,2.5701,6.8938,2.7845,6.4505,2.777)"
+              },
+              {
+                "content": "heavy",
+                "span": {
+                  "offset": 304,
+                  "length": 5
+                },
+                "confidence": 0.987,
+                "source": "D(8,1.379,2.7224,1.9341,2.7318,1.9284,2.9692,1.3727,2.9608)"
+              },
+              {
+                "content": "rain",
+                "span": {
+                  "offset": 310,
+                  "length": 4
+                },
+                "confidence": 0.992,
+                "source": "D(8,2.0467,2.7338,2.462,2.7422,2.4568,2.9773,2.041,2.9709)"
+              },
+              {
+                "content": "and",
+                "span": {
+                  "offset": 315,
+                  "length": 3
+                },
+                "confidence": 0.996,
+                "source": "D(8,2.5707,2.7445,2.9628,2.7532,2.958,2.985,2.5656,2.979)"
+              },
+              {
+                "content": "hail",
+                "span": {
+                  "offset": 319,
+                  "length": 4
+                },
+                "confidence": 0.99,
+                "source": "D(8,3.0947,2.7565,3.5023,2.7665,3.4981,2.9934,3.0901,2.9871)"
+              },
+              {
+                "content": ".",
+                "span": {
+                  "offset": 323,
+                  "length": 1
+                },
+                "confidence": 0.963,
+                "source": "D(8,3.4906,2.7663,3.5527,2.7678,3.5486,2.9942,3.4864,2.9932)"
+              },
+              {
+                "content": "I",
+                "span": {
+                  "offset": 326,
+                  "length": 1
+                },
+                "confidence": 0.99,
+                "source": "D(8,1.3655,3.2724,1.5427,3.2764,1.5407,3.5148,1.3634,3.5113)"
+              },
+              {
+                "content": "stayed",
+                "span": {
+                  "offset": 328,
+                  "length": 6
+                },
+                "confidence": 0.99,
+                "source": "D(8,1.666,3.2792,2.3286,3.2941,2.3269,3.5306,1.664,3.5173)"
+              },
+              {
+                "content": "indoors",
+                "span": {
+                  "offset": 335,
+                  "length": 7
+                },
+                "confidence": 0.992,
+                "source": "D(8,2.4673,3.2972,3.1223,3.3119,3.1209,3.5465,2.4657,3.5334)"
+              },
+              {
+                "content": "until",
+                "span": {
+                  "offset": 343,
+                  "length": 5
+                },
+                "confidence": 0.992,
+                "source": "D(8,3.2725,3.3153,3.7657,3.3225,3.7646,3.5556,3.2712,3.5495)"
+              },
+              {
+                "content": "the",
+                "span": {
+                  "offset": 349,
+                  "length": 3
+                },
+                "confidence": 0.997,
+                "source": "D(8,3.8929,3.3242,4.2012,3.3283,4.2001,3.5605,3.8918,3.557)"
+              },
+              {
+                "content": "storm",
+                "span": {
+                  "offset": 353,
+                  "length": 5
+                },
+                "confidence": 0.993,
+                "source": "D(8,4.2936,3.3295,4.8023,3.3364,4.8014,3.5672,4.2926,3.5615)"
+              },
+              {
+                "content": "passed",
+                "span": {
+                  "offset": 359,
+                  "length": 6
+                },
+                "confidence": 0.957,
+                "source": "D(8,4.9217,3.338,5.5421,3.3442,5.5415,3.5735,4.9209,3.5686)"
+              },
+              {
+                "content": ".",
+                "span": {
+                  "offset": 365,
+                  "length": 1
+                },
+                "confidence": 0.947,
+                "source": "D(8,5.5614,3.3443,5.6385,3.3446,5.6379,3.5737,5.5608,3.5735)"
+              },
+              {
+                "content": "When",
+                "span": {
+                  "offset": 367,
+                  "length": 4
+                },
+                "confidence": 0.889,
+                "source": "D(8,5.7001,3.3449,6.2011,3.3471,6.2007,3.575,5.6996,3.5738)"
+              },
+              {
+                "content": "I",
+                "span": {
+                  "offset": 372,
+                  "length": 1
+                },
+                "confidence": 0.94,
+                "source": "D(8,6.309,3.3475,6.467,3.3482,6.4667,3.5756,6.3087,3.5753)"
+              },
+              {
+                "content": "returned",
+                "span": {
+                  "offset": 374,
+                  "length": 8
+                },
+                "confidence": 0.854,
+                "source": "D(8,6.5479,3.3486,7.2839,3.3518,7.2839,3.5776,6.5477,3.5758)"
+              },
+              {
+                "content": "to",
+                "span": {
+                  "offset": 383,
+                  "length": 2
+                },
+                "confidence": 0.986,
+                "source": "D(8,1.3385,3.5862,1.5549,3.5894,1.5549,3.8203,1.3385,3.8176)"
+              },
+              {
+                "content": "my",
+                "span": {
+                  "offset": 386,
+                  "length": 2
+                },
+                "confidence": 0.99,
+                "source": "D(8,1.6631,3.5909,1.9616,3.5953,1.9616,3.8252,1.6631,3.8216)"
+              },
+              {
+                "content": "vehicle",
+                "span": {
+                  "offset": 389,
+                  "length": 7
+                },
+                "confidence": 0.974,
+                "source": "D(8,2.0773,3.5969,2.7377,3.6065,2.7377,3.8348,2.0773,3.8267)"
+              },
+              {
+                "content": ",",
+                "span": {
+                  "offset": 396,
+                  "length": 1
+                },
+                "confidence": 0.996,
+                "source": "D(8,2.7675,3.607,2.8459,3.6081,2.8459,3.8361,2.7675,3.8351)"
+              },
+              {
+                "content": "I",
+                "span": {
+                  "offset": 398,
+                  "length": 1
+                },
+                "confidence": 0.97,
+                "source": "D(8,2.9988,3.6103,3.1779,3.6129,3.1779,3.8402,2.9988,3.838)"
+              },
+              {
+                "content": "noticed",
+                "span": {
+                  "offset": 400,
+                  "length": 7
+                },
+                "confidence": 0.983,
+                "source": "D(8,3.2861,3.6142,3.9689,3.6211,3.969,3.8459,3.2861,3.8412)"
+              },
+              {
+                "content": "small",
+                "span": {
+                  "offset": 408,
+                  "length": 5
+                },
+                "confidence": 0.986,
+                "source": "D(8,4.107,3.6224,4.6331,3.6277,4.6331,3.8505,4.107,3.8469)"
+              },
+              {
+                "content": "dents",
+                "span": {
+                  "offset": 414,
+                  "length": 5
+                },
+                "confidence": 0.991,
+                "source": "D(8,4.7227,3.6286,5.26,3.6333,5.26,3.8541,4.7227,3.8512)"
+              },
+              {
+                "content": "across",
+                "span": {
+                  "offset": 420,
+                  "length": 6
+                },
+                "confidence": 0.986,
+                "source": "D(8,5.3794,3.634,5.9578,3.6371,5.9578,3.8552,5.3794,3.8543)"
+              },
+              {
+                "content": "the",
+                "span": {
+                  "offset": 427,
+                  "length": 3
+                },
+                "confidence": 0.992,
+                "source": "D(8,6.0884,3.6378,6.4167,3.6396,6.4167,3.856,6.0884,3.8554)"
+              },
+              {
+                "content": "hood",
+                "span": {
+                  "offset": 431,
+                  "length": 4
+                },
+                "confidence": 0.979,
+                "source": "D(8,6.5175,3.6402,6.9167,3.6423,6.9167,3.8568,6.5175,3.8561)"
+              },
+              {
+                "content": ",",
+                "span": {
+                  "offset": 435,
+                  "length": 1
+                },
+                "confidence": 0.969,
+                "source": "D(8,6.9242,3.6424,7.01,3.6428,7.01,3.8569,6.9242,3.8568)"
+              },
+              {
+                "content": "roof",
+                "span": {
+                  "offset": 437,
+                  "length": 4
+                },
+                "confidence": 0.988,
+                "source": "D(8,1.3333,3.8893,1.7514,3.8917,1.7504,4.1344,1.3323,4.132)"
+              },
+              {
+                "content": "and",
+                "span": {
+                  "offset": 442,
+                  "length": 3
+                },
+                "confidence": 0.998,
+                "source": "D(8,1.8736,3.8924,2.2483,3.8946,2.2474,4.1372,1.8727,4.1351)"
+              },
+              {
+                "content": "on",
+                "span": {
+                  "offset": 446,
+                  "length": 2
+                },
+                "confidence": 0.997,
+                "source": "D(8,2.3863,3.8954,2.6308,3.8969,2.63,4.1394,2.3855,4.138)"
+              },
+              {
+                "content": "the",
+                "span": {
+                  "offset": 449,
+                  "length": 3
+                },
+                "confidence": 0.997,
+                "source": "D(8,2.7531,3.8976,3.0962,3.8996,3.0955,4.142,2.7523,4.1401)"
+              },
+              {
+                "content": "upper",
+                "span": {
+                  "offset": 453,
+                  "length": 5
+                },
+                "confidence": 0.992,
+                "source": "D(8,3.2066,3.9002,3.7588,3.903,3.7582,4.144,3.2059,4.1427)"
+              },
+              {
+                "content": "panels",
+                "span": {
+                  "offset": 459,
+                  "length": 6
+                },
+                "confidence": 0.988,
+                "source": "D(8,3.8574,3.9035,4.4726,3.9065,4.4721,4.1454,3.8568,4.1442)"
+              },
+              {
+                "content": "of",
+                "span": {
+                  "offset": 466,
+                  "length": 2
+                },
+                "confidence": 0.996,
+                "source": "D(8,4.5791,3.907,4.8394,3.9083,4.839,4.1461,4.5786,4.1456)"
+              },
+              {
+                "content": "the",
+                "span": {
+                  "offset": 469,
+                  "length": 3
+                },
+                "confidence": 0.997,
+                "source": "D(8,4.938,3.9088,5.2653,3.9103,5.265,4.1467,4.9376,4.1463)"
+              },
+              {
+                "content": "left",
+                "span": {
+                  "offset": 473,
+                  "length": 4
+                },
+                "confidence": 0.982,
+                "source": "D(8,5.3876,3.9108,5.7662,3.9123,5.766,4.1458,5.3873,4.1465)"
+              },
+              {
+                "content": "side",
+                "span": {
+                  "offset": 478,
+                  "length": 4
+                },
+                "confidence": 0.948,
+                "source": "D(8,5.8569,3.9127,6.2434,3.9142,6.2432,4.145,5.8567,4.1457)"
+              },
+              {
+                "content": ".",
+                "span": {
+                  "offset": 482,
+                  "length": 1
+                },
+                "confidence": 0.959,
+                "source": "D(8,6.2434,3.9142,6.3223,3.9145,6.3221,4.1449,6.2432,4.145)"
+              },
+              {
+                "content": "The",
+                "span": {
+                  "offset": 484,
+                  "length": 3
+                },
+                "confidence": 0.947,
+                "source": "D(8,6.3933,3.9148,6.7167,3.9161,6.7166,4.1442,6.3931,4.1447)"
+              },
+              {
+                "content": "left",
+                "span": {
+                  "offset": 488,
+                  "length": 4
+                },
+                "confidence": 0.967,
+                "source": "D(8,6.7877,3.9164,7.1387,3.9178,7.1387,4.1434,6.7876,4.144)"
+              },
+              {
+                "content": "front",
+                "span": {
+                  "offset": 493,
+                  "length": 5
+                },
+                "confidence": 0.984,
+                "source": "D(8,1.3105,4.1854,1.8192,4.1885,1.8192,4.4251,1.3105,4.4211)"
+              },
+              {
+                "content": "fender",
+                "span": {
+                  "offset": 499,
+                  "length": 6
+                },
+                "confidence": 0.993,
+                "source": "D(8,1.9357,4.1892,2.5841,4.1931,2.5841,4.4312,1.9356,4.426)"
+              },
+              {
+                "content": "and",
+                "span": {
+                  "offset": 506,
+                  "length": 3
+                },
+                "confidence": 0.998,
+                "source": "D(8,2.6928,4.1938,3.0811,4.1962,3.0811,4.4351,2.6928,4.432)"
+              },
+              {
+                "content": "the",
+                "span": {
+                  "offset": 510,
+                  "length": 3
+                },
+                "confidence": 0.998,
+                "source": "D(8,3.2209,4.1969,3.5665,4.198,3.5665,4.4365,3.2209,4.4359)"
+              },
+              {
+                "content": "upper",
+                "span": {
+                  "offset": 514,
+                  "length": 5
+                },
+                "confidence": 0.99,
+                "source": "D(8,3.6558,4.1983,4.2111,4.2002,4.2111,4.4376,3.6558,4.4366)"
+              },
+              {
+                "content": "portions",
+                "span": {
+                  "offset": 520,
+                  "length": 8
+                },
+                "confidence": 0.985,
+                "source": "D(8,4.316,4.2005,5.1003,4.2029,5.1003,4.4386,4.316,4.4377)"
+              },
+              {
+                "content": "of",
+                "span": {
+                  "offset": 529,
+                  "length": 2
+                },
+                "confidence": 0.996,
+                "source": "D(8,5.213,4.203,5.4498,4.2031,5.4498,4.437,5.213,4.4381)"
+              },
+              {
+                "content": "the",
+                "span": {
+                  "offset": 532,
+                  "length": 3
+                },
+                "confidence": 0.997,
+                "source": "D(8,5.5236,4.2031,5.8537,4.2033,5.8537,4.4352,5.5236,4.4367)"
+              },
+              {
+                "content": "left",
+                "span": {
+                  "offset": 536,
+                  "length": 4
+                },
+                "confidence": 0.992,
+                "source": "D(8,5.9507,4.2033,6.3196,4.2035,6.3196,4.433,5.9507,4.4347)"
+              },
+              {
+                "content": "doors",
+                "span": {
+                  "offset": 541,
+                  "length": 5
+                },
+                "confidence": 0.995,
+                "source": "D(8,6.4128,4.2036,6.9021,4.2038,6.9021,4.4303,6.4128,4.4326)"
+              },
+              {
+                "content": "have",
+                "span": {
+                  "offset": 547,
+                  "length": 4
+                },
+                "confidence": 0.99,
+                "source": "D(8,1.3146,4.4976,1.7477,4.4965,1.7477,4.724,1.3146,4.7227)"
+              },
+              {
+                "content": "the",
+                "span": {
+                  "offset": 552,
+                  "length": 3
+                },
+                "confidence": 0.996,
+                "source": "D(8,1.8579,4.4962,2.1926,4.4954,2.1926,4.7253,1.8579,4.7243)"
+              },
+              {
+                "content": "most",
+                "span": {
+                  "offset": 556,
+                  "length": 4
+                },
+                "confidence": 0.993,
+                "source": "D(8,2.3146,4.4951,2.8225,4.4938,2.8225,4.7272,2.3146,4.7257)"
+              },
+              {
+                "content": "visible",
+                "span": {
+                  "offset": 561,
+                  "length": 7
+                },
+                "confidence": 0.988,
+                "source": "D(8,2.9406,4.4935,3.5863,4.4913,3.5863,4.7281,2.9406,4.7276)"
+              },
+              {
+                "content": "marks",
+                "span": {
+                  "offset": 569,
+                  "length": 5
+                },
+                "confidence": 0.878,
+                "source": "D(8,3.7083,4.4909,4.3186,4.4887,4.3186,4.7282,3.7083,4.7282)"
+              },
+              {
+                "content": ".",
+                "span": {
+                  "offset": 574,
+                  "length": 1
+                },
+                "confidence": 0.931,
+                "source": "D(8,4.3304,4.4886,4.4052,4.4883,4.4052,4.7282,4.3304,4.7282)"
+              },
+              {
+                "content": "The",
+                "span": {
+                  "offset": 576,
+                  "length": 3
+                },
+                "confidence": 0.912,
+                "source": "D(8,4.5233,4.4879,4.8579,4.4867,4.8579,4.7282,4.5233,4.7282)"
+              },
+              {
+                "content": "glass",
+                "span": {
+                  "offset": 580,
+                  "length": 5
+                },
+                "confidence": 0.987,
+                "source": "D(8,4.9564,4.4863,5.4485,4.484,5.4485,4.7267,4.9564,4.7282)"
+              },
+              {
+                "content": "(",
+                "span": {
+                  "offset": 586,
+                  "length": 1
+                },
+                "confidence": 0.994,
+                "source": "D(8,5.5745,4.4834,5.6808,4.4829,5.6808,4.7261,5.5745,4.7264)"
+              },
+              {
+                "content": "windshield",
+                "span": {
+                  "offset": 587,
+                  "length": 10
+                },
+                "confidence": 0.967,
+                "source": "D(8,5.6768,4.483,6.6611,4.4784,6.6611,4.7233,5.6768,4.7261)"
+              },
+              {
+                "content": ",",
+                "span": {
+                  "offset": 597,
+                  "length": 1
+                },
+                "confidence": 0.93,
+                "source": "D(8,6.6532,4.4784,6.7319,4.478,6.7319,4.7231,6.6532,4.7233)"
+              },
+              {
+                "content": "windows",
+                "span": {
+                  "offset": 599,
+                  "length": 7
+                },
+                "confidence": 0.971,
+                "source": "D(8,1.3136,4.7916,2.1135,4.7864,2.1144,5.0415,1.3146,5.043)"
+              },
+              {
+                "content": "and",
+                "span": {
+                  "offset": 607,
+                  "length": 3
+                },
+                "confidence": 0.997,
+                "source": "D(8,2.2266,4.7856,2.5952,4.7832,2.596,5.0407,2.2275,5.0413)"
+              },
+              {
+                "content": "rear",
+                "span": {
+                  "offset": 611,
+                  "length": 4
+                },
+                "confidence": 0.986,
+                "source": "D(8,2.7501,4.7822,3.1857,4.7802,3.1864,5.0385,2.7509,5.0404)"
+              },
+              {
+                "content": "glass",
+                "span": {
+                  "offset": 616,
+                  "length": 5
+                },
+                "confidence": 0.981,
+                "source": "D(8,3.2946,4.7799,3.7804,4.7783,3.781,5.0349,3.2953,5.0378)"
+              },
+              {
+                "content": ")",
+                "span": {
+                  "offset": 621,
+                  "length": 1
+                },
+                "confidence": 0.994,
+                "source": "D(8,3.7846,4.7783,3.881,4.778,3.8815,5.0343,3.7852,5.0349)"
+              },
+              {
+                "content": "appears",
+                "span": {
+                  "offset": 623,
+                  "length": 7
+                },
+                "confidence": 0.969,
+                "source": "D(8,4.0108,4.7776,4.7144,4.7759,4.7148,5.0286,4.0113,5.0336)"
+              },
+              {
+                "content": "to",
+                "span": {
+                  "offset": 631,
+                  "length": 2
+                },
+                "confidence": 0.988,
+                "source": "D(8,4.8526,4.7759,5.0579,4.7759,5.0581,5.0252,4.853,5.0272)"
+              },
+              {
+                "content": "be",
+                "span": {
+                  "offset": 634,
+                  "length": 2
+                },
+                "confidence": 0.967,
+                "source": "D(8,5.1793,4.7759,5.4055,4.776,5.4057,5.0217,5.1796,5.024)"
+              },
+              {
+                "content": "intact",
+                "span": {
+                  "offset": 637,
+                  "length": 6
+                },
+                "confidence": 0.857,
+                "source": "D(8,5.5186,4.776,6.0798,4.776,6.0798,5.0149,5.5187,5.0206)"
+              },
+              {
+                "content": ".",
+                "span": {
+                  "offset": 643,
+                  "length": 1
+                },
+                "confidence": 0.903,
+                "source": "D(8,6.0672,4.776,6.1384,4.776,6.1384,5.0143,6.0672,5.0151)"
+              },
+              {
+                "content": "There",
+                "span": {
+                  "offset": 646,
+                  "length": 5
+                },
+                "confidence": 0.992,
+                "source": "D(8,1.3167,5.3603,1.8372,5.3604,1.8372,5.6001,1.3167,5.5998)"
+              },
+              {
+                "content": "was",
+                "span": {
+                  "offset": 652,
+                  "length": 3
+                },
+                "confidence": 0.995,
+                "source": "D(8,1.9784,5.3604,2.3658,5.3605,2.3658,5.6004,1.9784,5.6002)"
+              },
+              {
+                "content": "no",
+                "span": {
+                  "offset": 656,
+                  "length": 2
+                },
+                "confidence": 0.997,
+                "source": "D(8,2.511,5.3605,2.7531,5.3606,2.7531,5.6006,2.511,5.6005)"
+              },
+              {
+                "content": "contact",
+                "span": {
+                  "offset": 659,
+                  "length": 7
+                },
+                "confidence": 0.984,
+                "source": "D(8,2.9145,5.3606,3.6407,5.3584,3.6407,5.5989,2.9145,5.6007)"
+              },
+              {
+                "content": "with",
+                "span": {
+                  "offset": 667,
+                  "length": 4
+                },
+                "confidence": 0.994,
+                "source": "D(8,3.7779,5.3577,4.2137,5.3553,4.2137,5.5962,3.7779,5.5982)"
+              },
+              {
+                "content": "any",
+                "span": {
+                  "offset": 672,
+                  "length": 3
+                },
+                "confidence": 0.996,
+                "source": "D(8,4.3428,5.3547,4.6898,5.3528,4.6898,5.594,4.3428,5.5956)"
+              },
+              {
+                "content": "other",
+                "span": {
+                  "offset": 676,
+                  "length": 5
+                },
+                "confidence": 0.995,
+                "source": "D(8,4.7866,5.3523,5.2788,5.3487,5.2788,5.5903,4.7866,5.5935)"
+              },
+              {
+                "content": "vehicle",
+                "span": {
+                  "offset": 682,
+                  "length": 7
+                },
+                "confidence": 0.98,
+                "source": "D(8,5.3837,5.3476,6.0091,5.3408,6.0091,5.5831,5.3837,5.5893)"
+              },
+              {
+                "content": "or",
+                "span": {
+                  "offset": 690,
+                  "length": 2
+                },
+                "confidence": 0.989,
+                "source": "D(8,6.1221,5.3396,6.3198,5.3375,6.3197,5.58,6.1221,5.582)"
+              },
+              {
+                "content": "object",
+                "span": {
+                  "offset": 693,
+                  "length": 6
+                },
+                "confidence": 0.968,
+                "source": "D(8,6.4004,5.3366,6.9976,5.3301,6.9976,5.5733,6.4004,5.5792)"
+              },
+              {
+                "content": "to",
+                "span": {
+                  "offset": 700,
+                  "length": 2
+                },
+                "confidence": 0.993,
+                "source": "D(8,1.2845,5.6852,1.4826,5.6824,1.4828,5.9326,1.2845,5.9359)"
+              },
+              {
+                "content": "my",
+                "span": {
+                  "offset": 703,
+                  "length": 2
+                },
+                "confidence": 0.993,
+                "source": "D(8,1.612,5.6807,1.9151,5.6765,1.9156,5.9255,1.6122,5.9305)"
+              },
+              {
+                "content": "knowledge",
+                "span": {
+                  "offset": 706,
+                  "length": 9
+                },
+                "confidence": 0.957,
+                "source": "D(8,2.0444,5.6747,3.0267,5.6612,3.028,5.9072,2.045,5.9234)"
+              },
+              {
+                "content": ".",
+                "span": {
+                  "offset": 715,
+                  "length": 1
+                },
+                "confidence": 0.918,
+                "source": "D(8,3.0307,5.6611,3.0994,5.6602,3.1008,5.906,3.032,5.9071)"
+              },
+              {
+                "content": "No",
+                "span": {
+                  "offset": 717,
+                  "length": 2
+                },
+                "confidence": 0.965,
+                "source": "D(8,3.249,5.6582,3.5198,5.6546,3.5215,5.8989,3.2505,5.9035)"
+              },
+              {
+                "content": "one",
+                "span": {
+                  "offset": 720,
+                  "length": 3
+                },
+                "confidence": 0.995,
+                "source": "D(8,3.633,5.653,3.9442,5.6489,3.9462,5.8917,3.6348,5.8969)"
+              },
+              {
+                "content": "else",
+                "span": {
+                  "offset": 724,
+                  "length": 4
+                },
+                "confidence": 0.994,
+                "source": "D(8,4.0897,5.6469,4.4535,5.642,4.4559,5.883,4.0919,5.8892)"
+              },
+              {
+                "content": "was",
+                "span": {
+                  "offset": 729,
+                  "length": 3
+                },
+                "confidence": 0.993,
+                "source": "D(8,4.5788,5.6403,4.9507,5.6353,4.9535,5.8746,4.5813,5.8809)"
+              },
+              {
+                "content": "involved",
+                "span": {
+                  "offset": 733,
+                  "length": 8
+                },
+                "confidence": 0.984,
+                "source": "D(8,5.1002,5.6334,5.8561,5.6235,5.8596,5.8588,5.1031,5.872)"
+              },
+              {
+                "content": "and",
+                "span": {
+                  "offset": 742,
+                  "length": 3
+                },
+                "confidence": 0.993,
+                "source": "D(8,6.0016,5.6216,6.3614,5.6169,6.3652,5.85,6.0052,5.8563)"
+              },
+              {
+                "content": "the",
+                "span": {
+                  "offset": 746,
+                  "length": 3
+                },
+                "confidence": 0.993,
+                "source": "D(8,6.4624,5.6155,6.7817,5.6114,6.7859,5.8426,6.4663,5.8482)"
+              },
+              {
+                "content": "police",
+                "span": {
+                  "offset": 750,
+                  "length": 6
+                },
+                "confidence": 0.994,
+                "source": "D(8,1.2679,6.0034,1.8184,5.9867,1.8224,6.2198,1.2721,6.2429)"
+              },
+              {
+                "content": "were",
+                "span": {
+                  "offset": 757,
+                  "length": 4
+                },
+                "confidence": 0.994,
+                "source": "D(8,1.9369,5.9831,2.4185,5.9703,2.4225,6.1977,1.9409,6.2148)"
+              },
+              {
+                "content": "not",
+                "span": {
+                  "offset": 762,
+                  "length": 3
+                },
+                "confidence": 0.998,
+                "source": "D(8,2.5562,5.9669,2.9232,5.9579,2.9272,6.1814,2.5602,6.1932)"
+              },
+              {
+                "content": "called",
+                "span": {
+                  "offset": 766,
+                  "length": 6
+                },
+                "confidence": 0.995,
+                "source": "D(8,3.0493,5.9554,3.642,5.9439,3.6461,6.1646,3.0534,6.1785)"
+              },
+              {
+                "content": ".",
+                "span": {
+                  "offset": 772,
+                  "length": 1
+                },
+                "confidence": 0.976,
+                "source": "D(8,3.6458,5.9438,3.7146,5.9425,3.7188,6.1629,3.6499,6.1645)"
+              },
+              {
+                "content": "I",
+                "span": {
+                  "offset": 775,
+                  "length": 1
+                },
+                "confidence": 0.986,
+                "source": "D(8,1.2731,6.5122,1.4455,6.509,1.4496,6.7474,1.2773,6.75)"
+              },
+              {
+                "content": "started",
+                "span": {
+                  "offset": 777,
+                  "length": 7
+                },
+                "confidence": 0.989,
+                "source": "D(8,1.5739,6.5067,2.2996,6.4937,2.303,6.7342,1.5778,6.7454)"
+              },
+              {
+                "content": "the",
+                "span": {
+                  "offset": 785,
+                  "length": 3
+                },
+                "confidence": 0.998,
+                "source": "D(8,2.4439,6.4911,2.7888,6.4849,2.7919,6.7267,2.4473,6.732)"
+              },
+              {
+                "content": "vehicle",
+                "span": {
+                  "offset": 789,
+                  "length": 7
+                },
+                "confidence": 0.993,
+                "source": "D(8,2.9211,6.4825,3.5707,6.4708,3.5732,6.7135,2.9241,6.7246)"
+              },
+              {
+                "content": "and",
+                "span": {
+                  "offset": 797,
+                  "length": 3
+                },
+                "confidence": 0.998,
+                "source": "D(8,3.699,6.4685,4.0638,6.4619,4.066,6.7045,3.7014,6.7112)"
+              },
+              {
+                "content": "it",
+                "span": {
+                  "offset": 801,
+                  "length": 2
+                },
+                "confidence": 0.989,
+                "source": "D(8,4.1801,6.4599,4.3766,6.4563,4.3786,6.6989,4.1822,6.7024)"
+              },
+              {
+                "content": "ran",
+                "span": {
+                  "offset": 804,
+                  "length": 3
+                },
+                "confidence": 0.996,
+                "source": "D(8,4.4808,6.4544,4.7936,6.4488,4.7953,6.6913,4.4827,6.697)"
+              },
+              {
+                "content": "normally",
+                "span": {
+                  "offset": 808,
+                  "length": 8
+                },
+                "confidence": 0.967,
+                "source": "D(8,4.9059,6.4468,5.7158,6.4323,5.7168,6.6727,4.9074,6.6892)"
+              },
+              {
+                "content": ".",
+                "span": {
+                  "offset": 816,
+                  "length": 1
+                },
+                "confidence": 0.939,
+                "source": "D(8,5.7118,6.4324,5.784,6.4311,5.7849,6.6712,5.7127,6.6727)"
+              },
+              {
+                "content": "The",
+                "span": {
+                  "offset": 818,
+                  "length": 3
+                },
+                "confidence": 0.981,
+                "source": "D(8,5.8842,6.4293,6.221,6.4232,6.2216,6.6621,5.885,6.6691)"
+              },
+              {
+                "content": "vehicle",
+                "span": {
+                  "offset": 822,
+                  "length": 7
+                },
+                "confidence": 0.983,
+                "source": "D(8,6.3132,6.4216,6.9187,6.4107,6.9187,6.6475,6.3137,6.6602)"
+              },
+              {
+                "content": "remained",
+                "span": {
+                  "offset": 830,
+                  "length": 8
+                },
+                "confidence": 0.987,
+                "source": "D(8,1.2711,6.8274,2.2049,6.8044,2.2084,7.0221,1.2752,7.0421)"
+              },
+              {
+                "content": "drivable",
+                "span": {
+                  "offset": 839,
+                  "length": 8
+                },
+                "confidence": 0.988,
+                "source": "D(8,2.3654,6.8005,3.2226,6.7796,3.2253,7.0001,2.3687,7.0187)"
+              },
+              {
+                "content": "after",
+                "span": {
+                  "offset": 848,
+                  "length": 5
+                },
+                "confidence": 0.992,
+                "source": "D(8,3.3648,6.7763,3.9011,6.764,3.9033,6.9847,3.3675,6.9969)"
+              },
+              {
+                "content": "the",
+                "span": {
+                  "offset": 854,
+                  "length": 3
+                },
+                "confidence": 0.997,
+                "source": "D(8,4.0141,6.7614,4.3388,6.7539,4.3407,6.9748,4.0163,6.9821)"
+              },
+              {
+                "content": "storm",
+                "span": {
+                  "offset": 858,
+                  "length": 5
+                },
+                "confidence": 0.988,
+                "source": "D(8,4.4446,6.7515,4.9589,6.7398,4.9603,6.9605,4.4464,6.9724)"
+              },
+              {
+                "content": "on",
+                "span": {
+                  "offset": 864,
+                  "length": 2
+                },
+                "confidence": 0.993,
+                "source": "D(8,5.0793,6.7372,5.2945,6.7325,5.2957,6.9525,5.0806,6.9576)"
+              },
+              {
+                "content": "06/12/2026",
+                "span": {
+                  "offset": 867,
+                  "length": 10
+                },
+                "confidence": 0.956,
+                "source": "D(8,5.4186,6.7299,6.5677,6.7052,6.5677,6.9218,5.4196,6.9495)"
+              },
+              {
+                "content": ".",
+                "span": {
+                  "offset": 877,
+                  "length": 1
+                },
+                "confidence": 0.922,
+                "source": "D(8,6.5677,6.7052,6.6406,6.7036,6.6406,6.9201,6.5677,6.9218)"
+              },
+              {
+                "content": "I",
+                "span": {
+                  "offset": 879,
+                  "length": 1
+                },
+                "confidence": 0.993,
+                "source": "D(8,1.2586,7.1218,1.4292,7.1182,1.4312,7.332,1.2607,7.3353)"
+              },
+              {
+                "content": "drove",
+                "span": {
+                  "offset": 881,
+                  "length": 5
+                },
+                "confidence": 0.97,
+                "source": "D(8,1.5537,7.1155,2.1047,7.1037,2.1063,7.3192,1.5556,7.3297)"
+              },
+              {
+                "content": "home",
+                "span": {
+                  "offset": 887,
+                  "length": 4
+                },
+                "confidence": 0.996,
+                "source": "D(8,2.2469,7.1006,2.7623,7.0898,2.7635,7.3045,2.2484,7.3165)"
+              },
+              {
+                "content": "without",
+                "span": {
+                  "offset": 892,
+                  "length": 7
+                },
+                "confidence": 0.975,
+                "source": "D(8,2.8832,7.0873,3.6795,7.0709,3.6801,7.281,2.8843,7.3016)"
+              },
+              {
+                "content": "issue",
+                "span": {
+                  "offset": 900,
+                  "length": 5
+                },
+                "confidence": 0.987,
+                "source": "D(8,3.8182,7.0681,4.323,7.0579,4.323,7.2626,3.8186,7.277)"
+              },
+              {
+                "content": ".",
+                "span": {
+                  "offset": 905,
+                  "length": 1
+                },
+                "confidence": 0.944,
+                "source": "D(8,4.3265,7.0578,4.387,7.0566,4.387,7.2607,4.3266,7.2625)"
+              },
+              {
+                "content": "I",
+                "span": {
+                  "offset": 908,
+                  "length": 1
+                },
+                "confidence": 0.99,
+                "source": "D(8,1.2254,7.7038,1.4029,7.6984,1.405,7.9619,1.2275,7.9662)"
+              },
+              {
+                "content": "am",
+                "span": {
+                  "offset": 910,
+                  "length": 2
+                },
+                "confidence": 0.996,
+                "source": "D(8,1.5361,7.6943,1.8512,7.6846,1.8531,7.9508,1.5381,7.9586)"
+              },
+              {
+                "content": "reporting",
+                "span": {
+                  "offset": 913,
+                  "length": 9
+                },
+                "confidence": 0.99,
+                "source": "D(8,2.0198,7.6795,2.9429,7.6514,2.9446,7.9235,2.0217,7.9466)"
+              },
+              {
+                "content": "hail",
+                "span": {
+                  "offset": 923,
+                  "length": 4
+                },
+                "confidence": 0.997,
+                "source": "D(8,3.1071,7.6471,3.511,7.6364,3.5125,7.9079,3.1087,7.919)"
+              },
+              {
+                "content": "damage",
+                "span": {
+                  "offset": 928,
+                  "length": 6
+                },
+                "confidence": 0.99,
+                "source": "D(8,3.622,7.6335,4.3632,7.614,4.3643,7.8843,3.6234,7.9048)"
+              },
+              {
+                "content": "only",
+                "span": {
+                  "offset": 935,
+                  "length": 4
+                },
+                "confidence": 0.926,
+                "source": "D(8,4.4831,7.6108,4.8781,7.6019,4.879,7.8691,4.4841,7.881)"
+              },
+              {
+                "content": ".",
+                "span": {
+                  "offset": 939,
+                  "length": 1
+                },
+                "confidence": 0.898,
+                "source": "D(8,4.8648,7.6022,4.9314,7.6007,4.9322,7.8675,4.8656,7.8696)"
+              },
+              {
+                "content": "No",
+                "span": {
+                  "offset": 941,
+                  "length": 2
+                },
+                "confidence": 0.935,
+                "source": "D(8,5.0335,7.5984,5.2999,7.5926,5.3004,7.8563,5.0342,7.8644)"
+              },
+              {
+                "content": "injuries",
+                "span": {
+                  "offset": 944,
+                  "length": 8
+                },
+                "confidence": 0.964,
+                "source": "D(8,5.4286,7.5897,6.1255,7.5744,6.1256,7.8312,5.4291,7.8524)"
+              },
+              {
+                "content": ".",
+                "span": {
+                  "offset": 952,
+                  "length": 1
+                },
+                "confidence": 0.969,
+                "source": "D(8,6.1344,7.5742,6.1965,7.5728,6.1965,7.829,6.1344,7.8309)"
+              },
+              {
+                "content": "Photos",
+                "span": {
+                  "offset": 954,
+                  "length": 6
+                },
+                "confidence": 0.93,
+                "source": "D(8,1.2015,8.0246,1.8129,8.0035,1.8165,8.2275,1.2057,8.2515)"
+              },
+              {
+                "content": "were",
+                "span": {
+                  "offset": 961,
+                  "length": 4
+                },
+                "confidence": 0.987,
+                "source": "D(8,1.9323,7.9994,2.4026,7.9831,2.4056,8.2044,1.9358,8.2229)"
+              },
+              {
+                "content": "taken",
+                "span": {
+                  "offset": 966,
+                  "length": 5
+                },
+                "confidence": 0.987,
+                "source": "D(8,2.54,7.9783,3.108,7.9593,3.1104,8.1779,2.543,8.199)"
+              },
+              {
+                "content": "at",
+                "span": {
+                  "offset": 972,
+                  "length": 2
+                },
+                "confidence": 0.993,
+                "source": "D(8,3.2455,7.9549,3.4951,7.9469,3.4972,8.1643,3.2478,8.173)"
+              },
+              {
+                "content": "the",
+                "span": {
+                  "offset": 975,
+                  "length": 3
+                },
+                "confidence": 0.99,
+                "source": "D(8,3.6218,7.9428,3.951,7.9322,3.9527,8.1484,3.6238,8.1599)"
+              },
+              {
+                "content": "scene",
+                "span": {
+                  "offset": 979,
+                  "length": 5
+                },
+                "confidence": 0.978,
+                "source": "D(8,4.0704,7.9284,4.595,7.9118,4.5962,8.1263,4.072,8.1442)"
+              },
+              {
+                "content": "and",
+                "span": {
+                  "offset": 985,
+                  "length": 3
+                },
+                "confidence": 0.991,
+                "source": "D(8,4.7469,7.9073,5.1268,7.896,5.1276,8.1099,4.748,8.1216)"
+              },
+              {
+                "content": "at",
+                "span": {
+                  "offset": 989,
+                  "length": 2
+                },
+                "confidence": 0.986,
+                "source": "D(8,5.2426,7.8926,5.485,7.8854,5.4855,8.0989,5.2433,8.1064)"
+              },
+              {
+                "content": "home",
+                "span": {
+                  "offset": 992,
+                  "length": 4
+                },
+                "confidence": 0.891,
+                "source": "D(8,5.5827,7.8825,6.0676,7.8681,6.0676,8.081,5.5831,8.0959)"
+              },
+              {
+                "content": ".",
+                "span": {
+                  "offset": 996,
+                  "length": 1
+                },
+                "confidence": 0.934,
+                "source": "D(8,6.0495,7.8686,6.1218,7.8665,6.1218,8.0793,6.0495,8.0816)"
+              },
+              {
+                "content": "This",
+                "span": {
+                  "offset": 999,
+                  "length": 4
+                },
+                "confidence": 0.993,
+                "source": "D(8,1.1777,8.6185,1.5944,8.603,1.5985,8.8514,1.1818,8.8657)"
+              },
+              {
+                "content": "account",
+                "span": {
+                  "offset": 1004,
+                  "length": 7
+                },
+                "confidence": 0.99,
+                "source": "D(8,1.7375,8.5977,2.5583,8.5671,2.5625,8.8184,1.7417,8.8465)"
+              },
+              {
+                "content": "is",
+                "span": {
+                  "offset": 1012,
+                  "length": 2
+                },
+                "confidence": 0.996,
+                "source": "D(8,2.7014,8.5618,2.8782,8.5552,2.8824,8.8075,2.7056,8.8135)"
+              },
+              {
+                "content": "true",
+                "span": {
+                  "offset": 1015,
+                  "length": 4
+                },
+                "confidence": 0.98,
+                "source": "D(8,3.0045,8.5505,3.4381,8.5355,3.4423,8.7892,3.0087,8.8032)"
+              },
+              {
+                "content": "to",
+                "span": {
+                  "offset": 1020,
+                  "length": 2
+                },
+                "confidence": 0.993,
+                "source": "D(8,3.5559,8.5314,3.758,8.5243,3.7622,8.7788,3.5601,8.7853)"
+              },
+              {
+                "content": "the",
+                "span": {
+                  "offset": 1023,
+                  "length": 3
+                },
+                "confidence": 0.992,
+                "source": "D(8,3.8801,8.5201,4.2084,8.5086,4.2126,8.7642,3.8843,8.7748)"
+              },
+              {
+                "content": "best",
+                "span": {
+                  "offset": 1027,
+                  "length": 4
+                },
+                "confidence": 0.994,
+                "source": "D(8,4.3347,8.5042,4.7514,8.4897,4.7556,8.7465,4.3389,8.7601)"
+              },
+              {
+                "content": "of",
+                "span": {
+                  "offset": 1032,
+                  "length": 2
+                },
+                "confidence": 0.995,
+                "source": "D(8,4.8441,8.4867,5.0967,8.4785,5.1008,8.7359,4.8483,8.7437)"
+              },
+              {
+                "content": "my",
+                "span": {
+                  "offset": 1035,
+                  "length": 2
+                },
+                "confidence": 0.993,
+                "source": "D(8,5.1809,8.4758,5.484,8.466,5.4881,8.724,5.185,8.7333)"
+              },
+              {
+                "content": "knowledge",
+                "span": {
+                  "offset": 1038,
+                  "length": 9
+                },
+                "confidence": 0.962,
+                "source": "D(8,5.5808,8.4629,6.4859,8.4336,6.4901,8.6932,5.585,8.721)"
+              },
+              {
+                "content": ".",
+                "span": {
+                  "offset": 1047,
+                  "length": 1
+                },
+                "confidence": 0.956,
+                "source": "D(8,6.4901,8.4335,6.5659,8.431,6.5701,8.6908,6.4943,8.6931)"
+              },
+              {
+                "content": "Sincerely",
+                "span": {
+                  "offset": 1050,
+                  "length": 9
+                },
+                "confidence": 0.983,
+                "source": "D(8,1.1766,9.2685,1.9733,9.2674,1.9712,9.5588,1.1746,9.5616)"
+              },
+              {
+                "content": ",",
+                "span": {
+                  "offset": 1059,
+                  "length": 1
+                },
+                "confidence": 0.984,
+                "source": "D(8,1.9635,9.2674,2.0368,9.2671,2.0347,9.5589,1.9614,9.5587)"
+              },
+              {
+                "content": "M",
+                "span": {
+                  "offset": 1061,
+                  "length": 1
+                },
+                "confidence": 0.89,
+                "source": "D(8,1.1414,9.6435,1.5774,9.6325,1.5779,10.0851,1.1393,10.0949)"
+              },
+              {
+                "content": ".",
+                "span": {
+                  "offset": 1062,
+                  "length": 1
+                },
+                "confidence": 0.988,
+                "source": "D(8,1.4273,9.6341,1.7204,9.6314,1.7217,10.0816,1.4269,10.0887)"
+              },
+              {
+                "content": "C",
+                "span": {
+                  "offset": 1063,
+                  "length": 1
+                },
+                "confidence": 0.924,
+                "source": "D(8,1.6203,9.6322,2.0065,9.6356,2.0093,10.074,1.621,10.0841)"
+              },
+              {
+                "content": ".",
+                "span": {
+                  "offset": 1064,
+                  "length": 1
+                },
+                "confidence": 0.971,
+                "source": "D(8,1.8063,9.6321,2.0565,9.6364,2.0596,10.0726,1.808,10.0794)"
+              },
+              {
+                "content": "Marcus",
+                "span": {
+                  "offset": 1067,
+                  "length": 6
+                },
+                "confidence": 0.987,
+                "source": "D(8,1.1216,10.1905,1.8097,10.1679,1.814,10.4032,1.1258,10.4212)"
+              },
+              {
+                "content": "Coleman",
+                "span": {
+                  "offset": 1074,
+                  "length": 7
+                },
+                "confidence": 0.987,
+                "source": "D(8,1.9035,10.1645,2.6853,10.1343,2.6895,10.3683,1.9078,10.4)"
+              }
+            ],
+            "lines": [
+              {
+                "content": "Claim: ARC-26-739979",
+                "source": "D(8,1.4475,0.9079,2.953,0.9152,2.9522,1.0626,1.4467,1.0547)",
+                "span": {
+                  "offset": 17,
+                  "length": 20
+                }
+              },
+              {
+                "content": "Statement Date: 06/13/2026",
+                "source": "D(8,5.5117,1.0572,7.2549,1.0469,7.2549,1.2003,5.5118,1.2068)",
+                "span": {
+                  "offset": 59,
+                  "length": 26
+                }
+              },
+              {
+                "content": "On 06/12/2026 at about 4:18PM, I was at Juniper",
+                "source": "D(8,1.3572,1.4725,6.9893,1.7387,6.9886,1.9542,1.3464,1.7007)",
+                "span": {
+                  "offset": 91,
+                  "length": 47
+                }
+              },
+              {
+                "content": "Center in Aspen Hollow for a short appointment . I parked",
+                "source": "D(8,1.3665,1.7881,7.1055,2.0152,7.1045,2.231,1.357,2.0286)",
+                "span": {
+                  "offset": 139,
+                  "length": 57
+                }
+              },
+              {
+                "content": "in the uncovered lot on the south side of the building.",
+                "source": "D(8,1.3696,2.1063,7.0003,2.2896,6.9974,2.5133,1.3623,2.3305)",
+                "span": {
+                  "offset": 197,
+                  "length": 55
+                }
+              },
+              {
+                "content": "Within a few minutes, a strong storm moved in with",
+                "source": "D(8,1.3707,2.3985,6.8952,2.5703,6.8929,2.7846,1.3631,2.6421)",
+                "span": {
+                  "offset": 253,
+                  "length": 50
+                }
+              },
+              {
+                "content": "heavy rain and hail.",
+                "source": "D(8,1.3768,2.7224,3.5527,2.7594,3.5488,2.995,1.3727,2.9608)",
+                "span": {
+                  "offset": 304,
+                  "length": 20
+                }
+              },
+              {
+                "content": "I stayed indoors until the storm passed. When I returned",
+                "source": "D(8,1.3655,3.2724,7.287,3.3518,7.2836,3.5818,1.3621,3.5244)",
+                "span": {
+                  "offset": 326,
+                  "length": 56
+                }
+              },
+              {
+                "content": "to my vehicle, I noticed small dents across the hood,",
+                "source": "D(8,1.3385,3.5862,7.0114,3.6429,7.0098,3.8586,1.3361,3.8219)",
+                "span": {
+                  "offset": 383,
+                  "length": 53
+                }
+              },
+              {
+                "content": "roof and on the upper panels of the left side. The left",
+                "source": "D(8,1.3333,3.8893,7.1387,3.9178,7.1386,4.152,1.3321,4.1335)",
+                "span": {
+                  "offset": 437,
+                  "length": 55
+                }
+              },
+              {
+                "content": "front fender and the upper portions of the left doors",
+                "source": "D(8,1.3105,4.1854,6.9028,4.2038,6.902,4.4399,1.3097,4.4297)",
+                "span": {
+                  "offset": 493,
+                  "length": 53
+                }
+              },
+              {
+                "content": "have the most visible marks. The glass (windshield,",
+                "source": "D(8,1.314,4.4936,6.7319,4.478,6.7326,4.7231,1.3147,4.7333)",
+                "span": {
+                  "offset": 547,
+                  "length": 51
+                }
+              },
+              {
+                "content": "windows and rear glass) appears to be intact.",
+                "source": "D(8,1.3136,4.7877,6.1384,4.772,6.1395,5.0268,1.3147,5.0433)",
+                "span": {
+                  "offset": 599,
+                  "length": 45
+                }
+              },
+              {
+                "content": "There was no contact with any other vehicle or object",
+                "source": "D(8,1.3154,5.3603,6.9976,5.3301,6.9989,5.582,1.3168,5.6024)",
+                "span": {
+                  "offset": 646,
+                  "length": 53
+                }
+              },
+              {
+                "content": "to my knowledge. No one else was involved and the",
+                "source": "D(8,1.2839,5.6852,6.7818,5.608,6.7859,5.8453,1.2845,5.9359)",
+                "span": {
+                  "offset": 700,
+                  "length": 49
+                }
+              },
+              {
+                "content": "police were not called.",
+                "source": "D(8,1.2673,6.0035,3.7142,5.9401,3.7188,6.1685,1.2721,6.2429)",
+                "span": {
+                  "offset": 750,
+                  "length": 23
+                }
+              },
+              {
+                "content": "I started the vehicle and it ran normally. The vehicle",
+                "source": "D(8,1.273,6.5121,6.9187,6.4107,6.9229,6.6534,1.2774,6.7539)",
+                "span": {
+                  "offset": 775,
+                  "length": 54
+                }
+              },
+              {
+                "content": "remained drivable after the storm on 06/12/2026.",
+                "source": "D(8,1.2702,6.8235,6.6406,6.7014,6.6406,6.9224,1.2753,7.0445)",
+                "span": {
+                  "offset": 830,
+                  "length": 48
+                }
+              },
+              {
+                "content": "I drove home without issue.",
+                "source": "D(8,1.2562,7.1212,4.387,7.056,4.3883,7.2719,1.2607,7.3372)",
+                "span": {
+                  "offset": 879,
+                  "length": 27
+                }
+              },
+              {
+                "content": "I am reporting hail damage only. No injuries.",
+                "source": "D(8,1.223,7.6968,6.1963,7.5677,6.1979,7.8377,1.2275,7.9663)",
+                "span": {
+                  "offset": 908,
+                  "length": 45
+                }
+              },
+              {
+                "content": "Photos were taken at the scene and at home.",
+                "source": "D(8,1.2008,8.0248,6.1214,7.8611,6.126,8.0811,1.2057,8.2515)",
+                "span": {
+                  "offset": 954,
+                  "length": 43
+                }
+              },
+              {
+                "content": "This account is true to the best of my knowledge.",
+                "source": "D(8,1.1734,8.6058,6.5659,8.4308,6.5742,8.6906,1.1818,8.8657)",
+                "span": {
+                  "offset": 999,
+                  "length": 49
+                }
+              },
+              {
+                "content": "Sincerely,",
+                "source": "D(8,1.1741,9.2685,2.0368,9.2671,2.0373,9.5602,1.1746,9.5616)",
+                "span": {
+                  "offset": 1050,
+                  "length": 10
+                }
+              },
+              {
+                "content": "M.C.",
+                "source": "D(8,1.1344,9.6403,2.0562,9.6271,2.0641,10.075,1.1393,10.0949)",
+                "span": {
+                  "offset": 1061,
+                  "length": 4
+                }
+              },
+              {
+                "content": "Marcus Coleman",
+                "source": "D(8,1.1178,10.1906,2.6853,10.1343,2.6895,10.3723,1.1261,10.4243)",
+                "span": {
+                  "offset": 1067,
+                  "length": 14
+                }
+              }
+            ]
+          }
+        ],
+        "paragraphs": [
+          {
+            "role": "pageHeader",
+            "content": "Claim: ARC-26-739979",
+            "source": "D(8,1.4475,0.9073,2.953,0.9152,2.9522,1.0626,1.4467,1.0547)",
+            "span": {
+              "offset": 0,
+              "length": 41
+            }
+          },
+          {
+            "role": "pageHeader",
+            "content": "Statement Date: 06/13/2026",
+            "source": "D(8,5.5112,1.0535,7.2549,1.0469,7.2555,1.2003,5.5118,1.2068)",
+            "span": {
+              "offset": 42,
+              "length": 47
+            }
+          },
+          {
+            "content": "On 06/12/2026 at about 4:18PM, I was at Juniper Center in Aspen Hollow for a short appointment . I parked in the uncovered lot on the south side of the building. Within a few minutes, a strong storm moved in with heavy rain and hail.",
+            "source": "D(8,1.35,1.4724,7.115,1.563,7.0916,3.0506,1.3267,2.9601)",
+            "span": {
+              "offset": 91,
+              "length": 233
+            }
+          },
+          {
+            "content": "I stayed indoors until the storm passed. When I returned to my vehicle, I noticed small dents across the hood, roof and on the upper panels of the left side. The left front fender and the upper portions of the left doors have the most visible marks. The glass (windshield, windows and rear glass) appears to be intact.",
+            "source": "D(8,1.3227,3.2719,7.287,3.3518,7.2633,5.123,1.299,5.0431)",
+            "span": {
+              "offset": 326,
+              "length": 318
+            }
+          },
+          {
+            "content": "There was no contact with any other vehicle or object to my knowledge. No one else was involved and the police were not called.",
+            "source": "D(8,1.2638,5.3606,6.9976,5.3301,7.0022,6.2124,1.2685,6.2429)",
+            "span": {
+              "offset": 646,
+              "length": 127
+            }
+          },
+          {
+            "content": "I started the vehicle and it ran normally. The vehicle remained drivable after the storm on 06/12/2026. I drove home without issue.",
+            "source": "D(8,1.2453,6.5126,6.9187,6.4107,6.9335,7.2353,1.2601,7.3372)",
+            "span": {
+              "offset": 775,
+              "length": 131
+            }
+          },
+          {
+            "content": "I am reporting hail damage only. No injuries. Photos were taken at the scene and at home.",
+            "source": "D(8,1.1913,7.6976,6.1963,7.5677,6.2107,8.1216,1.2057,8.2515)",
+            "span": {
+              "offset": 908,
+              "length": 89
+            }
+          },
+          {
+            "content": "This account is true to the best of my knowledge.",
+            "source": "D(8,1.1734,8.6058,6.5659,8.4308,6.5743,8.6906,1.1818,8.8657)",
+            "span": {
+              "offset": 999,
+              "length": 49
+            }
+          },
+          {
+            "content": "Sincerely, M.C.",
+            "source": "D(8,1.1246,9.2693,2.0495,9.2529,2.0642,10.0784,1.1393,10.0949)",
+            "span": {
+              "offset": 1050,
+              "length": 15
+            }
+          },
+          {
+            "content": "Marcus Coleman",
+            "source": "D(8,1.1178,10.1896,2.6853,10.1343,2.6937,10.3722,1.1262,10.4274)",
+            "span": {
+              "offset": 1067,
+              "length": 14
+            }
+          }
+        ],
+        "segments": [
+          {
+            "span": {
+              "offset": 0,
+              "length": 1103
+            },
+            "segmentId": "segment6",
+            "startPageNumber": 8,
+            "endPageNumber": 8,
+            "category": "statement",
+            "confidence": 0.95
+          }
+        ],
+        "metadata": {
+          "contentType": "application/pdf",
+          "pageCount": "12"
+        },
+        "analyzerId": "lab664_statement_ab3f812d0991491d"
       },
       {
         "path": "input1/segment9/segment1",
@@ -74150,15 +76591,15 @@
     "documentPagesStandard": 12,
     "contextualizationTokens": 12000,
     "tokens": {
-      "gpt-5-input": 5519,
-      "gpt-5-cached-input": 5504,
+      "gpt-5-input": 5610,
+      "gpt-5-cached-input": 1024,
       "gpt-5-output": 267,
       "gpt-5.2-input": 7042,
       "gpt-5.2-cached-input": 3584,
-      "gpt-5.2-output": 514,
-      "gpt-5.5-input": 8660,
-      "gpt-5.5-cached-input": 3840,
-      "gpt-5.5-output": 1600
+      "gpt-5.2-output": 576,
+      "gpt-5.5-input": 13417,
+      "gpt-5.5-cached-input": 7680,
+      "gpt-5.5-output": 2044
     }
   }
 }

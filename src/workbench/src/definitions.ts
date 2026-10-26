@@ -2,6 +2,33 @@ import { createHash } from "node:crypto";
 import { categories, LabError, record } from "./config.ts";
 import type { CuClient } from "./cu.ts";
 
+export const statementFields = {
+  claimant_name: "string",
+  incident_date: "date",
+  incident_location: "string",
+  vehicle: "string",
+  vin: "string",
+  reported_damage: "string",
+  summary: "string",
+};
+const generatedStatementFields = new Set(["reported_damage", "summary"]);
+
+export function statementSchemaIssue(value: unknown) {
+  const fields = record(value);
+  for (const [name, type] of Object.entries(statementFields)) {
+    const field = record(fields?.[name]);
+    const generated = generatedStatementFields.has(name);
+    if (
+      field?.type !== type ||
+      !(
+        field.method === "extract" ||
+        (generated && field.method === "generate")
+      )
+    )
+      return `${name}: ${type}, ${generated ? "Generate (or legacy Extract)" : "Extract"}`;
+  }
+}
+
 async function verifyRouter(client: Pick<CuClient, "detail">, id: string) {
   const detail = record(await client.detail(id));
   const config = record(detail?.config);
@@ -45,6 +72,11 @@ async function verifyRouter(client: Pick<CuClient, "detail">, id: string) {
             `Repair child needs ${field}: ${type}, Extract.`,
           );
     }
+    if (key === "statement") {
+      const fields = record(record(child.fieldSchema)?.fields);
+      const issue = statementSchemaIssue(fields);
+      if (issue) throw new LabError(422, `Statement child needs ${issue}.`);
+    }
   }
   return { id, categories: rules, verifiedReadOnly: true };
 }
@@ -54,16 +86,20 @@ function categoryProfile(rules: Record<string, unknown>) {
   const hasInvoices =
     Object.hasOwn(rules, "towing_invoice") ||
     Object.hasOwn(rules, "rental_invoice");
-  const selected = hasInvoices
-    ? [...categories]
-    : categories.filter((category) => core.includes(category));
+  const selected = categories.filter(
+    (category) =>
+      core.includes(category) ||
+      (hasInvoices &&
+        ["towing_invoice", "rental_invoice"].includes(category)) ||
+      (category === "statement" && Object.hasOwn(rules, "statement")),
+  );
   if (
     Object.keys(rules).length !== selected.length ||
     selected.some((category) => !Object.hasOwn(rules, category))
   )
     throw new LabError(
       422,
-      "Use the four core categories, optionally adding both towing_invoice and rental_invoice.",
+      "Use the four core categories, optionally adding statement and/or both towing_invoice and rental_invoice.",
     );
   return selected;
 }

@@ -10,6 +10,7 @@ export const categories = [
   "repair_estimate",
   "towing_invoice",
   "rental_invoice",
+  "statement",
   "other",
 ] as const;
 
