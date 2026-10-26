@@ -1,0 +1,125 @@
+{
+  "version": "azure-policy-v2",
+  "id": "f6fd5989-e3e8-4a68-a9d4-0a7271a24cef",
+  "timestamp": "2026-10-24T02:19:28.969Z",
+  "endpoint": "https://ignite-anatolip-test-scus.services.ai.azure.com",
+  "cacheKey": "e9f9d73912aab267339cf9d9426daf2aef422661c8a74c94864423b3e5d001e1",
+  "status": "completed",
+  "deployment": "gpt-5.5",
+  "model": "gpt-5.5",
+  "fallbackFrom": "gpt-6.1-sol",
+  "responseId": "resp_0a49e6dd21c08de1016adc15aedc588196af60b51464a7af33",
+  "usage": {
+    "input_tokens": 1074,
+    "input_tokens_details": {
+      "cache_write_tokens": 0,
+      "cached_tokens": 0
+    },
+    "output_tokens": 124,
+    "output_tokens_details": {
+      "reasoning_tokens": 0
+    },
+    "total_tokens": 1198
+  },
+  "advisoryOnly": true,
+  "payloadSha256": "af0f5e594159c01062f0d89ebc476ac65f35eafe9fc1b911afa5fb5b32ce4774",
+  "input": {
+    "source": {
+      "endpoint": "https://ignite-anatolip-test-scus.services.ai.azure.com",
+      "runId": "3b87d91f-c274-489f-a8d9-995e4a1e2f0c",
+      "packetSha256": "408b92ebe2d82646b8a381712143d92860cee9c6432bda69f8bf89350ac866c8",
+      "analyzerFingerprint": "c2a85f9fd6722c8488d5cbf5201004b7144aad347af15ecd80b8a36b269785aa"
+    },
+    "ruleset": "1.1.0",
+    "check": {
+      "id": "required.id:1-1:0",
+      "rule": "Named-holder ID extraction requires FirstName, LastName, and DocumentNumber (schema assumption; advisory).",
+      "status": "fail",
+      "message": "Document 1-1:0 is missing configured required field(s): last name (LastName). This is a schema assumption and advisory, not a person mismatch.",
+      "evidence": [
+        {
+          "documentId": "1-1:0",
+          "category": "id_document",
+          "analyzerId": "prebuilt-idDocument.generic",
+          "start": 1,
+          "end": 1,
+          "field": "FirstName",
+          "value": "Minh Tran",
+          "confidence": 0.38,
+          "regions": [
+            {
+              "page": 1,
+              "polygon": [
+                0.7505,
+                0.4107529411764706,
+                0.8698272727272727,
+                0.41204705882352943,
+                0.8696181818181817,
+                0.44358823529411767,
+                0.750290909090909,
+                0.44229411764705884
+              ]
+            }
+          ]
+        },
+        {
+          "documentId": "1-1:0",
+          "category": "id_document",
+          "analyzerId": "prebuilt-idDocument.generic",
+          "start": 1,
+          "end": 1,
+          "field": "LastName",
+          "value": null,
+          "confidence": 0.816,
+          "regions": []
+        },
+        {
+          "documentId": "1-1:0",
+          "category": "id_document",
+          "analyzerId": "prebuilt-idDocument.generic",
+          "start": 1,
+          "end": 1,
+          "field": "DocumentNumber",
+          "value": "MR-465679",
+          "confidence": 0.817,
+          "regions": [
+            {
+              "page": 1,
+              "polygon": [
+                0.7246090909090909,
+                0.3372941176470588,
+                0.8682181818181818,
+                0.3377411764705882,
+                0.8681636363636364,
+                0.3672235294117647,
+                0.7245545454545455,
+                0.36677647058823526
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "documents": [
+      {
+        "id": "1-1:0",
+        "category": "id_document",
+        "pages": {
+          "start": 1,
+          "end": 1
+        },
+        "analyzerId": "prebuilt-idDocument.generic",
+        "sourceTextTruncated": false,
+        "untrustedSourceText": "WORKING ROUTE\nASSISTANCE\n\nMEMBERSHIP\n\nMR-465679\n\nMEMBER\n\nMinh Tran\n\nVALID FROM\n\n01/06/2026\n\nVALID UNTIL\n\n01/06/2027\n\nCOMMERCIAL ROAD ASSISTANCE\nFOR DELIVERY VEHICLES\n\nASSET REFERENCE\nOH-54971\n\nVEHICLE\n2021 Ram ProMaster City\n\nCOLOR\nWhite\n"
+      }
+    ]
+  },
+  "result": {
+    "category": "extraction_error",
+    "reason": "On the ID document (pages 1-1), the source text shows the member name as “Minh Tran,” but the extracted fields placed the full name in FirstName and left LastName missing. Under the required separate-name schema, this is an extraction/mapping error rather than a packet defect.",
+    "suggestion": "Refine the extractor to split the member name into FirstName and LastName, then rerun the affected ID document (pages 1-1).",
+    "documentIds": [
+      "1-1:0"
+    ]
+  }
+}

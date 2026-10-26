@@ -1,16 +1,16 @@
 {
-  "id": "8076c293-6424-48df-941a-1f45a2c8b7bb",
+  "id": "54e25d3c-9b8d-4fa2-8065-41fb528f34ce",
   "status": "Succeeded",
   "result": {
-    "analyzerId": "lab664_anatolip_scus_routerg5",
+    "analyzerId": "lab664_statement_router_0699239b9914",
     "apiVersion": "2026-06-01-preview",
-    "createdAt": "2026-10-23T03:09:35Z",
+    "createdAt": "2026-10-23T07:09:41Z",
     "stringEncoding": "codePoint",
     "warnings": [],
     "infos": [
       {
         "code": "LLMStats",
-        "message": "completion calls: 6; avg completion latency: 5.11s; total completion latency: 30.67s"
+        "message": "completion calls: 7; avg completion latency: 5.23s; total completion latency: 36.59s"
       }
     ],
     "contents": [
@@ -44870,7 +44870,7 @@
             "startPageNumber": 1,
             "endPageNumber": 1,
             "category": "id_document",
-            "confidence": 0.89
+            "confidence": 0.92
           },
           {
             "span": {
@@ -44903,7 +44903,7 @@
             "startPageNumber": 5,
             "endPageNumber": 5,
             "category": "other",
-            "confidence": 0.85
+            "confidence": 0.78
           },
           {
             "span": {
@@ -44914,7 +44914,7 @@
             "startPageNumber": 6,
             "endPageNumber": 6,
             "category": "repair_estimate",
-            "confidence": 0.96
+            "confidence": 0.93
           },
           {
             "span": {
@@ -44924,8 +44924,8 @@
             "segmentId": "segment6",
             "startPageNumber": 7,
             "endPageNumber": 7,
-            "category": "other",
-            "confidence": 0.84
+            "category": "statement",
+            "confidence": 0.9
           },
           {
             "span": {
@@ -44947,7 +44947,7 @@
             "startPageNumber": 10,
             "endPageNumber": 10,
             "category": "other",
-            "confidence": 0.82
+            "confidence": 0.8
           },
           {
             "span": {
@@ -44978,7 +44978,7 @@
             "id": "7.1"
           }
         ],
-        "analyzerId": "lab664_anatolip_scus_routerg5",
+        "analyzerId": "lab664_statement_router_0699239b9914",
         "mimeType": "application/pdf"
       },
       {
@@ -45019,7 +45019,7 @@
                 "length": 6
               }
             ],
-            "confidence": 0.842,
+            "confidence": 0.892,
             "source": "D(1,2.7661,2.7049,3.6323,2.7116,3.6323,2.9125,2.7661,2.9081)"
           },
           "LastName": {
@@ -45031,7 +45031,7 @@
                 "length": 7
               }
             ],
-            "confidence": 0.832,
+            "confidence": 0.877,
             "source": "D(1,3.7940,2.7131,4.8152,2.7241,4.8152,2.9245,3.7940,2.9138)"
           },
           "Address": {
@@ -45047,7 +45047,7 @@
                 "length": 21
               }
             ],
-            "confidence": 0.774,
+            "confidence": 0.89,
             "source": "D(1,2.3821,4.8370,4.9309,4.8395,4.9307,5.0369,2.3819,5.0345);D(1,2.3646,5.1314,5.3632,5.1338,5.3630,5.3473,2.3644,5.3449)"
           },
           "BirthDate": {
@@ -45075,7 +45075,7 @@
                 "length": 10
               }
             ],
-            "confidence": 0.984,
+            "confidence": 0.978,
             "source": "D(1,8.9838,6.8730,9.8721,6.8813,9.8721,7.0631,8.9838,7.0543)"
           },
           "EyeColor": {
@@ -46650,7 +46650,7 @@
                 "length": 28
               }
             ],
-            "confidence": 0.793,
+            "confidence": 0.646,
             "source": "D(6,1.0541,8.9338,2.5835,8.9128,2.5858,9.0767,1.0564,9.0978)"
           },
           "PONumber": {
@@ -51670,7 +51670,7 @@
             "startPageNumber": 6,
             "endPageNumber": 6,
             "category": "repair_estimate",
-            "confidence": 0.96
+            "confidence": 0.93
           }
         ],
         "metadata": {
@@ -51691,6 +51691,3214 @@
           }
         ],
         "analyzerId": "lab664_anatolip_scus_repair"
+      },
+      {
+        "path": "input1/segment6",
+        "category": "statement",
+        "markdown": "Date: 04/09/2025\n\nSubject: Vehicle Damage Discovery - 2020 Subaru Outback Premium\n\nI am writing to provide my account of a parking incident involving my vehicle.\n\nOn 04/08/2025, I parked my 2020 Subaru Outback Premium (dark blue) in the east\nparking area of Pine Market, Alder Sound, WA 98052. I returned to the vehicle around\n21:10 discovery and found damage on the left side.\n\nThe impact time and other driver are unknown. No note was left on the vehicle. I did\nnot see the incident occur and there were no known witnesses. No injuries were\ninvolved.\n\nThe visible damage consists of a crease on the left rear door, scuffed left rocker\nmolding and a scraped left rear wheel.\n\nThe vehicle remained drivable and I drove it home. I filed a parking incident report\nwith the store and am reporting the loss to my insurer. A claim has been opened under\nclaim number ASA-25-615743.\n\nPlease contact me if you need any additional information.\n\nPolicy Number: ASA-A6815200\n\nClaim Number: ASA-25-615743\n\nInsured: Victor Bennett\n\nAddress: 242 Linden Terrace, Alder Sound, WA 98052\n\nPhone: (425) 555-0102\n\nEmail: victor.bennett@example.com\n\nVehicle Information:\n2020 Subaru Outback Premium\nDark blue\nVIN: 4S4BTACC1LA511562\nRegistration: WA72906\n\nUse: Personal / commute\n\nInsurer: Alder Sound Assurance\n\nAddress: 426 Civic Lane, Alder Sound, WA 98052\n\nPhone: (425) 555-0122\n\nAdjuster: Irene Foster\n\nThank you,\n\nVictor Bennett\nV.B.\n\nSignature:\n\n\n![Victor Bennett](signatures/7.1)\n\n\n<!-- PageFooter: 04/09/2025 -->\n<!-- PageBreak -->\n\n",
+        "fields": {
+          "claimant_name": {
+            "type": "string",
+            "valueString": "Victor Bennett",
+            "spans": [
+              {
+                "offset": 1003,
+                "length": 14
+              }
+            ],
+            "confidence": 0.932,
+            "source": "D(7,2.1189,5.8388,2.9011,5.8342,2.9020,5.9899,2.1198,5.9945)"
+          },
+          "incident_date": {
+            "type": "date",
+            "valueDate": "2025-04-08",
+            "spans": [
+              {
+                "offset": 166,
+                "length": 10
+              }
+            ],
+            "confidence": 0.989,
+            "source": "D(7,1.8970,2.2023,2.6332,2.2179,2.6315,2.3875,1.8951,2.3713)"
+          },
+          "incident_location": {
+            "type": "string",
+            "valueString": "east parking area of Pine Market, Alder Sound, WA 98052",
+            "spans": [
+              {
+                "offset": 237,
+                "length": 4
+              },
+              {
+                "offset": 242,
+                "length": 50
+              }
+            ],
+            "confidence": 0.859,
+            "source": "D(7,6.2500,2.2811,6.4954,2.2848,6.4954,2.4464,6.2498,2.4437);D(7,1.6726,2.3965,4.7682,2.4466,4.7654,2.6180,1.6699,2.5678)"
+          },
+          "vehicle": {
+            "type": "string",
+            "valueString": "2020 Subaru Outback Premium",
+            "spans": [
+              {
+                "offset": 1150,
+                "length": 27
+              }
+            ],
+            "confidence": 0.647,
+            "source": "D(7,1.6529,6.9182,3.3286,6.9059,3.3297,7.0570,1.6540,7.0693)"
+          },
+          "vin": {
+            "type": "string",
+            "valueString": "4S4BTACC1LA511562",
+            "spans": [
+              {
+                "offset": 1193,
+                "length": 17
+              }
+            ],
+            "confidence": 0.986,
+            "source": "D(7,1.9139,7.2963,3.0900,7.2845,3.0900,7.4349,1.9156,7.4467)"
+          },
+          "reported_damage": {
+            "type": "string",
+            "valueString": "a crease on the left rear door, scuffed left rocker molding and a scraped left rear wheel",
+            "spans": [
+              {
+                "offset": 585,
+                "length": 51
+              },
+              {
+                "offset": 637,
+                "length": 37
+              }
+            ],
+            "confidence": 0.888,
+            "source": "D(7,3.4986,3.7548,6.2142,3.7731,6.2131,3.9481,3.4974,3.9298);D(7,1.6653,3.9475,3.8817,3.9562,3.8810,4.1343,1.6646,4.1256)"
+          },
+          "summary": {
+            "type": "string",
+            "valueString": "On 04/08/2025, I parked my 2020 Subaru Outback Premium (dark blue) in the east parking area of Pine Market, Alder Sound, WA 98052. I returned to the vehicle around 21:10 discovery and found damage on the left side. The impact time and other driver are unknown. No note was left on the vehicle. I did not see the incident occur and there were no known witnesses. No injuries were involved. The vehicle remained drivable and I drove it home. I filed a parking incident report with the store and am reporting the loss to my insurer.",
+            "spans": [
+              {
+                "offset": 163,
+                "length": 78
+              },
+              {
+                "offset": 242,
+                "length": 84
+              },
+              {
+                "offset": 327,
+                "length": 50
+              },
+              {
+                "offset": 379,
+                "length": 84
+              },
+              {
+                "offset": 464,
+                "length": 78
+              },
+              {
+                "offset": 543,
+                "length": 9
+              },
+              {
+                "offset": 677,
+                "length": 84
+              },
+              {
+                "offset": 762,
+                "length": 55
+              }
+            ],
+            "confidence": 0.553,
+            "source": "D(7,1.6768,2.1977,6.4983,2.2811,6.4952,2.4572,1.6738,2.3738);D(7,1.6726,2.3982,6.6015,2.4687,6.5990,2.6414,1.6701,2.5710);D(7,1.6716,2.5893,4.6013,2.6386,4.5985,2.8081,1.6687,2.7587);D(7,1.6653,2.9526,6.4809,3.0119,6.4787,3.1950,1.6630,3.1356);D(7,1.6705,3.1636,6.2195,3.2235,6.2172,3.3913,1.6683,3.3314);D(7,1.6653,3.3539,2.2065,3.3561,2.2059,3.5125,1.6647,3.5102);D(7,1.6622,4.3132,6.3597,4.3482,6.3584,4.5246,1.6609,4.4896);D(7,1.6602,4.5137,4.7913,4.5396,4.7899,4.7170,1.6588,4.6911)"
+          }
+        },
+        "kind": "document",
+        "startPageNumber": 7,
+        "endPageNumber": 7,
+        "unit": "inch",
+        "pages": [
+          {
+            "pageNumber": 7,
+            "angle": -0.0042,
+            "width": 8.5,
+            "height": 11,
+            "spans": [
+              {
+                "offset": 0,
+                "length": 1520
+              }
+            ],
+            "words": [
+              {
+                "content": "Date",
+                "span": {
+                  "offset": 0,
+                  "length": 4
+                },
+                "confidence": 0.998,
+                "source": "D(7,1.6882,0.978,1.9776,0.9855,1.975,1.1347,1.6861,1.1267)"
+              },
+              {
+                "content": ":",
+                "span": {
+                  "offset": 4,
+                  "length": 1
+                },
+                "confidence": 0.999,
+                "source": "D(7,1.985,0.9857,2.0169,0.9866,2.0142,1.1358,1.9824,1.1349)"
+              },
+              {
+                "content": "04/09/2025",
+                "span": {
+                  "offset": 6,
+                  "length": 10
+                },
+                "confidence": 0.995,
+                "source": "D(7,2.0586,0.9876,2.8264,1.0067,2.8223,1.1571,2.0558,1.1369)"
+              },
+              {
+                "content": "Subject",
+                "span": {
+                  "offset": 18,
+                  "length": 7
+                },
+                "confidence": 0.996,
+                "source": "D(7,1.6819,1.3147,2.1451,1.3257,2.1423,1.4915,1.6788,1.479)"
+              },
+              {
+                "content": ":",
+                "span": {
+                  "offset": 25,
+                  "length": 1
+                },
+                "confidence": 0.999,
+                "source": "D(7,2.1506,1.3258,2.1809,1.3266,2.1781,1.4925,2.1478,1.4916)"
+              },
+              {
+                "content": "Vehicle",
+                "span": {
+                  "offset": 27,
+                  "length": 7
+                },
+                "confidence": 0.997,
+                "source": "D(7,2.2195,1.3275,2.6633,1.3381,2.6609,1.5055,2.2168,1.4935)"
+              },
+              {
+                "content": "Damage",
+                "span": {
+                  "offset": 35,
+                  "length": 6
+                },
+                "confidence": 0.998,
+                "source": "D(7,2.7047,1.3391,3.1816,1.3502,3.1795,1.5187,2.7023,1.5066)"
+              },
+              {
+                "content": "Discovery",
+                "span": {
+                  "offset": 42,
+                  "length": 9
+                },
+                "confidence": 0.995,
+                "source": "D(7,3.223,1.3512,3.8019,1.3641,3.8003,1.532,3.2209,1.5196)"
+              },
+              {
+                "content": "-",
+                "span": {
+                  "offset": 52,
+                  "length": 1
+                },
+                "confidence": 0.915,
+                "source": "D(7,3.835,1.3649,3.9067,1.3665,3.9051,1.5343,3.8334,1.5327)"
+              },
+              {
+                "content": "2020",
+                "span": {
+                  "offset": 54,
+                  "length": 4
+                },
+                "confidence": 0.941,
+                "source": "D(7,3.9453,1.3673,4.2457,1.3741,4.2445,1.5416,3.9438,1.5351)"
+              },
+              {
+                "content": "Subaru",
+                "span": {
+                  "offset": 59,
+                  "length": 6
+                },
+                "confidence": 0.965,
+                "source": "D(7,4.2816,1.3749,4.6813,1.3834,4.6804,1.5493,4.2804,1.5423)"
+              },
+              {
+                "content": "Outback",
+                "span": {
+                  "offset": 66,
+                  "length": 7
+                },
+                "confidence": 0.988,
+                "source": "D(7,4.7172,1.3841,5.2134,1.3945,5.213,1.5578,4.7163,1.5499)"
+              },
+              {
+                "content": "Premium",
+                "span": {
+                  "offset": 74,
+                  "length": 7
+                },
+                "confidence": 0.982,
+                "source": "D(7,5.2437,1.3951,5.74,1.4055,5.74,1.5663,5.2433,1.5583)"
+              },
+              {
+                "content": "I",
+                "span": {
+                  "offset": 83,
+                  "length": 1
+                },
+                "confidence": 0.876,
+                "source": "D(7,1.6778,1.8377,1.7149,1.8386,1.7128,2.0085,1.6757,2.0075)"
+              },
+              {
+                "content": "am",
+                "span": {
+                  "offset": 85,
+                  "length": 2
+                },
+                "confidence": 0.522,
+                "source": "D(7,1.7548,1.8395,1.926,1.8435,1.924,2.0139,1.7528,2.0095)"
+              },
+              {
+                "content": "writing",
+                "span": {
+                  "offset": 88,
+                  "length": 7
+                },
+                "confidence": 0.877,
+                "source": "D(7,1.9659,1.8444,2.3795,1.8539,2.3777,2.0255,1.9639,2.0149)"
+              },
+              {
+                "content": "to",
+                "span": {
+                  "offset": 96,
+                  "length": 2
+                },
+                "confidence": 0.992,
+                "source": "D(7,2.4166,1.8548,2.5364,1.8575,2.5347,2.0295,2.4148,2.0265)"
+              },
+              {
+                "content": "provide",
+                "span": {
+                  "offset": 99,
+                  "length": 7
+                },
+                "confidence": 0.977,
+                "source": "D(7,2.5735,1.8584,3.0185,1.8686,3.017,2.0419,2.5718,2.0305)"
+              },
+              {
+                "content": "my",
+                "span": {
+                  "offset": 107,
+                  "length": 2
+                },
+                "confidence": 0.989,
+                "source": "D(7,3.0584,1.8695,3.2381,1.8734,3.2367,2.0471,3.0569,2.0429)"
+              },
+              {
+                "content": "account",
+                "span": {
+                  "offset": 110,
+                  "length": 7
+                },
+                "confidence": 0.953,
+                "source": "D(7,3.2695,1.874,3.7374,1.883,3.7362,2.0567,3.2681,2.0477)"
+              },
+              {
+                "content": "of",
+                "span": {
+                  "offset": 118,
+                  "length": 2
+                },
+                "confidence": 0.929,
+                "source": "D(7,3.7744,1.8838,3.8943,1.8861,3.8931,2.0597,3.7733,2.0574)"
+              },
+              {
+                "content": "a",
+                "span": {
+                  "offset": 121,
+                  "length": 1
+                },
+                "confidence": 0.898,
+                "source": "D(7,3.9142,1.8864,3.977,1.8877,3.9759,2.0613,3.9131,2.0601)"
+              },
+              {
+                "content": "parking",
+                "span": {
+                  "offset": 123,
+                  "length": 7
+                },
+                "confidence": 0.869,
+                "source": "D(7,4.0198,1.8885,4.442,1.8966,4.4411,2.0702,4.0187,2.0621)"
+              },
+              {
+                "content": "incident",
+                "span": {
+                  "offset": 131,
+                  "length": 8
+                },
+                "confidence": 0.971,
+                "source": "D(7,4.4791,1.8973,4.9327,1.905,4.9321,2.0779,4.4782,2.0709)"
+              },
+              {
+                "content": "involving",
+                "span": {
+                  "offset": 140,
+                  "length": 9
+                },
+                "confidence": 0.946,
+                "source": "D(7,4.9698,1.9056,5.4804,1.9135,5.4801,2.0848,4.9692,2.0783)"
+              },
+              {
+                "content": "my",
+                "span": {
+                  "offset": 150,
+                  "length": 2
+                },
+                "confidence": 0.937,
+                "source": "D(7,5.509,1.914,5.6859,1.9167,5.6856,2.0875,5.5086,2.0852)"
+              },
+              {
+                "content": "vehicle",
+                "span": {
+                  "offset": 153,
+                  "length": 7
+                },
+                "confidence": 0.918,
+                "source": "D(7,5.7115,1.9171,6.1109,1.9233,6.1109,2.0929,5.7113,2.0878)"
+              },
+              {
+                "content": ".",
+                "span": {
+                  "offset": 160,
+                  "length": 1
+                },
+                "confidence": 0.996,
+                "source": "D(7,6.1138,1.9233,6.1509,1.9239,6.1509,2.0934,6.1138,2.0929)"
+              },
+              {
+                "content": "On",
+                "span": {
+                  "offset": 163,
+                  "length": 2
+                },
+                "confidence": 0.985,
+                "source": "D(7,1.6768,2.1977,1.8524,2.2014,1.8504,2.3703,1.6747,2.3664)"
+              },
+              {
+                "content": "04/08/2025",
+                "span": {
+                  "offset": 166,
+                  "length": 10
+                },
+                "confidence": 0.966,
+                "source": "D(7,1.897,2.2023,2.6332,2.2179,2.6315,2.3875,1.8951,2.3713)"
+              },
+              {
+                "content": ",",
+                "span": {
+                  "offset": 176,
+                  "length": 1
+                },
+                "confidence": 0.992,
+                "source": "D(7,2.636,2.2179,2.6666,2.2186,2.6649,2.3882,2.6343,2.3875)"
+              },
+              {
+                "content": "I",
+                "span": {
+                  "offset": 178,
+                  "length": 1
+                },
+                "confidence": 0.716,
+                "source": "D(7,2.7168,2.2196,2.7447,2.2202,2.7431,2.3899,2.7152,2.3893)"
+              },
+              {
+                "content": "parked",
+                "span": {
+                  "offset": 180,
+                  "length": 6
+                },
+                "confidence": 0.903,
+                "source": "D(7,2.7865,2.2211,3.1797,2.2294,3.1782,2.3995,2.7849,2.3908)"
+              },
+              {
+                "content": "my",
+                "span": {
+                  "offset": 187,
+                  "length": 2
+                },
+                "confidence": 0.991,
+                "source": "D(7,3.2243,2.2303,3.3972,2.2336,3.3958,2.4036,3.2228,2.4004)"
+              },
+              {
+                "content": "2020",
+                "span": {
+                  "offset": 190,
+                  "length": 4
+                },
+                "confidence": 0.972,
+                "source": "D(7,3.4334,2.2343,3.7318,2.2397,3.7306,2.4092,3.4321,2.4042)"
+              },
+              {
+                "content": "Subaru",
+                "span": {
+                  "offset": 195,
+                  "length": 6
+                },
+                "confidence": 0.989,
+                "source": "D(7,3.7681,2.2403,4.1696,2.2476,4.1686,2.4164,3.7668,2.4098)"
+              },
+              {
+                "content": "Outback",
+                "span": {
+                  "offset": 202,
+                  "length": 7
+                },
+                "confidence": 0.993,
+                "source": "D(7,4.2059,2.2483,4.7078,2.2573,4.707,2.4254,4.2048,2.417)"
+              },
+              {
+                "content": "Premium",
+                "span": {
+                  "offset": 210,
+                  "length": 7
+                },
+                "confidence": 0.988,
+                "source": "D(7,4.7413,2.2579,5.2181,2.2656,5.2176,2.4321,4.7405,2.4259)"
+              },
+              {
+                "content": "(",
+                "span": {
+                  "offset": 218,
+                  "length": 1
+                },
+                "confidence": 0.999,
+                "source": "D(7,5.26,2.2662,5.3018,2.2668,5.3012,2.433,5.2594,2.4326)"
+              },
+              {
+                "content": "dark",
+                "span": {
+                  "offset": 219,
+                  "length": 4
+                },
+                "confidence": 0.992,
+                "source": "D(7,5.3018,2.2668,5.5556,2.2706,5.5551,2.4359,5.3012,2.433)"
+              },
+              {
+                "content": "blue",
+                "span": {
+                  "offset": 224,
+                  "length": 4
+                },
+                "confidence": 0.973,
+                "source": "D(7,5.589,2.2711,5.8177,2.2746,5.8174,2.4388,5.5886,2.4362)"
+              },
+              {
+                "content": ")",
+                "span": {
+                  "offset": 228,
+                  "length": 1
+                },
+                "confidence": 0.998,
+                "source": "D(7,5.8233,2.2746,5.8651,2.2753,5.8648,2.4393,5.823,2.4389)"
+              },
+              {
+                "content": "in",
+                "span": {
+                  "offset": 230,
+                  "length": 2
+                },
+                "confidence": 0.96,
+                "source": "D(7,5.9042,2.2759,5.9934,2.2772,5.9932,2.4408,5.9039,2.4398)"
+              },
+              {
+                "content": "the",
+                "span": {
+                  "offset": 233,
+                  "length": 3
+                },
+                "confidence": 0.84,
+                "source": "D(7,6.0296,2.2778,6.2109,2.2805,6.2108,2.4432,6.0294,2.4412)"
+              },
+              {
+                "content": "east",
+                "span": {
+                  "offset": 237,
+                  "length": 4
+                },
+                "confidence": 0.893,
+                "source": "D(7,6.25,2.2811,6.4954,2.2848,6.4954,2.4464,6.2498,2.4437)"
+              },
+              {
+                "content": "parking",
+                "span": {
+                  "offset": 242,
+                  "length": 7
+                },
+                "confidence": 0.994,
+                "source": "D(7,1.6726,2.3982,2.1164,2.4054,2.1164,2.575,1.6726,2.5678)"
+              },
+              {
+                "content": "area",
+                "span": {
+                  "offset": 250,
+                  "length": 4
+                },
+                "confidence": 0.998,
+                "source": "D(7,2.1525,2.4059,2.4021,2.41,2.4021,2.5796,2.1525,2.5756)"
+              },
+              {
+                "content": "of",
+                "span": {
+                  "offset": 255,
+                  "length": 2
+                },
+                "confidence": 0.997,
+                "source": "D(7,2.4437,2.4106,2.563,2.4126,2.563,2.5823,2.4437,2.5803)"
+              },
+              {
+                "content": "Pine",
+                "span": {
+                  "offset": 258,
+                  "length": 4
+                },
+                "confidence": 0.995,
+                "source": "D(7,2.5991,2.4132,2.8404,2.4171,2.8404,2.5868,2.5991,2.5828)"
+              },
+              {
+                "content": "Market",
+                "span": {
+                  "offset": 263,
+                  "length": 6
+                },
+                "confidence": 0.995,
+                "source": "D(7,2.8793,2.4177,3.2926,2.4244,3.2925,2.5941,2.8792,2.5874)"
+              },
+              {
+                "content": ",",
+                "span": {
+                  "offset": 269,
+                  "length": 1
+                },
+                "confidence": 0.998,
+                "source": "D(7,3.2926,2.4244,3.3231,2.4249,3.323,2.5946,3.2925,2.5941)"
+              },
+              {
+                "content": "Alder",
+                "span": {
+                  "offset": 271,
+                  "length": 5
+                },
+                "confidence": 0.994,
+                "source": "D(7,3.3619,2.4254,3.6837,2.4303,3.6836,2.5994,3.3619,2.5951)"
+              },
+              {
+                "content": "Sound",
+                "span": {
+                  "offset": 277,
+                  "length": 5
+                },
+                "confidence": 0.994,
+                "source": "D(7,3.717,2.4308,4.0748,2.4362,4.0748,2.6046,3.7169,2.5998)"
+              },
+              {
+                "content": ",",
+                "span": {
+                  "offset": 282,
+                  "length": 1
+                },
+                "confidence": 0.998,
+                "source": "D(7,4.0831,2.4363,4.1109,2.4367,4.1108,2.605,4.0831,2.6047)"
+              },
+              {
+                "content": "WA",
+                "span": {
+                  "offset": 284,
+                  "length": 2
+                },
+                "confidence": 0.988,
+                "source": "D(7,4.1497,2.4373,4.3688,2.4406,4.3688,2.6085,4.1497,2.6055)"
+              },
+              {
+                "content": "98052",
+                "span": {
+                  "offset": 287,
+                  "length": 5
+                },
+                "confidence": 0.878,
+                "source": "D(7,4.4049,2.4412,4.7655,2.4466,4.7655,2.6137,4.4049,2.6089)"
+              },
+              {
+                "content": ".",
+                "span": {
+                  "offset": 292,
+                  "length": 1
+                },
+                "confidence": 0.972,
+                "source": "D(7,4.7683,2.4467,4.796,2.4471,4.796,2.6141,4.7683,2.6138)"
+              },
+              {
+                "content": "I",
+                "span": {
+                  "offset": 294,
+                  "length": 1
+                },
+                "confidence": 0.925,
+                "source": "D(7,4.8349,2.4477,4.8626,2.4481,4.8626,2.615,4.8348,2.6146)"
+              },
+              {
+                "content": "returned",
+                "span": {
+                  "offset": 296,
+                  "length": 8
+                },
+                "confidence": 0.866,
+                "source": "D(7,4.907,2.4487,5.3786,2.4554,5.3785,2.6206,4.907,2.6156)"
+              },
+              {
+                "content": "to",
+                "span": {
+                  "offset": 305,
+                  "length": 2
+                },
+                "confidence": 0.989,
+                "source": "D(7,5.4174,2.4559,5.5339,2.4576,5.5339,2.6222,5.4174,2.621)"
+              },
+              {
+                "content": "the",
+                "span": {
+                  "offset": 308,
+                  "length": 3
+                },
+                "confidence": 0.976,
+                "source": "D(7,5.5672,2.458,5.7447,2.4605,5.7447,2.6244,5.5672,2.6225)"
+              },
+              {
+                "content": "vehicle",
+                "span": {
+                  "offset": 312,
+                  "length": 7
+                },
+                "confidence": 0.984,
+                "source": "D(7,5.7808,2.461,6.1692,2.4665,6.1691,2.6288,5.7808,2.6247)"
+              },
+              {
+                "content": "around",
+                "span": {
+                  "offset": 320,
+                  "length": 6
+                },
+                "confidence": 0.984,
+                "source": "D(7,6.2052,2.467,6.5991,2.4725,6.5991,2.6332,6.2052,2.6291)"
+              },
+              {
+                "content": "21",
+                "span": {
+                  "offset": 327,
+                  "length": 2
+                },
+                "confidence": 0.979,
+                "source": "D(7,1.6716,2.5893,1.788,2.5914,1.788,2.7572,1.6716,2.7547)"
+              },
+              {
+                "content": ":",
+                "span": {
+                  "offset": 329,
+                  "length": 1
+                },
+                "confidence": 0.998,
+                "source": "D(7,1.8046,2.5917,1.8351,2.5922,1.8351,2.7582,1.8046,2.7575)"
+              },
+              {
+                "content": "10",
+                "span": {
+                  "offset": 330,
+                  "length": 2
+                },
+                "confidence": 0.58,
+                "source": "D(7,1.8407,2.5923,1.9709,2.5946,1.9709,2.761,1.8406,2.7583)"
+              },
+              {
+                "content": "discovery",
+                "span": {
+                  "offset": 333,
+                  "length": 9
+                },
+                "confidence": 0.846,
+                "source": "D(7,2.0097,2.5953,2.578,2.6055,2.5779,2.7739,2.0097,2.7619)"
+              },
+              {
+                "content": "and",
+                "span": {
+                  "offset": 343,
+                  "length": 3
+                },
+                "confidence": 0.987,
+                "source": "D(7,2.6112,2.6061,2.8191,2.6097,2.819,2.7781,2.6111,2.7746)"
+              },
+              {
+                "content": "found",
+                "span": {
+                  "offset": 347,
+                  "length": 5
+                },
+                "confidence": 0.985,
+                "source": "D(7,2.8579,2.6104,3.1905,2.6162,3.1905,2.7841,2.8578,2.7787)"
+              },
+              {
+                "content": "damage",
+                "span": {
+                  "offset": 353,
+                  "length": 6
+                },
+                "confidence": 0.919,
+                "source": "D(7,3.2321,2.6169,3.6811,2.6246,3.6811,2.7917,3.232,2.7848)"
+              },
+              {
+                "content": "on",
+                "span": {
+                  "offset": 360,
+                  "length": 2
+                },
+                "confidence": 0.86,
+                "source": "D(7,3.7172,2.6252,3.8558,2.6275,3.8557,2.7936,3.7171,2.7921)"
+              },
+              {
+                "content": "the",
+                "span": {
+                  "offset": 363,
+                  "length": 3
+                },
+                "confidence": 0.827,
+                "source": "D(7,3.889,2.6281,4.0775,2.6312,4.0775,2.7961,3.889,2.794)"
+              },
+              {
+                "content": "left",
+                "span": {
+                  "offset": 367,
+                  "length": 4
+                },
+                "confidence": 0.783,
+                "source": "D(7,4.1136,2.6318,4.2993,2.6349,4.2993,2.7985,4.1135,2.7965)"
+              },
+              {
+                "content": "side",
+                "span": {
+                  "offset": 372,
+                  "length": 4
+                },
+                "confidence": 0.896,
+                "source": "D(7,4.3298,2.6354,4.5598,2.6393,4.5598,2.8014,4.3297,2.7989)"
+              },
+              {
+                "content": ".",
+                "span": {
+                  "offset": 376,
+                  "length": 1
+                },
+                "confidence": 0.997,
+                "source": "D(7,4.5598,2.6393,4.5986,2.6399,4.5986,2.8018,4.5598,2.8014)"
+              },
+              {
+                "content": "The",
+                "span": {
+                  "offset": 379,
+                  "length": 3
+                },
+                "confidence": 0.997,
+                "source": "D(7,1.6653,2.9526,1.8924,2.9569,1.8924,3.1306,1.6653,3.1265)"
+              },
+              {
+                "content": "impact",
+                "span": {
+                  "offset": 383,
+                  "length": 6
+                },
+                "confidence": 0.991,
+                "source": "D(7,1.9349,2.9577,2.3379,2.9654,2.3379,3.1386,1.9349,3.1313)"
+              },
+              {
+                "content": "time",
+                "span": {
+                  "offset": 390,
+                  "length": 4
+                },
+                "confidence": 0.997,
+                "source": "D(7,2.3748,2.9661,2.6387,2.9712,2.6387,3.144,2.3748,3.1392)"
+              },
+              {
+                "content": "and",
+                "span": {
+                  "offset": 395,
+                  "length": 3
+                },
+                "confidence": 0.998,
+                "source": "D(7,2.6756,2.9719,2.8885,2.9759,2.8885,3.1485,2.6756,3.1447)"
+              },
+              {
+                "content": "other",
+                "span": {
+                  "offset": 399,
+                  "length": 5
+                },
+                "confidence": 0.997,
+                "source": "D(7,2.931,2.9767,3.246,2.9828,3.246,3.1549,2.931,3.1492)"
+              },
+              {
+                "content": "driver",
+                "span": {
+                  "offset": 405,
+                  "length": 6
+                },
+                "confidence": 0.995,
+                "source": "D(7,3.2773,2.9833,3.6207,2.9881,3.6207,3.1595,3.2773,3.1555)"
+              },
+              {
+                "content": "are",
+                "span": {
+                  "offset": 412,
+                  "length": 3
+                },
+                "confidence": 0.997,
+                "source": "D(7,3.6519,2.9885,3.8307,2.991,3.8307,3.162,3.6519,3.1599)"
+              },
+              {
+                "content": "unknown",
+                "span": {
+                  "offset": 416,
+                  "length": 7
+                },
+                "confidence": 0.819,
+                "source": "D(7,3.8733,2.9916,4.3898,2.9988,4.3898,3.1687,3.8733,3.1625)"
+              },
+              {
+                "content": ".",
+                "span": {
+                  "offset": 423,
+                  "length": 1
+                },
+                "confidence": 0.918,
+                "source": "D(7,4.3955,2.9989,4.4239,2.9993,4.4239,3.1691,4.3955,3.1688)"
+              },
+              {
+                "content": "No",
+                "span": {
+                  "offset": 425,
+                  "length": 2
+                },
+                "confidence": 0.907,
+                "source": "D(7,4.4636,2.9998,4.6225,3.002,4.6225,3.1715,4.4636,3.1696)"
+              },
+              {
+                "content": "note",
+                "span": {
+                  "offset": 428,
+                  "length": 4
+                },
+                "confidence": 0.978,
+                "source": "D(7,4.6623,3.0026,4.912,3.0059,4.912,3.1747,4.6623,3.1719)"
+              },
+              {
+                "content": "was",
+                "span": {
+                  "offset": 433,
+                  "length": 3
+                },
+                "confidence": 0.994,
+                "source": "D(7,4.9461,3.0062,5.1561,3.008,5.1561,3.1761,4.9461,3.1749)"
+              },
+              {
+                "content": "left",
+                "span": {
+                  "offset": 437,
+                  "length": 4
+                },
+                "confidence": 0.975,
+                "source": "D(7,5.1959,3.0083,5.3775,3.0099,5.3775,3.1774,5.1959,3.1763)"
+              },
+              {
+                "content": "on",
+                "span": {
+                  "offset": 442,
+                  "length": 2
+                },
+                "confidence": 0.969,
+                "source": "D(7,5.4087,3.0102,5.5421,3.0114,5.5421,3.1784,5.4087,3.1776)"
+              },
+              {
+                "content": "the",
+                "span": {
+                  "offset": 445,
+                  "length": 3
+                },
+                "confidence": 0.96,
+                "source": "D(7,5.5762,3.0117,5.7522,3.0132,5.7522,3.1796,5.5762,3.1785)"
+              },
+              {
+                "content": "vehicle",
+                "span": {
+                  "offset": 449,
+                  "length": 7
+                },
+                "confidence": 0.793,
+                "source": "D(7,5.7862,3.0135,6.1694,3.0169,6.1694,3.182,5.7862,3.1798)"
+              },
+              {
+                "content": ".",
+                "span": {
+                  "offset": 456,
+                  "length": 1
+                },
+                "confidence": 0.945,
+                "source": "D(7,6.1694,3.0169,6.1978,3.0171,6.1978,3.1822,6.1694,3.182)"
+              },
+              {
+                "content": "I",
+                "span": {
+                  "offset": 458,
+                  "length": 1
+                },
+                "confidence": 0.874,
+                "source": "D(7,6.2375,3.0175,6.2659,3.0177,6.2659,3.1826,6.2375,3.1824)"
+              },
+              {
+                "content": "did",
+                "span": {
+                  "offset": 460,
+                  "length": 3
+                },
+                "confidence": 0.831,
+                "source": "D(7,6.2971,3.018,6.4788,3.0196,6.4788,3.1838,6.2971,3.1827)"
+              },
+              {
+                "content": "not",
+                "span": {
+                  "offset": 464,
+                  "length": 3
+                },
+                "confidence": 0.985,
+                "source": "D(7,1.6705,3.165,1.8618,3.1675,1.8618,3.3292,1.6705,3.3261)"
+              },
+              {
+                "content": "see",
+                "span": {
+                  "offset": 468,
+                  "length": 3
+                },
+                "confidence": 0.981,
+                "source": "D(7,1.9001,3.168,2.0968,3.1706,2.0968,3.3331,1.9,3.3299)"
+              },
+              {
+                "content": "the",
+                "span": {
+                  "offset": 472,
+                  "length": 3
+                },
+                "confidence": 0.992,
+                "source": "D(7,2.1378,3.1711,2.329,3.1736,2.329,3.3369,2.1378,3.3338)"
+              },
+              {
+                "content": "incident",
+                "span": {
+                  "offset": 476,
+                  "length": 8
+                },
+                "confidence": 0.99,
+                "source": "D(7,2.3728,3.1742,2.8345,3.1803,2.8345,3.3453,2.3727,3.3377)"
+              },
+              {
+                "content": "occur",
+                "span": {
+                  "offset": 485,
+                  "length": 5
+                },
+                "confidence": 0.983,
+                "source": "D(7,2.8701,3.1808,3.2034,3.1851,3.2034,3.3513,2.87,3.3458)"
+              },
+              {
+                "content": "and",
+                "span": {
+                  "offset": 491,
+                  "length": 3
+                },
+                "confidence": 0.99,
+                "source": "D(7,3.2335,3.1855,3.4411,3.1882,3.4411,3.3545,3.2334,3.3517)"
+              },
+              {
+                "content": "there",
+                "span": {
+                  "offset": 495,
+                  "length": 5
+                },
+                "confidence": 0.989,
+                "source": "D(7,3.4821,3.1887,3.78,3.1926,3.7799,3.359,3.4821,3.355)"
+              },
+              {
+                "content": "were",
+                "span": {
+                  "offset": 501,
+                  "length": 4
+                },
+                "confidence": 0.99,
+                "source": "D(7,3.8155,3.193,4.0969,3.1966,4.0969,3.3633,3.8154,3.3595)"
+              },
+              {
+                "content": "no",
+                "span": {
+                  "offset": 506,
+                  "length": 2
+                },
+                "confidence": 0.99,
+                "source": "D(7,4.1352,3.1971,4.2718,3.1989,4.2717,3.3656,4.1351,3.3638)"
+              },
+              {
+                "content": "known",
+                "span": {
+                  "offset": 509,
+                  "length": 5
+                },
+                "confidence": 0.978,
+                "source": "D(7,4.3128,3.1994,4.6707,3.204,4.6707,3.3709,4.3127,3.3661)"
+              },
+              {
+                "content": "witnesses",
+                "span": {
+                  "offset": 515,
+                  "length": 9
+                },
+                "confidence": 0.847,
+                "source": "D(7,4.7062,3.2045,5.2418,3.2112,5.2418,3.3769,4.7062,3.3714)"
+              },
+              {
+                "content": ".",
+                "span": {
+                  "offset": 524,
+                  "length": 1
+                },
+                "confidence": 0.95,
+                "source": "D(7,5.25,3.2113,5.2773,3.2117,5.2773,3.3773,5.25,3.377)"
+              },
+              {
+                "content": "No",
+                "span": {
+                  "offset": 526,
+                  "length": 2
+                },
+                "confidence": 0.878,
+                "source": "D(7,5.3183,3.2122,5.4768,3.2142,5.4768,3.3794,5.3183,3.3777)"
+              },
+              {
+                "content": "injuries",
+                "span": {
+                  "offset": 529,
+                  "length": 8
+                },
+                "confidence": 0.875,
+                "source": "D(7,5.515,3.2147,5.9085,3.2196,5.9085,3.3838,5.515,3.3798)"
+              },
+              {
+                "content": "were",
+                "span": {
+                  "offset": 538,
+                  "length": 4
+                },
+                "confidence": 0.984,
+                "source": "D(7,5.9358,3.22,6.2173,3.2235,6.2173,3.387,5.9358,3.3841)"
+              },
+              {
+                "content": "involved",
+                "span": {
+                  "offset": 543,
+                  "length": 8
+                },
+                "confidence": 0.996,
+                "source": "D(7,1.6653,3.3545,2.1617,3.3565,2.1617,3.5123,1.6653,3.5102)"
+              },
+              {
+                "content": ".",
+                "span": {
+                  "offset": 551,
+                  "length": 1
+                },
+                "confidence": 0.995,
+                "source": "D(7,2.1643,3.3565,2.2059,3.3561,2.2059,3.5118,2.1643,3.5123)"
+              },
+              {
+                "content": "The",
+                "span": {
+                  "offset": 554,
+                  "length": 3
+                },
+                "confidence": 0.996,
+                "source": "D(7,1.6653,3.7323,1.8899,3.7352,1.8899,3.9051,1.6653,3.9018)"
+              },
+              {
+                "content": "visible",
+                "span": {
+                  "offset": 558,
+                  "length": 7
+                },
+                "confidence": 0.988,
+                "source": "D(7,1.9268,3.7357,2.3049,3.7405,2.3048,3.9113,1.9268,3.9057)"
+              },
+              {
+                "content": "damage",
+                "span": {
+                  "offset": 566,
+                  "length": 6
+                },
+                "confidence": 0.996,
+                "source": "D(7,2.339,3.7409,2.8051,3.7469,2.8051,3.9188,2.3389,3.9118)"
+              },
+              {
+                "content": "consists",
+                "span": {
+                  "offset": 573,
+                  "length": 8
+                },
+                "confidence": 0.983,
+                "source": "D(7,2.842,3.7473,3.3053,3.7529,3.3053,3.9255,2.842,3.9193)"
+              },
+              {
+                "content": "of",
+                "span": {
+                  "offset": 582,
+                  "length": 2
+                },
+                "confidence": 0.945,
+                "source": "D(7,3.3423,3.7532,3.4645,3.7544,3.4645,3.927,3.3423,3.9258)"
+              },
+              {
+                "content": "a",
+                "span": {
+                  "offset": 585,
+                  "length": 1
+                },
+                "confidence": 0.945,
+                "source": "D(7,3.4986,3.7548,3.564,3.7554,3.564,3.9279,3.4986,3.9273)"
+              },
+              {
+                "content": "crease",
+                "span": {
+                  "offset": 587,
+                  "length": 6
+                },
+                "confidence": 0.878,
+                "source": "D(7,3.601,3.7558,3.9705,3.7594,3.9704,3.9315,3.6009,3.9282)"
+              },
+              {
+                "content": "on",
+                "span": {
+                  "offset": 594,
+                  "length": 2
+                },
+                "confidence": 0.939,
+                "source": "D(7,4.0046,3.7598,4.141,3.7611,4.141,3.9331,4.0045,3.9318)"
+              },
+              {
+                "content": "the",
+                "span": {
+                  "offset": 597,
+                  "length": 3
+                },
+                "confidence": 0.876,
+                "source": "D(7,4.1723,3.7614,4.3542,3.7632,4.3542,3.935,4.1722,3.9334)"
+              },
+              {
+                "content": "left",
+                "span": {
+                  "offset": 601,
+                  "length": 4
+                },
+                "confidence": 0.9,
+                "source": "D(7,4.3883,3.7635,4.5674,3.7653,4.5673,3.937,4.3883,3.9353)"
+              },
+              {
+                "content": "rear",
+                "span": {
+                  "offset": 606,
+                  "length": 4
+                },
+                "confidence": 0.879,
+                "source": "D(7,4.6043,3.7657,4.8345,3.7675,4.8345,3.9386,4.6043,3.9373)"
+              },
+              {
+                "content": "door",
+                "span": {
+                  "offset": 611,
+                  "length": 4
+                },
+                "confidence": 0.967,
+                "source": "D(7,4.863,3.7677,5.1245,3.7695,5.1245,3.9395,4.8629,3.9387)"
+              },
+              {
+                "content": ",",
+                "span": {
+                  "offset": 615,
+                  "length": 1
+                },
+                "confidence": 0.998,
+                "source": "D(7,5.1216,3.7695,5.1501,3.7697,5.15,3.9396,5.1216,3.9395)"
+              },
+              {
+                "content": "scuffed",
+                "span": {
+                  "offset": 617,
+                  "length": 7
+                },
+                "confidence": 0.934,
+                "source": "D(7,5.1813,3.7699,5.5878,3.7727,5.5878,3.941,5.1813,3.9397)"
+              },
+              {
+                "content": "left",
+                "span": {
+                  "offset": 625,
+                  "length": 4
+                },
+                "confidence": 0.716,
+                "source": "D(7,5.6304,3.773,5.8209,3.7743,5.8209,3.9418,5.6304,3.9411)"
+              },
+              {
+                "content": "rocker",
+                "span": {
+                  "offset": 630,
+                  "length": 6
+                },
+                "confidence": 0.877,
+                "source": "D(7,5.855,3.7746,6.2131,3.7771,6.2131,3.943,5.855,3.9419)"
+              },
+              {
+                "content": "molding",
+                "span": {
+                  "offset": 637,
+                  "length": 7
+                },
+                "confidence": 0.998,
+                "source": "D(7,1.6653,3.9507,2.1494,3.9505,2.1494,4.1248,1.6653,4.1256)"
+              },
+              {
+                "content": "and",
+                "span": {
+                  "offset": 645,
+                  "length": 3
+                },
+                "confidence": 0.994,
+                "source": "D(7,2.184,3.9505,2.3972,3.9504,2.3972,4.1243,2.184,4.1247)"
+              },
+              {
+                "content": "a",
+                "span": {
+                  "offset": 649,
+                  "length": 1
+                },
+                "confidence": 0.995,
+                "source": "D(7,2.4375,3.9505,2.5009,3.9508,2.5009,4.1245,2.4375,4.1243)"
+              },
+              {
+                "content": "scraped",
+                "span": {
+                  "offset": 651,
+                  "length": 7
+                },
+                "confidence": 0.994,
+                "source": "D(7,2.5412,3.951,3.0138,3.9534,3.0137,4.1256,2.5412,4.1246)"
+              },
+              {
+                "content": "left",
+                "span": {
+                  "offset": 659,
+                  "length": 4
+                },
+                "confidence": 0.988,
+                "source": "D(7,3.0599,3.9536,3.2471,3.9549,3.2471,4.1265,3.0598,4.1257)"
+              },
+              {
+                "content": "rear",
+                "span": {
+                  "offset": 664,
+                  "length": 4
+                },
+                "confidence": 0.982,
+                "source": "D(7,3.2846,3.9553,3.5151,3.9576,3.5151,4.1282,3.2846,4.1267)"
+              },
+              {
+                "content": "wheel",
+                "span": {
+                  "offset": 669,
+                  "length": 5
+                },
+                "confidence": 0.994,
+                "source": "D(7,3.541,3.9579,3.881,3.9614,3.881,4.1305,3.541,4.1283)"
+              },
+              {
+                "content": ".",
+                "span": {
+                  "offset": 674,
+                  "length": 1
+                },
+                "confidence": 0.997,
+                "source": "D(7,3.8896,3.9615,3.9242,3.9618,3.9242,4.1307,3.8896,4.1305)"
+              },
+              {
+                "content": "The",
+                "span": {
+                  "offset": 677,
+                  "length": 3
+                },
+                "confidence": 0.997,
+                "source": "D(7,1.6622,4.3148,1.8896,4.3166,1.8896,4.4874,1.6622,4.4851)"
+              },
+              {
+                "content": "vehicle",
+                "span": {
+                  "offset": 681,
+                  "length": 7
+                },
+                "confidence": 0.995,
+                "source": "D(7,1.927,4.3169,2.3528,4.3202,2.3528,4.4919,1.927,4.4877)"
+              },
+              {
+                "content": "remained",
+                "span": {
+                  "offset": 689,
+                  "length": 8
+                },
+                "confidence": 0.996,
+                "source": "D(7,2.396,4.3206,2.9283,4.3248,2.9283,4.4975,2.396,4.4923)"
+              },
+              {
+                "content": "drivable",
+                "span": {
+                  "offset": 698,
+                  "length": 8
+                },
+                "confidence": 0.991,
+                "source": "D(7,2.9744,4.3251,3.4348,4.3286,3.4348,4.5021,2.9744,4.498)"
+              },
+              {
+                "content": "and",
+                "span": {
+                  "offset": 707,
+                  "length": 3
+                },
+                "confidence": 0.953,
+                "source": "D(7,3.4693,4.3289,3.6736,4.3303,3.6736,4.504,3.4693,4.5024)"
+              },
+              {
+                "content": "I",
+                "span": {
+                  "offset": 711,
+                  "length": 1
+                },
+                "confidence": 0.911,
+                "source": "D(7,3.7226,4.3307,3.7513,4.3309,3.7513,4.5046,3.7225,4.5044)"
+              },
+              {
+                "content": "drove",
+                "span": {
+                  "offset": 713,
+                  "length": 5
+                },
+                "confidence": 0.837,
+                "source": "D(7,3.7916,4.3311,4.1139,4.3334,4.1139,4.5075,3.7916,4.505)"
+              },
+              {
+                "content": "it",
+                "span": {
+                  "offset": 719,
+                  "length": 2
+                },
+                "confidence": 0.985,
+                "source": "D(7,4.1513,4.3337,4.2232,4.3342,4.2232,4.5084,4.1513,4.5078)"
+              },
+              {
+                "content": "home",
+                "span": {
+                  "offset": 722,
+                  "length": 4
+                },
+                "confidence": 0.879,
+                "source": "D(7,4.2578,4.3345,4.5657,4.3367,4.5657,4.5111,4.2578,4.5087)"
+              },
+              {
+                "content": ".",
+                "span": {
+                  "offset": 726,
+                  "length": 1
+                },
+                "confidence": 0.983,
+                "source": "D(7,4.5714,4.3367,4.6002,4.3369,4.6002,4.5114,4.5714,4.5112)"
+              },
+              {
+                "content": "I",
+                "span": {
+                  "offset": 728,
+                  "length": 1
+                },
+                "confidence": 0.945,
+                "source": "D(7,4.6434,4.3372,4.6721,4.3374,4.6721,4.512,4.6434,4.5117)"
+              },
+              {
+                "content": "filed",
+                "span": {
+                  "offset": 730,
+                  "length": 5
+                },
+                "confidence": 0.761,
+                "source": "D(7,4.7067,4.3377,4.934,4.3392,4.934,4.5138,4.7067,4.5122)"
+              },
+              {
+                "content": "a",
+                "span": {
+                  "offset": 736,
+                  "length": 1
+                },
+                "confidence": 0.983,
+                "source": "D(7,4.9743,4.3394,5.0347,4.3398,5.0347,4.5144,4.9743,4.514)"
+              },
+              {
+                "content": "parking",
+                "span": {
+                  "offset": 738,
+                  "length": 7
+                },
+                "confidence": 0.914,
+                "source": "D(7,5.075,4.3401,5.498,4.3427,5.498,4.5172,5.075,4.5146)"
+              },
+              {
+                "content": "incident",
+                "span": {
+                  "offset": 746,
+                  "length": 8
+                },
+                "confidence": 0.959,
+                "source": "D(7,5.5297,4.3429,5.9699,4.3457,5.9699,4.5201,5.5297,4.5174)"
+              },
+              {
+                "content": "report",
+                "span": {
+                  "offset": 755,
+                  "length": 6
+                },
+                "confidence": 0.964,
+                "source": "D(7,6.0016,4.3459,6.3584,4.3482,6.3584,4.5225,6.0016,4.5203)"
+              },
+              {
+                "content": "with",
+                "span": {
+                  "offset": 762,
+                  "length": 4
+                },
+                "confidence": 0.993,
+                "source": "D(7,1.6602,4.517,1.9174,4.5191,1.9174,4.6895,1.6602,4.6865)"
+              },
+              {
+                "content": "the",
+                "span": {
+                  "offset": 767,
+                  "length": 3
+                },
+                "confidence": 0.993,
+                "source": "D(7,1.9517,4.5194,2.1403,4.5209,2.1403,4.692,1.9517,4.6898)"
+              },
+              {
+                "content": "store",
+                "span": {
+                  "offset": 771,
+                  "length": 5
+                },
+                "confidence": 0.987,
+                "source": "D(7,2.1832,4.5212,2.4833,4.5236,2.4833,4.6959,2.1832,4.6925)"
+              },
+              {
+                "content": "and",
+                "span": {
+                  "offset": 777,
+                  "length": 3
+                },
+                "confidence": 0.988,
+                "source": "D(7,2.5205,4.5239,2.732,4.5256,2.732,4.6987,2.5205,4.6963)"
+              },
+              {
+                "content": "am",
+                "span": {
+                  "offset": 781,
+                  "length": 2
+                },
+                "confidence": 0.985,
+                "source": "D(7,2.772,4.5259,2.9435,4.5272,2.9435,4.7011,2.772,4.6992)"
+              },
+              {
+                "content": "reporting",
+                "span": {
+                  "offset": 784,
+                  "length": 9
+                },
+                "confidence": 0.975,
+                "source": "D(7,2.9921,4.5276,3.518,4.5315,3.518,4.7065,2.992,4.7017)"
+              },
+              {
+                "content": "the",
+                "span": {
+                  "offset": 794,
+                  "length": 3
+                },
+                "confidence": 0.991,
+                "source": "D(7,3.5494,4.5317,3.7352,4.5328,3.7352,4.7078,3.5494,4.7067)"
+              },
+              {
+                "content": "loss",
+                "span": {
+                  "offset": 798,
+                  "length": 4
+                },
+                "confidence": 0.963,
+                "source": "D(7,3.7781,4.5331,3.9896,4.5345,3.9896,4.7094,3.7781,4.7081)"
+              },
+              {
+                "content": "to",
+                "span": {
+                  "offset": 803,
+                  "length": 2
+                },
+                "confidence": 0.946,
+                "source": "D(7,4.0239,4.5347,4.1354,4.5354,4.1353,4.7103,4.0239,4.7096)"
+              },
+              {
+                "content": "my",
+                "span": {
+                  "offset": 806,
+                  "length": 2
+                },
+                "confidence": 0.908,
+                "source": "D(7,4.1725,4.5356,4.344,4.5367,4.344,4.7116,4.1725,4.7105)"
+              },
+              {
+                "content": "insurer",
+                "span": {
+                  "offset": 809,
+                  "length": 7
+                },
+                "confidence": 0.716,
+                "source": "D(7,4.3783,4.537,4.7642,4.5394,4.7642,4.7142,4.3783,4.7118)"
+              },
+              {
+                "content": ".",
+                "span": {
+                  "offset": 816,
+                  "length": 1
+                },
+                "confidence": 0.963,
+                "source": "D(7,4.7613,4.5394,4.7899,4.5396,4.7899,4.7144,4.7613,4.7142)"
+              },
+              {
+                "content": "A",
+                "span": {
+                  "offset": 818,
+                  "length": 1
+                },
+                "confidence": 0.938,
+                "source": "D(7,4.8214,4.5398,4.9128,4.5404,4.9128,4.7151,4.8213,4.7146)"
+              },
+              {
+                "content": "claim",
+                "span": {
+                  "offset": 820,
+                  "length": 5
+                },
+                "confidence": 0.668,
+                "source": "D(7,4.9443,4.5405,5.2472,4.542,5.2472,4.7155,4.9442,4.7152)"
+              },
+              {
+                "content": "has",
+                "span": {
+                  "offset": 826,
+                  "length": 3
+                },
+                "confidence": 0.925,
+                "source": "D(7,5.2844,4.5422,5.4616,4.543,5.4616,4.7158,5.2844,4.7156)"
+              },
+              {
+                "content": "been",
+                "span": {
+                  "offset": 830,
+                  "length": 4
+                },
+                "confidence": 0.918,
+                "source": "D(7,5.4988,4.5432,5.7531,4.5444,5.7531,4.7161,5.4987,4.7158)"
+              },
+              {
+                "content": "opened",
+                "span": {
+                  "offset": 835,
+                  "length": 6
+                },
+                "confidence": 0.946,
+                "source": "D(7,5.7932,4.5446,6.1905,4.5466,6.1905,4.7165,5.7932,4.7161)"
+              },
+              {
+                "content": "under",
+                "span": {
+                  "offset": 842,
+                  "length": 5
+                },
+                "confidence": 0.967,
+                "source": "D(7,6.2276,4.5467,6.5535,4.5483,6.5535,4.7169,6.2276,4.7165)"
+              },
+              {
+                "content": "claim",
+                "span": {
+                  "offset": 848,
+                  "length": 5
+                },
+                "confidence": 0.996,
+                "source": "D(7,1.6643,4.7214,1.9691,4.7212,1.9691,4.8812,1.6643,4.8808)"
+              },
+              {
+                "content": "number",
+                "span": {
+                  "offset": 854,
+                  "length": 6
+                },
+                "confidence": 0.994,
+                "source": "D(7,2.0137,4.7211,2.4656,4.7209,2.4656,4.8814,2.0137,4.8813)"
+              },
+              {
+                "content": "ASA",
+                "span": {
+                  "offset": 861,
+                  "length": 3
+                },
+                "confidence": 0.994,
+                "source": "D(7,2.4945,4.7209,2.7598,4.7208,2.7598,4.8811,2.4945,4.8814)"
+              },
+              {
+                "content": "-",
+                "span": {
+                  "offset": 864,
+                  "length": 1
+                },
+                "confidence": 0.998,
+                "source": "D(7,2.7598,4.7208,2.8098,4.7208,2.8098,4.8811,2.7598,4.8811)"
+              },
+              {
+                "content": "25-615743",
+                "span": {
+                  "offset": 865,
+                  "length": 9
+                },
+                "confidence": 0.978,
+                "source": "D(7,2.8098,4.7208,3.4324,4.7213,3.4324,4.8792,2.8098,4.8811)"
+              },
+              {
+                "content": ".",
+                "span": {
+                  "offset": 874,
+                  "length": 1
+                },
+                "confidence": 0.997,
+                "source": "D(7,3.435,4.7213,3.4718,4.7213,3.4718,4.8791,3.435,4.8792)"
+              },
+              {
+                "content": "Please",
+                "span": {
+                  "offset": 877,
+                  "length": 6
+                },
+                "confidence": 0.992,
+                "source": "D(7,1.6622,5.0941,2.0391,5.0959,2.0391,5.2648,1.6622,5.2612)"
+              },
+              {
+                "content": "contact",
+                "span": {
+                  "offset": 884,
+                  "length": 7
+                },
+                "confidence": 0.956,
+                "source": "D(7,2.076,5.0961,2.5266,5.0983,2.5265,5.2694,2.076,5.2651)"
+              },
+              {
+                "content": "me",
+                "span": {
+                  "offset": 892,
+                  "length": 2
+                },
+                "confidence": 0.951,
+                "source": "D(7,2.5577,5.0984,2.7419,5.0993,2.7419,5.2715,2.5577,5.2697)"
+              },
+              {
+                "content": "if",
+                "span": {
+                  "offset": 895,
+                  "length": 2
+                },
+                "confidence": 0.846,
+                "source": "D(7,2.7816,5.0994,2.8609,5.0997,2.8609,5.272,2.7816,5.2718)"
+              },
+              {
+                "content": "you",
+                "span": {
+                  "offset": 898,
+                  "length": 3
+                },
+                "confidence": 0.716,
+                "source": "D(7,2.8836,5.0998,3.0962,5.1005,3.0961,5.2726,2.8836,5.2721)"
+              },
+              {
+                "content": "need",
+                "span": {
+                  "offset": 902,
+                  "length": 4
+                },
+                "confidence": 0.771,
+                "source": "D(7,3.1415,5.1006,3.422,5.1016,3.422,5.2736,3.1415,5.2728)"
+              },
+              {
+                "content": "any",
+                "span": {
+                  "offset": 907,
+                  "length": 3
+                },
+                "confidence": 0.877,
+                "source": "D(7,3.4646,5.1017,3.6799,5.1024,3.6799,5.2743,3.4645,5.2737)"
+              },
+              {
+                "content": "additional",
+                "span": {
+                  "offset": 911,
+                  "length": 10
+                },
+                "confidence": 0.937,
+                "source": "D(7,3.7253,5.1026,4.2694,5.1038,4.2694,5.2732,3.7253,5.2744)"
+              },
+              {
+                "content": "information",
+                "span": {
+                  "offset": 922,
+                  "length": 11
+                },
+                "confidence": 0.993,
+                "source": "D(7,4.309,5.1039,4.9353,5.1051,4.9353,5.2706,4.309,5.2731)"
+              },
+              {
+                "content": ".",
+                "span": {
+                  "offset": 933,
+                  "length": 1
+                },
+                "confidence": 0.997,
+                "source": "D(7,4.9438,5.1051,4.9722,5.1052,4.9722,5.2705,4.9438,5.2706)"
+              },
+              {
+                "content": "Policy",
+                "span": {
+                  "offset": 936,
+                  "length": 6
+                },
+                "confidence": 0.994,
+                "source": "D(7,1.6591,5.4651,1.9904,5.4651,1.9904,5.6235,1.6591,5.6232)"
+              },
+              {
+                "content": "Number",
+                "span": {
+                  "offset": 943,
+                  "length": 6
+                },
+                "confidence": 0.996,
+                "source": "D(7,2.0237,5.4651,2.468,5.4645,2.468,5.6221,2.0238,5.6235)"
+              },
+              {
+                "content": ":",
+                "span": {
+                  "offset": 949,
+                  "length": 1
+                },
+                "confidence": 0.999,
+                "source": "D(7,2.4654,5.4646,2.4936,5.4645,2.4937,5.6219,2.4654,5.6221)"
+              },
+              {
+                "content": "ASA",
+                "span": {
+                  "offset": 951,
+                  "length": 3
+                },
+                "confidence": 0.998,
+                "source": "D(7,2.5296,5.4644,2.7735,5.4638,2.7736,5.6199,2.5296,5.6216)"
+              },
+              {
+                "content": "-",
+                "span": {
+                  "offset": 954,
+                  "length": 1
+                },
+                "confidence": 0.999,
+                "source": "D(7,2.7761,5.4638,2.8197,5.4637,2.8198,5.6195,2.7761,5.6199)"
+              },
+              {
+                "content": "A6815200",
+                "span": {
+                  "offset": 955,
+                  "length": 8
+                },
+                "confidence": 0.996,
+                "source": "D(7,2.8172,5.4637,3.3846,5.4611,3.3846,5.6111,2.8172,5.6196)"
+              },
+              {
+                "content": "Claim",
+                "span": {
+                  "offset": 965,
+                  "length": 5
+                },
+                "confidence": 0.995,
+                "source": "D(7,1.6602,5.6491,1.9659,5.6504,1.9659,5.8008,1.6602,5.7995)"
+              },
+              {
+                "content": "Number",
+                "span": {
+                  "offset": 971,
+                  "length": 6
+                },
+                "confidence": 0.995,
+                "source": "D(7,2.0056,5.6505,2.4431,5.6502,2.4431,5.8005,2.0056,5.8009)"
+              },
+              {
+                "content": ":",
+                "span": {
+                  "offset": 977,
+                  "length": 1
+                },
+                "confidence": 0.999,
+                "source": "D(7,2.4406,5.6502,2.4679,5.65,2.4679,5.8004,2.4406,5.8006)"
+              },
+              {
+                "content": "ASA",
+                "span": {
+                  "offset": 979,
+                  "length": 3
+                },
+                "confidence": 0.995,
+                "source": "D(7,2.5052,5.6498,2.7538,5.6482,2.7538,5.7986,2.5052,5.8002)"
+              },
+              {
+                "content": "-",
+                "span": {
+                  "offset": 982,
+                  "length": 1
+                },
+                "confidence": 0.999,
+                "source": "D(7,2.7513,5.6482,2.796,5.6479,2.796,5.7983,2.7513,5.7986)"
+              },
+              {
+                "content": "25-615743",
+                "span": {
+                  "offset": 983,
+                  "length": 9
+                },
+                "confidence": 0.99,
+                "source": "D(7,2.796,5.6479,3.3701,5.6384,3.3701,5.7888,2.796,5.7983)"
+              },
+              {
+                "content": "Insured",
+                "span": {
+                  "offset": 994,
+                  "length": 7
+                },
+                "confidence": 0.982,
+                "source": "D(7,1.655,5.8417,2.0494,5.8443,2.0494,5.9947,1.655,5.9921)"
+              },
+              {
+                "content": ":",
+                "span": {
+                  "offset": 1001,
+                  "length": 1
+                },
+                "confidence": 0.999,
+                "source": "D(7,2.057,5.8443,2.0871,5.8443,2.0871,5.9947,2.057,5.9947)"
+              },
+              {
+                "content": "Victor",
+                "span": {
+                  "offset": 1003,
+                  "length": 6
+                },
+                "confidence": 0.997,
+                "source": "D(7,2.1198,5.8441,2.459,5.8421,2.459,5.9925,2.1198,5.9945)"
+              },
+              {
+                "content": "Bennett",
+                "span": {
+                  "offset": 1010,
+                  "length": 7
+                },
+                "confidence": 0.998,
+                "source": "D(7,2.4891,5.8419,2.9011,5.8342,2.9011,5.9846,2.4891,5.9923)"
+              },
+              {
+                "content": "Address",
+                "span": {
+                  "offset": 1019,
+                  "length": 7
+                },
+                "confidence": 0.997,
+                "source": "D(7,1.657,6.0268,2.0938,6.0232,2.0938,6.1791,1.657,6.1786)"
+              },
+              {
+                "content": ":",
+                "span": {
+                  "offset": 1026,
+                  "length": 1
+                },
+                "confidence": 0.999,
+                "source": "D(7,2.0991,6.0232,2.1282,6.0229,2.1283,6.1791,2.0991,6.1791)"
+              },
+              {
+                "content": "242",
+                "span": {
+                  "offset": 1028,
+                  "length": 3
+                },
+                "confidence": 0.985,
+                "source": "D(7,2.168,6.0226,2.3797,6.0208,2.3798,6.1794,2.168,6.1792)"
+              },
+              {
+                "content": "Linden",
+                "span": {
+                  "offset": 1032,
+                  "length": 6
+                },
+                "confidence": 0.979,
+                "source": "D(7,2.4168,6.0205,2.753,6.0179,2.753,6.1789,2.4168,6.1795)"
+              },
+              {
+                "content": "Terrace",
+                "span": {
+                  "offset": 1039,
+                  "length": 7
+                },
+                "confidence": 0.998,
+                "source": "D(7,2.79,6.0177,3.1739,6.015,3.1739,6.1766,2.7901,6.1787)"
+              },
+              {
+                "content": ",",
+                "span": {
+                  "offset": 1046,
+                  "length": 1
+                },
+                "confidence": 0.999,
+                "source": "D(7,3.1765,6.0149,3.2057,6.0147,3.2057,6.1765,3.1766,6.1766)"
+              },
+              {
+                "content": "Alder",
+                "span": {
+                  "offset": 1048,
+                  "length": 5
+                },
+                "confidence": 0.997,
+                "source": "D(7,3.2348,6.0145,3.5207,6.0125,3.5207,6.1748,3.2348,6.1763)"
+              },
+              {
+                "content": "Sound",
+                "span": {
+                  "offset": 1054,
+                  "length": 5
+                },
+                "confidence": 0.995,
+                "source": "D(7,3.5445,6.0123,3.8622,6.0104,3.8622,6.171,3.5446,6.1747)"
+              },
+              {
+                "content": ",",
+                "span": {
+                  "offset": 1059,
+                  "length": 1
+                },
+                "confidence": 0.998,
+                "source": "D(7,3.8648,6.0104,3.8939,6.0102,3.894,6.1706,3.8649,6.1709)"
+              },
+              {
+                "content": "WA",
+                "span": {
+                  "offset": 1061,
+                  "length": 2
+                },
+                "confidence": 0.969,
+                "source": "D(7,3.9231,6.0101,4.119,6.0089,4.119,6.168,3.9231,6.1703)"
+              },
+              {
+                "content": "98052",
+                "span": {
+                  "offset": 1064,
+                  "length": 5
+                },
+                "confidence": 0.91,
+                "source": "D(7,4.1454,6.0087,4.4949,6.0066,4.4949,6.1635,4.1455,6.1677)"
+              },
+              {
+                "content": "Phone",
+                "span": {
+                  "offset": 1071,
+                  "length": 5
+                },
+                "confidence": 0.996,
+                "source": "D(7,1.657,6.216,1.987,6.2114,1.987,6.373,1.657,6.3758)"
+              },
+              {
+                "content": ":",
+                "span": {
+                  "offset": 1076,
+                  "length": 1
+                },
+                "confidence": 0.999,
+                "source": "D(7,1.9949,6.2113,2.0213,6.2109,2.0213,6.3727,1.9949,6.3729)"
+              },
+              {
+                "content": "(",
+                "span": {
+                  "offset": 1078,
+                  "length": 1
+                },
+                "confidence": 0.999,
+                "source": "D(7,2.0608,6.2104,2.1004,6.2099,2.1005,6.372,2.0609,6.3724)"
+              },
+              {
+                "content": "425",
+                "span": {
+                  "offset": 1079,
+                  "length": 3
+                },
+                "confidence": 0.998,
+                "source": "D(7,2.0978,6.2099,2.3063,6.2082,2.3063,6.3696,2.0978,6.372)"
+              },
+              {
+                "content": ")",
+                "span": {
+                  "offset": 1082,
+                  "length": 1
+                },
+                "confidence": 0.999,
+                "source": "D(7,2.309,6.2082,2.3512,6.2078,2.3512,6.3691,2.309,6.3696)"
+              },
+              {
+                "content": "555-0102",
+                "span": {
+                  "offset": 1084,
+                  "length": 8
+                },
+                "confidence": 0.992,
+                "source": "D(7,2.3829,6.2075,2.924,6.2052,2.924,6.3613,2.3829,6.3687)"
+              },
+              {
+                "content": "Email",
+                "span": {
+                  "offset": 1094,
+                  "length": 5
+                },
+                "confidence": 0.997,
+                "source": "D(7,1.6602,6.4087,1.9421,6.4074,1.9421,6.5581,1.6602,6.558)"
+              },
+              {
+                "content": ":",
+                "span": {
+                  "offset": 1099,
+                  "length": 1
+                },
+                "confidence": 0.999,
+                "source": "D(7,1.9523,6.4073,1.9777,6.4072,1.9777,6.5581,1.9523,6.5581)"
+              },
+              {
+                "content": "victor.bennett@example.com",
+                "span": {
+                  "offset": 1101,
+                  "length": 26
+                },
+                "confidence": 0.985,
+                "source": "D(7,2.0158,6.407,3.5299,6.402,3.5299,6.5513,2.0158,6.5581)"
+              },
+              {
+                "content": "Vehicle",
+                "span": {
+                  "offset": 1129,
+                  "length": 7
+                },
+                "confidence": 0.996,
+                "source": "D(7,1.6508,6.7305,2.0451,6.7279,2.0451,6.8783,1.6508,6.8809)"
+              },
+              {
+                "content": "Information",
+                "span": {
+                  "offset": 1137,
+                  "length": 11
+                },
+                "confidence": 0.992,
+                "source": "D(7,2.085,6.7277,2.689,6.7243,2.689,6.8747,2.085,6.8781)"
+              },
+              {
+                "content": ":",
+                "span": {
+                  "offset": 1148,
+                  "length": 1
+                },
+                "confidence": 0.997,
+                "source": "D(7,2.6939,6.7243,2.7289,6.7241,2.7289,6.8745,2.6939,6.8747)"
+              },
+              {
+                "content": "2020",
+                "span": {
+                  "offset": 1150,
+                  "length": 4
+                },
+                "confidence": 0.996,
+                "source": "D(7,1.6529,6.9189,1.9297,6.9166,1.9314,7.067,1.655,7.0693)"
+              },
+              {
+                "content": "Subaru",
+                "span": {
+                  "offset": 1155,
+                  "length": 6
+                },
+                "confidence": 0.995,
+                "source": "D(7,1.9646,6.9163,2.3361,6.9132,2.3374,7.0636,1.9663,7.0667)"
+              },
+              {
+                "content": "Outback",
+                "span": {
+                  "offset": 1162,
+                  "length": 7
+                },
+                "confidence": 0.997,
+                "source": "D(7,2.3735,6.913,2.8349,6.9096,2.8355,7.0599,2.3747,7.0633)"
+              },
+              {
+                "content": "Premium",
+                "span": {
+                  "offset": 1170,
+                  "length": 7
+                },
+                "confidence": 0.998,
+                "source": "D(7,2.8673,6.9093,3.3286,6.9063,3.3286,7.0567,2.8679,7.0597)"
+              },
+              {
+                "content": "Dark",
+                "span": {
+                  "offset": 1178,
+                  "length": 4
+                },
+                "confidence": 0.997,
+                "source": "D(7,1.6539,7.1167,1.9131,7.1167,1.9131,7.2563,1.6539,7.2563)"
+              },
+              {
+                "content": "blue",
+                "span": {
+                  "offset": 1183,
+                  "length": 4
+                },
+                "confidence": 0.996,
+                "source": "D(7,1.9434,7.1167,2.1769,7.1167,2.1769,7.2563,1.9434,7.2563)"
+              },
+              {
+                "content": "VIN",
+                "span": {
+                  "offset": 1188,
+                  "length": 3
+                },
+                "confidence": 0.98,
+                "source": "D(7,1.6487,7.3015,1.8414,7.2977,1.8432,7.4481,1.6508,7.4519)"
+              },
+              {
+                "content": ":",
+                "span": {
+                  "offset": 1191,
+                  "length": 1
+                },
+                "confidence": 0.999,
+                "source": "D(7,1.8514,7.2975,1.8789,7.297,1.8807,7.4474,1.8532,7.4479)"
+              },
+              {
+                "content": "4S4BTACC1LA511562",
+                "span": {
+                  "offset": 1193,
+                  "length": 17
+                },
+                "confidence": 0.953,
+                "source": "D(7,1.9139,7.2963,3.09,7.2845,3.09,7.4349,1.9156,7.4467)"
+              },
+              {
+                "content": "Registration",
+                "span": {
+                  "offset": 1211,
+                  "length": 12
+                },
+                "confidence": 0.998,
+                "source": "D(7,1.6487,7.4949,2.2817,7.4831,2.2848,7.6431,1.6508,7.656)"
+              },
+              {
+                "content": ":",
+                "span": {
+                  "offset": 1223,
+                  "length": 1
+                },
+                "confidence": 0.999,
+                "source": "D(7,2.2869,7.483,2.3155,7.4827,2.3187,7.6426,2.29,7.643)"
+              },
+              {
+                "content": "WA72906",
+                "span": {
+                  "offset": 1225,
+                  "length": 7
+                },
+                "confidence": 0.996,
+                "source": "D(7,2.3442,7.4824,2.899,7.4823,2.9032,7.6366,2.3474,7.6421)"
+              },
+              {
+                "content": "Use",
+                "span": {
+                  "offset": 1234,
+                  "length": 3
+                },
+                "confidence": 0.998,
+                "source": "D(7,1.6498,7.6856,1.8491,7.684,1.8491,7.8343,1.6498,7.8352)"
+              },
+              {
+                "content": ":",
+                "span": {
+                  "offset": 1237,
+                  "length": 1
+                },
+                "confidence": 0.999,
+                "source": "D(7,1.8565,7.6839,1.8835,7.6837,1.8836,7.8341,1.8565,7.8342)"
+              },
+              {
+                "content": "Personal",
+                "span": {
+                  "offset": 1239,
+                  "length": 8
+                },
+                "confidence": 0.996,
+                "source": "D(7,1.9254,7.6834,2.3707,7.678,2.3708,7.828,1.9254,7.8339)"
+              },
+              {
+                "content": "/",
+                "span": {
+                  "offset": 1248,
+                  "length": 1
+                },
+                "confidence": 0.999,
+                "source": "D(7,2.3954,7.6776,2.4593,7.6767,2.4594,7.8264,2.3954,7.8276)"
+              },
+              {
+                "content": "commute",
+                "span": {
+                  "offset": 1250,
+                  "length": 7
+                },
+                "confidence": 0.998,
+                "source": "D(7,2.4864,7.6763,2.9883,7.6657,2.9883,7.8105,2.4865,7.8259)"
+              },
+              {
+                "content": "Insurer",
+                "span": {
+                  "offset": 1259,
+                  "length": 7
+                },
+                "confidence": 0.978,
+                "source": "D(7,1.6487,8.0254,2.0208,8.0162,2.0225,8.1612,1.6508,8.1704)"
+              },
+              {
+                "content": ":",
+                "span": {
+                  "offset": 1266,
+                  "length": 1
+                },
+                "confidence": 0.999,
+                "source": "D(7,2.0256,8.0161,2.0544,8.0154,2.056,8.1604,2.0272,8.1611)"
+              },
+              {
+                "content": "Alder",
+                "span": {
+                  "offset": 1268,
+                  "length": 5
+                },
+                "confidence": 0.996,
+                "source": "D(7,2.088,8.0145,2.3833,8.0085,2.3845,8.1535,2.0896,8.1595)"
+              },
+              {
+                "content": "Sound",
+                "span": {
+                  "offset": 1274,
+                  "length": 5
+                },
+                "confidence": 0.998,
+                "source": "D(7,2.4074,8.0081,2.7387,8.0024,2.7394,8.1474,2.4085,8.1531)"
+              },
+              {
+                "content": "Assurance",
+                "span": {
+                  "offset": 1280,
+                  "length": 9
+                },
+                "confidence": 0.998,
+                "source": "D(7,2.7771,8.0018,3.339,7.9964,3.339,8.1414,2.7778,8.1468)"
+              },
+              {
+                "content": "Address",
+                "span": {
+                  "offset": 1291,
+                  "length": 7
+                },
+                "confidence": 0.998,
+                "source": "D(7,1.6425,8.2056,2.0784,8.1987,2.0802,8.3585,1.6446,8.3642)"
+              },
+              {
+                "content": ":",
+                "span": {
+                  "offset": 1298,
+                  "length": 1
+                },
+                "confidence": 0.999,
+                "source": "D(7,2.0811,8.1986,2.1103,8.1982,2.112,8.3581,2.0828,8.3585)"
+              },
+              {
+                "content": "426",
+                "span": {
+                  "offset": 1300,
+                  "length": 3
+                },
+                "confidence": 0.993,
+                "source": "D(7,2.1422,8.1977,2.3575,8.1943,2.359,8.3548,2.1439,8.3577)"
+              },
+              {
+                "content": "Civic",
+                "span": {
+                  "offset": 1304,
+                  "length": 5
+                },
+                "confidence": 0.989,
+                "source": "D(7,2.3947,8.1937,2.6552,8.1892,2.6565,8.3504,2.3962,8.3544)"
+              },
+              {
+                "content": "Lane",
+                "span": {
+                  "offset": 1310,
+                  "length": 4
+                },
+                "confidence": 0.998,
+                "source": "D(7,2.6924,8.1886,2.9369,8.1841,2.938,8.3454,2.6937,8.3497)"
+              },
+              {
+                "content": ",",
+                "span": {
+                  "offset": 1314,
+                  "length": 1
+                },
+                "confidence": 0.999,
+                "source": "D(7,2.9396,8.184,2.9688,8.1835,2.9699,8.3449,2.9406,8.3454)"
+              },
+              {
+                "content": "Alder",
+                "span": {
+                  "offset": 1316,
+                  "length": 5
+                },
+                "confidence": 0.997,
+                "source": "D(7,2.998,8.183,3.2851,8.1777,3.2859,8.3393,2.9991,8.3443)"
+              },
+              {
+                "content": "Sound",
+                "span": {
+                  "offset": 1322,
+                  "length": 5
+                },
+                "confidence": 0.998,
+                "source": "D(7,3.3143,8.1772,3.6332,8.1708,3.6338,8.3322,3.3151,8.3388)"
+              },
+              {
+                "content": ",",
+                "span": {
+                  "offset": 1327,
+                  "length": 1
+                },
+                "confidence": 0.999,
+                "source": "D(7,3.6386,8.1707,3.6651,8.1701,3.6656,8.3315,3.6391,8.3321)"
+              },
+              {
+                "content": "WA",
+                "span": {
+                  "offset": 1329,
+                  "length": 2
+                },
+                "confidence": 0.987,
+                "source": "D(7,3.6997,8.1694,3.9017,8.1652,3.902,8.3263,3.7002,8.3307)"
+              },
+              {
+                "content": "98052",
+                "span": {
+                  "offset": 1332,
+                  "length": 5
+                },
+                "confidence": 0.951,
+                "source": "D(7,3.9336,8.1646,4.2791,8.1574,4.2791,8.318,3.9338,8.3256)"
+              },
+              {
+                "content": "Phone",
+                "span": {
+                  "offset": 1339,
+                  "length": 5
+                },
+                "confidence": 0.997,
+                "source": "D(7,1.6425,8.3974,1.975,8.3927,1.9766,8.5538,1.6446,8.5585)"
+              },
+              {
+                "content": ":",
+                "span": {
+                  "offset": 1344,
+                  "length": 1
+                },
+                "confidence": 0.999,
+                "source": "D(7,1.9832,8.3925,2.0102,8.3922,2.0117,8.5533,1.9847,8.5537)"
+              },
+              {
+                "content": "(",
+                "span": {
+                  "offset": 1346,
+                  "length": 1
+                },
+                "confidence": 0.999,
+                "source": "D(7,2.0507,8.3916,2.0886,8.3911,2.0899,8.5523,2.0521,8.5527)"
+              },
+              {
+                "content": "425",
+                "span": {
+                  "offset": 1347,
+                  "length": 3
+                },
+                "confidence": 0.998,
+                "source": "D(7,2.0859,8.3911,2.2914,8.3887,2.2924,8.5499,2.0872,8.5523)"
+              },
+              {
+                "content": ")",
+                "span": {
+                  "offset": 1350,
+                  "length": 1
+                },
+                "confidence": 0.999,
+                "source": "D(7,2.2968,8.3887,2.3373,8.3882,2.3382,8.5493,2.2978,8.5498)"
+              },
+              {
+                "content": "555-0122",
+                "span": {
+                  "offset": 1352,
+                  "length": 8
+                },
+                "confidence": 0.988,
+                "source": "D(7,2.3644,8.3879,2.897,8.3826,2.897,8.5438,2.3652,8.549)"
+              },
+              {
+                "content": "Adjuster",
+                "span": {
+                  "offset": 1362,
+                  "length": 8
+                },
+                "confidence": 0.997,
+                "source": "D(7,1.6384,8.602,2.0979,8.5904,2.0992,8.752,1.6404,8.7623)"
+              },
+              {
+                "content": ":",
+                "span": {
+                  "offset": 1370,
+                  "length": 1
+                },
+                "confidence": 0.999,
+                "source": "D(7,2.0979,8.5904,2.1275,8.5899,2.1287,8.7514,2.0992,8.752)"
+              },
+              {
+                "content": "Irene",
+                "span": {
+                  "offset": 1372,
+                  "length": 5
+                },
+                "confidence": 0.828,
+                "source": "D(7,2.1678,8.5892,2.4285,8.5849,2.4292,8.7454,2.1689,8.7506)"
+              },
+              {
+                "content": "Foster",
+                "span": {
+                  "offset": 1378,
+                  "length": 6
+                },
+                "confidence": 0.997,
+                "source": "D(7,2.4634,8.5846,2.7994,8.5821,2.7994,8.7389,2.4641,8.7448)"
+              },
+              {
+                "content": "Thank",
+                "span": {
+                  "offset": 1386,
+                  "length": 5
+                },
+                "confidence": 0.997,
+                "source": "D(7,1.6363,8.9322,1.9684,8.9336,1.9684,9.0947,1.6363,9.0934)"
+              },
+              {
+                "content": "you",
+                "span": {
+                  "offset": 1392,
+                  "length": 3
+                },
+                "confidence": 0.998,
+                "source": "D(7,1.9869,8.9338,2.1845,8.9379,2.1845,9.099,1.9869,9.0949)"
+              },
+              {
+                "content": ",",
+                "span": {
+                  "offset": 1395,
+                  "length": 1
+                },
+                "confidence": 0.996,
+                "source": "D(7,2.1872,8.938,2.2267,8.9389,2.2267,9.1,2.1872,9.0991)"
+              },
+              {
+                "content": "Victor",
+                "span": {
+                  "offset": 1398,
+                  "length": 6
+                },
+                "confidence": 0.998,
+                "source": "D(7,1.6301,9.2626,1.9639,9.2584,1.9651,9.4081,1.6321,9.4104)"
+              },
+              {
+                "content": "Bennett",
+                "span": {
+                  "offset": 1405,
+                  "length": 7
+                },
+                "confidence": 0.999,
+                "source": "D(7,1.9909,9.2582,2.4155,9.2559,2.4155,9.3996,1.992,9.4077)"
+              },
+              {
+                "content": "V",
+                "span": {
+                  "offset": 1413,
+                  "length": 1
+                },
+                "confidence": 0.993,
+                "source": "D(7,1.6342,9.4642,1.7107,9.4632,1.712,9.6028,1.6363,9.6039)"
+              },
+              {
+                "content": ".",
+                "span": {
+                  "offset": 1414,
+                  "length": 1
+                },
+                "confidence": 0.999,
+                "source": "D(7,1.7062,9.4632,1.7309,9.4632,1.732,9.6028,1.7075,9.6028)"
+              },
+              {
+                "content": "B",
+                "span": {
+                  "offset": 1415,
+                  "length": 1
+                },
+                "confidence": 0.994,
+                "source": "D(7,1.7376,9.4632,1.8096,9.4637,1.81,9.6033,1.7387,9.6028)"
+              },
+              {
+                "content": ".",
+                "span": {
+                  "offset": 1416,
+                  "length": 1
+                },
+                "confidence": 0.998,
+                "source": "D(7,1.8118,9.4637,1.85,9.4643,1.85,9.6039,1.8122,9.6033)"
+              },
+              {
+                "content": "Signature",
+                "span": {
+                  "offset": 1419,
+                  "length": 9
+                },
+                "confidence": 0.996,
+                "source": "D(7,1.6259,9.7915,2.1138,9.7915,2.1138,9.9528,1.6259,9.9545)"
+              },
+              {
+                "content": ":",
+                "span": {
+                  "offset": 1428,
+                  "length": 1
+                },
+                "confidence": 0.995,
+                "source": "D(7,2.1166,9.7915,2.1582,9.7915,2.1582,9.9529,2.1166,9.9528)"
+              },
+              {
+                "content": "Victor",
+                "span": {
+                  "offset": 1434,
+                  "length": 6
+                },
+                "confidence": 0.973,
+                "source": "D(7,2.3159,9.6369,2.884,9.619,2.8842,9.8989,2.3159,9.9115)"
+              },
+              {
+                "content": "Bennett",
+                "span": {
+                  "offset": 1441,
+                  "length": 7
+                },
+                "confidence": 0.953,
+                "source": "D(7,2.9632,9.6167,3.8806,9.5927,3.8806,9.8642,2.9634,9.8965)"
+              },
+              {
+                "content": "04/09/2025",
+                "span": {
+                  "offset": 1485,
+                  "length": 10
+                },
+                "confidence": 0.966,
+                "source": "D(7,1.4433,10.4733,2.7351,10.4633,2.7351,10.6843,1.4433,10.6988)"
+              }
+            ],
+            "lines": [
+              {
+                "content": "Date: 04/09/2025",
+                "source": "D(7,1.6882,0.978,2.8264,1.0067,2.8226,1.1572,1.6844,1.1285)",
+                "span": {
+                  "offset": 0,
+                  "length": 16
+                }
+              },
+              {
+                "content": "Subject: Vehicle Damage Discovery - 2020 Subaru Outback Premium",
+                "source": "D(7,1.6819,1.3147,5.7436,1.4056,5.7398,1.5667,1.6781,1.4852)",
+                "span": {
+                  "offset": 18,
+                  "length": 63
+                }
+              },
+              {
+                "content": "I am writing to provide my account of a parking incident involving my vehicle.",
+                "source": "D(7,1.6778,1.8377,6.1536,1.924,6.1507,2.0981,1.6743,2.017)",
+                "span": {
+                  "offset": 83,
+                  "length": 78
+                }
+              },
+              {
+                "content": "On 04/08/2025, I parked my 2020 Subaru Outback Premium (dark blue) in the east",
+                "source": "D(7,1.6768,2.1977,6.4967,2.2848,6.4951,2.4469,1.6736,2.3727)",
+                "span": {
+                  "offset": 163,
+                  "length": 78
+                }
+              },
+              {
+                "content": "parking area of Pine Market, Alder Sound, WA 98052. I returned to the vehicle around",
+                "source": "D(7,1.6726,2.3982,6.6015,2.4725,6.599,2.6351,1.6712,2.5697)",
+                "span": {
+                  "offset": 242,
+                  "length": 84
+                }
+              },
+              {
+                "content": "21:10 discovery and found damage on the left side.",
+                "source": "D(7,1.6716,2.5893,4.5986,2.64,4.5985,2.8067,1.6712,2.7584)",
+                "span": {
+                  "offset": 327,
+                  "length": 50
+                }
+              },
+              {
+                "content": "The impact time and other driver are unknown. No note was left on the vehicle. I did",
+                "source": "D(7,1.6653,2.9526,6.4801,3.0196,6.4785,3.1887,1.6628,3.133)",
+                "span": {
+                  "offset": 379,
+                  "length": 84
+                }
+              },
+              {
+                "content": "not see the incident occur and there were no known witnesses. No injuries were",
+                "source": "D(7,1.6705,3.165,6.2194,3.2235,6.2172,3.388,1.6684,3.3323)",
+                "span": {
+                  "offset": 464,
+                  "length": 78
+                }
+              },
+              {
+                "content": "involved.",
+                "source": "D(7,1.6653,3.3545,2.2064,3.3561,2.2059,3.5142,1.6649,3.5126)",
+                "span": {
+                  "offset": 543,
+                  "length": 9
+                }
+              },
+              {
+                "content": "The visible damage consists of a crease on the left rear door, scuffed left rocker",
+                "source": "D(7,1.6653,3.7323,6.2145,3.7771,6.213,3.9472,1.6636,3.9095)",
+                "span": {
+                  "offset": 554,
+                  "length": 82
+                }
+              },
+              {
+                "content": "molding and a scraped left rear wheel.",
+                "source": "D(7,1.6653,3.9487,3.9246,3.9538,3.9242,4.1307,1.6649,4.1256)",
+                "span": {
+                  "offset": 637,
+                  "length": 38
+                }
+              },
+              {
+                "content": "The vehicle remained drivable and I drove it home. I filed a parking incident report",
+                "source": "D(7,1.6622,4.3148,6.3584,4.3482,6.3584,4.5229,1.661,4.4906)",
+                "span": {
+                  "offset": 677,
+                  "length": 84
+                }
+              },
+              {
+                "content": "with the store and am reporting the loss to my insurer. A claim has been opened under",
+                "source": "D(7,1.6602,4.517,6.5545,4.5483,6.5534,4.7222,1.6602,4.6947)",
+                "span": {
+                  "offset": 762,
+                  "length": 85
+                }
+              },
+              {
+                "content": "claim number ASA-25-615743.",
+                "source": "D(7,1.6643,4.7209,3.4718,4.7208,3.4718,4.8815,1.6643,4.8816)",
+                "span": {
+                  "offset": 848,
+                  "length": 27
+                }
+              },
+              {
+                "content": "Please contact me if you need any additional information.",
+                "source": "D(7,1.6622,5.0941,4.9727,5.1052,4.9721,5.2758,1.6617,5.268)",
+                "span": {
+                  "offset": 877,
+                  "length": 57
+                }
+              },
+              {
+                "content": "Policy Number: ASA-A6815200",
+                "source": "D(7,1.6587,5.4651,3.3846,5.4611,3.385,5.621,1.6591,5.6246)",
+                "span": {
+                  "offset": 936,
+                  "length": 27
+                }
+              },
+              {
+                "content": "Claim Number: ASA-25-615743",
+                "source": "D(7,1.6602,5.6491,3.3701,5.6384,3.3701,5.7947,1.6602,5.8055)",
+                "span": {
+                  "offset": 965,
+                  "length": 27
+                }
+              },
+              {
+                "content": "Insured: Victor Bennett",
+                "source": "D(7,1.6546,5.8417,2.9011,5.8342,2.9021,5.9898,1.655,5.9955)",
+                "span": {
+                  "offset": 994,
+                  "length": 23
+                }
+              },
+              {
+                "content": "Address: 242 Linden Terrace, Alder Sound, WA 98052",
+                "source": "D(7,1.6561,6.0236,4.4949,6.0066,4.4958,6.169,1.6571,6.1837)",
+                "span": {
+                  "offset": 1019,
+                  "length": 50
+                }
+              },
+              {
+                "content": "Phone: (425) 555-0102",
+                "source": "D(7,1.6556,6.2138,2.9239,6.2028,2.9253,6.3649,1.657,6.3758)",
+                "span": {
+                  "offset": 1071,
+                  "length": 21
+                }
+              },
+              {
+                "content": "Email: victor.bennett@example.com",
+                "source": "D(7,1.6602,6.408,3.5299,6.4013,3.5305,6.5537,1.6602,6.5601)",
+                "span": {
+                  "offset": 1094,
+                  "length": 33
+                }
+              },
+              {
+                "content": "Vehicle Information:",
+                "source": "D(7,1.6499,6.7303,2.7289,6.7238,2.7298,6.8745,1.6508,6.8809)",
+                "span": {
+                  "offset": 1129,
+                  "length": 20
+                }
+              },
+              {
+                "content": "2020 Subaru Outback Premium",
+                "source": "D(7,1.6529,6.9184,3.3286,6.9058,3.3297,7.0567,1.654,7.0693)",
+                "span": {
+                  "offset": 1150,
+                  "length": 27
+                }
+              },
+              {
+                "content": "Dark blue",
+                "source": "D(7,1.6539,7.1167,2.1769,7.1167,2.1769,7.2563,1.6539,7.2563)",
+                "span": {
+                  "offset": 1178,
+                  "length": 9
+                }
+              },
+              {
+                "content": "VIN: 4S4BTACC1LA511562",
+                "source": "D(7,1.6487,7.2978,3.0899,7.2807,3.0917,7.4348,1.6505,7.4519)",
+                "span": {
+                  "offset": 1188,
+                  "length": 22
+                }
+              },
+              {
+                "content": "Registration: WA72906",
+                "source": "D(7,1.6483,7.4917,2.9007,7.4791,2.9032,7.6366,1.6508,7.656)",
+                "span": {
+                  "offset": 1211,
+                  "length": 21
+                }
+              },
+              {
+                "content": "Use: Personal / commute",
+                "source": "D(7,1.6491,7.6856,2.9883,7.6657,2.9883,7.8198,1.6498,7.839)",
+                "span": {
+                  "offset": 1234,
+                  "length": 23
+                }
+              },
+              {
+                "content": "Insurer: Alder Sound Assurance",
+                "source": "D(7,1.6483,8.0211,3.3389,7.994,3.3415,8.1414,1.6508,8.1704)",
+                "span": {
+                  "offset": 1259,
+                  "length": 30
+                }
+              },
+              {
+                "content": "Address: 426 Civic Lane, Alder Sound, WA 98052",
+                "source": "D(7,1.6417,8.2056,4.2791,8.1574,4.282,8.3212,1.6447,8.3649)",
+                "span": {
+                  "offset": 1291,
+                  "length": 46
+                }
+              },
+              {
+                "content": "Phone: (425) 555-0122",
+                "source": "D(7,1.6425,8.3964,2.897,8.3816,2.8989,8.5437,1.6444,8.5585)",
+                "span": {
+                  "offset": 1339,
+                  "length": 21
+                }
+              },
+              {
+                "content": "Adjuster: Irene Foster",
+                "source": "D(7,1.638,8.5995,2.7993,8.5808,2.8001,8.7388,1.6404,8.7623)",
+                "span": {
+                  "offset": 1362,
+                  "length": 22
+                }
+              },
+              {
+                "content": "Thank you,",
+                "source": "D(7,1.6363,8.9298,2.2285,8.9365,2.2267,9.1,1.6345,9.0933)",
+                "span": {
+                  "offset": 1386,
+                  "length": 10
+                }
+              },
+              {
+                "content": "Victor Bennett",
+                "source": "D(7,1.6301,9.2626,2.4155,9.2518,2.4175,9.4018,1.6321,9.4112)",
+                "span": {
+                  "offset": 1398,
+                  "length": 14
+                }
+              },
+              {
+                "content": "V.B.",
+                "source": "D(7,1.6342,9.4632,1.85,9.4632,1.85,9.6039,1.6342,9.6039)",
+                "span": {
+                  "offset": 1413,
+                  "length": 4
+                }
+              },
+              {
+                "content": "Signature:",
+                "source": "D(7,1.6259,9.7915,2.1582,9.7915,2.1582,9.9545,1.6259,9.9545)",
+                "span": {
+                  "offset": 1419,
+                  "length": 10
+                }
+              },
+              {
+                "content": "Victor Bennett",
+                "source": "D(7,2.3132,9.6353,3.8806,9.5908,3.8848,9.8705,2.316,9.9149)",
+                "span": {
+                  "offset": 1434,
+                  "length": 14
+                }
+              },
+              {
+                "content": "04/09/2025",
+                "source": "D(7,1.4416,10.4733,2.7351,10.4633,2.7369,10.6917,1.4433,10.7011)",
+                "span": {
+                  "offset": 1485,
+                  "length": 10
+                }
+              }
+            ]
+          }
+        ],
+        "paragraphs": [
+          {
+            "content": "Date: 04/09/2025",
+            "source": "D(7,1.6882,0.978,2.8264,1.0067,2.8226,1.1572,1.6844,1.1285)",
+            "span": {
+              "offset": 0,
+              "length": 16
+            }
+          },
+          {
+            "content": "Subject: Vehicle Damage Discovery - 2020 Subaru Outback Premium",
+            "source": "D(7,1.6819,1.3147,5.7436,1.4056,5.7398,1.5761,1.6781,1.4852)",
+            "span": {
+              "offset": 18,
+              "length": 63
+            }
+          },
+          {
+            "content": "I am writing to provide my account of a parking incident involving my vehicle.",
+            "source": "D(7,1.6778,1.8377,6.154,1.924,6.1506,2.1032,1.6743,2.017)",
+            "span": {
+              "offset": 83,
+              "length": 78
+            }
+          },
+          {
+            "content": "On 04/08/2025, I parked my 2020 Subaru Outback Premium (dark blue) in the east parking area of Pine Market, Alder Sound, WA 98052. I returned to the vehicle around 21:10 discovery and found damage on the left side.",
+            "source": "D(7,1.6759,2.1977,6.6048,2.279,6.5956,2.8397,1.6667,2.7583)",
+            "span": {
+              "offset": 163,
+              "length": 214
+            }
+          },
+          {
+            "content": "The impact time and other driver are unknown. No note was left on the vehicle. I did not see the incident occur and there were no known witnesses. No injuries were involved.",
+            "source": "D(7,1.6653,2.9526,6.4809,3.0196,6.4731,3.5795,1.6576,3.5125)",
+            "span": {
+              "offset": 379,
+              "length": 173
+            }
+          },
+          {
+            "content": "The visible damage consists of a crease on the left rear door, scuffed left rocker molding and a scraped left rear wheel.",
+            "source": "D(7,1.6653,3.7323,6.2147,3.7771,6.2108,4.1704,1.6615,4.1256)",
+            "span": {
+              "offset": 554,
+              "length": 121
+            }
+          },
+          {
+            "content": "The vehicle remained drivable and I drove it home. I filed a parking incident report with the store and am reporting the loss to my insurer. A claim has been opened under claim number ASA-25-615743.",
+            "source": "D(7,1.6615,4.3148,6.5559,4.3467,6.5522,4.9136,1.6578,4.8816)",
+            "span": {
+              "offset": 677,
+              "length": 198
+            }
+          },
+          {
+            "content": "Please contact me if you need any additional information.",
+            "source": "D(7,1.6622,5.0941,4.9727,5.1052,4.9721,5.2791,1.6617,5.268)",
+            "span": {
+              "offset": 877,
+              "length": 57
+            }
+          },
+          {
+            "content": "Policy Number: ASA-A6815200",
+            "source": "D(7,1.6587,5.4651,3.3846,5.4611,3.385,5.621,1.6591,5.6251)",
+            "span": {
+              "offset": 936,
+              "length": 27
+            }
+          },
+          {
+            "content": "Claim Number: ASA-25-615743",
+            "source": "D(7,1.6592,5.6491,3.3701,5.6384,3.3711,5.7947,1.6602,5.8055)",
+            "span": {
+              "offset": 965,
+              "length": 27
+            }
+          },
+          {
+            "content": "Insured: Victor Bennett",
+            "source": "D(7,1.6543,5.8399,2.9014,5.8342,2.9021,5.9898,1.655,5.9955)",
+            "span": {
+              "offset": 994,
+              "length": 23
+            }
+          },
+          {
+            "content": "Address: 242 Linden Terrace, Alder Sound, WA 98052",
+            "source": "D(7,1.6561,6.0236,4.4949,6.0066,4.4958,6.169,1.6571,6.186)",
+            "span": {
+              "offset": 1019,
+              "length": 50
+            }
+          },
+          {
+            "content": "Phone: (425) 555-0102",
+            "source": "D(7,1.6556,6.2138,2.9239,6.2028,2.9253,6.3649,1.657,6.3758)",
+            "span": {
+              "offset": 1071,
+              "length": 21
+            }
+          },
+          {
+            "content": "Email: victor.bennett@example.com",
+            "source": "D(7,1.6596,6.408,3.5299,6.4013,3.5305,6.5537,1.6602,6.5604)",
+            "span": {
+              "offset": 1094,
+              "length": 33
+            }
+          },
+          {
+            "content": "Vehicle Information: 2020 Subaru Outback Premium Dark blue VIN: 4S4BTACC1LA511562 Registration: WA72906",
+            "source": "D(7,1.6437,6.7303,3.3277,6.7202,3.3333,7.6459,1.6493,7.656)",
+            "span": {
+              "offset": 1129,
+              "length": 103
+            }
+          },
+          {
+            "content": "Use: Personal / commute",
+            "source": "D(7,1.6477,7.6849,2.9883,7.6657,2.9905,7.8198,1.6498,7.839)",
+            "span": {
+              "offset": 1234,
+              "length": 23
+            }
+          },
+          {
+            "content": "Insurer: Alder Sound Assurance",
+            "source": "D(7,1.6483,8.0211,3.3389,7.9921,3.3415,8.1414,1.6508,8.1704)",
+            "span": {
+              "offset": 1259,
+              "length": 30
+            }
+          },
+          {
+            "content": "Address: 426 Civic Lane, Alder Sound, WA 98052",
+            "source": "D(7,1.6417,8.2056,4.2791,8.1574,4.282,8.3212,1.6447,8.3694)",
+            "span": {
+              "offset": 1291,
+              "length": 46
+            }
+          },
+          {
+            "content": "Phone: (425) 555-0122",
+            "source": "D(7,1.6425,8.3964,2.897,8.3816,2.8989,8.5437,1.6444,8.5585)",
+            "span": {
+              "offset": 1339,
+              "length": 21
+            }
+          },
+          {
+            "content": "Adjuster: Irene Foster",
+            "source": "D(7,1.6378,8.5995,2.7993,8.5808,2.8019,8.7436,1.6404,8.7623)",
+            "span": {
+              "offset": 1362,
+              "length": 22
+            }
+          },
+          {
+            "content": "Thank you,",
+            "source": "D(7,1.6363,8.9298,2.2285,8.9365,2.2267,9.1,1.6345,9.0933)",
+            "span": {
+              "offset": 1386,
+              "length": 10
+            }
+          },
+          {
+            "content": "Victor Bennett V.B.",
+            "source": "D(7,1.6295,9.2626,2.4155,9.2518,2.4202,9.596,1.6343,9.6069)",
+            "span": {
+              "offset": 1398,
+              "length": 19
+            }
+          },
+          {
+            "content": "Signature:",
+            "source": "D(7,1.6259,9.7915,2.1582,9.7915,2.1582,9.9545,1.6259,9.9545)",
+            "span": {
+              "offset": 1419,
+              "length": 10
+            }
+          },
+          {
+            "content": "Victor Bennett",
+            "source": "D(7,2.3085,9.6343,3.8806,9.592,3.8881,9.8718,2.316,9.9141)",
+            "span": {
+              "offset": 1434,
+              "length": 14
+            }
+          },
+          {
+            "role": "pageFooter",
+            "content": "04/09/2025",
+            "source": "D(7,1.4416,10.4733,2.7351,10.4633,2.7369,10.6917,1.4433,10.7016)",
+            "span": {
+              "offset": 1468,
+              "length": 31
+            }
+          }
+        ],
+        "segments": [
+          {
+            "span": {
+              "offset": 0,
+              "length": 1520
+            },
+            "segmentId": "segment6",
+            "startPageNumber": 7,
+            "endPageNumber": 7,
+            "category": "statement",
+            "confidence": 0.9
+          }
+        ],
+        "metadata": {
+          "contentType": "application/pdf",
+          "pageCount": "11"
+        },
+        "signatures": [
+          {
+            "source": "D(7,2.3035,9.5928,3.8765,9.5713,3.8806,9.915,2.3055,9.9312)",
+            "span": {
+              "offset": 13445,
+              "length": 33
+            },
+            "elements": [
+              "/paragraphs/384"
+            ],
+            "id": "7.1"
+          }
+        ],
+        "analyzerId": "lab664_statement_ab3f812d0991491d"
       },
       {
         "path": "input1/segment7",
@@ -51779,12 +54987,12 @@
             "valueString": "Victor Bennett",
             "spans": [
               {
-                "offset": 196,
+                "offset": 3760,
                 "length": 14
               }
             ],
-            "confidence": 0.831,
-            "source": "D(8,1.9071,1.5539,2.6234,1.5563,2.6230,1.6706,1.9067,1.6682)"
+            "confidence": 0.963,
+            "source": "D(9,1.0957,1.8707,1.8812,1.8802,1.8795,2.0189,1.0941,2.0094)"
           },
           "CustomerTaxId": {
             "type": "string",
@@ -52389,7 +55597,7 @@
                             "length": 5
                           }
                         ],
-                        "confidence": 0.753,
+                        "confidence": 0.721,
                         "source": "D(9,7.1055,5.8223,7.4084,5.8223,7.4084,5.9621,7.1055,5.9590)"
                       },
                       "CurrencyCode": {
@@ -52443,7 +55651,7 @@
                             "length": 5
                           }
                         ],
-                        "confidence": 0.527,
+                        "confidence": 0.482,
                         "source": "D(9,7.1221,6.0854,7.4126,6.0854,7.4126,6.2251,7.1221,6.2251)"
                       },
                       "CurrencyCode": {
@@ -52497,7 +55705,7 @@
                             "length": 4
                           }
                         ],
-                        "confidence": 0.55,
+                        "confidence": 0.567,
                         "source": "D(9,7.1802,6.3486,7.4209,6.3486,7.4209,6.4883,7.1802,6.4883)"
                       },
                       "CurrencyCode": {
@@ -52517,6 +55725,60 @@
                     ],
                     "confidence": 0.702,
                     "source": "D(9,1.0599,6.3572,2.3600,6.3614,2.3595,6.5143,1.0594,6.5100)"
+                  },
+                  "NetAmount": {
+                    "type": "object",
+                    "valueObject": {
+                      "Amount": {
+                        "type": "number",
+                        "confidence": 0.919
+                      },
+                      "CurrencyCode": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "Rate": {
+                    "type": "number",
+                    "confidence": 0.919
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "valueObject": {
+                  "Amount": {
+                    "type": "object",
+                    "valueObject": {
+                      "Amount": {
+                        "type": "number",
+                        "valueNumber": 53.99,
+                        "spans": [
+                          {
+                            "offset": 4941,
+                            "length": 5
+                          }
+                        ],
+                        "confidence": 0.878,
+                        "source": "D(9,7.1096,6.6346,7.4333,6.6271,7.4333,6.7901,7.1096,6.7842)"
+                      },
+                      "CurrencyCode": {
+                        "type": "string",
+                        "valueString": "USD"
+                      }
+                    }
+                  },
+                  "Description": {
+                    "type": "string",
+                    "valueString": "Total Taxes",
+                    "spans": [
+                      {
+                        "offset": 4920,
+                        "length": 11
+                      }
+                    ],
+                    "confidence": 0.711,
+                    "source": "D(9,4.9888,6.6493,5.5832,6.6530,5.5823,6.8043,4.9879,6.8006)"
                   },
                   "NetAmount": {
                     "type": "object",
@@ -67444,13 +70706,15 @@
     "documentPagesStandard": 11,
     "contextualizationTokens": 11000,
     "tokens": {
-      "gpt-5-input": 5287,
+      "gpt-5-input": 5378,
+      "gpt-5-cached-input": 1024,
       "gpt-5-output": 249,
       "gpt-5.2-input": 20661,
-      "gpt-5.2-cached-input": 4992,
-      "gpt-5.2-output": 1660,
-      "gpt-5.5-input": 7318,
-      "gpt-5.5-output": 1537
+      "gpt-5.2-output": 1655,
+      "gpt-5.5-input": 12258,
+      "gpt-5.5-output": 1869,
+      "gpt-5.5-cached-input": 3840,
+      "gpt-5.2-cached-input": 1408
     }
   }
 }

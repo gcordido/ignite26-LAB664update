@@ -1,0 +1,388 @@
+{
+  "id": "6a37b6bf-c217-483b-9730-8ed669cf76cc",
+  "timestamp": "2026-10-23T07:09:41.229Z",
+  "endpoint": "https://ignite-anatolip-test-scus.services.ai.azure.com",
+  "cacheKey": "fe551a2e52063062e80c006171a6ba3952a299288ff8e3c6dce9f7926b02c387",
+  "status": "completed",
+  "deployment": "gpt-5.5",
+  "model": "gpt-5.5",
+  "fallbackFrom": "gpt-6.1-sol",
+  "responseId": "resp_0fc7a787bc9a94c4016adb0831edd08193802d8df3369f7ea9",
+  "usage": {
+    "input_tokens": 3666,
+    "input_tokens_details": {
+      "cache_write_tokens": 0,
+      "cached_tokens": 0
+    },
+    "output_tokens": 168,
+    "output_tokens_details": {
+      "reasoning_tokens": 0
+    },
+    "total_tokens": 3834
+  },
+  "advisoryOnly": true,
+  "payloadSha256": "4bff575f1ef8041d381763fb5a305b51e21ce160eb57290cc2956ac5d576bbbf",
+  "input": {
+    "source": {
+      "endpoint": "https://ignite-anatolip-test-scus.services.ai.azure.com",
+      "runId": "3b87d91f-c274-489f-a8d9-995e4a1e2f0c",
+      "packetSha256": "87ef2277c0d1273790a47439cbfcb4d1f5a93eb0e3fc2e576ba185b92cc63fd4",
+      "analyzerFingerprint": "c2a85f9fd6722c8488d5cbf5201004b7144aad347af15ecd80b8a36b269785aa"
+    },
+    "ruleset": "1.0.0",
+    "check": {
+      "id": "financial.total:8-8:0",
+      "rule": "Total must equal subtotal plus tax minus discount when no unsupported adjustment is present.",
+      "status": "fail",
+      "message": "Document 8-8:0: USD 2121.60 + USD 112.20 tax - USD 500.00 discount = USD 1733.80 expected; total is USD 2233.80.",
+      "evidence": [
+        {
+          "documentId": "8-8:0",
+          "category": "repair_estimate",
+          "analyzerId": "lab664_anatolip_scus_repair",
+          "start": 8,
+          "end": 8,
+          "field": "SubtotalAmount.Amount",
+          "value": 2121.6,
+          "confidence": 0.684,
+          "regions": [
+            {
+              "page": 8,
+              "polygon": [
+                0.4934117647058823,
+                0.6162090909090909,
+                0.5493176470588236,
+                0.6162090909090909,
+                0.5493176470588236,
+                0.6279272727272727,
+                0.4934117647058823,
+                0.6279272727272727
+              ]
+            },
+            {
+              "page": 8,
+              "polygon": [
+                0.8266588235294118,
+                0.6154727272727273,
+                0.8725529411764705,
+                0.6150818181818182,
+                0.8725529411764705,
+                0.6287818181818182,
+                0.8266588235294118,
+                0.6289272727272727
+              ]
+            }
+          ]
+        },
+        {
+          "documentId": "8-8:0",
+          "category": "repair_estimate",
+          "analyzerId": "lab664_anatolip_scus_repair",
+          "start": 8,
+          "end": 8,
+          "field": "SubtotalAmount.CurrencyCode",
+          "value": "USD",
+          "confidence": 0.592,
+          "regions": [
+            {
+              "page": 8,
+              "polygon": [
+                0.5214823529411765,
+                0.38075454545454546,
+                0.5742705882352942,
+                0.3808909090909091,
+                0.5742235294117647,
+                0.3922818181818182,
+                0.521435294117647,
+                0.3921454545454546
+              ]
+            },
+            {
+              "page": 8,
+              "polygon": [
+                0.5327176470588235,
+                0.3949363636363636,
+                0.5630941176470587,
+                0.3950909090909091,
+                0.5629882352941177,
+                0.40790000000000004,
+                0.5326117647058823,
+                0.4077454545454545
+              ]
+            },
+            {
+              "page": 8,
+              "polygon": [
+                0.15491764705882352,
+                0.15674545454545455,
+                0.29468235294117645,
+                0.15608181818181818,
+                0.29478823529411763,
+                0.16904545454545453,
+                0.15502352941176473,
+                0.16970909090909092
+              ]
+            }
+          ]
+        },
+        {
+          "documentId": "8-8:0",
+          "category": "repair_estimate",
+          "analyzerId": "lab664_anatolip_scus_repair",
+          "start": 8,
+          "end": 8,
+          "field": "TotalTaxAmount.Amount",
+          "value": 112.2,
+          "confidence": 0.697,
+          "regions": [
+            {
+              "page": 8,
+              "polygon": [
+                0.47827058823529406,
+                0.6430636363636363,
+                0.5546823529411765,
+                0.6430636363636363,
+                0.5546823529411765,
+                0.6547818181818182,
+                0.47827058823529406,
+                0.6547818181818182
+              ]
+            },
+            {
+              "page": 8,
+              "polygon": [
+                0.8378941176470588,
+                0.6425818181818181,
+                0.8725529411764705,
+                0.6425818181818181,
+                0.8725529411764705,
+                0.6553181818181818,
+                0.8378941176470588,
+                0.6548818181818182
+              ]
+            }
+          ]
+        },
+        {
+          "documentId": "8-8:0",
+          "category": "repair_estimate",
+          "analyzerId": "lab664_anatolip_scus_repair",
+          "start": 8,
+          "end": 8,
+          "field": "TotalTaxAmount.CurrencyCode",
+          "value": "USD",
+          "confidence": 0.592,
+          "regions": [
+            {
+              "page": 8,
+              "polygon": [
+                0.5214823529411765,
+                0.38075454545454546,
+                0.5742705882352942,
+                0.3808909090909091,
+                0.5742235294117647,
+                0.3922818181818182,
+                0.521435294117647,
+                0.3921454545454546
+              ]
+            },
+            {
+              "page": 8,
+              "polygon": [
+                0.5327176470588235,
+                0.3949363636363636,
+                0.5630941176470587,
+                0.3950909090909091,
+                0.5629882352941177,
+                0.40790000000000004,
+                0.5326117647058823,
+                0.4077454545454545
+              ]
+            },
+            {
+              "page": 8,
+              "polygon": [
+                0.15491764705882352,
+                0.15674545454545455,
+                0.29468235294117645,
+                0.15608181818181818,
+                0.29478823529411763,
+                0.16904545454545453,
+                0.15502352941176473,
+                0.16970909090909092
+              ]
+            }
+          ]
+        },
+        {
+          "documentId": "8-8:0",
+          "category": "repair_estimate",
+          "analyzerId": "lab664_anatolip_scus_repair",
+          "start": 8,
+          "end": 8,
+          "field": "TotalDiscountAmount.Amount",
+          "value": 500,
+          "confidence": 0.424,
+          "regions": [
+            {
+              "page": 8,
+              "polygon": [
+                0.2858941176470588,
+                0.7065454545454546,
+                0.3205529411764706,
+                0.7063,
+                0.3205529411764706,
+                0.7188818181818182,
+                0.2858941176470588,
+                0.7182272727272727
+              ]
+            }
+          ]
+        },
+        {
+          "documentId": "8-8:0",
+          "category": "repair_estimate",
+          "analyzerId": "lab664_anatolip_scus_repair",
+          "start": 8,
+          "end": 8,
+          "field": "TotalDiscountAmount.CurrencyCode",
+          "value": "USD",
+          "confidence": 0.592,
+          "regions": [
+            {
+              "page": 8,
+              "polygon": [
+                0.5214823529411765,
+                0.38075454545454546,
+                0.5742705882352942,
+                0.3808909090909091,
+                0.5742235294117647,
+                0.3922818181818182,
+                0.521435294117647,
+                0.3921454545454546
+              ]
+            },
+            {
+              "page": 8,
+              "polygon": [
+                0.5327176470588235,
+                0.3949363636363636,
+                0.5630941176470587,
+                0.3950909090909091,
+                0.5629882352941177,
+                0.40790000000000004,
+                0.5326117647058823,
+                0.4077454545454545
+              ]
+            },
+            {
+              "page": 8,
+              "polygon": [
+                0.15491764705882352,
+                0.15674545454545455,
+                0.29468235294117645,
+                0.15608181818181818,
+                0.29478823529411763,
+                0.16904545454545453,
+                0.15502352941176473,
+                0.16970909090909092
+              ]
+            }
+          ]
+        },
+        {
+          "documentId": "8-8:0",
+          "category": "repair_estimate",
+          "analyzerId": "lab664_anatolip_scus_repair",
+          "start": 8,
+          "end": 8,
+          "field": "TotalAmount.Amount",
+          "value": 2233.8,
+          "confidence": 0.824,
+          "regions": [
+            {
+              "page": 8,
+              "polygon": [
+                0.8173882352941176,
+                0.6705181818181818,
+                0.8745058823529411,
+                0.6708727272727273,
+                0.8745058823529411,
+                0.6874727272727272,
+                0.8173882352941176,
+                0.6871181818181819
+              ]
+            }
+          ]
+        },
+        {
+          "documentId": "8-8:0",
+          "category": "repair_estimate",
+          "analyzerId": "lab664_anatolip_scus_repair",
+          "start": 8,
+          "end": 8,
+          "field": "TotalAmount.CurrencyCode",
+          "value": "USD",
+          "confidence": 0.592,
+          "regions": [
+            {
+              "page": 8,
+              "polygon": [
+                0.5214823529411765,
+                0.38075454545454546,
+                0.5742705882352942,
+                0.3808909090909091,
+                0.5742235294117647,
+                0.3922818181818182,
+                0.521435294117647,
+                0.3921454545454546
+              ]
+            },
+            {
+              "page": 8,
+              "polygon": [
+                0.5327176470588235,
+                0.3949363636363636,
+                0.5630941176470587,
+                0.3950909090909091,
+                0.5629882352941177,
+                0.40790000000000004,
+                0.5326117647058823,
+                0.4077454545454545
+              ]
+            },
+            {
+              "page": 8,
+              "polygon": [
+                0.15491764705882352,
+                0.15674545454545455,
+                0.29468235294117645,
+                0.15608181818181818,
+                0.29478823529411763,
+                0.16904545454545453,
+                0.15502352941176473,
+                0.16970909090909092
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "documents": [
+      {
+        "id": "8-8:0",
+        "category": "repair_estimate",
+        "analyzerId": "lab664_anatolip_scus_repair",
+        "untrustedSourceText": "Copper Bend Collision\n107 Works Road\nCedar Mesa, TX 78758\n(512) 555-0141\n\nREPAIR ESTIMATE\n\n\n<table>\n<tr>\n<td>Estimate #</td>\n<td>Q-TX-96781</td>\n</tr>\n<tr>\n<td>Claim #</td>\n<td>CMM-26-467202</td>\n</tr>\n<tr>\n<td>Policy #</td>\n<td>CMM-A4911741</td>\n</tr>\n<tr>\n<td>Inspection Date</td>\n<td>02/15/2026</td>\n</tr>\n<tr>\n<td>Inspector</td>\n<td>Tomas Vega</td>\n</tr>\n</table>\n\n\nCUSTOMER\nDanielle Ortiz\n211 Linden Terrace\nCedar Mesa, TX 78758\n(512) 555-0101\ndanielle.ortiz@example.com\n\nVEHICLE\n\n\n<table>\n<tr>\n<td>Description:</td>\n<td>2022 Honda CR-V EX</td>\n</tr>\n<tr>\n<td>Color:</td>\n<td>Silver</td>\n</tr>\n<tr>\n<td>VIN:</td>\n<td>7FARW1H55NA510781</td>\n</tr>\n<tr>\n<td>License:</td>\n<td>TX56750</td>\n</tr>\n<tr>\n<td>Use:</td>\n<td>Personal / commute</td>\n</tr>\n<tr>\n<td>Odometer:</td>\n<td>36,420</td>\n</tr>\n</table>\n\n\nINSURER\nCedar Mesa Mutual\n413 Civic Lane\nCedar Mesa, TX 78758\n(512) 555-0121\nAdjuster: Nora Salcedo\n\n\n<table>\n<tr>\n<th rowspan=\"2\">Line #</th>\n<th rowspan=\"2\">Description</th>\n<th rowspan=\"2\">Quantity</th>\n<th rowspan=\"2\">Labor Hours</th>\n<th rowspan=\"2\">Labor Rate ($/hr.)</th>\n<th colspan=\"3\">ESTIMATED AMOUNT</th>\n</tr>\n<tr>\n<th>Parts</th>\n<th>Labor</th>\n<th>Total</th>\n</tr>\n<tr>\n<td>1</td>\n<td>Rear bumper cover - replace</td>\n<td>1</td>\n<td>1.8</td>\n<td>112.00</td>\n<td>685.00</td>\n<td>201.60</td>\n<td>886.60</td>\n</tr>\n<tr>\n<td>2</td>\n<td>Energy absorber - replace</td>\n<td>1</td>\n<td>0.7</td>\n<td>112.00</td>\n<td>154.00</td>\n<td>78.40</td>\n<td>232.40</td>\n</tr>\n<tr>\n<td>3</td>\n<td>Right rear lamp - replace</td>\n<td>1</td>\n<td>0.6</td>\n<td>112.00</td>\n<td>329.00</td>\n<td>67.20</td>\n<td>396.20</td>\n</tr>\n<tr>\n<td>4</td>\n<td>Rear bumper - refinish</td>\n<td>1</td>\n<td>3.7</td>\n<td>112.00</td>\n<td>0.00</td>\n<td>414.40</td>\n<td>414.40</td>\n</tr>\n<tr>\n<td>5</td>\n<td>Paint materials</td>\n<td>1</td>\n<td>0.0</td>\n<td>112.00</td>\n<td>192.00</td>\n<td>0.00</td>\n<td>192.00</td>\n</tr>\n<tr>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n</tr>\n<tr>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n</tr>\n</table>\n\n\nDeductible\n500.00\n\n\n<table>\n<tr>\n<td>SUBTOTAL</td>\n<td></td>\n<td>2,121.60</td>\n</tr>\n<tr>\n<td>TAX ON PARTS</td>\n<td></td>\n<td>112.20</td>\n</tr>\n<tr>\n<td>TOTAL ESTIMATE</td>\n<td></td>\n<td>2,233.80</td>\n</tr>\n<tr>\n<td></td>\n<td></td>\n<td></td>\n</tr>\n<tr>\n<td>ESTIMATE LESS DEDUCTIBLE</td>\n<td></td>\n<td>1,733.80</td>\n</tr>\n</table>\n\n\nREPAIR SCHEDULE & STATUS\n\nScheduled Start Date:\n02/17/2026\n\nCurrent Status:\nScheduled\n\nNOTES\nEstimate based on visual inspection and information provided.\nAdditional damage or parts hidden by damage may require a supplement.\n\n<!-- PageFooter: Estimate subject to repair authorization. -->\n<!-- PageNumber: Page 1 of 1 -->\n<!-- PageBreak -->\n\n"
+      }
+    ]
+  },
+  "result": {
+    "category": "policy_code_error_or_too_strict",
+    "reason": "The source text for document 8-8:0 distinguishes between “TOTAL ESTIMATE” of 2,233.80 and “ESTIMATE LESS DEDUCTIBLE” of 1,733.80. The failed check treated the extracted deductible value 500.00 as a discount to subtract from the total formula, but the document’s displayed total estimate equals subtotal 2,121.60 plus tax 112.20, without subtracting the deductible.",
+    "suggestion": "Refine the rule or field mapping so deductible is not treated as TotalDiscountAmount for this total-equals-subtotal-plus-tax check, then rerun document 8-8:0.",
+    "documentIds": [
+      "8-8:0"
+    ]
+  }
+}

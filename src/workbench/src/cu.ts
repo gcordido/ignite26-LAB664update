@@ -10,12 +10,14 @@ export class CuOperationError extends LabError {
     super(502, message);
   }
 }
-export class CuClient {
-  private credential = new AzureCliCredential();
-  private bearerToken = getBearerTokenProvider(
-    this.credential,
+export function azureBearerToken() {
+  return getBearerTokenProvider(
+    new AzureCliCredential(),
     "https://cognitiveservices.azure.com/.default",
   );
+}
+export class CuClient {
+  private bearerToken = azureBearerToken();
   constructor(
     private settings = configuration(),
     private operationTimeoutMs = 300_000,

@@ -1,0 +1,119 @@
+{
+  "id": "08f2567f-9248-4527-a7a0-d5da825024d6",
+  "timestamp": "2026-10-23T07:12:22.574Z",
+  "endpoint": "https://ignite-anatolip-test-scus.services.ai.azure.com",
+  "cacheKey": "f75d886b3004ad16a155653465d2dc61583b0d6436d1d21c48386f141838a662",
+  "status": "completed",
+  "deployment": "gpt-5.5",
+  "model": "gpt-5.5",
+  "fallbackFrom": "gpt-6.1-sol",
+  "responseId": "resp_06eefb03b535ce59016adb08d2fcc4819587d6c10b91e53ea0",
+  "usage": {
+    "input_tokens": 1103,
+    "input_tokens_details": {
+      "cache_write_tokens": 0,
+      "cached_tokens": 0
+    },
+    "output_tokens": 174,
+    "output_tokens_details": {
+      "reasoning_tokens": 0
+    },
+    "total_tokens": 1277
+  },
+  "advisoryOnly": true,
+  "payloadSha256": "7119272bf0c35f6a6a57e0ca088b625c6f7e84baf7c908aca241d0dc2df5a009",
+  "input": {
+    "source": {
+      "endpoint": "https://ignite-anatolip-test-scus.services.ai.azure.com",
+      "runId": "3b87d91f-c274-489f-a8d9-995e4a1e2f0c",
+      "packetSha256": "1c6b787bdc91f8b12211bfeb1762b9c14e2c68a85726a6e70c687db1bc088ebc",
+      "analyzerFingerprint": "c2a85f9fd6722c8488d5cbf5201004b7144aad347af15ecd80b8a36b269785aa"
+    },
+    "ruleset": "1.0.0",
+    "check": {
+      "id": "required.statement:8-8:0",
+      "rule": "Statements require claimant name, incident date, and vehicle.",
+      "status": "fail",
+      "message": "Document 8-8:0 is missing required field(s): vehicle (vehicle).",
+      "evidence": [
+        {
+          "documentId": "8-8:0",
+          "category": "statement",
+          "analyzerId": "lab664_statement_ab3f812d0991491d",
+          "start": 8,
+          "end": 8,
+          "field": "claimant_name",
+          "value": "Marcus Coleman",
+          "confidence": 0.891,
+          "regions": [
+            {
+              "page": 8,
+              "polygon": [
+                0.13161176470588234,
+                0.9255,
+                0.3159176470588235,
+                0.9213,
+                0.31676470588235295,
+                0.9433909090909091,
+                0.13245882352941174,
+                0.9475909090909092
+              ]
+            }
+          ]
+        },
+        {
+          "documentId": "8-8:0",
+          "category": "statement",
+          "analyzerId": "lab664_statement_ab3f812d0991491d",
+          "start": 8,
+          "end": 8,
+          "field": "incident_date",
+          "value": "2026-06-12",
+          "confidence": 0.926,
+          "regions": [
+            {
+              "page": 8,
+              "polygon": [
+                0.2130235294117647,
+                0.136,
+                0.3568705882352941,
+                0.14174545454545454,
+                0.35617647058823526,
+                0.16172727272727272,
+                0.21211764705882352,
+                0.15593636363636365
+              ]
+            }
+          ]
+        },
+        {
+          "documentId": "8-8:0",
+          "category": "statement",
+          "analyzerId": "lab664_statement_ab3f812d0991491d",
+          "start": 8,
+          "end": 8,
+          "field": "vehicle",
+          "value": null,
+          "confidence": 0.8,
+          "regions": []
+        }
+      ]
+    },
+    "documents": [
+      {
+        "id": "8-8:0",
+        "category": "statement",
+        "analyzerId": "lab664_statement_ab3f812d0991491d",
+        "untrustedSourceText": "<!-- PageHeader: Claim: ARC-26-739979 -->\n<!-- PageHeader: Statement Date: 06/13/2026 -->\n\nOn 06/12/2026 at about 4:18PM, I was at Juniper\nCenter in Aspen Hollow for a short appointment . I parked\nin the uncovered lot on the south side of the building.\nWithin a few minutes, a strong storm moved in with\nheavy rain and hail.\n\nI stayed indoors until the storm passed. When I returned\nto my vehicle, I noticed small dents across the hood,\nroof and on the upper panels of the left side. The left\nfront fender and the upper portions of the left doors\nhave the most visible marks. The glass (windshield,\nwindows and rear glass) appears to be intact.\n\nThere was no contact with any other vehicle or object\nto my knowledge. No one else was involved and the\npolice were not called.\n\nI started the vehicle and it ran normally. The vehicle\nremained drivable after the storm on 06/12/2026.\nI drove home without issue.\n\nI am reporting hail damage only. No injuries.\nPhotos were taken at the scene and at home.\n\nThis account is true to the best of my knowledge.\n\nSincerely,\nM.C.\n\nMarcus Coleman\n\n<!-- PageBreak -->\n\n"
+      }
+    ]
+  },
+  "result": {
+    "category": "policy_code_error_or_too_strict",
+    "reason": "The failed check requires a statement to include a vehicle field. In document 8-8:0, the source text refers to “my vehicle” and discusses its condition and drivability, but it does not identify the vehicle by a specific make, model, VIN, plate, or other distinguishing vehicle value. If the rule only requires some mention of a vehicle, the extractor/rule is too strict; if it requires a specific vehicle identifier, the failure is consistent but the message may be ambiguous.",
+    "suggestion": "Clarify the rule/extractor expectation for the vehicle field—whether generic vehicle mention is sufficient or a specific vehicle identifier is required—then rerun document 8-8:0.",
+    "documentIds": [
+      "8-8:0"
+    ]
+  }
+}

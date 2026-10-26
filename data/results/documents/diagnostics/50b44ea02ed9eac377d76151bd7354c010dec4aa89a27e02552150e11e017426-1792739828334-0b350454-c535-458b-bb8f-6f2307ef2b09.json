@@ -1,0 +1,284 @@
+{
+  "id": "2bee3cd3-5c08-4012-9500-0a53779f58c2",
+  "timestamp": "2026-10-23T07:17:08.333Z",
+  "endpoint": "https://ignite-anatolip-test-scus.services.ai.azure.com",
+  "cacheKey": "50b44ea02ed9eac377d76151bd7354c010dec4aa89a27e02552150e11e017426",
+  "status": "completed",
+  "deployment": "gpt-5.5",
+  "model": "gpt-5.5",
+  "fallbackFrom": "gpt-6.1-sol",
+  "responseId": "resp_0debd710065f2c7b016adb09f09fa08194b1cb28d3d837f1d0",
+  "usage": {
+    "input_tokens": 3003,
+    "input_tokens_details": {
+      "cache_write_tokens": 0,
+      "cached_tokens": 0
+    },
+    "output_tokens": 203,
+    "output_tokens_details": {
+      "reasoning_tokens": 0
+    },
+    "total_tokens": 3206
+  },
+  "advisoryOnly": true,
+  "payloadSha256": "8183fbedf65d5c2aec52025cc2b785b110bc51b82e8d1ad06e319a9bbe3a11be",
+  "input": {
+    "source": {
+      "endpoint": "https://ignite-anatolip-test-scus.services.ai.azure.com",
+      "runId": "3b87d91f-c274-489f-a8d9-995e4a1e2f0c",
+      "packetSha256": "70c7491429f5a9297bb1a03dbf7b46346863a0108faf5554eb29f035658742db",
+      "analyzerFingerprint": "c2a85f9fd6722c8488d5cbf5201004b7144aad347af15ecd80b8a36b269785aa"
+    },
+    "ruleset": "1.0.0",
+    "check": {
+      "id": "financial.total:6-6:0",
+      "rule": "Total must equal subtotal plus tax minus discount when no unsupported adjustment is present.",
+      "status": "fail",
+      "message": "Document 6-6:0: USD 3454.80 + USD 159.36 tax - USD 250.00 discount = USD 3364.16 expected; total is USD 3614.16.",
+      "evidence": [
+        {
+          "documentId": "6-6:0",
+          "category": "repair_estimate",
+          "analyzerId": "lab664_anatolip_scus_repair",
+          "start": 6,
+          "end": 6,
+          "field": "SubtotalAmount.Amount",
+          "value": 3454.8,
+          "confidence": 0.839,
+          "regions": [
+            {
+              "page": 6,
+              "polygon": [
+                0.3398470588235294,
+                0.6113272727272727,
+                0.3876941176470588,
+                0.6113272727272727,
+                0.3876941176470588,
+                0.6240272727272728,
+                0.3398470588235294,
+                0.6240272727272728
+              ]
+            },
+            {
+              "page": 6,
+              "polygon": [
+                0.8256823529411764,
+                0.6112454545454545,
+                0.8774470588235295,
+                0.610790909090909,
+                0.8774470588235295,
+                0.6244545454545455,
+                0.8256823529411764,
+                0.6249181818181818
+              ]
+            }
+          ]
+        },
+        {
+          "documentId": "6-6:0",
+          "category": "repair_estimate",
+          "analyzerId": "lab664_anatolip_scus_repair",
+          "start": 6,
+          "end": 6,
+          "field": "SubtotalAmount.CurrencyCode",
+          "value": "USD",
+          "confidence": 0.77,
+          "regions": [
+            {
+              "page": 6,
+              "polygon": [
+                0.796,
+                0.5331636363636364,
+                0.876729411764706,
+                0.5356272727272727,
+                0.8758705882352941,
+                0.5524272727272727,
+                0.7951411764705882,
+                0.5499545454545455
+              ]
+            }
+          ]
+        },
+        {
+          "documentId": "6-6:0",
+          "category": "repair_estimate",
+          "analyzerId": "lab664_anatolip_scus_repair",
+          "start": 6,
+          "end": 6,
+          "field": "TotalTaxAmount.Amount",
+          "value": 159.36,
+          "confidence": 0.833,
+          "regions": [
+            {
+              "page": 6,
+              "polygon": [
+                0.3397176470588235,
+                0.6576454545454545,
+                0.4572705882352941,
+                0.6570818181818182,
+                0.45740000000000003,
+                0.6729,
+                0.3398470588235294,
+                0.6734727272727272
+              ]
+            },
+            {
+              "page": 6,
+              "polygon": [
+                0.8383764705882353,
+                0.6574090909090908,
+                0.8789058823529412,
+                0.6571727272727274,
+                0.8789058823529412,
+                0.6711727272727273,
+                0.8383764705882353,
+                0.6705090909090909
+              ]
+            }
+          ]
+        },
+        {
+          "documentId": "6-6:0",
+          "category": "repair_estimate",
+          "analyzerId": "lab664_anatolip_scus_repair",
+          "start": 6,
+          "end": 6,
+          "field": "TotalTaxAmount.CurrencyCode",
+          "value": "USD",
+          "confidence": 0.77,
+          "regions": [
+            {
+              "page": 6,
+              "polygon": [
+                0.796,
+                0.5331636363636364,
+                0.876729411764706,
+                0.5356272727272727,
+                0.8758705882352941,
+                0.5524272727272727,
+                0.7951411764705882,
+                0.5499545454545455
+              ]
+            }
+          ]
+        },
+        {
+          "documentId": "6-6:0",
+          "category": "repair_estimate",
+          "analyzerId": "lab664_anatolip_scus_repair",
+          "start": 6,
+          "end": 6,
+          "field": "TotalDiscountAmount.Amount",
+          "value": 250,
+          "confidence": 0.538,
+          "regions": [
+            {
+              "page": 6,
+              "polygon": [
+                0.5317411764705883,
+                0.7523636363636363,
+                0.5698235294117646,
+                0.7530454545454546,
+                0.5698235294117646,
+                0.7667181818181817,
+                0.5317411764705883,
+                0.7660363636363635
+              ]
+            }
+          ]
+        },
+        {
+          "documentId": "6-6:0",
+          "category": "repair_estimate",
+          "analyzerId": "lab664_anatolip_scus_repair",
+          "start": 6,
+          "end": 6,
+          "field": "TotalDiscountAmount.CurrencyCode",
+          "value": "USD",
+          "confidence": 0.77,
+          "regions": [
+            {
+              "page": 6,
+              "polygon": [
+                0.796,
+                0.5331636363636364,
+                0.876729411764706,
+                0.5356272727272727,
+                0.8758705882352941,
+                0.5524272727272727,
+                0.7951411764705882,
+                0.5499545454545455
+              ]
+            }
+          ]
+        },
+        {
+          "documentId": "6-6:0",
+          "category": "repair_estimate",
+          "analyzerId": "lab664_anatolip_scus_repair",
+          "start": 6,
+          "end": 6,
+          "field": "TotalAmount.Amount",
+          "value": 3614.16,
+          "confidence": 0.787,
+          "regions": [
+            {
+              "page": 6,
+              "polygon": [
+                0.8237294117647058,
+                0.6855454545454546,
+                0.881835294117647,
+                0.6855454545454546,
+                0.881835294117647,
+                0.7001909090909091,
+                0.8237294117647058,
+                0.7001909090909091
+              ]
+            }
+          ]
+        },
+        {
+          "documentId": "6-6:0",
+          "category": "repair_estimate",
+          "analyzerId": "lab664_anatolip_scus_repair",
+          "start": 6,
+          "end": 6,
+          "field": "TotalAmount.CurrencyCode",
+          "value": "USD",
+          "confidence": 0.77,
+          "regions": [
+            {
+              "page": 6,
+              "polygon": [
+                0.796,
+                0.5331636363636364,
+                0.876729411764706,
+                0.5356272727272727,
+                0.8758705882352941,
+                0.5524272727272727,
+                0.7951411764705882,
+                0.5499545454545455
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "documents": [
+      {
+        "id": "6-6:0",
+        "category": "repair_estimate",
+        "analyzerId": "lab664_anatolip_scus_repair",
+        "untrustedSourceText": "\n![Maple Crossing Mutual](figures/6.1)\n\n\nINSURED\nGrace Okafor\n459 Linden Terrace\nMaple Crossing, NY 12009\n(518) 555-0109\ngrace.okafor@example.com\n\nVEHICLE\n2023 Chevrolet Equinox LT\nDark blue\nVIN: 3GNAXUEG3PA517029\n\nRegistration: NY38941\nUse: Personal / commute\n\nPOLICY REFERENCE\nMCM-A4370409\n\nLOSS INFORMATION\n\nDate: 2025-12-15\nTime: 06:51\nLocation: County Route 18\nnear Mill Lane,\nMaple Crossing, NY 12009\n\nNarrative:\nGrace reports a deer entering\nthe roadway before contact\nwith the front of the vehicle.\nNo second vehicle or injuries\nwere reported. Front lighting\nand grille damage prompted\ntowing. The animal is not\ndepicted in inspection\nphotographs; cause and\ncoverage remain subject\nto review.\n\nDamage:\nFront bumper, grille, hood\nedge and right headlamp;\nno rear damage.\n\nDrivable: No\nInjuries: None reported\nOther Driver:\nNot applicable\nLiability: Not determined\n\nINSURER\nMaple Crossing Mutual\n517 Civic Lane\nMaple Crossing, NY 12009\n(518) 555-0129\nAdjuster: Zoe Ellis\n\n<!-- PageNumber: Page 2 of 2 -->\n\n\n## FOLLOW-UP CLAIM ASSESSMENT SHEET\n\nClaim No.\nMCM-25-998392\n\nQuote Reference\nQ-NY-53183\n\nInspection / Supplement Date\n12/18/2025\n\nInitial Intake Date\n12/16/2025\n\nInspection Mileage: 41,870\n\nRecord Date: 12/18/2025\n\n\n<table>\n<tr>\n<th>REPAIRER INFORMATION</th>\n<th>INSPECTION</th>\n</tr>\n<tr>\n<td>Millstone Collision &amp; Recovery 243 Works Road Maple Crossing, NY 12009 (518) 555-0149<br>Inspector: Peter Adeyemi</td>\n<td>Inspection Date: 12/18/2025<br>Inspection Type: In-person<br>Facility: Millstone Collision &amp; Recovery</td>\n</tr>\n</table>\n\n\n<table>\n<tr>\n<td colspan=\"6\">ESTIMATE SUMMARY<br>Labor Rate: $138.00/ hour</td>\n</tr>\n<tr>\n<th>Item</th>\n<th>Qty</th>\n<th>Parts</th>\n<th>Hours</th>\n<th>Labor</th>\n<th>Line Total</th>\n</tr>\n<tr>\n<td>Front bumper assembly</td>\n<td>1</td>\n<td>726.00</td>\n<td>1.9</td>\n<td>262.20</td>\n<td>988.20</td>\n</tr>\n<tr>\n<td>Grille and brackets</td>\n<td>1</td>\n<td>385.00</td>\n<td>0.9</td>\n<td>124.20</td>\n<td>509.20</td>\n</tr>\n<tr>\n<td>Right headlamp</td>\n<td>1</td>\n<td>643.00</td>\n<td>0.7</td>\n<td>96.60</td>\n<td>739.60</td>\n</tr>\n<tr>\n<td>Hood leading-edge repair</td>\n<td>1</td>\n<td>0.00</td>\n<td>2.8</td>\n<td>386.40</td>\n<td>386.40</td>\n</tr>\n<tr>\n<td>Front-panel refinish</td>\n<td>1</td>\n<td>238.00</td>\n<td>4.3</td>\n<td>593.40</td>\n<td>831.40</td>\n</tr>\n</table>\n\n\n<table>\n<tr>\n<th>COST SUMMARY</th>\n<th>Amount (USD)</th>\n</tr>\n<tr>\n<td>Total Parts</td>\n<td>1,992.00</td>\n</tr>\n<tr>\n<td>Total Labor</td>\n<td>1,462.80</td>\n</tr>\n<tr>\n<td>Subtotal</td>\n<td>3,454.80</td>\n</tr>\n<tr>\n<td>Parts-only taxable base</td>\n<td>1,992.00</td>\n</tr>\n<tr>\n<td>Tax on parts (8.00%)</td>\n<td>159.36</td>\n</tr>\n<tr>\n<td>GROSS ESTIMATE</td>\n<td>3,614.16</td>\n</tr>\n</table>\n\n\n### DEDUCTIBLE\n\nComprehensive Deductible\n250.00\n\nESTIMATE LESS DEDUCTIBLE\n3,364.16\n\n\n### CLAIM / REPAIR STATUS\n\nRepair Status\n\nScheduled\n\nScheduled Start Date\n12/20/2025\n\nLiability Status\nNot determined\n\nInsurer Payment Authorization\n\nPending\n\nAuthorization and payment are pending review.\nNo repair has been completed.\n\nThis estimate is based on the inspection findings as of 12/18/2025 and is subject to change\nupon additional disassembly, parts availability, and review.\n\n<!-- PageNumber: Page 2 of 2 -->\n<!-- PageBreak -->\n\n"
+      }
+    ]
+  },
+  "result": {
+    "category": "policy_code_error_or_too_strict",
+    "reason": "The supplied source text for document 6-6:0 distinguishes between “GROSS ESTIMATE” of 3,614.16 and “ESTIMATE LESS DEDUCTIBLE” of 3,364.16. The check formula treated the “Comprehensive Deductible” 250.00 as a discount to subtract from the gross total, but the extracted TotalAmount of 3,614.16 matches Subtotal 3,454.80 plus tax 159.36 before deductible. This appears to be an inappropriate assumption in the policy check rather than a document contradiction or CU extraction contradiction.",
+    "suggestion": "Refine the rule to avoid treating a deductible as a discount for gross estimate validation, or validate against an explicit net/less-deductible total field when present, then rerun document 6-6:0.",
+    "documentIds": [
+      "6-6:0"
+    ]
+  }
+}

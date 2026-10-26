@@ -27,7 +27,7 @@ Start here on a prepared lab machine. You don't need to inspect or redeploy
 Azure resources before trying the agent.
 
 1. In the workbench's **Cache Results**, load the included completed **10/10**
-   run. Select **Policy checks**.
+   run. Select **Policy review**.
 2. In **Policy retrieval**, select **Azure Search retrieval**. Select **Run policy
    checks** and confirm. This runs the Agent Framework agent against saved CU
    claim facts, not just a local rules engine. Azure charges apply, including
@@ -41,10 +41,10 @@ Azure resources before trying the agent.
    dropdown doesn't submit another batch.
 5. Compare **Daily rate** for packets **01** and **02**, using the expected
    evidence below. Select each check to inspect **Expected**, **Actual** and
-   **Reasoning** in the right-hand panel.
+   **Reasoning** in the expandable row below that customer. The PDF viewer remains available alongside it.
 6. For packet **01**, select the Texas **Source** link. In the **Document** tab,
    inspect rule **TX-R2** on page 2 and **Schedule A** on page 3 of
-   `tx-rental-review-sop-v2.pdf`. Select **Back to policy checks** to return.
+   `tx-rental-review-sop-v2.pdf`. The inline review stays open; select **Back to claim document** to restore the packet preview.
 
 | Case | Extracted daily base | Contractual daily cap | Retrieved routine authority | Expected daily-rate result |
 |---|---:|---:|---:|---|
@@ -67,7 +67,7 @@ flowchart. These examples show why understanding tables, scans and figures
 matters to retrieval. A missing representation has an explicit, billable
 generation action; switching tabs alone doesn't run CU.
 
-Optionally, return to the result and select **Chat**. Ask: "Explain this case's
+Optionally, select **Ask agent** in the expanded review. Ask: "Explain this case's
 daily-rate result. Cite the applicable rule and separate the contractual cap
 from routine handling authority." Each chat turn
 uses the selected case and retrieval mode; it isn't a new batch comparison.
@@ -141,9 +141,9 @@ Framework implementation or a hosted Foundry agent.
 
 1. Launch the workbench with `.\infra\launch-workbench.ps1`.
 2. Load saved CU results, or explicitly run your connected analyzer.
-3. In **Policy checks**, select **Azure Search retrieval**.
+3. In **Policy review**, select **Azure Search retrieval**.
 4. Select **Run policy checks** and confirm the Azure operation.
-5. Select a check in the grid to see the complete review in the sidebar.
+5. Select a check in the grid to expand its review directly below the customer.
 6. Optionally switch to **No policy retrieval** to inspect saved baseline
    results. The app doesn't start new runs in this mode.
 
@@ -204,7 +204,7 @@ SOP threshold and require exception approval.
 
 ## Ask follow-up questions
 
-The sidebar opens in **Result**. Select **Chat** to ask about the same case and
+The inline panel opens in **Result**. Select **Ask agent** to ask about the same case and
 retrieval mode without replacing or changing its saved checks.
 
 Chat uses the locally served, MIT-licensed [Deep Chat](https://deepchat.dev/)
@@ -227,8 +227,8 @@ hosted agent or hosted conversation is created.
 
 ## Open cited documents
 
-Sources open the verified PDF inside the sidebar at the cited page.
-**Back to policy checks** or **Back to chat** restores the previous view.
+Sources open the verified PDF in the right-hand viewer at the cited page without
+closing the inline result or chat. **Back to claim document** restores the packet PDF.
 The citation must match the source filename, document ID, version, rule,
 section and unchanged PDF hash. Search-backed citations must also come from
 evidence retrieved during that turn.

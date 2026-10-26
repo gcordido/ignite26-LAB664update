@@ -12,7 +12,8 @@ claim packets and individual PDFs. All names and claim details are fictional.
 - [Claim forms and assessments](documents/packet-01/03-claim_form.pdf)
 - [Police and incident reports](documents/packet-01/04-incident_report.pdf)
 - [Repair estimates](documents/packet-01/05-estimate.pdf)
-- [Handwritten statements](documents/packet-01/06-handwriting.pdf)
+- [Handwritten statements](documents/packet-01/06-handwriting.pdf) and
+  [email statements](samples/email-statement.pdf)
 - [Towing invoices](documents/packet-03/07-invoice.pdf),
   [rental invoices](documents/packet-01/07-invoice.pdf), and
   [supporting quotes](documents/packet-08/07-invoice.pdf)

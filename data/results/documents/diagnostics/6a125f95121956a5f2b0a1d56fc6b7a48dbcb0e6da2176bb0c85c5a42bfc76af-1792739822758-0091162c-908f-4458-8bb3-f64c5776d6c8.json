@@ -1,0 +1,258 @@
+{
+  "id": "abb01440-c047-499f-af99-448bd217ae57",
+  "timestamp": "2026-10-23T07:17:02.758Z",
+  "endpoint": "https://ignite-anatolip-test-scus.services.ai.azure.com",
+  "cacheKey": "6a125f95121956a5f2b0a1d56fc6b7a48dbcb0e6da2176bb0c85c5a42bfc76af",
+  "status": "completed",
+  "deployment": "gpt-5.5",
+  "model": "gpt-5.5",
+  "fallbackFrom": "gpt-6.1-sol",
+  "responseId": "resp_05821f0ba3c85490016adb09eb068481958c7eb305d5e6fa27",
+  "usage": {
+    "input_tokens": 2996,
+    "input_tokens_details": {
+      "cache_write_tokens": 0,
+      "cached_tokens": 0
+    },
+    "output_tokens": 176,
+    "output_tokens_details": {
+      "reasoning_tokens": 0
+    },
+    "total_tokens": 3172
+  },
+  "advisoryOnly": true,
+  "payloadSha256": "f99a849c72f743958d794bee057249911e5ce0a7a0b25aa601fa14fb146e0773",
+  "input": {
+    "source": {
+      "endpoint": "https://ignite-anatolip-test-scus.services.ai.azure.com",
+      "runId": "3b87d91f-c274-489f-a8d9-995e4a1e2f0c",
+      "packetSha256": "70c7491429f5a9297bb1a03dbf7b46346863a0108faf5554eb29f035658742db",
+      "analyzerFingerprint": "c2a85f9fd6722c8488d5cbf5201004b7144aad347af15ecd80b8a36b269785aa"
+    },
+    "ruleset": "1.0.0",
+    "check": {
+      "id": "financial.total:1-1:0",
+      "rule": "Total must equal subtotal plus tax minus discount when no unsupported adjustment is present.",
+      "status": "fail",
+      "message": "Document 1-1:0: USD 3454.80 + USD 159.36 tax - USD 250.00 discount = USD 3364.16 expected; total is USD 3614.16.",
+      "evidence": [
+        {
+          "documentId": "1-1:0",
+          "category": "repair_estimate",
+          "analyzerId": "lab664_anatolip_scus_repair",
+          "start": 1,
+          "end": 1,
+          "field": "SubtotalAmount.Amount",
+          "value": 3454.8,
+          "confidence": 0.817,
+          "regions": [
+            {
+              "page": 1,
+              "polygon": [
+                0.8339294117647059,
+                0.7175,
+                0.8969764705882353,
+                0.7173454545454545,
+                0.897035294117647,
+                0.7318363636363636,
+                0.8339882352941176,
+                0.731990909090909
+              ]
+            }
+          ]
+        },
+        {
+          "documentId": "1-1:0",
+          "category": "repair_estimate",
+          "analyzerId": "lab664_anatolip_scus_repair",
+          "start": 1,
+          "end": 1,
+          "field": "SubtotalAmount.CurrencyCode",
+          "value": "USD",
+          "confidence": 0.817,
+          "regions": [
+            {
+              "page": 1,
+              "polygon": [
+                0.8339294117647059,
+                0.7175,
+                0.8969764705882353,
+                0.7173454545454545,
+                0.897035294117647,
+                0.7318363636363636,
+                0.8339882352941176,
+                0.731990909090909
+              ]
+            }
+          ]
+        },
+        {
+          "documentId": "1-1:0",
+          "category": "repair_estimate",
+          "analyzerId": "lab664_anatolip_scus_repair",
+          "start": 1,
+          "end": 1,
+          "field": "TotalTaxAmount.Amount",
+          "value": 159.36,
+          "confidence": 0.767,
+          "regions": [
+            {
+              "page": 1,
+              "polygon": [
+                0.8457058823529412,
+                0.6845727272727273,
+                0.8969764705882353,
+                0.6845727272727273,
+                0.8969764705882353,
+                0.6982454545454545,
+                0.8457058823529412,
+                0.6982454545454545
+              ]
+            }
+          ]
+        },
+        {
+          "documentId": "1-1:0",
+          "category": "repair_estimate",
+          "analyzerId": "lab664_anatolip_scus_repair",
+          "start": 1,
+          "end": 1,
+          "field": "TotalTaxAmount.CurrencyCode",
+          "value": "USD",
+          "confidence": 0.569,
+          "regions": [
+            {
+              "page": 1,
+              "polygon": [
+                0.8457058823529412,
+                0.6845727272727273,
+                0.8969764705882353,
+                0.6845727272727273,
+                0.8969764705882353,
+                0.6982454545454545,
+                0.8457058823529412,
+                0.6982454545454545
+              ]
+            }
+          ]
+        },
+        {
+          "documentId": "1-1:0",
+          "category": "repair_estimate",
+          "analyzerId": "lab664_anatolip_scus_repair",
+          "start": 1,
+          "end": 1,
+          "field": "TotalDiscountAmount.Amount",
+          "value": 250,
+          "confidence": 0.356,
+          "regions": [
+            {
+              "page": 1,
+              "polygon": [
+                0.8461882352941176,
+                0.7622090909090908,
+                0.8969764705882353,
+                0.7622090909090908,
+                0.8969764705882353,
+                0.7758818181818182,
+                0.8461882352941176,
+                0.7758818181818182
+              ]
+            }
+          ]
+        },
+        {
+          "documentId": "1-1:0",
+          "category": "repair_estimate",
+          "analyzerId": "lab664_anatolip_scus_repair",
+          "start": 1,
+          "end": 1,
+          "field": "TotalDiscountAmount.CurrencyCode",
+          "value": "USD",
+          "confidence": 0.248,
+          "regions": [
+            {
+              "page": 1,
+              "polygon": [
+                0.8461882352941176,
+                0.7622090909090908,
+                0.8969764705882353,
+                0.7622090909090908,
+                0.8969764705882353,
+                0.7758818181818182,
+                0.8461882352941176,
+                0.7758818181818182
+              ]
+            }
+          ]
+        },
+        {
+          "documentId": "1-1:0",
+          "category": "repair_estimate",
+          "analyzerId": "lab664_anatolip_scus_repair",
+          "start": 1,
+          "end": 1,
+          "field": "TotalAmount.Amount",
+          "value": 3614.16,
+          "confidence": 0.721,
+          "regions": [
+            {
+              "page": 1,
+              "polygon": [
+                0.8349764705882352,
+                0.7389727272727273,
+                0.8971058823529412,
+                0.7393272727272727,
+                0.896964705882353,
+                0.7542272727272727,
+                0.834835294117647,
+                0.7538727272727272
+              ]
+            }
+          ]
+        },
+        {
+          "documentId": "1-1:0",
+          "category": "repair_estimate",
+          "analyzerId": "lab664_anatolip_scus_repair",
+          "start": 1,
+          "end": 1,
+          "field": "TotalAmount.CurrencyCode",
+          "value": "USD",
+          "confidence": 0.814,
+          "regions": [
+            {
+              "page": 1,
+              "polygon": [
+                0.8349764705882352,
+                0.7389727272727273,
+                0.8971058823529412,
+                0.7393272727272727,
+                0.896964705882353,
+                0.7542272727272727,
+                0.834835294117647,
+                0.7538727272727272
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "documents": [
+      {
+        "id": "1-1:0",
+        "category": "repair_estimate",
+        "analyzerId": "lab664_anatolip_scus_repair",
+        "untrustedSourceText": "![Millstone Collision & Recovery 243 Works Road, Maple Crossing, NY 12009 (518) 555-0149](figures/1.1)\n\n\n# REPAIR ESTIMATE\n\n\n<table>\n<tr>\n<td>Claim Reference:</td>\n<td>MCM-25-998392</td>\n</tr>\n<tr>\n<td>Policy Reference:</td>\n<td>MCM-A4370409</td>\n</tr>\n<tr>\n<td>Estimate Reference:</td>\n<td>Q-NY-53183</td>\n</tr>\n</table>\n\n\nINSURER / CUSTOMER INFORMATION\n\nMaple Crossing Mutual\n517 Civic Lane\nMaple Crossing, NY 12009\n(518) 555-0129\n\nAdjuster:\nZoe Ellis\n\nInsured:\nGrace Okafor\n459 Linden Terrace\nMaple Crossing, NY 12009\n(518) 555-0109\ngrace.okafor@example.com\n\nREPAIRER INFORMATION\nMillstone Collision & Recovery\n243 Works Road\nMaple Crossing, NY 12009\n(518) 555-0149\n\nInspector:\nPeter Adeyemi\n\nVehicle:\n2023 Chevrolet Equinox LT\nColor:\nDark blue\nViN:\n3GNAXUEG3PA517029\n\nRegistration: NY38941\n\nUse:\nPersonal / commute\n\nOdometer:\n41,870\n\n\n<table>\n<tr>\n<th rowspan=\"2\">Item</th>\n<th rowspan=\"2\">Description</th>\n<th rowspan=\"2\">Qty.</th>\n<th>PARTS</th>\n<th colspan=\"2\">LABOR</th>\n<th>LINE TOTAL</th>\n</tr>\n<tr>\n<th>Amount</th>\n<th>Hours</th>\n<th>Amount</th>\n<th>Amount</th>\n</tr>\n<tr>\n<td>1</td>\n<td>Front bumper assembly</td>\n<td>1</td>\n<td>726.00</td>\n<td>1.9</td>\n<td>262.20</td>\n<td>988.20</td>\n</tr>\n<tr>\n<td>2</td>\n<td>Grille and brackets</td>\n<td>1</td>\n<td>385.00</td>\n<td>0.9</td>\n<td>124.20</td>\n<td>509.20</td>\n</tr>\n<tr>\n<td>3</td>\n<td>Right headlamp</td>\n<td>1</td>\n<td>643.00</td>\n<td>0.7</td>\n<td>96.60</td>\n<td>739.60</td>\n</tr>\n<tr>\n<td>4</td>\n<td>Hood leading-edge repair</td>\n<td>1</td>\n<td>0.00</td>\n<td>2.8</td>\n<td>386.40</td>\n<td>386.40</td>\n</tr>\n<tr>\n<td>5</td>\n<td>Front-panel refinish</td>\n<td>1</td>\n<td>238.00</td>\n<td>4.3</td>\n<td>593.40</td>\n<td>831.40</td>\n</tr>\n<tr>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n</tr>\n<tr>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n</tr>\n<tr>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n</tr>\n<tr>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n</tr>\n</table>\n\n\nLABOR RATE\n\nRate Per Hour\n$138.00\n\nThis repair valuation is provisional and based on\na visual inspection only. Final costs may change\npending teardown or supplemental review.\n\n\n<table>\n<tr>\n<th>Tax Description</th>\n<th>Tax Rate</th>\n</tr>\n<tr>\n<td>Tax on parts</td>\n<td>8.00%</td>\n</tr>\n</table>\n\n\n<table>\n<tr>\n<td>Taxable Parts Base</td>\n<td>$1,992.00</td>\n</tr>\n<tr>\n<td>Tax on parts (8.00%)</td>\n<td>$159.36</td>\n</tr>\n<tr>\n<td>Subtotal (Parts &amp; Labor)</td>\n<td>$3,454.80</td>\n</tr>\n<tr>\n<td>Gross Estimate Total</td>\n<td>$3,614.16</td>\n</tr>\n<tr>\n<td>Deductible</td>\n<td>$250.00</td>\n</tr>\n<tr>\n<td>Net Estimate (Less Deductible)</td>\n<td>$3,364.16</td>\n</tr>\n</table>\n\n\n<table>\n<tr>\n<th>Inspection Date</th>\n<th>Estimated Repair Start</th>\n<th>Repair Status</th>\n<th>Prepared By</th>\n</tr>\n<tr>\n<td>12/18/2025</td>\n<td>12/20/2025</td>\n<td>Scheduled</td>\n<td>Peter Adeyemi</td>\n</tr>\n</table>\n\n\nNotes / Additional Information\n\nEstimate includes disassembly and reassembly. OEM parts pricing used where available.\n\n<!-- PageFooter: Estimate Reference: Q-NY-53183 -->\n<!-- PageFooter: Inspection Date: 12/18/2025 -->\n<!-- PageFooter: Repair Status: Scheduled -->\n<!-- PageNumber: Page 1 of 1 -->\n<!-- PageBreak -->\n\n"
+      }
+    ]
+  },
+  "result": {
+    "category": "extraction_error",
+    "reason": "The source text for document 1-1:0 distinguishes two totals: “Gross Estimate Total” is $3,614.16 and “Net Estimate (Less Deductible)” is $3,364.16. The CU field TotalAmount.Amount was extracted as 3614.16, while the check formula treats the deductible as a discount and expects the net amount after subtracting $250.00. This indicates the extracted TotalAmount is the gross total rather than the net estimate relevant to the rule.",
+    "suggestion": "Refine the repair estimate extractor so TotalAmount maps to “Net Estimate (Less Deductible)” when TotalDiscountAmount/Deductible is populated, then rerun document 1-1:0.",
+    "documentIds": [
+      "1-1:0"
+    ]
+  }
+}

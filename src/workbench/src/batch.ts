@@ -56,6 +56,7 @@ export type Item = {
   completedAt?: string;
   rawSaved?: boolean;
   error?: string;
+  reviewStatus?: "completed" | "partial";
 };
 export type Run = {
   id: string;
@@ -226,6 +227,9 @@ export function summarize(
     const newInvoiceClass = ["towing_invoice", "rental_invoice"].includes(
       row.category,
     );
+    const newStatementClass =
+      row.category === "statement" &&
+      expected.every((doc) => doc.sourceId === "06-handwriting");
     if (newInvoiceClass && expected.some((doc) => doc.category === "other"))
       findings.push({
         kind: "invoice taxonomy reference",
@@ -237,7 +241,7 @@ export function summarize(
       expected.some(
         (doc) =>
           doc.category !== row.category &&
-          !(newInvoiceClass && doc.category === "other"),
+          !((newInvoiceClass || newStatementClass) && doc.category === "other"),
       )
     )
       findings.push({

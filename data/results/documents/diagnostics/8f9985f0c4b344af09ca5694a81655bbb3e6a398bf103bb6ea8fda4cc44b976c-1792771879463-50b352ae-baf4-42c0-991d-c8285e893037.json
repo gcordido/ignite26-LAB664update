@@ -1,0 +1,222 @@
+{
+  "id": "3f35dd21-f72c-4526-8af3-ddcc651a825e",
+  "timestamp": "2026-10-23T16:11:19.462Z",
+  "endpoint": "https://ignite-anatolip-test-scus.services.ai.azure.com",
+  "cacheKey": "8f9985f0c4b344af09ca5694a81655bbb3e6a398bf103bb6ea8fda4cc44b976c",
+  "status": "completed",
+  "deployment": "gpt-5.5",
+  "model": "gpt-5.5",
+  "fallbackFrom": "gpt-6.1-sol",
+  "responseId": "resp_0c8e79ef612d9c67016adb8721e6c88197a0dff3e238a7eef0",
+  "usage": {
+    "input_tokens": 3234,
+    "input_tokens_details": {
+      "cache_write_tokens": 0,
+      "cached_tokens": 0
+    },
+    "output_tokens": 407,
+    "output_tokens_details": {
+      "reasoning_tokens": 250
+    },
+    "total_tokens": 3641
+  },
+  "advisoryOnly": true,
+  "payloadSha256": "4ee20f17e66357a7499acb867ee7230e8ad1365cab67bc6e53f2d8288873de8a",
+  "input": {
+    "source": {
+      "endpoint": "https://ignite-anatolip-test-scus.services.ai.azure.com",
+      "runId": "3b87d91f-c274-489f-a8d9-995e4a1e2f0c",
+      "packetSha256": "70c7491429f5a9297bb1a03dbf7b46346863a0108faf5554eb29f035658742db",
+      "analyzerFingerprint": "c2a85f9fd6722c8488d5cbf5201004b7144aad347af15ecd80b8a36b269785aa"
+    },
+    "ruleset": "1.1.0",
+    "check": {
+      "id": "financial.tax_details:9-10:0",
+      "rule": "Tax-detail amounts must sum to the explicit total tax.",
+      "status": "fail",
+      "message": "Document 9-10:0: tax details sum to USD 116.80; total tax is USD 58.40.",
+      "evidence": [
+        {
+          "documentId": "9-10:0",
+          "category": "rental_invoice",
+          "analyzerId": "prebuilt-invoice",
+          "start": 9,
+          "end": 10,
+          "field": "TaxDetails[0].Amount.Amount",
+          "value": 23.36,
+          "confidence": 0.843,
+          "regions": [
+            {
+              "page": 10,
+              "polygon": [
+                0.5131882352941176,
+                0.5767363636363636,
+                0.5532235294117647,
+                0.5771636363636363,
+                0.5532235294117647,
+                0.591809090909091,
+                0.5131882352941176,
+                0.5913818181818182
+              ]
+            }
+          ]
+        },
+        {
+          "documentId": "9-10:0",
+          "category": "rental_invoice",
+          "analyzerId": "prebuilt-invoice",
+          "start": 9,
+          "end": 10,
+          "field": "TaxDetails[0].Amount.CurrencyCode",
+          "value": "USD",
+          "regions": []
+        },
+        {
+          "documentId": "9-10:0",
+          "category": "rental_invoice",
+          "analyzerId": "prebuilt-invoice",
+          "start": 9,
+          "end": 10,
+          "field": "TaxDetails[1].Amount.Amount",
+          "value": 17.52,
+          "confidence": 0.843,
+          "regions": [
+            {
+              "page": 10,
+              "polygon": [
+                0.5146470588235295,
+                0.606890909090909,
+                0.5542,
+                0.6069636363636364,
+                0.5542,
+                0.6216181818181817,
+                0.5146470588235295,
+                0.6215454545454545
+              ]
+            }
+          ]
+        },
+        {
+          "documentId": "9-10:0",
+          "category": "rental_invoice",
+          "analyzerId": "prebuilt-invoice",
+          "start": 9,
+          "end": 10,
+          "field": "TaxDetails[1].Amount.CurrencyCode",
+          "value": "USD",
+          "regions": []
+        },
+        {
+          "documentId": "9-10:0",
+          "category": "rental_invoice",
+          "analyzerId": "prebuilt-invoice",
+          "start": 9,
+          "end": 10,
+          "field": "TaxDetails[2].Amount.Amount",
+          "value": 17.52,
+          "confidence": 0.863,
+          "regions": [
+            {
+              "page": 10,
+              "polygon": [
+                0.5146470588235295,
+                0.6372090909090908,
+                0.5542,
+                0.6372090909090908,
+                0.5542,
+                0.6518545454545455,
+                0.5146470588235295,
+                0.6518545454545455
+              ]
+            }
+          ]
+        },
+        {
+          "documentId": "9-10:0",
+          "category": "rental_invoice",
+          "analyzerId": "prebuilt-invoice",
+          "start": 9,
+          "end": 10,
+          "field": "TaxDetails[2].Amount.CurrencyCode",
+          "value": "USD",
+          "regions": []
+        },
+        {
+          "documentId": "9-10:0",
+          "category": "rental_invoice",
+          "analyzerId": "prebuilt-invoice",
+          "start": 9,
+          "end": 10,
+          "field": "TaxDetails[3].Amount.Amount",
+          "value": 58.4,
+          "confidence": 0.86,
+          "regions": [
+            {
+              "page": 10,
+              "polygon": [
+                0.5126941176470589,
+                0.6672545454545454,
+                0.5551764705882354,
+                0.6669090909090909,
+                0.5551764705882354,
+                0.6818454545454545,
+                0.5126941176470589,
+                0.6816181818181818
+              ]
+            }
+          ]
+        },
+        {
+          "documentId": "9-10:0",
+          "category": "rental_invoice",
+          "analyzerId": "prebuilt-invoice",
+          "start": 9,
+          "end": 10,
+          "field": "TaxDetails[3].Amount.CurrencyCode",
+          "value": "USD",
+          "regions": []
+        },
+        {
+          "documentId": "9-10:0",
+          "category": "rental_invoice",
+          "analyzerId": "prebuilt-invoice",
+          "start": 9,
+          "end": 10,
+          "field": "TotalTaxAmount.Amount",
+          "value": 58.4,
+          "regions": []
+        },
+        {
+          "documentId": "9-10:0",
+          "category": "rental_invoice",
+          "analyzerId": "prebuilt-invoice",
+          "start": 9,
+          "end": 10,
+          "field": "TotalTaxAmount.CurrencyCode",
+          "value": "USD",
+          "regions": []
+        }
+      ]
+    },
+    "documents": [
+      {
+        "id": "9-10:0",
+        "category": "rental_invoice",
+        "pages": {
+          "start": 9,
+          "end": 10
+        },
+        "analyzerId": "prebuilt-invoice",
+        "untrustedSourceText": "![MAPLEWAY VEHICLE RENTAL](figures/9.1)\n\n\nMapleway Vehicle Rental\n221 Station Street\nMaple Crossing, NY 12009\n(518) 555-0169\n\n\n# PICKUP AGREEMENT\n\nAgreement No.\nRA-703731\n\nDate / Time\n12/20/2025 09:30\n\nStatus\nOPEN; no payment or\ninsurance authorization\n\n\n<table>\n<tr>\n<td>Renter</td>\n<td>Grace Okafor</td>\n</tr>\n<tr>\n<td>Address</td>\n<td>459 Linden Terrace Maple Crossing, NY 12009</td>\n</tr>\n<tr>\n<td>Phone</td>\n<td>(518) 555-0109</td>\n</tr>\n</table>\n\n\nEmail\n\ngrace.okafor@example.com\n\n\n# RENTAL VEHICLE\n\n\n<table>\n<tr>\n<th>Unit No.</th>\n<th>Year / Make / Model</th>\n<th>Color</th>\n<th>Vehicle Class</th>\n</tr>\n<tr>\n<td>RV-109</td>\n<td>2024 Ford Escape Active</td>\n<td>Blue</td>\n<td>Compact SUV</td>\n</tr>\n</table>\n\n\n# RENTAL PERIOD\n\n\n<table>\n<tr>\n<th>Pickup</th>\n<th>Scheduled Return</th>\n<th>Rental Days</th>\n</tr>\n<tr>\n<td>12/20/2025 09:30</td>\n<td>12/24/2025 09:30</td>\n<td>4</td>\n</tr>\n</table>\n\n\n# MILEAGE & FUEL\n\n\n<table>\n<tr>\n<th></th>\n<th>OUT (at Pickup)</th>\n<th>IN (at Return)</th>\n<th>Total Distance</th>\n<th>Fuel</th>\n</tr>\n<tr>\n<td>Mileage</td>\n<td>20,392</td>\n<td>Pending</td>\n<td>Pending</td>\n<td>-</td>\n</tr>\n<tr>\n<td>Fuel Level</td>\n<td>Full out</td>\n<td>Pending</td>\n<td>-</td>\n<td>Pending</td>\n</tr>\n</table>\n\n\n## CONDITION RECORD\n\n\n<table>\n<tr>\n<th>AT PICKUP</th>\n<th>AT RETURN (PENDING)</th>\n</tr>\n<tr>\n<td>Pre-existing left-rear bumper scuff noted; return inspection Pending.</td>\n<td>☐ No new damage<br>☐ New damage noted<br>☐ Vehicle not returned</td>\n</tr>\n</table>\n\n\n## RENTAL CHARGES (Estimated)\n\n\n<table>\n<tr>\n<th>Description</th>\n<th>Rate</th>\n<th>Days</th>\n<th>Amount</th>\n</tr>\n<tr>\n<td>Daily Rate</td>\n<td>$73.00</td>\n<td>4</td>\n<td>$292.00</td>\n</tr>\n<tr>\n<td>Estimated Total</td>\n<td></td>\n<td></td>\n<td>$292.00</td>\n</tr>\n</table>\n\n\nPAYMENT / INSURANCE AUTHORIZATION\n\nAuthorization Status:\nPENDING\nNo payment or insurance authorization\nhas been received.\n\n\n# AGREEMENT TERMS\n\nRenter agrees to be responsible for all charges and applicable taxes, fees, and surcharges\nincurred during the rental period. Renter is also responsible for any loss or damage to the\nvehicle, subject to the terms and conditions of this agreement.\nThis agreement is governed by the laws of the State of New York.\n\nRenter Signature\n\nDate\n\n<!-- PageFooter: Thank you for renting with Mapleway Vehicle Rental. -->\n<!-- PageNumber: Page 1 of 2 -->\n<!-- PageBreak -->\n\n\n![Mapleway VEHICLE RENTAL](figures/10.1)\n\n\nMapleway Vehicle Rental\n221 Station Street\nMaple Crossing, NY 12009\n(518) 555-0169\n\nRenter\nGrace Okafor\n459 Linden Terrace\nMaple Crossing, NY 12009\n(518) 555-0109\ngrace.okafor@example.com\n\nRental Agreement:\nRA-703731\n\nInvoice #:\n\nR-NY-45735\n\n\n<table>\n<tr>\n<td>Unit Number:</td>\n<td>RV-109</td>\n</tr>\n<tr>\n<td>Vehicle:</td>\n<td>2024 Ford Escape Active</td>\n</tr>\n<tr>\n<td>Color:</td>\n<td>Blue</td>\n</tr>\n<tr>\n<td>Class:</td>\n<td>Compact SUV</td>\n</tr>\n</table>\n\n\n<table>\n<tr>\n<td>Invoice Date:</td>\n<td>12/24/2025</td>\n</tr>\n<tr>\n<td>Due Date:</td>\n<td>01/07/2026</td>\n</tr>\n<tr>\n<td>Days:</td>\n<td>4</td>\n</tr>\n</table>\n\n\n<table>\n<tr>\n<th>Pickup Date/Time</th>\n<th>Return Date/Time</th>\n<th>Miles Out</th>\n<th>Miles In</th>\n<th>Distance</th>\n<th>Fuel Level</th>\n</tr>\n<tr>\n<td>2025-12-20 09:30</td>\n<td>2025-12-24 09:30</td>\n<td>20,392</td>\n<td>20,634</td>\n<td>242</td>\n<td>Full out / Full in</td>\n</tr>\n</table>\n\n\n## RENTAL CHARGES\n\n\n<table>\n<tr>\n<th>Description</th>\n<th>Amount (USD)</th>\n</tr>\n<tr>\n<td>Rental day 2025-12-20</td>\n<td>73.00</td>\n</tr>\n<tr>\n<td>Rental day 2025-12-21</td>\n<td>73.00</td>\n</tr>\n<tr>\n<td>Rental day 2025-12-22</td>\n<td>73.00</td>\n</tr>\n<tr>\n<td>Rental day 2025-12-23</td>\n<td>73.00</td>\n</tr>\n</table>\n\n\n<table>\n<tr>\n<td>Subtotal</td>\n<td>292.00</td>\n</tr>\n<tr>\n<td>Quoted state/local sales tax</td>\n<td>23.36</td>\n</tr>\n<tr>\n<td>State passenger rental tax</td>\n<td>17.52</td>\n</tr>\n<tr>\n<td>Non-MCTD regional rental tax</td>\n<td>17.52</td>\n</tr>\n<tr>\n<td>Total Tax</td>\n<td>58.40</td>\n</tr>\n<tr>\n<td>INVOICE TOTAL (USD)</td>\n<td>350.40</td>\n</tr>\n</table>\n\n\n# NOTES\n\nWinter roadway conditions may include\nsnow, ice, and reduced visibility.\nDrive cautiously and allow extra time.\n\nCustomer acknowledgment:\nOne pre-existing left-rear bumper scuff,\nunchanged; no new damage.\nBy signing the rental agreement, I\nacknowledge the vehicle condition as\nnoted above.\n\n\n## CONDITION RECORD (AT RETURN)\n\nExterior Condition\n\n◉\nNo New Damage\n\n○\nNew Damage Noted\n\nInterior Condition\n\n◉\nClean\n\n○\nSoiling Noted\n\nTire Condition\n\n◉\nNormal Wear\n\n○\nDamage Noted\n\nGlass Condition\n\n◉\nClear\n\n○\nChip/Crack Noted\n\nNotes: One pre-existing left-rear bumper scuff, unchanged; no new damage.\n\nACCOUNT STATUS: OPEN; no payment or insurance authorization\n\n<!-- PageNumber: Page 2 of 2 -->\n"
+      }
+    ]
+  },
+  "result": {
+    "category": "extraction_error",
+    "reason": "On the Rental Invoice (p2), the listed tax components are Quoted state/local sales tax USD 23.36, State passenger rental tax USD 17.52, and Non-MCTD regional rental tax USD 17.52, which sum to the explicit Total Tax of USD 58.40. The failure occurs because the Total Tax row itself was also extracted as an additional TaxDetails amount, causing the check to sum USD 116.80.",
+    "suggestion": "Refine the rental invoice extractor so the Total Tax row is mapped only to TotalTaxAmount and excluded from TaxDetails, then rerun that document.",
+    "documentIds": [
+      "9-10:0"
+    ]
+  }
+}

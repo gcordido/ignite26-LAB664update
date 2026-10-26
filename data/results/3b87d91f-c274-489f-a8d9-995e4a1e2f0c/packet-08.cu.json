@@ -1,16 +1,16 @@
 {
-  "id": "81e04d32-ad53-46ab-9fd2-9303156222ca",
+  "id": "54b95c53-21e0-472b-82f7-8acfb2ee279f",
   "status": "Succeeded",
   "result": {
-    "analyzerId": "lab664_anatolip_scus_routerg5",
+    "analyzerId": "lab664_statement_router_0699239b9914",
     "apiVersion": "2026-06-01-preview",
-    "createdAt": "2026-10-23T04:05:32Z",
+    "createdAt": "2026-10-23T07:14:57Z",
     "stringEncoding": "codePoint",
     "warnings": [],
     "infos": [
       {
         "code": "LLMStats",
-        "message": "completion calls: 6; avg completion latency: 5.38s; total completion latency: 32.26s"
+        "message": "completion calls: 7; avg completion latency: 5.27s; total completion latency: 36.88s"
       }
     ],
     "contents": [
@@ -47704,7 +47704,7 @@
             "startPageNumber": 1,
             "endPageNumber": 1,
             "category": "repair_estimate",
-            "confidence": 0.9
+            "confidence": 0.93
           },
           {
             "span": {
@@ -47726,7 +47726,7 @@
             "startPageNumber": 3,
             "endPageNumber": 4,
             "category": "other",
-            "confidence": 0.89
+            "confidence": 0.88
           },
           {
             "span": {
@@ -47737,7 +47737,7 @@
             "startPageNumber": 5,
             "endPageNumber": 5,
             "category": "other",
-            "confidence": 0.92
+            "confidence": 0.84
           },
           {
             "span": {
@@ -47748,7 +47748,7 @@
             "startPageNumber": 6,
             "endPageNumber": 6,
             "category": "other",
-            "confidence": 0.85
+            "confidence": 0.8
           },
           {
             "span": {
@@ -47758,8 +47758,8 @@
             "segmentId": "segment6",
             "startPageNumber": 7,
             "endPageNumber": 7,
-            "category": "other",
-            "confidence": 0.84
+            "category": "statement",
+            "confidence": 0.92
           },
           {
             "span": {
@@ -47770,7 +47770,7 @@
             "startPageNumber": 8,
             "endPageNumber": 9,
             "category": "repair_estimate",
-            "confidence": 0.89
+            "confidence": 0.9
           },
           {
             "span": {
@@ -47781,7 +47781,7 @@
             "startPageNumber": 10,
             "endPageNumber": 10,
             "category": "tax_1099a",
-            "confidence": 0.98
+            "confidence": 0.97
           },
           {
             "span": {
@@ -47792,7 +47792,7 @@
             "startPageNumber": 11,
             "endPageNumber": 11,
             "category": "other",
-            "confidence": 0.86
+            "confidence": 0.82
           }
         ],
         "metadata": {
@@ -47812,7 +47812,7 @@
             "id": "7.1"
           }
         ],
-        "analyzerId": "lab664_anatolip_scus_routerg5",
+        "analyzerId": "lab664_statement_router_0699239b9914",
         "mimeType": "application/pdf"
       },
       {
@@ -47903,7 +47903,7 @@
                 "length": 28
               }
             ],
-            "confidence": 0.845,
+            "confidence": 0.948,
             "source": "D(1,1.2960,2.4291,2.1155,2.4489,2.1124,2.5772,1.2929,2.5574);D(1,1.2898,2.6377,2.5706,2.6513,2.5691,2.7960,1.2882,2.7824)"
           },
           "CustomerAddressRecipient": {
@@ -47915,7 +47915,7 @@
                 "length": 10
               }
             ],
-            "confidence": 0.891,
+            "confidence": 0.976,
             "source": "D(1,1.3022,2.2343,1.8046,2.2477,1.8012,2.3739,1.2989,2.3604)"
           },
           "CustomerId": {
@@ -47931,7 +47931,7 @@
                 "length": 10
               }
             ],
-            "confidence": 0.891,
+            "confidence": 0.976,
             "source": "D(1,1.3022,2.2343,1.8046,2.2477,1.8012,2.3739,1.2989,2.3604)"
           },
           "CustomerTaxId": {
@@ -47985,7 +47985,7 @@
                         "length": 28
                       }
                     ],
-                    "confidence": 0.752,
+                    "confidence": 0.719,
                     "source": "D(1,1.5782,5.3440,2.9059,5.3493,2.9053,5.5026,1.5776,5.4973)"
                   },
                   "ProductCode": {
@@ -48001,7 +48001,7 @@
                         "length": 1
                       }
                     ],
-                    "confidence": 0.747,
+                    "confidence": 0.72,
                     "source": "D(1,3.7478,5.3576,3.7955,5.3549,3.7955,5.4733,3.7478,5.4727)"
                   },
                   "QuantityUnit": {
@@ -48037,7 +48037,7 @@
                             "length": 8
                           }
                         ],
-                        "confidence": 0.854,
+                        "confidence": 0.839,
                         "source": "D(1,6.8398,5.3364,7.2507,5.3327,7.2507,5.4731,6.8398,5.4731)"
                       },
                       "CurrencyCode": {
@@ -48070,7 +48070,7 @@
                             "length": 6
                           }
                         ],
-                        "confidence": 0.823,
+                        "confidence": 0.859,
                         "source": "D(1,4.3662,5.3493,4.6858,5.3484,4.6858,5.4785,4.3662,5.4785)"
                       },
                       "CurrencyCode": {
@@ -48109,7 +48109,7 @@
                         "length": 24
                       }
                     ],
-                    "confidence": 0.724,
+                    "confidence": 0.708,
                     "source": "D(1,1.5627,5.6436,2.6503,5.6609,2.6478,5.8180,1.5602,5.8007)"
                   },
                   "ProductCode": {
@@ -48125,7 +48125,7 @@
                         "length": 1
                       }
                     ],
-                    "confidence": 0.755,
+                    "confidence": 0.723,
                     "source": "D(1,3.7457,5.6558,3.7955,5.6558,3.7955,5.7739,3.7457,5.7739)"
                   },
                   "QuantityUnit": {
@@ -48161,7 +48161,7 @@
                             "length": 6
                           }
                         ],
-                        "confidence": 0.865,
+                        "confidence": 0.852,
                         "source": "D(1,6.9436,5.6397,7.2590,5.6397,7.2590,5.7686,6.9436,5.7686)"
                       },
                       "CurrencyCode": {
@@ -48194,7 +48194,7 @@
                             "length": 6
                           }
                         ],
-                        "confidence": 0.818,
+                        "confidence": 0.837,
                         "source": "D(1,4.3787,5.6504,4.6941,5.6504,4.6941,5.7793,4.3787,5.7793)"
                       },
                       "CurrencyCode": {
@@ -48233,7 +48233,7 @@
                         "length": 26
                       }
                     ],
-                    "confidence": 0.722,
+                    "confidence": 0.704,
                     "source": "D(1,1.5554,5.9583,2.6931,5.9711,2.6915,6.1143,1.5538,6.1015)"
                   },
                   "ProductCode": {
@@ -48249,7 +48249,7 @@
                         "length": 1
                       }
                     ],
-                    "confidence": 0.711,
+                    "confidence": 0.694,
                     "source": "D(1,3.7457,5.9740,3.8038,5.9738,3.8038,6.0919,3.7457,6.0922)"
                   },
                   "QuantityUnit": {
@@ -48285,7 +48285,7 @@
                             "length": 6
                           }
                         ],
-                        "confidence": 0.905,
+                        "confidence": 0.898,
                         "source": "D(1,6.9353,5.9588,7.2632,5.9571,7.2632,6.0910,6.9353,6.0920)"
                       },
                       "CurrencyCode": {
@@ -48318,7 +48318,7 @@
                             "length": 4
                           }
                         ],
-                        "confidence": 0.525,
+                        "confidence": 0.531,
                         "source": "D(1,4.4824,5.9677,4.6941,5.9688,4.6941,6.0977,4.4824,6.0966)"
                       },
                       "CurrencyCode": {
@@ -48391,7 +48391,7 @@
                     "length": 8
                   }
                 ],
-                "confidence": 0.816,
+                "confidence": 0.894,
                 "source": "D(1,1.1652,7.8311,1.5678,7.8311,1.5678,7.9707,1.1652,7.9707);D(1,3.8018,7.8257,4.2251,7.8257,4.2251,7.9707,3.8018,7.9707)"
               },
               "CurrencyCode": {
@@ -48430,7 +48430,7 @@
                             "length": 5
                           }
                         ],
-                        "confidence": 0.646,
+                        "confidence": 0.633,
                         "source": "D(1,3.9823,9.0238,4.2375,9.0230,4.2375,9.1519,3.9823,9.1527)"
                       },
                       "CurrencyCode": {
@@ -48460,7 +48460,7 @@
                         "length": 12
                       }
                     ],
-                    "confidence": 0.759,
+                    "confidence": 0.723,
                     "source": "D(1,1.1268,9.0333,1.6511,9.0343,1.6508,9.1853,1.1265,9.1843)"
                   },
                   "NetAmount": {
@@ -48475,7 +48475,7 @@
                             "length": 8
                           }
                         ],
-                        "confidence": 0.906,
+                        "confidence": 0.898,
                         "source": "D(1,3.0298,9.0234,3.4220,9.0234,3.4220,9.1631,3.0298,9.1631)"
                       },
                       "CurrencyCode": {
@@ -48505,7 +48505,7 @@
                         "length": 5
                       }
                     ],
-                    "confidence": 0.64,
+                    "confidence": 0.609,
                     "source": "D(1,2.2710,9.0246,2.5504,9.0219,2.5517,9.1577,2.2723,9.1604)"
                   }
                 }
@@ -48524,7 +48524,7 @@
                     "length": 8
                   }
                 ],
-                "confidence": 0.888,
+                "confidence": 0.942,
                 "source": "D(1,3.7374,8.2445,4.2292,8.2378,4.2292,8.3992,3.7374,8.4086)"
               },
               "CurrencyCode": {
@@ -48550,11 +48550,31 @@
             "valueObject": {
               "Amount": {
                 "type": "number",
-                "confidence": 0.929
+                "valueNumber": 0,
+                "spans": [
+                  {
+                    "offset": 2249,
+                    "length": 4
+                  }
+                ],
+                "confidence": 0.299,
+                "source": "D(1,7.1968,7.4175,7.4126,7.4169,7.4126,7.5571,7.1968,7.5570)"
               },
               "CurrencyCode": {
                 "type": "string",
-                "confidence": 0.849
+                "valueString": "USD",
+                "spans": [
+                  {
+                    "offset": 920,
+                    "length": 14
+                  },
+                  {
+                    "offset": 437,
+                    "length": 28
+                  }
+                ],
+                "confidence": 0.51,
+                "source": "D(1,5.2129,3.8925,5.8780,3.8975,5.8770,4.0371,5.2119,4.0321);D(1,1.2898,2.6377,2.5706,2.6513,2.5691,2.7960,1.2882,2.7824)"
               }
             }
           },
@@ -48574,7 +48594,7 @@
                     "length": 5
                   }
                 ],
-                "confidence": 0.833,
+                "confidence": 0.917,
                 "source": "D(1,1.1642,8.0244,2.1229,8.0244,2.1229,8.1855,1.1642,8.1855);D(1,3.9429,8.0188,4.2272,8.0237,4.2272,8.1633,3.9429,8.1585)"
               },
               "CurrencyCode": {
@@ -48608,7 +48628,7 @@
                 "length": 28
               }
             ],
-            "confidence": 0.829,
+            "confidence": 0.942,
             "source": "D(1,1.2513,4.0671,1.9896,4.0701,1.9891,4.2046,1.2508,4.2016);D(1,1.2441,4.2687,2.5608,4.2687,2.5608,4.4097,1.2441,4.4097)"
           },
           "VendorAddressRecipient": {
@@ -48620,7 +48640,7 @@
                 "length": 25
               }
             ],
-            "confidence": 0.706,
+            "confidence": 0.95,
             "source": "D(1,1.2534,3.8688,2.4663,3.8777,2.4653,4.0157,1.2524,4.0068)"
           },
           "VendorName": {
@@ -48632,7 +48652,7 @@
                 "length": 25
               }
             ],
-            "confidence": 0.706,
+            "confidence": 0.95,
             "source": "D(1,1.2534,3.8688,2.4663,3.8777,2.4653,4.0157,1.2524,4.0068)"
           },
           "VendorTaxId": {
@@ -48648,7 +48668,7 @@
                 "length": 23
               }
             ],
-            "confidence": 0.857,
+            "confidence": 0.963,
             "source": "D(1,3.3058,2.2778,4.4337,2.2871,4.4326,2.4316,3.3047,2.4224)"
           },
           "vin": {
@@ -48660,7 +48680,7 @@
                 "length": 17
               }
             ],
-            "confidence": 0.903,
+            "confidence": 0.986,
             "source": "D(1,3.5500,2.6762,4.5945,2.6833,4.5945,2.8122,3.5500,2.8049)"
           },
           "odometer": {
@@ -48672,7 +48692,7 @@
                 "length": 6
               }
             ],
-            "confidence": 0.888,
+            "confidence": 0.978,
             "source": "D(1,3.8513,3.2793,4.1711,3.2786,4.1711,3.4198,3.8513,3.4193)"
           }
         },
@@ -53765,7 +53785,7 @@
             "startPageNumber": 1,
             "endPageNumber": 1,
             "category": "repair_estimate",
-            "confidence": 0.9
+            "confidence": 0.93
           }
         ],
         "metadata": {
@@ -53867,7 +53887,7 @@
                 "length": 10
               }
             ],
-            "confidence": 0.845,
+            "confidence": 0.908,
             "source": "D(2,4.1089,4.4454,5.5215,4.4448,5.5215,4.6689,4.1089,4.6695)"
           },
           "EyeColor": {
@@ -54657,6 +54677,3838 @@
         "analyzerId": "prebuilt-idDocument.generic"
       },
       {
+        "path": "input1/segment6",
+        "category": "statement",
+        "markdown": "Insured:\nEthan Park\n428 Linden Terrace, Sierra Vista Grove, CA 95825\n(916) 555-0108\nethan.park@example.com\n\nPolicy Reference:\nSLI-A1508902\n\nSierra Lantern Insurance\n504 Civic Lane\nSierra Vista Grove, CA 95825\n(916) 555-0128\nAdjuster: Jules Mercer\n\nClaim Reference:\nSLI-26-394117\n\n05/15/2026\n\nI'm writing to describe what happened on 05/14/2026.\nAt about 10:42 AM, I was driving northbound on Sierra\nParkway in Sierra Vista Grove in my 2022 Hyundai IONIQ 5 SE.\nA road stone kicked up from the lane ahead and struck my\nwindshield on the passenger side.\n\nNo collision occurred and there was no contact with any\nother vehicle. Shortly after the impact, I noticed a crack\nspreading across the forward camera viewing area.\n\nNo injuries were involved, and the vehicle remained\ndrivable. There was no body damage.\n\nI'm arranging mobile glass replacement repln and\ncamera calibration through Grove Mobile Glass & Scan.\n\nPlease let me know if you need any additional information.\n\nE.P.\n\n\n![Ethan Park](signatures/7.1)\n\n\n<table>\n<tr>\n<td colspan=\"2\">Vehicle Information</td>\n</tr>\n<tr>\n<td>Vehicle:</td>\n<td>2022 Hyundai IONIQ 5 SE</td>\n</tr>\n<tr>\n<td>Color:</td>\n<td>White</td>\n</tr>\n<tr>\n<td>VIN:</td>\n<td>KM8KNDAF4NA516248</td>\n</tr>\n<tr>\n<td>Registration:</td>\n<td>CA79535</td>\n</tr>\n<tr>\n<td>Use:</td>\n<td>Personal / commute</td>\n</tr>\n</table>\n\n\n<table>\n<tr>\n<td colspan=\"4\">Loss Details</td>\n</tr>\n<tr>\n<th>Date:</th>\n<th>2026-05-14</th>\n<th>Time:</th>\n<th>10:42</th>\n</tr>\n<tr>\n<td>Location:</td>\n<td colspan=\"3\">Sierra Parkway northbound, Sierra Vista Grove, CA 95825</td>\n</tr>\n<tr>\n<td>Damage:</td>\n<td colspan=\"3\">Windshield crack across forward camera viewing area; no body- panel damage.</td>\n</tr>\n<tr>\n<td>Drivable:</td>\n<td colspan=\"3\">Yes</td>\n</tr>\n<tr>\n<td>Injuries:</td>\n<td colspan=\"3\">None reported</td>\n</tr>\n<tr>\n<td>Other Driver:</td>\n<td colspan=\"3\">Not applicable</td>\n</tr>\n<tr>\n<td>Liability:</td>\n<td colspan=\"3\">Not determined</td>\n</tr>\n</table>\n\n\n<!-- PageBreak -->\n\n",
+        "fields": {
+          "claimant_name": {
+            "type": "string",
+            "valueString": "Ethan Park",
+            "spans": [
+              {
+                "offset": 9,
+                "length": 10
+              }
+            ],
+            "confidence": 0.994,
+            "source": "D(7,1.2441,0.8673,1.7849,0.8736,1.7836,0.9867,1.2428,0.9804)"
+          },
+          "incident_date": {
+            "type": "date",
+            "valueDate": "2026-05-14",
+            "spans": [
+              {
+                "offset": 1418,
+                "length": 10
+              }
+            ],
+            "confidence": 0.987,
+            "source": "D(7,5.1050,8.7270,5.5491,8.7171,5.5491,8.8194,5.1050,8.8262)"
+          },
+          "incident_location": {
+            "type": "string",
+            "valueString": "Sierra Parkway northbound, Sierra Vista Grove, CA 95825",
+            "spans": [
+              {
+                "offset": 1510,
+                "length": 26
+              },
+              {
+                "offset": 1537,
+                "length": 28
+              }
+            ],
+            "confidence": 0.901,
+            "source": "D(7,5.1050,8.8727,6.1301,8.8723,6.1301,8.9805,5.1050,8.9809);D(7,5.1040,9.0000,6.1965,8.9899,6.1976,9.1037,5.1051,9.1138)"
+          },
+          "vehicle": {
+            "type": "string",
+            "valueString": "2022 Hyundai IONIQ 5 SE",
+            "spans": [
+              {
+                "offset": 1097,
+                "length": 23
+              }
+            ],
+            "confidence": 0.912,
+            "source": "D(7,5.1089,7.6067,6.1135,7.6052,6.1137,7.7183,5.1091,7.7198)"
+          },
+          "vin": {
+            "type": "string",
+            "valueString": "KM8KNDAF4NA516248",
+            "spans": [
+              {
+                "offset": 1197,
+                "length": 17
+              }
+            ],
+            "confidence": 0.993,
+            "source": "D(7,5.1091,7.9224,6.0430,7.9291,6.0430,8.0365,5.1091,8.0299)"
+          },
+          "reported_damage": {
+            "type": "string",
+            "valueString": "Windshield crack across forward camera viewing area; no body-panel damage.",
+            "spans": [
+              {
+                "offset": 1615,
+                "length": 31
+              },
+              {
+                "offset": 1647,
+                "length": 29
+              },
+              {
+                "offset": 1677,
+                "length": 13
+              }
+            ],
+            "confidence": 0.895,
+            "source": "D(7,5.1050,9.1506,6.3048,9.1545,6.3044,9.2710,5.1046,9.2670);D(7,5.1047,9.2914,6.2090,9.2886,6.2093,9.3994,5.1050,9.4022);D(7,5.1050,9.4316,5.6321,9.4316,5.6321,9.5391,5.1050,9.5391)"
+          },
+          "summary": {
+            "type": "string",
+            "valueString": "I'm writing to describe what happened on 05/14/2026. At about 10:42 AM, I was driving northbound on Sierra Parkway in Sierra Vista Grove in my 2022 Hyundai IONIQ 5 SE. A road stone kicked up from the lane ahead and struck my windshield on the passenger side. No collision occurred and there was no contact with any other vehicle. Shortly after the impact, I noticed a crack spreading across the forward camera viewing area. No injuries were involved, and the vehicle remained drivable. There was no body damage.",
+            "spans": [
+              {
+                "offset": 292,
+                "length": 52
+              },
+              {
+                "offset": 345,
+                "length": 53
+              },
+              {
+                "offset": 399,
+                "length": 60
+              },
+              {
+                "offset": 460,
+                "length": 56
+              },
+              {
+                "offset": 517,
+                "length": 33
+              },
+              {
+                "offset": 552,
+                "length": 55
+              },
+              {
+                "offset": 608,
+                "length": 58
+              },
+              {
+                "offset": 667,
+                "length": 49
+              },
+              {
+                "offset": 718,
+                "length": 51
+              },
+              {
+                "offset": 770,
+                "length": 35
+              }
+            ],
+            "confidence": 0.554,
+            "source": "D(7,1.1652,2.6321,5.9101,2.5473,5.9144,2.7860,1.1695,2.8708);D(7,1.1712,3.0140,6.3169,2.9235,6.3206,3.1328,1.1749,3.2233);D(7,1.1336,3.3481,6.8066,3.2176,6.8115,3.4318,1.1385,3.5623);D(7,1.1328,3.7013,6.7361,3.5765,6.7406,3.7776,1.1373,3.9024);D(7,1.1466,4.0468,4.0985,3.9889,4.1029,4.2135,1.1510,4.2714);D(7,1.1453,4.4682,6.3708,4.3291,6.3763,4.5379,1.1509,4.6770);D(7,1.1616,4.8145,6.5055,4.6421,6.5125,4.8598,1.1687,5.0322);D(7,1.1670,5.1585,5.4151,5.0476,5.4206,5.2573,1.1725,5.3681);D(7,1.1716,5.5641,5.7859,5.3890,5.7943,5.6099,1.1799,5.7850);D(7,1.1724,5.8939,4.4261,5.7980,4.4327,6.0206,1.1790,6.1164)"
+          }
+        },
+        "kind": "document",
+        "startPageNumber": 7,
+        "endPageNumber": 7,
+        "unit": "inch",
+        "pages": [
+          {
+            "pageNumber": 7,
+            "angle": 0,
+            "width": 8.5,
+            "height": 11,
+            "spans": [
+              {
+                "offset": 0,
+                "length": 1990
+              }
+            ],
+            "words": [
+              {
+                "content": "Insured",
+                "span": {
+                  "offset": 0,
+                  "length": 7
+                },
+                "confidence": 0.979,
+                "source": "D(7,1.2451,0.7079,1.6579,0.7152,1.6579,0.8276,1.2451,0.8197)"
+              },
+              {
+                "content": ":",
+                "span": {
+                  "offset": 7,
+                  "length": 1
+                },
+                "confidence": 0.999,
+                "source": "D(7,1.6655,0.7154,1.6996,0.7163,1.6996,0.8286,1.6655,0.8278)"
+              },
+              {
+                "content": "Ethan",
+                "span": {
+                  "offset": 9,
+                  "length": 5
+                },
+                "confidence": 0.998,
+                "source": "D(7,1.2441,0.8709,1.5139,0.8714,1.5139,0.982,1.2441,0.9804)"
+              },
+              {
+                "content": "Park",
+                "span": {
+                  "offset": 15,
+                  "length": 4
+                },
+                "confidence": 0.998,
+                "source": "D(7,1.5532,0.8716,1.7836,0.8736,1.7836,0.9857,1.5532,0.9823)"
+              },
+              {
+                "content": "428",
+                "span": {
+                  "offset": 20,
+                  "length": 3
+                },
+                "confidence": 0.957,
+                "source": "D(7,1.242,1.0286,1.4148,1.0282,1.4148,1.1454,1.242,1.1449)"
+              },
+              {
+                "content": "Linden",
+                "span": {
+                  "offset": 24,
+                  "length": 6
+                },
+                "confidence": 0.944,
+                "source": "D(7,1.4545,1.0282,1.7702,1.0275,1.7702,1.1466,1.4545,1.1456)"
+              },
+              {
+                "content": "Terrace",
+                "span": {
+                  "offset": 31,
+                  "length": 7
+                },
+                "confidence": 0.998,
+                "source": "D(7,1.8079,1.0275,2.1713,1.0265,2.1713,1.1472,1.8079,1.1467)"
+              },
+              {
+                "content": ",",
+                "span": {
+                  "offset": 38,
+                  "length": 1
+                },
+                "confidence": 0.999,
+                "source": "D(7,2.1733,1.0265,2.1971,1.0264,2.1971,1.1471,2.1733,1.1472)"
+              },
+              {
+                "content": "Sierra",
+                "span": {
+                  "offset": 40,
+                  "length": 6
+                },
+                "confidence": 0.991,
+                "source": "D(7,2.2368,1.0263,2.5267,1.0253,2.5267,1.1463,2.2368,1.147)"
+              },
+              {
+                "content": "Vista",
+                "span": {
+                  "offset": 47,
+                  "length": 5
+                },
+                "confidence": 0.973,
+                "source": "D(7,2.5565,1.0252,2.7928,1.0243,2.7928,1.1457,2.5565,1.1463)"
+              },
+              {
+                "content": "Grove",
+                "span": {
+                  "offset": 53,
+                  "length": 5
+                },
+                "confidence": 0.988,
+                "source": "D(7,2.8265,1.0242,3.1105,1.0228,3.1105,1.1434,2.8265,1.1456)"
+              },
+              {
+                "content": ",",
+                "span": {
+                  "offset": 58,
+                  "length": 1
+                },
+                "confidence": 0.999,
+                "source": "D(7,3.1105,1.0228,3.1363,1.0227,3.1363,1.1432,3.1105,1.1434)"
+              },
+              {
+                "content": "CA",
+                "span": {
+                  "offset": 60,
+                  "length": 2
+                },
+                "confidence": 0.803,
+                "source": "D(7,3.176,1.0225,3.3209,1.0217,3.3209,1.1417,3.176,1.1429)"
+              },
+              {
+                "content": "95825",
+                "span": {
+                  "offset": 63,
+                  "length": 5
+                },
+                "confidence": 0.378,
+                "source": "D(7,3.3547,1.0215,3.6565,1.02,3.6565,1.139,3.3547,1.1414)"
+              },
+              {
+                "content": "(",
+                "span": {
+                  "offset": 69,
+                  "length": 1
+                },
+                "confidence": 0.998,
+                "source": "D(7,1.243,1.183,1.276,1.1827,1.277,1.3099,1.2441,1.3102)"
+              },
+              {
+                "content": "916",
+                "span": {
+                  "offset": 70,
+                  "length": 3
+                },
+                "confidence": 0.997,
+                "source": "D(7,1.274,1.1828,1.4553,1.1816,1.4561,1.3083,1.275,1.3099)"
+              },
+              {
+                "content": ")",
+                "span": {
+                  "offset": 73,
+                  "length": 1
+                },
+                "confidence": 0.999,
+                "source": "D(7,1.4553,1.1816,1.4924,1.1813,1.4931,1.3079,1.4561,1.3083)"
+              },
+              {
+                "content": "555-0108",
+                "span": {
+                  "offset": 75,
+                  "length": 8
+                },
+                "confidence": 0.992,
+                "source": "D(7,1.5254,1.1814,2.0015,1.186,2.0015,1.3091,1.5261,1.3079)"
+              },
+              {
+                "content": "ethan.park@example.com",
+                "span": {
+                  "offset": 84,
+                  "length": 22
+                },
+                "confidence": 0.943,
+                "source": "D(7,1.2379,1.3455,2.4923,1.3457,2.4923,1.4673,1.2379,1.4658)"
+              },
+              {
+                "content": "Policy",
+                "span": {
+                  "offset": 108,
+                  "length": 6
+                },
+                "confidence": 0.999,
+                "source": "D(7,1.2389,1.7415,1.5075,1.7398,1.5075,1.8575,1.2389,1.8581)"
+              },
+              {
+                "content": "Reference",
+                "span": {
+                  "offset": 115,
+                  "length": 9
+                },
+                "confidence": 0.998,
+                "source": "D(7,1.5346,1.7399,1.9791,1.7435,1.979,1.8585,1.5346,1.8576)"
+              },
+              {
+                "content": ":",
+                "span": {
+                  "offset": 124,
+                  "length": 1
+                },
+                "confidence": 0.999,
+                "source": "D(7,1.981,1.7435,2.0119,1.7439,2.0119,1.8587,1.981,1.8586)"
+              },
+              {
+                "content": "SLI",
+                "span": {
+                  "offset": 126,
+                  "length": 3
+                },
+                "confidence": 0.982,
+                "source": "D(7,1.241,1.8979,1.3962,1.8972,1.3962,2.0096,1.241,2.0095)"
+              },
+              {
+                "content": "-",
+                "span": {
+                  "offset": 129,
+                  "length": 1
+                },
+                "confidence": 0.999,
+                "source": "D(7,1.4073,1.8972,1.4406,1.8971,1.4406,2.0097,1.4073,2.0096)"
+              },
+              {
+                "content": "A1508902",
+                "span": {
+                  "offset": 130,
+                  "length": 8
+                },
+                "confidence": 0.963,
+                "source": "D(7,1.435,1.8971,1.9507,1.8994,1.9507,2.0137,1.435,2.0097)"
+              },
+              {
+                "content": "Sierra",
+                "span": {
+                  "offset": 140,
+                  "length": 6
+                },
+                "confidence": 0.997,
+                "source": "D(7,5.1257,0.7233,5.4281,0.7248,5.4281,0.8312,5.1257,0.8299)"
+              },
+              {
+                "content": "Lantern",
+                "span": {
+                  "offset": 147,
+                  "length": 7
+                },
+                "confidence": 0.996,
+                "source": "D(7,5.4668,0.725,5.8501,0.7262,5.8501,0.8318,5.4668,0.8314)"
+              },
+              {
+                "content": "Insurance",
+                "span": {
+                  "offset": 155,
+                  "length": 9
+                },
+                "confidence": 0.993,
+                "source": "D(7,5.8888,0.7263,6.3916,0.7265,6.3916,0.8303,5.8888,0.8318)"
+              },
+              {
+                "content": "504",
+                "span": {
+                  "offset": 165,
+                  "length": 3
+                },
+                "confidence": 0.996,
+                "source": "D(7,5.1257,0.8781,5.3024,0.8785,5.3024,0.9877,5.1257,0.9875)"
+              },
+              {
+                "content": "Civic",
+                "span": {
+                  "offset": 169,
+                  "length": 5
+                },
+                "confidence": 0.996,
+                "source": "D(7,5.3363,0.8786,5.5737,0.8794,5.5737,0.988,5.3363,0.9878)"
+              },
+              {
+                "content": "Lane",
+                "span": {
+                  "offset": 175,
+                  "length": 4
+                },
+                "confidence": 0.994,
+                "source": "D(7,5.6022,0.8795,5.8396,0.8805,5.8396,0.9883,5.6022,0.9881)"
+              },
+              {
+                "content": "Sierra",
+                "span": {
+                  "offset": 180,
+                  "length": 6
+                },
+                "confidence": 0.996,
+                "source": "D(7,5.1299,1.0328,5.4003,1.0323,5.4003,1.1481,5.1299,1.1478)"
+              },
+              {
+                "content": "Vista",
+                "span": {
+                  "offset": 187,
+                  "length": 5
+                },
+                "confidence": 0.988,
+                "source": "D(7,5.4314,1.0322,5.6649,1.0315,5.6649,1.1481,5.4314,1.1481)"
+              },
+              {
+                "content": "Grove",
+                "span": {
+                  "offset": 193,
+                  "length": 5
+                },
+                "confidence": 0.997,
+                "source": "D(7,5.698,1.0314,5.9781,1.0301,5.9781,1.1473,5.698,1.148)"
+              },
+              {
+                "content": ",",
+                "span": {
+                  "offset": 198,
+                  "length": 1
+                },
+                "confidence": 0.999,
+                "source": "D(7,5.9781,1.0301,6.0034,1.03,6.0034,1.1473,5.9781,1.1473)"
+              },
+              {
+                "content": "CA",
+                "span": {
+                  "offset": 200,
+                  "length": 2
+                },
+                "confidence": 0.938,
+                "source": "D(7,6.0404,1.0299,6.1805,1.0289,6.1805,1.1464,6.0404,1.1472)"
+              },
+              {
+                "content": "95825",
+                "span": {
+                  "offset": 203,
+                  "length": 5
+                },
+                "confidence": 0.657,
+                "source": "D(7,6.2096,1.0287,6.4995,1.0267,6.4995,1.1446,6.2096,1.1463)"
+              },
+              {
+                "content": "(",
+                "span": {
+                  "offset": 209,
+                  "length": 1
+                },
+                "confidence": 0.998,
+                "source": "D(7,5.1299,1.189,5.1629,1.1886,5.1629,1.3135,5.1299,1.314)"
+              },
+              {
+                "content": "916",
+                "span": {
+                  "offset": 210,
+                  "length": 3
+                },
+                "confidence": 0.996,
+                "source": "D(7,5.1608,1.1887,5.3362,1.1869,5.3362,1.311,5.1608,1.3135)"
+              },
+              {
+                "content": ")",
+                "span": {
+                  "offset": 213,
+                  "length": 1
+                },
+                "confidence": 0.999,
+                "source": "D(7,5.3362,1.1869,5.3734,1.1865,5.3734,1.3105,5.3362,1.311)"
+              },
+              {
+                "content": "555-0128",
+                "span": {
+                  "offset": 215,
+                  "length": 8
+                },
+                "confidence": 0.988,
+                "source": "D(7,5.4023,1.1866,5.8562,1.1916,5.8562,1.3113,5.4022,1.3104)"
+              },
+              {
+                "content": "Adjuster",
+                "span": {
+                  "offset": 224,
+                  "length": 8
+                },
+                "confidence": 0.998,
+                "source": "D(7,5.1299,1.3446,5.5223,1.3441,5.5223,1.4599,5.1299,1.4612)"
+              },
+              {
+                "content": ":",
+                "span": {
+                  "offset": 232,
+                  "length": 1
+                },
+                "confidence": 0.999,
+                "source": "D(7,5.5223,1.3441,5.547,1.3441,5.547,1.4598,5.5223,1.4599)"
+              },
+              {
+                "content": "Jules",
+                "span": {
+                  "offset": 234,
+                  "length": 5
+                },
+                "confidence": 0.998,
+                "source": "D(7,5.5984,1.3441,5.8423,1.3439,5.8423,1.4589,5.5984,1.4597)"
+              },
+              {
+                "content": "Mercer",
+                "span": {
+                  "offset": 240,
+                  "length": 6
+                },
+                "confidence": 0.999,
+                "source": "D(7,5.8708,1.3439,6.1965,1.3437,6.1965,1.4579,5.8708,1.4588)"
+              },
+              {
+                "content": "Claim",
+                "span": {
+                  "offset": 248,
+                  "length": 5
+                },
+                "confidence": 0.999,
+                "source": "D(7,5.1506,1.7455,5.3958,1.7456,5.3958,1.8477,5.1506,1.8477)"
+              },
+              {
+                "content": "Reference",
+                "span": {
+                  "offset": 254,
+                  "length": 9
+                },
+                "confidence": 0.999,
+                "source": "D(7,5.4289,1.7456,5.8688,1.7444,5.8688,1.8477,5.4289,1.8477)"
+              },
+              {
+                "content": ":",
+                "span": {
+                  "offset": 263,
+                  "length": 1
+                },
+                "confidence": 0.999,
+                "source": "D(7,5.874,1.7444,5.9019,1.7443,5.9019,1.8477,5.874,1.8477)"
+              },
+              {
+                "content": "SLI",
+                "span": {
+                  "offset": 265,
+                  "length": 3
+                },
+                "confidence": 0.968,
+                "source": "D(7,5.1548,1.908,5.3091,1.9072,5.3091,2.0135,5.1548,2.013)"
+              },
+              {
+                "content": "-",
+                "span": {
+                  "offset": 268,
+                  "length": 1
+                },
+                "confidence": 0.997,
+                "source": "D(7,5.3196,1.9071,5.3512,1.9069,5.3512,2.0137,5.3196,2.0136)"
+              },
+              {
+                "content": "26-394117",
+                "span": {
+                  "offset": 269,
+                  "length": 9
+                },
+                "confidence": 0.974,
+                "source": "D(7,5.3529,1.9069,5.8562,1.9086,5.8562,2.0156,5.3529,2.0137)"
+              },
+              {
+                "content": "05/15/2026",
+                "span": {
+                  "offset": 280,
+                  "length": 10
+                },
+                "confidence": 0.937,
+                "source": "D(7,6.1052,2.2563,7.147,2.2356,7.147,2.434,6.1052,2.4606)"
+              },
+              {
+                "content": "I'm",
+                "span": {
+                  "offset": 292,
+                  "length": 3
+                },
+                "confidence": 0.931,
+                "source": "D(7,1.1673,2.6321,1.456,2.6279,1.458,2.8625,1.1694,2.8668)"
+              },
+              {
+                "content": "writing",
+                "span": {
+                  "offset": 296,
+                  "length": 7
+                },
+                "confidence": 0.984,
+                "source": "D(7,1.61,2.6257,2.1606,2.6177,2.1622,2.8519,1.6119,2.8602)"
+              },
+              {
+                "content": "to",
+                "span": {
+                  "offset": 304,
+                  "length": 2
+                },
+                "confidence": 0.997,
+                "source": "D(7,2.2876,2.6159,2.4493,2.6136,2.4509,2.8476,2.2892,2.85)"
+              },
+              {
+                "content": "describe",
+                "span": {
+                  "offset": 307,
+                  "length": 8
+                },
+                "confidence": 0.987,
+                "source": "D(7,2.5571,2.612,3.2424,2.601,3.2436,2.8337,2.5586,2.846)"
+              },
+              {
+                "content": "what",
+                "span": {
+                  "offset": 316,
+                  "length": 4
+                },
+                "confidence": 0.993,
+                "source": "D(7,3.3732,2.5989,3.7621,2.5924,3.7631,2.8238,3.3744,2.8312)"
+              },
+              {
+                "content": "happened",
+                "span": {
+                  "offset": 321,
+                  "length": 8
+                },
+                "confidence": 0.984,
+                "source": "D(7,3.9084,2.59,4.5282,2.5793,4.5288,2.8084,3.9093,2.821)"
+              },
+              {
+                "content": "on",
+                "span": {
+                  "offset": 330,
+                  "length": 2
+                },
+                "confidence": 0.991,
+                "source": "D(7,4.6398,2.5772,4.84,2.5735,4.8405,2.8012,4.6404,2.8058)"
+              },
+              {
+                "content": "05/14/2026",
+                "span": {
+                  "offset": 333,
+                  "length": 10
+                },
+                "confidence": 0.971,
+                "source": "D(7,4.9478,2.5714,5.8601,2.5544,5.8601,2.7777,4.9482,2.7987)"
+              },
+              {
+                "content": ".",
+                "span": {
+                  "offset": 343,
+                  "length": 1
+                },
+                "confidence": 0.838,
+                "source": "D(7,5.8486,2.5546,5.9102,2.5534,5.9102,2.7765,5.8486,2.778)"
+              },
+              {
+                "content": "At",
+                "span": {
+                  "offset": 345,
+                  "length": 2
+                },
+                "confidence": 0.989,
+                "source": "D(7,1.1735,3.0189,1.405,3.0159,1.406,3.206,1.1746,3.208)"
+              },
+              {
+                "content": "about",
+                "span": {
+                  "offset": 348,
+                  "length": 5
+                },
+                "confidence": 0.988,
+                "source": "D(7,1.5368,3.0142,2.003,3.0083,2.0039,3.2008,1.5378,3.2049)"
+              },
+              {
+                "content": "10",
+                "span": {
+                  "offset": 354,
+                  "length": 2
+                },
+                "confidence": 0.992,
+                "source": "D(7,2.1669,3.0062,2.3309,3.0041,2.3318,3.198,2.1678,3.1994)"
+              },
+              {
+                "content": ":",
+                "span": {
+                  "offset": 356,
+                  "length": 1
+                },
+                "confidence": 0.998,
+                "source": "D(7,2.3566,3.0038,2.4145,3.003,2.4153,3.1973,2.3575,3.1978)"
+              },
+              {
+                "content": "42",
+                "span": {
+                  "offset": 357,
+                  "length": 2
+                },
+                "confidence": 0.928,
+                "source": "D(7,2.4209,3.003,2.662,2.9999,2.6629,3.1952,2.4218,3.1973)"
+              },
+              {
+                "content": "AM",
+                "span": {
+                  "offset": 360,
+                  "length": 2
+                },
+                "confidence": 0.897,
+                "source": "D(7,2.7778,2.9984,3.0317,2.9943,3.0325,3.1906,2.7786,3.1942)"
+              },
+              {
+                "content": ",",
+                "span": {
+                  "offset": 362,
+                  "length": 1
+                },
+                "confidence": 0.995,
+                "source": "D(7,3.0478,2.994,3.1218,2.9927,3.1225,3.189,3.0486,3.1903)"
+              },
+              {
+                "content": "I",
+                "span": {
+                  "offset": 364,
+                  "length": 1
+                },
+                "confidence": 0.935,
+                "source": "D(7,3.1989,2.9912,3.35,2.9884,3.3507,3.1848,3.1996,3.1876)"
+              },
+              {
+                "content": "was",
+                "span": {
+                  "offset": 366,
+                  "length": 3
+                },
+                "confidence": 0.977,
+                "source": "D(7,3.4882,2.9859,3.755,2.9809,3.7557,3.1774,3.4889,3.1823)"
+              },
+              {
+                "content": "driving",
+                "span": {
+                  "offset": 370,
+                  "length": 7
+                },
+                "confidence": 0.988,
+                "source": "D(7,3.8965,2.9783,4.4076,2.9688,4.4081,3.1655,3.8971,3.1748)"
+              },
+              {
+                "content": "northbound",
+                "span": {
+                  "offset": 378,
+                  "length": 10
+                },
+                "confidence": 0.976,
+                "source": "D(7,4.5298,2.9665,5.3751,2.9464,5.3754,3.1403,4.5303,3.1632)"
+              },
+              {
+                "content": "on",
+                "span": {
+                  "offset": 389,
+                  "length": 2
+                },
+                "confidence": 0.987,
+                "source": "D(7,5.5037,2.9433,5.703,2.9384,5.7031,3.1312,5.5039,3.1367)"
+              },
+              {
+                "content": "Sierra",
+                "span": {
+                  "offset": 392,
+                  "length": 6
+                },
+                "confidence": 0.939,
+                "source": "D(7,5.8315,2.9353,6.3169,2.9235,6.3169,3.114,5.8317,3.1276)"
+              },
+              {
+                "content": "Parkway",
+                "span": {
+                  "offset": 399,
+                  "length": 7
+                },
+                "confidence": 0.991,
+                "source": "D(7,1.1362,3.348,1.8113,3.3356,1.8132,3.5387,1.1382,3.5497)"
+              },
+              {
+                "content": "in",
+                "span": {
+                  "offset": 407,
+                  "length": 2
+                },
+                "confidence": 0.997,
+                "source": "D(7,1.9362,3.3333,2.078,3.3307,2.0798,3.5343,1.938,3.5367)"
+              },
+              {
+                "content": "Sierra",
+                "span": {
+                  "offset": 410,
+                  "length": 6
+                },
+                "confidence": 0.986,
+                "source": "D(7,2.213,3.3282,2.6687,3.3198,2.6703,3.5247,2.2147,3.5321)"
+              },
+              {
+                "content": "Vista",
+                "span": {
+                  "offset": 417,
+                  "length": 5
+                },
+                "confidence": 0.989,
+                "source": "D(7,2.7801,3.3178,3.175,3.3099,3.1765,3.5154,2.7817,3.5229)"
+              },
+              {
+                "content": "Grove",
+                "span": {
+                  "offset": 423,
+                  "length": 5
+                },
+                "confidence": 0.991,
+                "source": "D(7,3.283,3.3074,3.7151,3.2977,3.7163,3.5028,3.2844,3.5129)"
+              },
+              {
+                "content": "in",
+                "span": {
+                  "offset": 429,
+                  "length": 2
+                },
+                "confidence": 0.997,
+                "source": "D(7,3.8535,3.2945,4.0121,3.2909,4.0132,3.4958,3.8547,3.4995)"
+              },
+              {
+                "content": "my",
+                "span": {
+                  "offset": 432,
+                  "length": 2
+                },
+                "confidence": 0.99,
+                "source": "D(7,4.1336,3.2882,4.3597,3.2831,4.3608,3.4877,4.1347,3.493)"
+              },
+              {
+                "content": "2022",
+                "span": {
+                  "offset": 435,
+                  "length": 4
+                },
+                "confidence": 0.991,
+                "source": "D(7,4.4846,3.2802,4.893,3.271,4.8939,3.4752,4.4856,3.4847)"
+              },
+              {
+                "content": "Hyundai",
+                "span": {
+                  "offset": 440,
+                  "length": 7
+                },
+                "confidence": 0.979,
+                "source": "D(7,5.0078,3.268,5.5883,3.2524,5.5888,3.4541,5.0086,3.4718)"
+              },
+              {
+                "content": "IONIQ",
+                "span": {
+                  "offset": 448,
+                  "length": 5
+                },
+                "confidence": 0.945,
+                "source": "D(7,5.7098,3.2491,6.2531,3.2345,6.2534,3.4338,5.7103,3.4504)"
+              },
+              {
+                "content": "5",
+                "span": {
+                  "offset": 454,
+                  "length": 1
+                },
+                "confidence": 0.97,
+                "source": "D(7,6.3375,3.2322,6.4455,3.2293,6.4457,3.4279,6.3377,3.4312)"
+              },
+              {
+                "content": "SE",
+                "span": {
+                  "offset": 456,
+                  "length": 2
+                },
+                "confidence": 0.931,
+                "source": "D(7,6.5366,3.2269,6.7425,3.2213,6.7425,3.4188,6.5368,3.4251)"
+              },
+              {
+                "content": ".",
+                "span": {
+                  "offset": 458,
+                  "length": 1
+                },
+                "confidence": 0.896,
+                "source": "D(7,6.7493,3.2211,6.8066,3.2196,6.8066,3.4169,6.7493,3.4186)"
+              },
+              {
+                "content": "A",
+                "span": {
+                  "offset": 460,
+                  "length": 1
+                },
+                "confidence": 0.996,
+                "source": "D(7,1.1372,3.7032,1.2693,3.7002,1.2693,3.8942,1.1372,3.8968)"
+              },
+              {
+                "content": "road",
+                "span": {
+                  "offset": 462,
+                  "length": 4
+                },
+                "confidence": 0.992,
+                "source": "D(7,1.398,3.6972,1.7545,3.6891,1.7546,3.8846,1.398,3.8916)"
+              },
+              {
+                "content": "stone",
+                "span": {
+                  "offset": 467,
+                  "length": 5
+                },
+                "confidence": 0.993,
+                "source": "D(7,1.8998,3.6858,2.3256,3.676,2.3257,3.8733,1.8998,3.8817)"
+              },
+              {
+                "content": "kicked",
+                "span": {
+                  "offset": 473,
+                  "length": 6
+                },
+                "confidence": 0.963,
+                "source": "D(7,2.4775,3.6726,2.9892,3.6608,2.9893,3.8602,2.4776,3.8703)"
+              },
+              {
+                "content": "up",
+                "span": {
+                  "offset": 480,
+                  "length": 2
+                },
+                "confidence": 0.995,
+                "source": "D(7,3.1542,3.6571,3.3688,3.6523,3.3689,3.852,3.1543,3.8566)"
+              },
+              {
+                "content": "from",
+                "span": {
+                  "offset": 483,
+                  "length": 4
+                },
+                "confidence": 0.994,
+                "source": "D(7,3.491,3.6495,3.8475,3.6414,3.8476,3.8415,3.4911,3.8493)"
+              },
+              {
+                "content": "the",
+                "span": {
+                  "offset": 488,
+                  "length": 3
+                },
+                "confidence": 0.998,
+                "source": "D(7,3.9796,3.6385,4.2668,3.632,4.2668,3.8324,3.9796,3.8387)"
+              },
+              {
+                "content": "lane",
+                "span": {
+                  "offset": 492,
+                  "length": 4
+                },
+                "confidence": 0.995,
+                "source": "D(7,4.3955,3.6291,4.7322,3.6214,4.7323,3.8223,4.3956,3.8296)"
+              },
+              {
+                "content": "ahead",
+                "span": {
+                  "offset": 497,
+                  "length": 5
+                },
+                "confidence": 0.943,
+                "source": "D(7,4.8643,3.6184,5.3132,3.6084,5.3133,3.8088,4.8644,3.8194)"
+              },
+              {
+                "content": "and",
+                "span": {
+                  "offset": 503,
+                  "length": 3
+                },
+                "confidence": 0.998,
+                "source": "D(7,5.442,3.6055,5.7193,3.5993,5.7194,3.7991,5.4421,3.8057)"
+              },
+              {
+                "content": "struck",
+                "span": {
+                  "offset": 507,
+                  "length": 6
+                },
+                "confidence": 0.993,
+                "source": "D(7,5.848,3.5964,6.3928,3.5842,6.3928,3.7831,5.8481,3.7961)"
+              },
+              {
+                "content": "my",
+                "span": {
+                  "offset": 514,
+                  "length": 2
+                },
+                "confidence": 0.996,
+                "source": "D(7,6.5083,3.5816,6.7361,3.5765,6.7361,3.775,6.5083,3.7804)"
+              },
+              {
+                "content": "windshield",
+                "span": {
+                  "offset": 517,
+                  "length": 10
+                },
+                "confidence": 0.995,
+                "source": "D(7,1.1486,4.0503,2.0115,4.0411,2.0142,4.2517,1.1507,4.2556)"
+              },
+              {
+                "content": "on",
+                "span": {
+                  "offset": 528,
+                  "length": 2
+                },
+                "confidence": 0.996,
+                "source": "D(7,2.1333,4.0398,2.3142,4.036,2.3171,4.2478,2.1361,4.2511)"
+              },
+              {
+                "content": "the",
+                "span": {
+                  "offset": 531,
+                  "length": 3
+                },
+                "confidence": 0.998,
+                "source": "D(7,2.4429,4.0333,2.7386,4.0272,2.7418,4.24,2.4459,4.2454)"
+              },
+              {
+                "content": "passenger",
+                "span": {
+                  "offset": 535,
+                  "length": 9
+                },
+                "confidence": 0.989,
+                "source": "D(7,2.8742,4.0244,3.6081,4.0041,3.612,4.2173,2.8776,4.2375)"
+              },
+              {
+                "content": "side",
+                "span": {
+                  "offset": 545,
+                  "length": 4
+                },
+                "confidence": 0.995,
+                "source": "D(7,3.7125,4.0009,4.029,3.9911,4.0331,4.2037,3.7164,4.2139)"
+              },
+              {
+                "content": ".",
+                "span": {
+                  "offset": 549,
+                  "length": 1
+                },
+                "confidence": 0.97,
+                "source": "D(7,4.0429,3.9907,4.0985,3.9889,4.1027,4.2015,4.047,4.2033)"
+              },
+              {
+                "content": "No",
+                "span": {
+                  "offset": 552,
+                  "length": 2
+                },
+                "confidence": 0.995,
+                "source": "D(7,1.1486,4.4681,1.3751,4.4633,1.3771,4.666,1.1507,4.6713)"
+              },
+              {
+                "content": "collision",
+                "span": {
+                  "offset": 555,
+                  "length": 9
+                },
+                "confidence": 0.989,
+                "source": "D(7,1.515,4.4603,2.1812,4.4462,2.1828,4.6472,1.5169,4.6628)"
+              },
+              {
+                "content": "occurred",
+                "span": {
+                  "offset": 565,
+                  "length": 8
+                },
+                "confidence": 0.991,
+                "source": "D(7,2.3144,4.4434,3.0173,4.4278,3.0185,4.6273,2.316,4.6441)"
+              },
+              {
+                "content": "and",
+                "span": {
+                  "offset": 574,
+                  "length": 3
+                },
+                "confidence": 0.999,
+                "source": "D(7,3.1605,4.424,3.4536,4.4163,3.4547,4.6156,3.1617,4.6235)"
+              },
+              {
+                "content": "there",
+                "span": {
+                  "offset": 578,
+                  "length": 5
+                },
+                "confidence": 0.993,
+                "source": "D(7,3.6101,4.4122,4.0464,4.4007,4.0472,4.5997,3.6111,4.6114)"
+              },
+              {
+                "content": "was",
+                "span": {
+                  "offset": 584,
+                  "length": 3
+                },
+                "confidence": 0.997,
+                "source": "D(7,4.163,4.3976,4.4561,4.3899,4.4567,4.5887,4.1638,4.5966)"
+              },
+              {
+                "content": "no",
+                "span": {
+                  "offset": 588,
+                  "length": 2
+                },
+                "confidence": 0.997,
+                "source": "D(7,4.5726,4.3868,4.7525,4.3814,4.753,4.5803,4.5733,4.5856)"
+              },
+              {
+                "content": "contact",
+                "span": {
+                  "offset": 591,
+                  "length": 7
+                },
+                "confidence": 0.982,
+                "source": "D(7,4.8723,4.3777,5.4617,4.3591,5.4621,4.5588,4.8729,4.5767)"
+              },
+              {
+                "content": "with",
+                "span": {
+                  "offset": 599,
+                  "length": 4
+                },
+                "confidence": 0.994,
+                "source": "D(7,5.5816,4.3553,5.9613,4.3433,5.9614,4.5436,5.5819,4.5551)"
+              },
+              {
+                "content": "any",
+                "span": {
+                  "offset": 604,
+                  "length": 3
+                },
+                "confidence": 0.997,
+                "source": "D(7,6.0778,4.3397,6.3708,4.3304,6.3708,4.5312,6.0779,4.5401)"
+              },
+              {
+                "content": "other",
+                "span": {
+                  "offset": 608,
+                  "length": 5
+                },
+                "confidence": 0.99,
+                "source": "D(7,1.1642,4.8144,1.6137,4.8019,1.6183,5.0092,1.1683,5.0208)"
+              },
+              {
+                "content": "vehicle",
+                "span": {
+                  "offset": 614,
+                  "length": 7
+                },
+                "confidence": 0.802,
+                "source": "D(7,1.7397,4.7984,2.3323,4.782,2.3375,4.9906,1.7444,5.0059)"
+              },
+              {
+                "content": ".",
+                "span": {
+                  "offset": 621,
+                  "length": 1
+                },
+                "confidence": 0.951,
+                "source": "D(7,2.3425,4.7817,2.4004,4.7801,2.4057,4.9889,2.3477,4.9904)"
+              },
+              {
+                "content": "Shortly",
+                "span": {
+                  "offset": 623,
+                  "length": 7
+                },
+                "confidence": 0.909,
+                "source": "D(7,2.4958,4.7775,3.0816,4.7607,3.0874,4.9703,2.5011,4.9864)"
+              },
+              {
+                "content": "after",
+                "span": {
+                  "offset": 631,
+                  "length": 5
+                },
+                "confidence": 0.993,
+                "source": "D(7,3.1939,4.7572,3.6298,4.7434,3.6361,4.9522,3.1999,4.9666)"
+              },
+              {
+                "content": "the",
+                "span": {
+                  "offset": 637,
+                  "length": 3
+                },
+                "confidence": 0.996,
+                "source": "D(7,3.7558,4.7395,4.035,4.7306,4.0416,4.9388,3.7622,4.948)"
+              },
+              {
+                "content": "impact",
+                "span": {
+                  "offset": 641,
+                  "length": 6
+                },
+                "confidence": 0.979,
+                "source": "D(7,4.144,4.7272,4.6616,4.7109,4.6687,4.9181,4.1507,4.9352)"
+              },
+              {
+                "content": ",",
+                "span": {
+                  "offset": 647,
+                  "length": 1
+                },
+                "confidence": 0.991,
+                "source": "D(7,4.6548,4.7111,4.7229,4.709,4.7301,4.9161,4.6619,4.9183)"
+              },
+              {
+                "content": "I",
+                "span": {
+                  "offset": 649,
+                  "length": 1
+                },
+                "confidence": 0.968,
+                "source": "D(7,4.8114,4.7058,4.9476,4.701,4.9549,4.907,4.8186,4.9125)"
+              },
+              {
+                "content": "noticed",
+                "span": {
+                  "offset": 651,
+                  "length": 7
+                },
+                "confidence": 0.899,
+                "source": "D(7,5.0634,4.6969,5.6763,4.6753,5.684,4.8777,5.0708,4.9024)"
+              },
+              {
+                "content": "a",
+                "span": {
+                  "offset": 659,
+                  "length": 1
+                },
+                "confidence": 0.978,
+                "source": "D(7,5.7886,4.6713,5.8976,4.6675,5.9055,4.8688,5.7965,4.8732)"
+              },
+              {
+                "content": "crack",
+                "span": {
+                  "offset": 661,
+                  "length": 5
+                },
+                "confidence": 0.897,
+                "source": "D(7,6.0066,4.6636,6.5037,4.646,6.512,4.8444,6.0145,4.8644)"
+              },
+              {
+                "content": "spreading",
+                "span": {
+                  "offset": 667,
+                  "length": 9
+                },
+                "confidence": 0.954,
+                "source": "D(7,1.1683,5.1587,1.8722,5.1402,1.8771,5.3482,1.1725,5.3681)"
+              },
+              {
+                "content": "across",
+                "span": {
+                  "offset": 677,
+                  "length": 6
+                },
+                "confidence": 0.987,
+                "source": "D(7,1.998,5.1369,2.4809,5.1242,2.4863,5.331,2.003,5.3447)"
+              },
+              {
+                "content": "the",
+                "span": {
+                  "offset": 684,
+                  "length": 3
+                },
+                "confidence": 0.997,
+                "source": "D(7,2.6067,5.1209,2.8821,5.114,2.888,5.3198,2.6123,5.3275)"
+              },
+              {
+                "content": "forward",
+                "span": {
+                  "offset": 688,
+                  "length": 7
+                },
+                "confidence": 0.985,
+                "source": "D(7,2.9841,5.1115,3.5452,5.0974,3.5517,5.3013,2.9901,5.317)"
+              },
+              {
+                "content": "camera",
+                "span": {
+                  "offset": 696,
+                  "length": 6
+                },
+                "confidence": 0.983,
+                "source": "D(7,3.6744,5.0942,4.1879,5.0816,4.195,5.2835,3.6811,5.2977)"
+              },
+              {
+                "content": "viewing",
+                "span": {
+                  "offset": 703,
+                  "length": 7
+                },
+                "confidence": 0.969,
+                "source": "D(7,4.3375,5.0781,4.8952,5.0648,4.903,5.2641,4.3448,5.2794)"
+              },
+              {
+                "content": "area",
+                "span": {
+                  "offset": 711,
+                  "length": 4
+                },
+                "confidence": 0.979,
+                "source": "D(7,5.0142,5.062,5.3509,5.054,5.3591,5.2516,5.0222,5.2608)"
+              },
+              {
+                "content": ".",
+                "span": {
+                  "offset": 715,
+                  "length": 1
+                },
+                "confidence": 0.947,
+                "source": "D(7,5.3543,5.0539,5.4121,5.0525,5.4204,5.2499,5.3625,5.2515)"
+              },
+              {
+                "content": "No",
+                "span": {
+                  "offset": 718,
+                  "length": 2
+                },
+                "confidence": 0.988,
+                "source": "D(7,1.1766,5.5639,1.4221,5.5556,1.4255,5.7704,1.1797,5.7787)"
+              },
+              {
+                "content": "injuries",
+                "span": {
+                  "offset": 721,
+                  "length": 8
+                },
+                "confidence": 0.977,
+                "source": "D(7,1.5359,5.5517,2.1512,5.5309,2.1555,5.7458,1.5394,5.7666)"
+              },
+              {
+                "content": "were",
+                "span": {
+                  "offset": 730,
+                  "length": 4
+                },
+                "confidence": 0.996,
+                "source": "D(7,2.2935,5.5261,2.6634,5.5136,2.6682,5.7284,2.2979,5.7409)"
+              },
+              {
+                "content": "involved",
+                "span": {
+                  "offset": 735,
+                  "length": 8
+                },
+                "confidence": 0.979,
+                "source": "D(7,2.7914,5.509,3.3853,5.4869,3.391,5.7007,2.7964,5.7237)"
+              },
+              {
+                "content": ",",
+                "span": {
+                  "offset": 743,
+                  "length": 1
+                },
+                "confidence": 0.998,
+                "source": "D(7,3.4102,5.486,3.4707,5.4838,3.4765,5.6974,3.4159,5.6998)"
+              },
+              {
+                "content": "and",
+                "span": {
+                  "offset": 745,
+                  "length": 3
+                },
+                "confidence": 0.996,
+                "source": "D(7,3.5738,5.4799,3.8583,5.4694,3.8645,5.6824,3.5797,5.6934)"
+              },
+              {
+                "content": "the",
+                "span": {
+                  "offset": 749,
+                  "length": 3
+                },
+                "confidence": 0.993,
+                "source": "D(7,4.0006,5.4641,4.2673,5.4541,4.274,5.6665,4.0069,5.6769)"
+              },
+              {
+                "content": "vehicle",
+                "span": {
+                  "offset": 753,
+                  "length": 7
+                },
+                "confidence": 0.971,
+                "source": "D(7,4.3846,5.4494,4.9358,5.4271,4.9432,5.6374,4.3914,5.6614)"
+              },
+              {
+                "content": "remained",
+                "span": {
+                  "offset": 761,
+                  "length": 8
+                },
+                "confidence": 0.976,
+                "source": "D(7,5.0567,5.4223,5.7856,5.3928,5.7939,5.6004,5.0642,5.6322)"
+              },
+              {
+                "content": "drivable",
+                "span": {
+                  "offset": 770,
+                  "length": 8
+                },
+                "confidence": 0.904,
+                "source": "D(7,1.1746,5.9018,1.8374,5.8815,1.8424,6.092,1.1787,6.1073)"
+              },
+              {
+                "content": ".",
+                "span": {
+                  "offset": 778,
+                  "length": 1
+                },
+                "confidence": 0.952,
+                "source": "D(7,1.8374,5.8815,1.9015,5.8795,1.9066,6.0905,1.8424,6.092)"
+              },
+              {
+                "content": "There",
+                "span": {
+                  "offset": 780,
+                  "length": 5
+                },
+                "confidence": 0.94,
+                "source": "D(7,2.0084,5.8763,2.4895,5.8612,2.4954,6.076,2.0137,6.0881)"
+              },
+              {
+                "content": "was",
+                "span": {
+                  "offset": 786,
+                  "length": 3
+                },
+                "confidence": 0.995,
+                "source": "D(7,2.6106,5.8574,2.885,5.8486,2.8914,6.0651,2.6167,6.0727)"
+              },
+              {
+                "content": "no",
+                "span": {
+                  "offset": 790,
+                  "length": 2
+                },
+                "confidence": 0.997,
+                "source": "D(7,3.0168,5.8444,3.195,5.8387,3.2018,6.0567,3.0234,6.0615)"
+              },
+              {
+                "content": "body",
+                "span": {
+                  "offset": 793,
+                  "length": 4
+                },
+                "confidence": 0.985,
+                "source": "D(7,3.3269,5.8345,3.6903,5.8224,3.6977,6.0415,3.3338,6.053)"
+              },
+              {
+                "content": "damage",
+                "span": {
+                  "offset": 798,
+                  "length": 6
+                },
+                "confidence": 0.975,
+                "source": "D(7,3.7829,5.8194,4.3637,5.8001,4.372,6.0201,3.7905,6.0386)"
+              },
+              {
+                "content": ".",
+                "span": {
+                  "offset": 804,
+                  "length": 1
+                },
+                "confidence": 0.945,
+                "source": "D(7,4.3566,5.8003,4.4243,5.7981,4.4326,6.0182,4.3648,6.0204)"
+              },
+              {
+                "content": "I'm",
+                "span": {
+                  "offset": 807,
+                  "length": 3
+                },
+                "confidence": 0.946,
+                "source": "D(7,1.1268,6.3128,1.4424,6.3005,1.4446,6.5409,1.1289,6.5532)"
+              },
+              {
+                "content": "arranging",
+                "span": {
+                  "offset": 811,
+                  "length": 9
+                },
+                "confidence": 0.979,
+                "source": "D(7,1.5787,6.2952,2.2877,6.2676,2.2903,6.5078,1.581,6.5355)"
+              },
+              {
+                "content": "mobile",
+                "span": {
+                  "offset": 821,
+                  "length": 6
+                },
+                "confidence": 0.99,
+                "source": "D(7,2.4357,6.2619,2.9421,6.2422,2.9451,6.4821,2.4384,6.502)"
+              },
+              {
+                "content": "glass",
+                "span": {
+                  "offset": 828,
+                  "length": 5
+                },
+                "confidence": 0.992,
+                "source": "D(7,3.0473,6.2383,3.4213,6.2242,3.4244,6.4626,3.0503,6.4778)"
+              },
+              {
+                "content": "replacement",
+                "span": {
+                  "offset": 834,
+                  "length": 11
+                },
+                "confidence": 0.987,
+                "source": "D(7,3.5771,6.2184,4.4653,6.185,4.4689,6.4203,3.5803,6.4563)"
+              },
+              {
+                "content": "repln",
+                "span": {
+                  "offset": 846,
+                  "length": 5
+                },
+                "confidence": 0,
+                "source": "D(7,4.6328,6.1787,5.6925,6.1402,5.6964,6.3691,4.6365,6.4135)"
+              },
+              {
+                "content": "and",
+                "span": {
+                  "offset": 852,
+                  "length": 3
+                },
+                "confidence": 0.997,
+                "source": "D(7,6.008,6.1287,6.3625,6.1159,6.3667,6.3411,6.0121,6.3559)"
+              },
+              {
+                "content": "camera",
+                "span": {
+                  "offset": 856,
+                  "length": 6
+                },
+                "confidence": 0.876,
+                "source": "D(7,1.1299,6.6653,1.6869,6.6358,1.6922,6.8291,1.1351,6.8536)"
+              },
+              {
+                "content": "calibration",
+                "span": {
+                  "offset": 863,
+                  "length": 11
+                },
+                "confidence": 0.973,
+                "source": "D(7,1.8474,6.6273,2.7418,6.5801,2.7472,6.7826,1.8527,6.822)"
+              },
+              {
+                "content": "through",
+                "span": {
+                  "offset": 875,
+                  "length": 7
+                },
+                "confidence": 0.99,
+                "source": "D(7,2.886,6.5737,3.453,6.5487,3.4583,6.7516,2.8914,6.7763)"
+              },
+              {
+                "content": "Grove",
+                "span": {
+                  "offset": 883,
+                  "length": 5
+                },
+                "confidence": 0.989,
+                "source": "D(7,3.6005,6.5422,4.043,6.5227,4.0481,6.7258,3.6057,6.7451)"
+              },
+              {
+                "content": "Mobile",
+                "span": {
+                  "offset": 889,
+                  "length": 6
+                },
+                "confidence": 0.987,
+                "source": "D(7,4.138,6.5185,4.633,6.4995,4.6379,6.7002,4.1431,6.7217)"
+              },
+              {
+                "content": "Glass",
+                "span": {
+                  "offset": 896,
+                  "length": 5
+                },
+                "confidence": 0.975,
+                "source": "D(7,4.751,6.4954,5.1642,6.4808,5.1687,6.6772,4.7559,6.6951)"
+              },
+              {
+                "content": "&",
+                "span": {
+                  "offset": 902,
+                  "length": 1
+                },
+                "confidence": 0.998,
+                "source": "D(7,5.256,6.4776,5.3806,6.4732,5.385,6.6678,5.2605,6.6732)"
+              },
+              {
+                "content": "Scan",
+                "span": {
+                  "offset": 904,
+                  "length": 4
+                },
+                "confidence": 0.987,
+                "source": "D(7,5.4592,6.4705,5.8363,6.4572,5.8405,6.6481,5.4636,6.6644)"
+              },
+              {
+                "content": ".",
+                "span": {
+                  "offset": 908,
+                  "length": 1
+                },
+                "confidence": 0.936,
+                "source": "D(7,5.8461,6.4568,5.9019,6.4549,5.906,6.6452,5.8503,6.6476)"
+              },
+              {
+                "content": "Please",
+                "span": {
+                  "offset": 911,
+                  "length": 6
+                },
+                "confidence": 0.973,
+                "source": "D(7,1.1248,7.048,1.6095,7.0255,1.6153,7.2436,1.131,7.2637)"
+              },
+              {
+                "content": "let",
+                "span": {
+                  "offset": 918,
+                  "length": 3
+                },
+                "confidence": 0.993,
+                "source": "D(7,1.759,7.0185,1.9923,7.0077,1.9977,7.2277,1.7646,7.2374)"
+              },
+              {
+                "content": "me",
+                "span": {
+                  "offset": 922,
+                  "length": 2
+                },
+                "confidence": 0.994,
+                "source": "D(7,2.1198,7.0017,2.3531,6.9909,2.3582,7.2127,2.1251,7.2224)"
+              },
+              {
+                "content": "know",
+                "span": {
+                  "offset": 925,
+                  "length": 4
+                },
+                "confidence": 0.968,
+                "source": "D(7,2.4771,6.9851,2.8707,6.9668,2.8753,7.1912,2.482,7.2076)"
+              },
+              {
+                "content": "if",
+                "span": {
+                  "offset": 930,
+                  "length": 2
+                },
+                "confidence": 0.994,
+                "source": "D(7,2.991,6.9618,3.1624,6.9547,3.1667,7.179,2.9955,7.1862)"
+              },
+              {
+                "content": "you",
+                "span": {
+                  "offset": 933,
+                  "length": 3
+                },
+                "confidence": 0.993,
+                "source": "D(7,3.2426,6.9514,3.527,6.9397,3.5308,7.1637,3.2468,7.1756)"
+              },
+              {
+                "content": "need",
+                "span": {
+                  "offset": 937,
+                  "length": 4
+                },
+                "confidence": 0.988,
+                "source": "D(7,3.6509,6.9346,4.0009,6.9202,4.0042,7.1438,3.6546,7.1585)"
+              },
+              {
+                "content": "any",
+                "span": {
+                  "offset": 942,
+                  "length": 3
+                },
+                "confidence": 0.987,
+                "source": "D(7,4.1431,6.9143,4.4239,6.9028,4.4266,7.126,4.1462,7.1378)"
+              },
+              {
+                "content": "additional",
+                "span": {
+                  "offset": 946,
+                  "length": 10
+                },
+                "confidence": 0.947,
+                "source": "D(7,4.577,6.8965,5.3282,6.8691,5.3297,7.0878,4.5796,7.1196)"
+              },
+              {
+                "content": "information",
+                "span": {
+                  "offset": 957,
+                  "length": 11
+                },
+                "confidence": 0.973,
+                "source": "D(7,5.4558,6.8646,6.3748,6.8316,6.3748,7.0434,5.4572,7.0824)"
+              },
+              {
+                "content": ".",
+                "span": {
+                  "offset": 968,
+                  "length": 1
+                },
+                "confidence": 0.892,
+                "source": "D(7,6.3784,6.8315,6.4331,6.8295,6.4331,7.041,6.3785,7.0433)"
+              },
+              {
+                "content": "E",
+                "span": {
+                  "offset": 971,
+                  "length": 1
+                },
+                "confidence": 0.991,
+                "source": "D(7,1.0947,7.8013,1.2119,7.8007,1.2162,8.0023,1.0988,8.0024)"
+              },
+              {
+                "content": ".",
+                "span": {
+                  "offset": 972,
+                  "length": 1
+                },
+                "confidence": 0.995,
+                "source": "D(7,1.2087,7.8008,1.2689,7.799,1.2732,7.9999,1.213,8.0024)"
+              },
+              {
+                "content": "P",
+                "span": {
+                  "offset": 973,
+                  "length": 1
+                },
+                "confidence": 0.979,
+                "source": "D(7,1.2753,7.7988,1.3734,7.7939,1.3776,7.9918,1.2796,7.9996)"
+              },
+              {
+                "content": ".",
+                "span": {
+                  "offset": 974,
+                  "length": 1
+                },
+                "confidence": 0.987,
+                "source": "D(7,1.3417,7.7957,1.3987,7.7925,1.4028,7.9895,1.346,7.9946)"
+              },
+              {
+                "content": "Ethan",
+                "span": {
+                  "offset": 980,
+                  "length": 5
+                },
+                "confidence": 0.937,
+                "source": "D(7,1.02,8.1962,1.8405,8.1681,1.8513,8.5295,1.0293,8.569)"
+              },
+              {
+                "content": "Park",
+                "span": {
+                  "offset": 986,
+                  "length": 4
+                },
+                "confidence": 0.834,
+                "source": "D(7,1.914,8.166,2.5878,8.1505,2.6002,8.5049,1.925,8.5264)"
+              },
+              {
+                "content": "Vehicle",
+                "span": {
+                  "offset": 1039,
+                  "length": 7
+                },
+                "confidence": 0.998,
+                "source": "D(7,4.1836,7.4451,4.504,7.4422,4.504,7.5497,4.1836,7.5525)"
+              },
+              {
+                "content": "Information",
+                "span": {
+                  "offset": 1047,
+                  "length": 11
+                },
+                "confidence": 0.998,
+                "source": "D(7,4.5344,7.442,5.0427,7.4383,5.0427,7.5458,4.5344,7.5494)"
+              },
+              {
+                "content": "Vehicle",
+                "span": {
+                  "offset": 1079,
+                  "length": 7
+                },
+                "confidence": 0.999,
+                "source": "D(7,4.1919,7.6162,4.4848,7.6162,4.4848,7.7147,4.1919,7.7135)"
+              },
+              {
+                "content": ":",
+                "span": {
+                  "offset": 1086,
+                  "length": 1
+                },
+                "confidence": 0.999,
+                "source": "D(7,4.4865,7.6162,4.5115,7.6162,4.5115,7.7153,4.4865,7.7148)"
+              },
+              {
+                "content": "2022",
+                "span": {
+                  "offset": 1097,
+                  "length": 4
+                },
+                "confidence": 0.995,
+                "source": "D(7,5.1091,7.6123,5.2993,7.6096,5.2993,7.7183,5.1091,7.7183)"
+              },
+              {
+                "content": "Hyundai",
+                "span": {
+                  "offset": 1102,
+                  "length": 7
+                },
+                "confidence": 0.989,
+                "source": "D(7,5.327,7.6093,5.6316,7.6064,5.6316,7.7183,5.327,7.7183)"
+              },
+              {
+                "content": "IONIQ",
+                "span": {
+                  "offset": 1110,
+                  "length": 5
+                },
+                "confidence": 0.967,
+                "source": "D(7,5.663,7.6062,5.8957,7.6055,5.8957,7.7183,5.663,7.7183)"
+              },
+              {
+                "content": "5",
+                "span": {
+                  "offset": 1116,
+                  "length": 1
+                },
+                "confidence": 0.981,
+                "source": "D(7,5.9178,7.6055,5.9695,7.6055,5.9695,7.7183,5.9178,7.7183)"
+              },
+              {
+                "content": "SE",
+                "span": {
+                  "offset": 1118,
+                  "length": 2
+                },
+                "confidence": 0.988,
+                "source": "D(7,5.9954,7.6055,6.1135,7.6056,6.1135,7.7183,5.9954,7.7183)"
+              },
+              {
+                "content": "Color",
+                "span": {
+                  "offset": 1141,
+                  "length": 5
+                },
+                "confidence": 0.999,
+                "source": "D(7,4.194,7.7773,4.4148,7.7773,4.4148,7.874,4.194,7.874)"
+              },
+              {
+                "content": ":",
+                "span": {
+                  "offset": 1146,
+                  "length": 1
+                },
+                "confidence": 0.999,
+                "source": "D(7,4.4081,7.7773,4.4368,7.7773,4.4368,7.874,4.4081,7.874)"
+              },
+              {
+                "content": "White",
+                "span": {
+                  "offset": 1157,
+                  "length": 5
+                },
+                "confidence": 0.999,
+                "source": "D(7,5.1008,7.772,5.3416,7.772,5.3416,7.8687,5.1008,7.8687)"
+              },
+              {
+                "content": "VIN",
+                "span": {
+                  "offset": 1183,
+                  "length": 3
+                },
+                "confidence": 0.989,
+                "source": "D(7,4.1919,7.939,4.3403,7.934,4.3403,8.0352,4.1919,8.0352)"
+              },
+              {
+                "content": ":",
+                "span": {
+                  "offset": 1186,
+                  "length": 1
+                },
+                "confidence": 0.997,
+                "source": "D(7,4.3403,7.934,4.3787,7.9315,4.3787,8.0352,4.3403,8.0352)"
+              },
+              {
+                "content": "KM8KNDAF4NA516248",
+                "span": {
+                  "offset": 1197,
+                  "length": 17
+                },
+                "confidence": 0.879,
+                "source": "D(7,5.1091,7.9224,6.043,7.9291,6.043,8.0365,5.1091,8.0299)"
+              },
+              {
+                "content": "Registration",
+                "span": {
+                  "offset": 1235,
+                  "length": 12
+                },
+                "confidence": 0.999,
+                "source": "D(7,4.196,8.0943,4.6728,8.0931,4.6728,8.207,4.196,8.207)"
+              },
+              {
+                "content": ":",
+                "span": {
+                  "offset": 1247,
+                  "length": 1
+                },
+                "confidence": 0.998,
+                "source": "D(7,4.6784,8.0931,4.7065,8.0929,4.7065,8.207,4.6784,8.207)"
+              },
+              {
+                "content": "CA79535",
+                "span": {
+                  "offset": 1258,
+                  "length": 7
+                },
+                "confidence": 0.961,
+                "source": "D(7,5.1091,8.0835,5.4827,8.0835,5.4827,8.1909,5.1091,8.1909)"
+              },
+              {
+                "content": "Use",
+                "span": {
+                  "offset": 1286,
+                  "length": 3
+                },
+                "confidence": 0.994,
+                "source": "D(7,4.1919,8.2506,4.3505,8.2502,4.3505,8.3573,4.1919,8.3568)"
+              },
+              {
+                "content": ":",
+                "span": {
+                  "offset": 1289,
+                  "length": 1
+                },
+                "confidence": 0.998,
+                "source": "D(7,4.3505,8.2502,4.3828,8.2478,4.3828,8.3596,4.3505,8.3573)"
+              },
+              {
+                "content": "Personal",
+                "span": {
+                  "offset": 1300,
+                  "length": 8
+                },
+                "confidence": 0.997,
+                "source": "D(7,5.1091,8.2446,5.4487,8.2446,5.4487,8.3521,5.1091,8.3521)"
+              },
+              {
+                "content": "/",
+                "span": {
+                  "offset": 1309,
+                  "length": 1
+                },
+                "confidence": 0.999,
+                "source": "D(7,5.4665,8.2446,5.5094,8.2446,5.5094,8.3521,5.4665,8.3521)"
+              },
+              {
+                "content": "commute",
+                "span": {
+                  "offset": 1311,
+                  "length": 7
+                },
+                "confidence": 0.998,
+                "source": "D(7,5.5237,8.2446,5.8811,8.2446,5.8811,8.3521,5.5237,8.3521)"
+              },
+              {
+                "content": "Loss",
+                "span": {
+                  "offset": 1370,
+                  "length": 4
+                },
+                "confidence": 0.998,
+                "source": "D(7,4.1836,8.5718,4.3657,8.5736,4.3657,8.6703,4.1836,8.6684)"
+              },
+              {
+                "content": "Details",
+                "span": {
+                  "offset": 1375,
+                  "length": 7
+                },
+                "confidence": 0.998,
+                "source": "D(7,4.3908,8.5736,4.6609,8.5714,4.6609,8.6681,4.3908,8.6703)"
+              },
+              {
+                "content": "Date",
+                "span": {
+                  "offset": 1403,
+                  "length": 4
+                },
+                "confidence": 0.999,
+                "source": "D(7,4.194,8.7334,4.3705,8.7334,4.3705,8.8301,4.194,8.8301)"
+              },
+              {
+                "content": ":",
+                "span": {
+                  "offset": 1407,
+                  "length": 1
+                },
+                "confidence": 0.999,
+                "source": "D(7,4.3705,8.7334,4.3994,8.7334,4.3994,8.8301,4.3705,8.8301)"
+              },
+              {
+                "content": "2026-05-14",
+                "span": {
+                  "offset": 1418,
+                  "length": 10
+                },
+                "confidence": 0.994,
+                "source": "D(7,5.105,8.727,5.5491,8.7171,5.5491,8.8194,5.105,8.8262)"
+              },
+              {
+                "content": "Time",
+                "span": {
+                  "offset": 1438,
+                  "length": 4
+                },
+                "confidence": 0.999,
+                "source": "D(7,5.823,8.7168,6.0066,8.7174,6.0066,8.8141,5.823,8.8135)"
+              },
+              {
+                "content": ":",
+                "span": {
+                  "offset": 1442,
+                  "length": 1
+                },
+                "confidence": 0.996,
+                "source": "D(7,6.0066,8.7174,6.0347,8.717,6.0347,8.8137,6.0066,8.8141)"
+              },
+              {
+                "content": "10",
+                "span": {
+                  "offset": 1453,
+                  "length": 2
+                },
+                "confidence": 0.999,
+                "source": "D(7,6.1841,8.7173,6.2683,8.7173,6.2683,8.814,6.1841,8.814)"
+              },
+              {
+                "content": ":",
+                "span": {
+                  "offset": 1455,
+                  "length": 1
+                },
+                "confidence": 0.999,
+                "source": "D(7,6.2683,8.7173,6.2921,8.7173,6.2921,8.814,6.2683,8.814)"
+              },
+              {
+                "content": "42",
+                "span": {
+                  "offset": 1456,
+                  "length": 2
+                },
+                "confidence": 0.999,
+                "source": "D(7,6.2874,8.7173,6.3875,8.7173,6.3875,8.814,6.2874,8.814)"
+              },
+              {
+                "content": "Location",
+                "span": {
+                  "offset": 1479,
+                  "length": 8
+                },
+                "confidence": 0.998,
+                "source": "D(7,4.1919,8.8838,4.5078,8.8838,4.5078,8.9805,4.1919,8.9805)"
+              },
+              {
+                "content": ":",
+                "span": {
+                  "offset": 1487,
+                  "length": 1
+                },
+                "confidence": 0.998,
+                "source": "D(7,4.5125,8.8838,4.5405,8.8838,4.5405,8.9805,4.5125,8.9805)"
+              },
+              {
+                "content": "Sierra",
+                "span": {
+                  "offset": 1510,
+                  "length": 6
+                },
+                "confidence": 0.996,
+                "source": "D(7,5.105,8.8733,5.3257,8.873,5.3257,8.9805,5.105,8.9805)"
+              },
+              {
+                "content": "Parkway",
+                "span": {
+                  "offset": 1517,
+                  "length": 7
+                },
+                "confidence": 0.988,
+                "source": "D(7,5.3506,8.873,5.6692,8.8726,5.6692,8.9805,5.3506,8.9805)"
+              },
+              {
+                "content": "northbound",
+                "span": {
+                  "offset": 1525,
+                  "length": 10
+                },
+                "confidence": 0.992,
+                "source": "D(7,5.687,8.8726,6.1016,8.8723,6.1016,8.9805,5.687,8.9805)"
+              },
+              {
+                "content": ",",
+                "span": {
+                  "offset": 1535,
+                  "length": 1
+                },
+                "confidence": 0.991,
+                "source": "D(7,6.1034,8.8723,6.1301,8.8723,6.1301,8.9805,6.1034,8.9805)"
+              },
+              {
+                "content": "Sierra",
+                "span": {
+                  "offset": 1537,
+                  "length": 6
+                },
+                "confidence": 0.998,
+                "source": "D(7,5.105,9.0007,5.3222,9.0021,5.3222,9.1095,5.105,9.1081)"
+              },
+              {
+                "content": "Vista",
+                "span": {
+                  "offset": 1544,
+                  "length": 5
+                },
+                "confidence": 0.997,
+                "source": "D(7,5.3438,9.0022,5.5251,9.0025,5.5251,9.1099,5.3438,9.1096)"
+              },
+              {
+                "content": "Grove",
+                "span": {
+                  "offset": 1550,
+                  "length": 5
+                },
+                "confidence": 0.998,
+                "source": "D(7,5.5503,9.0022,5.7729,9,5.7729,9.1075,5.5503,9.1097)"
+              },
+              {
+                "content": ",",
+                "span": {
+                  "offset": 1555,
+                  "length": 1
+                },
+                "confidence": 0.999,
+                "source": "D(7,5.7711,9.0001,5.7927,8.9999,5.7927,9.1073,5.7711,9.1075)"
+              },
+              {
+                "content": "CA",
+                "span": {
+                  "offset": 1557,
+                  "length": 2
+                },
+                "confidence": 0.993,
+                "source": "D(7,5.816,8.9996,5.9309,8.9969,5.9309,9.1043,5.816,9.107)"
+              },
+              {
+                "content": "95825",
+                "span": {
+                  "offset": 1560,
+                  "length": 5
+                },
+                "confidence": 0.957,
+                "source": "D(7,5.9542,8.9963,6.1965,8.9899,6.1965,9.0973,5.9542,9.1037)"
+              },
+              {
+                "content": "Damage",
+                "span": {
+                  "offset": 1586,
+                  "length": 6
+                },
+                "confidence": 0.999,
+                "source": "D(7,4.194,9.1685,4.5098,9.1685,4.5098,9.2759,4.194,9.2759)"
+              },
+              {
+                "content": ":",
+                "span": {
+                  "offset": 1592,
+                  "length": 1
+                },
+                "confidence": 0.999,
+                "source": "D(7,4.5098,9.1685,4.5405,9.1685,4.5405,9.2759,4.5098,9.2759)"
+              },
+              {
+                "content": "Windshield",
+                "span": {
+                  "offset": 1615,
+                  "length": 10
+                },
+                "confidence": 0.998,
+                "source": "D(7,5.105,9.1596,5.5101,9.1532,5.5101,9.2606,5.105,9.267)"
+              },
+              {
+                "content": "crack",
+                "span": {
+                  "offset": 1626,
+                  "length": 5
+                },
+                "confidence": 0.998,
+                "source": "D(7,5.5351,9.1531,5.7368,9.1527,5.7368,9.2602,5.5351,9.2606)"
+              },
+              {
+                "content": "across",
+                "span": {
+                  "offset": 1632,
+                  "length": 6
+                },
+                "confidence": 0.994,
+                "source": "D(7,5.7529,9.1527,5.9957,9.1535,5.9957,9.2609,5.7529,9.2601)"
+              },
+              {
+                "content": "forward",
+                "span": {
+                  "offset": 1639,
+                  "length": 7
+                },
+                "confidence": 0.994,
+                "source": "D(7,6.0099,9.1537,6.3044,9.1572,6.3044,9.2646,6.0099,9.2611)"
+              },
+              {
+                "content": "camera",
+                "span": {
+                  "offset": 1647,
+                  "length": 6
+                },
+                "confidence": 0.996,
+                "source": "D(7,5.105,9.2914,5.3774,9.2922,5.3773,9.3994,5.105,9.3994)"
+              },
+              {
+                "content": "viewing",
+                "span": {
+                  "offset": 1654,
+                  "length": 7
+                },
+                "confidence": 0.966,
+                "source": "D(7,5.3973,9.2922,5.6624,9.2921,5.6624,9.3994,5.3973,9.3994)"
+              },
+              {
+                "content": "area",
+                "span": {
+                  "offset": 1662,
+                  "length": 4
+                },
+                "confidence": 0.994,
+                "source": "D(7,5.6842,9.2921,5.8422,9.2918,5.8422,9.3994,5.6842,9.3994)"
+              },
+              {
+                "content": ";",
+                "span": {
+                  "offset": 1666,
+                  "length": 1
+                },
+                "confidence": 0.998,
+                "source": "D(7,5.844,9.2918,5.864,9.2917,5.864,9.3994,5.844,9.3994)"
+              },
+              {
+                "content": "no",
+                "span": {
+                  "offset": 1668,
+                  "length": 2
+                },
+                "confidence": 0.942,
+                "source": "D(7,5.8876,9.2915,5.9802,9.291,5.9802,9.3994,5.8876,9.3994)"
+              },
+              {
+                "content": "body",
+                "span": {
+                  "offset": 1671,
+                  "length": 4
+                },
+                "confidence": 0.8,
+                "source": "D(7,5.9984,9.2908,6.1799,9.2897,6.1799,9.3994,5.9984,9.3994)"
+              },
+              {
+                "content": "-",
+                "span": {
+                  "offset": 1675,
+                  "length": 1
+                },
+                "confidence": 0.999,
+                "source": "D(7,6.1745,9.2897,6.209,9.2895,6.209,9.3994,6.1745,9.3994)"
+              },
+              {
+                "content": "panel",
+                "span": {
+                  "offset": 1677,
+                  "length": 5
+                },
+                "confidence": 0.998,
+                "source": "D(7,5.105,9.4316,5.3008,9.4316,5.3008,9.5391,5.105,9.5391)"
+              },
+              {
+                "content": "damage",
+                "span": {
+                  "offset": 1683,
+                  "length": 6
+                },
+                "confidence": 0.998,
+                "source": "D(7,5.3209,9.4316,5.6101,9.4316,5.6101,9.5391,5.3209,9.5391)"
+              },
+              {
+                "content": ".",
+                "span": {
+                  "offset": 1689,
+                  "length": 1
+                },
+                "confidence": 0.996,
+                "source": "D(7,5.6119,9.4316,5.6321,9.4316,5.6321,9.5391,5.6119,9.5391)"
+              },
+              {
+                "content": "Drivable",
+                "span": {
+                  "offset": 1711,
+                  "length": 8
+                },
+                "confidence": 0.999,
+                "source": "D(7,4.1919,9.5874,4.5011,9.5874,4.5011,9.6841,4.1919,9.6841)"
+              },
+              {
+                "content": ":",
+                "span": {
+                  "offset": 1719,
+                  "length": 1
+                },
+                "confidence": 0.999,
+                "source": "D(7,4.5011,9.5874,4.5322,9.5874,4.5322,9.6841,4.5011,9.6841)"
+              },
+              {
+                "content": "Yes",
+                "span": {
+                  "offset": 1742,
+                  "length": 3
+                },
+                "confidence": 0.998,
+                "source": "D(7,5.1008,9.582,5.2544,9.582,5.2544,9.6787,5.1008,9.6787)"
+              },
+              {
+                "content": "Injuries",
+                "span": {
+                  "offset": 1766,
+                  "length": 8
+                },
+                "confidence": 0.957,
+                "source": "D(7,4.194,9.7369,4.4629,9.7435,4.4629,9.8509,4.194,9.8444)"
+              },
+              {
+                "content": ":",
+                "span": {
+                  "offset": 1774,
+                  "length": 1
+                },
+                "confidence": 0.993,
+                "source": "D(7,4.4648,9.7436,4.4907,9.7443,4.4907,9.8518,4.4648,9.851)"
+              },
+              {
+                "content": "None",
+                "span": {
+                  "offset": 1797,
+                  "length": 4
+                },
+                "confidence": 0.998,
+                "source": "D(7,5.1008,9.7384,5.2998,9.7357,5.2998,9.8432,5.1008,9.8458)"
+              },
+              {
+                "content": "reported",
+                "span": {
+                  "offset": 1802,
+                  "length": 8
+                },
+                "confidence": 0.998,
+                "source": "D(7,5.321,9.7358,5.6362,9.7391,5.6362,9.8465,5.321,9.8432)"
+              },
+              {
+                "content": "Other",
+                "span": {
+                  "offset": 1831,
+                  "length": 5
+                },
+                "confidence": 0.998,
+                "source": "D(7,4.194,9.8989,4.4072,9.8989,4.4072,10.0049,4.194,9.9996)"
+              },
+              {
+                "content": "Driver",
+                "span": {
+                  "offset": 1837,
+                  "length": 6
+                },
+                "confidence": 0.999,
+                "source": "D(7,4.4248,9.8989,4.6504,9.8989,4.6504,10.0063,4.4248,10.0051)"
+              },
+              {
+                "content": ":",
+                "span": {
+                  "offset": 1843,
+                  "length": 1
+                },
+                "confidence": 0.998,
+                "source": "D(7,4.6469,9.8989,4.6733,9.8989,4.6733,10.0063,4.6469,10.0063)"
+              },
+              {
+                "content": "Not",
+                "span": {
+                  "offset": 1866,
+                  "length": 3
+                },
+                "confidence": 0.999,
+                "source": "D(7,5.1008,9.9001,5.2394,9.8968,5.2394,10.0092,5.1008,10.0046)"
+              },
+              {
+                "content": "applicable",
+                "span": {
+                  "offset": 1870,
+                  "length": 10
+                },
+                "confidence": 0.998,
+                "source": "D(7,5.2563,9.8964,5.6404,9.8936,5.6404,10.0088,5.2563,10.0098)"
+              },
+              {
+                "content": "Liability",
+                "span": {
+                  "offset": 1901,
+                  "length": 9
+                },
+                "confidence": 0.998,
+                "source": "D(7,4.1919,10.0544,4.4861,10.0554,4.4861,10.1628,4.1919,10.1618)"
+              },
+              {
+                "content": ":",
+                "span": {
+                  "offset": 1910,
+                  "length": 1
+                },
+                "confidence": 0.996,
+                "source": "D(7,4.4842,10.0554,4.5115,10.0555,4.5115,10.1629,4.4842,10.1628)"
+              },
+              {
+                "content": "Not",
+                "span": {
+                  "offset": 1933,
+                  "length": 3
+                },
+                "confidence": 0.999,
+                "source": "D(7,5.105,10.056,5.2396,10.0538,5.2396,10.1514,5.105,10.1514)"
+              },
+              {
+                "content": "determined",
+                "span": {
+                  "offset": 1937,
+                  "length": 10
+                },
+                "confidence": 0.998,
+                "source": "D(7,5.2563,10.0536,5.6902,10.0484,5.6902,10.1514,5.2563,10.1514)"
+              }
+            ],
+            "lines": [
+              {
+                "content": "Insured:",
+                "source": "D(7,1.2451,0.7064,1.7018,0.7154,1.6996,0.8286,1.2451,0.8196)",
+                "span": {
+                  "offset": 0,
+                  "length": 8
+                }
+              },
+              {
+                "content": "Ethan Park",
+                "source": "D(7,1.2441,0.8691,1.7847,0.8736,1.7836,0.9857,1.243,0.9805)",
+                "span": {
+                  "offset": 9,
+                  "length": 10
+                }
+              },
+              {
+                "content": "428 Linden Terrace, Sierra Vista Grove, CA 95825",
+                "source": "D(7,1.2416,1.0286,3.6565,1.02,3.6569,1.1427,1.242,1.1513)",
+                "span": {
+                  "offset": 20,
+                  "length": 48
+                }
+              },
+              {
+                "content": "(916) 555-0108",
+                "source": "D(7,1.243,1.1817,2.0015,1.1806,2.0017,1.3091,1.2432,1.3102)",
+                "span": {
+                  "offset": 69,
+                  "length": 14
+                }
+              },
+              {
+                "content": "ethan.park@example.com",
+                "source": "D(7,1.2379,1.3451,2.4923,1.3453,2.4923,1.4686,1.2378,1.4684)",
+                "span": {
+                  "offset": 84,
+                  "length": 22
+                }
+              },
+              {
+                "content": "Policy Reference:",
+                "source": "D(7,1.2389,1.7396,2.012,1.7402,2.0119,1.8587,1.2388,1.8581)",
+                "span": {
+                  "offset": 108,
+                  "length": 17
+                }
+              },
+              {
+                "content": "SLI-A1508902",
+                "source": "D(7,1.241,1.8946,1.9514,1.8988,1.9507,2.0137,1.2403,2.0095)",
+                "span": {
+                  "offset": 126,
+                  "length": 12
+                }
+              },
+              {
+                "content": "Sierra Lantern Insurance",
+                "source": "D(7,5.1257,0.7233,6.3916,0.7265,6.3916,0.8339,5.1255,0.8306)",
+                "span": {
+                  "offset": 140,
+                  "length": 24
+                }
+              },
+              {
+                "content": "504 Civic Lane",
+                "source": "D(7,5.1257,0.8781,5.8397,0.879,5.8396,0.9884,5.1256,0.9875)",
+                "span": {
+                  "offset": 165,
+                  "length": 14
+                }
+              },
+              {
+                "content": "Sierra Vista Grove, CA 95825",
+                "source": "D(7,5.1299,1.0328,6.4995,1.0267,6.5,1.1452,5.1299,1.1513)",
+                "span": {
+                  "offset": 180,
+                  "length": 28
+                }
+              },
+              {
+                "content": "(916) 555-0128",
+                "source": "D(7,5.1299,1.1874,5.8562,1.1847,5.8566,1.3113,5.1299,1.314)",
+                "span": {
+                  "offset": 209,
+                  "length": 14
+                }
+              },
+              {
+                "content": "Adjuster: Jules Mercer",
+                "source": "D(7,5.1299,1.3446,6.1965,1.3433,6.1967,1.46,5.1299,1.4612)",
+                "span": {
+                  "offset": 224,
+                  "length": 22
+                }
+              },
+              {
+                "content": "Claim Reference:",
+                "source": "D(7,5.1506,1.7443,5.9019,1.7443,5.9019,1.8477,5.1506,1.8477)",
+                "span": {
+                  "offset": 248,
+                  "length": 16
+                }
+              },
+              {
+                "content": "SLI-26-394117",
+                "source": "D(7,5.1548,1.9052,5.8566,1.9078,5.8562,2.0156,5.1544,2.013)",
+                "span": {
+                  "offset": 265,
+                  "length": 13
+                }
+              },
+              {
+                "content": "05/15/2026",
+                "source": "D(7,6.1038,2.2549,7.1468,2.231,7.1497,2.4338,6.1052,2.4606)",
+                "span": {
+                  "offset": 280,
+                  "length": 10
+                }
+              },
+              {
+                "content": "I'm writing to describe what happened on 05/14/2026.",
+                "source": "D(7,1.1655,2.6321,5.9102,2.5534,5.9102,2.7906,1.1694,2.8676)",
+                "span": {
+                  "offset": 292,
+                  "length": 52
+                }
+              },
+              {
+                "content": "At about 10:42 AM, I was driving northbound on Sierra",
+                "source": "D(7,1.1732,3.0189,6.3169,2.9235,6.3197,3.1301,1.1749,3.2109)",
+                "span": {
+                  "offset": 345,
+                  "length": 53
+                }
+              },
+              {
+                "content": "Parkway in Sierra Vista Grove in my 2022 Hyundai IONIQ 5 SE.",
+                "source": "D(7,1.1344,3.3481,6.8066,3.2196,6.8066,3.4332,1.1385,3.5541)",
+                "span": {
+                  "offset": 399,
+                  "length": 60
+                }
+              },
+              {
+                "content": "A road stone kicked up from the lane ahead and struck my",
+                "source": "D(7,1.1344,3.702,6.7361,3.5765,6.7402,3.7774,1.1373,3.8973)",
+                "span": {
+                  "offset": 460,
+                  "length": 56
+                }
+              },
+              {
+                "content": "windshield on the passenger side.",
+                "source": "D(7,1.1464,4.0503,4.0985,3.9889,4.1032,4.2126,1.1511,4.2572)",
+                "span": {
+                  "offset": 517,
+                  "length": 33
+                }
+              },
+              {
+                "content": "No collision occurred and there was no contact with any",
+                "source": "D(7,1.1455,4.4682,6.3708,4.3304,6.375,4.5389,1.1508,4.6724)",
+                "span": {
+                  "offset": 552,
+                  "length": 55
+                }
+              },
+              {
+                "content": "other vehicle. Shortly after the impact, I noticed a crack",
+                "source": "D(7,1.1621,4.8145,6.5057,4.646,6.5125,4.8625,1.1687,5.0211)",
+                "span": {
+                  "offset": 608,
+                  "length": 58
+                }
+              },
+              {
+                "content": "spreading across the forward camera viewing area.",
+                "source": "D(7,1.1676,5.1587,5.4146,5.0488,5.4204,5.2499,1.1725,5.3681)",
+                "span": {
+                  "offset": 667,
+                  "length": 49
+                }
+              },
+              {
+                "content": "No injuries were involved, and the vehicle remained",
+                "source": "D(7,1.1732,5.5641,5.7862,5.3928,5.7939,5.6126,1.1799,5.7796)",
+                "span": {
+                  "offset": 718,
+                  "length": 51
+                }
+              },
+              {
+                "content": "drivable. There was no body damage.",
+                "source": "D(7,1.1732,5.9013,4.4256,5.798,4.4326,6.0182,1.1792,6.1117)",
+                "span": {
+                  "offset": 770,
+                  "length": 35
+                }
+              },
+              {
+                "content": "I'm arranging mobile glass replacement repln and",
+                "source": "D(7,1.1234,6.313,6.3623,6.1117,6.3695,6.3493,1.1289,6.5532)",
+                "span": {
+                  "offset": 807,
+                  "length": 48
+                }
+              },
+              {
+                "content": "camera calibration through Grove Mobile Glass & Scan.",
+                "source": "D(7,1.1289,6.65,5.9013,6.4494,5.9102,6.6451,1.1351,6.8536)",
+                "span": {
+                  "offset": 856,
+                  "length": 53
+                }
+              },
+              {
+                "content": "Please let me know if you need any additional information.",
+                "source": "D(7,1.1234,7.0394,6.4327,6.8259,6.4359,7.043,1.131,7.2637)",
+                "span": {
+                  "offset": 911,
+                  "length": 58
+                }
+              },
+              {
+                "content": "E.P.",
+                "source": "D(7,1.093,7.8013,1.3987,7.7925,1.4046,7.997,1.0989,8.005)",
+                "span": {
+                  "offset": 971,
+                  "length": 4
+                }
+              },
+              {
+                "content": "Ethan Park",
+                "source": "D(7,1.0182,8.1964,2.5873,8.149,2.6009,8.5106,1.0293,8.569)",
+                "span": {
+                  "offset": 980,
+                  "length": 10
+                }
+              },
+              {
+                "content": "Vehicle Information",
+                "source": "D(7,4.1836,7.4448,5.0427,7.438,5.0436,7.5458,4.1836,7.5525)",
+                "span": {
+                  "offset": 1039,
+                  "length": 19
+                }
+              },
+              {
+                "content": "Vehicle:",
+                "source": "D(7,4.1919,7.6162,4.5115,7.6162,4.5115,7.7153,4.1919,7.7153)",
+                "span": {
+                  "offset": 1079,
+                  "length": 8
+                }
+              },
+              {
+                "content": "2022 Hyundai IONIQ 5 SE",
+                "source": "D(7,5.1091,7.6054,6.1135,7.6054,6.1135,7.7183,5.1091,7.7183)",
+                "span": {
+                  "offset": 1097,
+                  "length": 23
+                }
+              },
+              {
+                "content": "Color:",
+                "source": "D(7,4.194,7.7773,4.4368,7.7773,4.4368,7.874,4.194,7.874)",
+                "span": {
+                  "offset": 1141,
+                  "length": 6
+                }
+              },
+              {
+                "content": "White",
+                "source": "D(7,5.1008,7.772,5.3416,7.772,5.3416,7.8687,5.1008,7.8687)",
+                "span": {
+                  "offset": 1157,
+                  "length": 5
+                }
+              },
+              {
+                "content": "VIN:",
+                "source": "D(7,4.1919,7.9315,4.3787,7.9315,4.3787,8.0352,4.1919,8.0352)",
+                "span": {
+                  "offset": 1183,
+                  "length": 4
+                }
+              },
+              {
+                "content": "KM8KNDAF4NA516248",
+                "source": "D(7,5.1091,7.922,6.043,7.9268,6.043,8.0365,5.1084,8.0299)",
+                "span": {
+                  "offset": 1197,
+                  "length": 17
+                }
+              },
+              {
+                "content": "Registration:",
+                "source": "D(7,4.196,8.0929,4.7065,8.0929,4.7065,8.207,4.196,8.207)",
+                "span": {
+                  "offset": 1235,
+                  "length": 13
+                }
+              },
+              {
+                "content": "CA79535",
+                "source": "D(7,5.1091,8.0835,5.4827,8.0835,5.4827,8.1909,5.1091,8.1909)",
+                "span": {
+                  "offset": 1258,
+                  "length": 7
+                }
+              },
+              {
+                "content": "Use:",
+                "source": "D(7,4.1919,8.2478,4.3828,8.2478,4.3828,8.3596,4.1919,8.3596)",
+                "span": {
+                  "offset": 1286,
+                  "length": 4
+                }
+              },
+              {
+                "content": "Personal / commute",
+                "source": "D(7,5.1091,8.2446,5.8811,8.2446,5.8811,8.3521,5.1091,8.3521)",
+                "span": {
+                  "offset": 1300,
+                  "length": 18
+                }
+              },
+              {
+                "content": "Loss Details",
+                "source": "D(7,4.1836,8.5718,4.6609,8.5714,4.661,8.6701,4.1836,8.6704)",
+                "span": {
+                  "offset": 1370,
+                  "length": 12
+                }
+              },
+              {
+                "content": "Date:",
+                "source": "D(7,4.194,8.7334,4.3994,8.7334,4.3994,8.8301,4.194,8.8301)",
+                "span": {
+                  "offset": 1403,
+                  "length": 5
+                }
+              },
+              {
+                "content": "2026-05-14",
+                "source": "D(7,5.1034,8.7222,5.549,8.7154,5.5505,8.8194,5.105,8.8262)",
+                "span": {
+                  "offset": 1418,
+                  "length": 10
+                }
+              },
+              {
+                "content": "Time:",
+                "source": "D(7,5.823,8.7168,6.0348,8.717,6.0347,8.8147,5.8229,8.8145)",
+                "span": {
+                  "offset": 1438,
+                  "length": 5
+                }
+              },
+              {
+                "content": "10:42",
+                "source": "D(7,6.1841,8.7173,6.3875,8.7173,6.3875,8.814,6.1841,8.814)",
+                "span": {
+                  "offset": 1453,
+                  "length": 5
+                }
+              },
+              {
+                "content": "Location:",
+                "source": "D(7,4.1919,8.8838,4.5405,8.8838,4.5405,8.9805,4.1919,8.9805)",
+                "span": {
+                  "offset": 1479,
+                  "length": 9
+                }
+              },
+              {
+                "content": "Sierra Parkway northbound,",
+                "source": "D(7,5.105,8.8723,6.1301,8.8723,6.1301,8.9805,5.105,8.9805)",
+                "span": {
+                  "offset": 1510,
+                  "length": 26
+                }
+              },
+              {
+                "content": "Sierra Vista Grove, CA 95825",
+                "source": "D(7,5.1039,9.0007,6.1965,8.9899,6.1977,9.1033,5.105,9.1122)",
+                "span": {
+                  "offset": 1537,
+                  "length": 28
+                }
+              },
+              {
+                "content": "Damage:",
+                "source": "D(7,4.194,9.1685,4.5405,9.1685,4.5405,9.2759,4.194,9.2759)",
+                "span": {
+                  "offset": 1586,
+                  "length": 7
+                }
+              },
+              {
+                "content": "Windshield crack across forward",
+                "source": "D(7,5.1048,9.154,6.3044,9.1516,6.3047,9.2646,5.105,9.267)",
+                "span": {
+                  "offset": 1615,
+                  "length": 31
+                }
+              },
+              {
+                "content": "camera viewing area; no body-",
+                "source": "D(7,5.105,9.2895,6.209,9.2895,6.209,9.3994,5.105,9.3994)",
+                "span": {
+                  "offset": 1647,
+                  "length": 29
+                }
+              },
+              {
+                "content": "panel damage.",
+                "source": "D(7,5.105,9.4316,5.6321,9.4316,5.6321,9.5391,5.105,9.5391)",
+                "span": {
+                  "offset": 1677,
+                  "length": 13
+                }
+              },
+              {
+                "content": "Drivable:",
+                "source": "D(7,4.1919,9.5874,4.5322,9.5874,4.5322,9.6841,4.1919,9.6841)",
+                "span": {
+                  "offset": 1711,
+                  "length": 9
+                }
+              },
+              {
+                "content": "Yes",
+                "source": "D(7,5.1008,9.582,5.2544,9.582,5.2544,9.6787,5.1008,9.6787)",
+                "span": {
+                  "offset": 1742,
+                  "length": 3
+                }
+              },
+              {
+                "content": "Injuries:",
+                "source": "D(7,4.194,9.7365,4.4934,9.744,4.4907,9.8518,4.1913,9.8443)",
+                "span": {
+                  "offset": 1766,
+                  "length": 9
+                }
+              },
+              {
+                "content": "None reported",
+                "source": "D(7,5.1008,9.7354,5.6364,9.7362,5.6362,9.8465,5.1007,9.8458)",
+                "span": {
+                  "offset": 1797,
+                  "length": 13
+                }
+              },
+              {
+                "content": "Other Driver:",
+                "source": "D(7,4.194,9.8989,4.6733,9.8989,4.6733,10.0064,4.194,10.0064)",
+                "span": {
+                  "offset": 1831,
+                  "length": 13
+                }
+              },
+              {
+                "content": "Not applicable",
+                "source": "D(7,5.1008,9.8939,5.6404,9.8936,5.6405,10.0119,5.1008,10.0122)",
+                "span": {
+                  "offset": 1866,
+                  "length": 14
+                }
+              },
+              {
+                "content": "Liability:",
+                "source": "D(7,4.1919,10.0544,4.5118,10.0555,4.5115,10.1631,4.1915,10.162)",
+                "span": {
+                  "offset": 1901,
+                  "length": 10
+                }
+              },
+              {
+                "content": "Not determined",
+                "source": "D(7,5.105,10.0484,5.6902,10.0484,5.6902,10.1514,5.105,10.1514)",
+                "span": {
+                  "offset": 1933,
+                  "length": 14
+                }
+              }
+            ]
+          }
+        ],
+        "paragraphs": [
+          {
+            "content": "Insured: Ethan Park 428 Linden Terrace, Sierra Vista Grove, CA 95825 (916) 555-0108 ethan.park@example.com",
+            "source": "D(7,1.2451,0.7064,3.6616,0.734,3.6529,1.496,1.2364,1.4684)",
+            "span": {
+              "offset": 0,
+              "length": 106
+            }
+          },
+          {
+            "content": "Policy Reference: SLI-A1508902",
+            "source": "D(7,1.2389,1.7396,2.012,1.7402,2.0118,2.0138,1.2387,2.0132)",
+            "span": {
+              "offset": 108,
+              "length": 30
+            }
+          },
+          {
+            "content": "Sierra Lantern Insurance 504 Civic Lane Sierra Vista Grove, CA 95825 (916) 555-0128 Adjuster: Jules Mercer",
+            "source": "D(7,5.1253,0.7233,6.4995,0.7217,6.5004,1.4596,5.1262,1.4613)",
+            "span": {
+              "offset": 140,
+              "length": 106
+            }
+          },
+          {
+            "content": "Claim Reference: SLI-26-394117",
+            "source": "D(7,5.1506,1.7443,5.9019,1.7443,5.9019,2.0156,5.1506,2.0156)",
+            "span": {
+              "offset": 248,
+              "length": 30
+            }
+          },
+          {
+            "content": "05/15/2026",
+            "source": "D(7,6.1005,2.255,7.1468,2.231,7.1515,2.4367,6.1052,2.4606)",
+            "span": {
+              "offset": 280,
+              "length": 10
+            }
+          },
+          {
+            "content": "I'm writing to describe what happened on 05/14/2026. At about 10:42 AM, I was driving northbound on Sierra Parkway in Sierra Vista Grove in my 2022 Hyundai IONIQ 5 SE. A road stone kicked up from the lane ahead and struck my windshield on the passenger side.",
+            "source": "D(7,1.1164,2.6329,6.7954,2.5387,6.8223,4.1676,1.1434,4.2617)",
+            "span": {
+              "offset": 292,
+              "length": 258
+            }
+          },
+          {
+            "content": "No collision occurred and there was no contact with any other vehicle. Shortly after the impact, I noticed a crack spreading across the forward camera viewing area.",
+            "source": "D(7,1.1452,4.4682,6.4974,4.3192,6.5224,5.2192,1.1702,5.3682)",
+            "span": {
+              "offset": 552,
+              "length": 164
+            }
+          },
+          {
+            "content": "No injuries were involved, and the vehicle remained drivable. There was no body damage.",
+            "source": "D(7,1.1589,5.5646,5.7862,5.3928,5.8075,5.9672,1.1802,6.1389)",
+            "span": {
+              "offset": 718,
+              "length": 87
+            }
+          },
+          {
+            "content": "I'm arranging mobile glass replacement repln and camera calibration through Grove Mobile Glass & Scan.",
+            "source": "D(7,1.1144,6.3134,6.3623,6.1117,6.383,6.652,1.1351,6.8536)",
+            "span": {
+              "offset": 807,
+              "length": 102
+            }
+          },
+          {
+            "content": "Please let me know if you need any additional information.",
+            "source": "D(7,1.122,7.0395,6.4327,6.8259,6.4417,7.0501,1.131,7.2637)",
+            "span": {
+              "offset": 911,
+              "length": 58
+            }
+          },
+          {
+            "content": "E.P.",
+            "source": "D(7,1.093,7.8013,1.3987,7.7925,1.4046,7.997,1.0989,8.0059)",
+            "span": {
+              "offset": 971,
+              "length": 4
+            }
+          },
+          {
+            "content": "Ethan Park",
+            "source": "D(7,1.0189,8.1905,2.5904,8.1474,2.6008,8.5259,1.0293,8.569)",
+            "span": {
+              "offset": 980,
+              "length": 10
+            }
+          },
+          {
+            "content": "Vehicle Information",
+            "source": "D(7,4.1828,7.4445,5.0427,7.4383,5.0435,7.5463,4.1836,7.5525)",
+            "span": {
+              "offset": 1039,
+              "length": 19
+            }
+          },
+          {
+            "content": "Vehicle:",
+            "source": "D(7,4.1919,7.6128,4.5125,7.6162,4.5115,7.7169,4.1908,7.7135)",
+            "span": {
+              "offset": 1079,
+              "length": 8
+            }
+          },
+          {
+            "content": "2022 Hyundai IONIQ 5 SE",
+            "source": "D(7,5.109,7.6067,6.1135,7.6051,6.1137,7.7183,5.1091,7.7198)",
+            "span": {
+              "offset": 1097,
+              "length": 23
+            }
+          },
+          {
+            "content": "Color:",
+            "source": "D(7,4.194,7.7773,4.4368,7.7773,4.4368,7.874,4.194,7.874)",
+            "span": {
+              "offset": 1141,
+              "length": 6
+            }
+          },
+          {
+            "content": "White",
+            "source": "D(7,5.1008,7.772,5.3416,7.772,5.3416,7.8687,5.1008,7.8687)",
+            "span": {
+              "offset": 1157,
+              "length": 5
+            }
+          },
+          {
+            "content": "VIN:",
+            "source": "D(7,4.1902,7.9347,4.3787,7.9315,4.3804,8.0351,4.1919,8.0383)",
+            "span": {
+              "offset": 1183,
+              "length": 4
+            }
+          },
+          {
+            "content": "KM8KNDAF4NA516248",
+            "source": "D(7,5.1091,7.9224,6.0437,7.9291,6.043,8.0365,5.1084,8.0299)",
+            "span": {
+              "offset": 1197,
+              "length": 17
+            }
+          },
+          {
+            "content": "Registration:",
+            "source": "D(7,4.1959,8.0936,4.7065,8.0929,4.7067,8.207,4.196,8.2077)",
+            "span": {
+              "offset": 1235,
+              "length": 13
+            }
+          },
+          {
+            "content": "CA79535",
+            "source": "D(7,5.1091,8.0835,5.4827,8.0835,5.4827,8.1909,5.1091,8.1909)",
+            "span": {
+              "offset": 1258,
+              "length": 7
+            }
+          },
+          {
+            "content": "Use:",
+            "source": "D(7,4.1919,8.2478,4.3828,8.2478,4.3828,8.3596,4.1919,8.3596)",
+            "span": {
+              "offset": 1286,
+              "length": 4
+            }
+          },
+          {
+            "content": "Personal / commute",
+            "source": "D(7,5.1091,8.2446,5.8811,8.2446,5.8811,8.3521,5.1091,8.3521)",
+            "span": {
+              "offset": 1300,
+              "length": 18
+            }
+          },
+          {
+            "content": "Loss Details",
+            "source": "D(7,4.1836,8.5665,4.6619,8.5714,4.6608,8.6734,4.1826,8.6684)",
+            "span": {
+              "offset": 1370,
+              "length": 12
+            }
+          },
+          {
+            "content": "Date:",
+            "source": "D(7,4.194,8.7334,4.3994,8.7334,4.3994,8.8301,4.194,8.8301)",
+            "span": {
+              "offset": 1403,
+              "length": 5
+            }
+          },
+          {
+            "content": "2026-05-14",
+            "source": "D(7,5.1031,8.7254,5.5491,8.7171,5.551,8.8194,5.105,8.8277)",
+            "span": {
+              "offset": 1418,
+              "length": 10
+            }
+          },
+          {
+            "content": "Time:",
+            "source": "D(7,5.823,8.7163,6.035,8.717,6.0347,8.8142,5.8227,8.8135)",
+            "span": {
+              "offset": 1438,
+              "length": 5
+            }
+          },
+          {
+            "content": "10:42",
+            "source": "D(7,6.1841,8.7173,6.3875,8.7173,6.3875,8.814,6.1841,8.814)",
+            "span": {
+              "offset": 1453,
+              "length": 5
+            }
+          },
+          {
+            "content": "Location:",
+            "source": "D(7,4.1919,8.8838,4.5405,8.8838,4.5405,8.9805,4.1919,8.9805)",
+            "span": {
+              "offset": 1479,
+              "length": 9
+            }
+          },
+          {
+            "content": "Sierra Parkway northbound, Sierra Vista Grove, CA 95825",
+            "source": "D(7,5.1048,8.8729,6.1965,8.8722,6.1966,9.1095,5.105,9.1102)",
+            "span": {
+              "offset": 1510,
+              "length": 55
+            }
+          },
+          {
+            "content": "Damage:",
+            "source": "D(7,4.194,9.1685,4.5405,9.1685,4.5405,9.2759,4.194,9.2759)",
+            "span": {
+              "offset": 1586,
+              "length": 7
+            }
+          },
+          {
+            "content": "Windshield crack across forward camera viewing area; no body- panel damage.",
+            "source": "D(7,5.1049,9.1528,6.3044,9.1526,6.3045,9.5389,5.105,9.5392)",
+            "span": {
+              "offset": 1615,
+              "length": 75
+            }
+          },
+          {
+            "content": "Drivable:",
+            "source": "D(7,4.1919,9.5874,4.5322,9.5874,4.5322,9.6841,4.1919,9.6841)",
+            "span": {
+              "offset": 1711,
+              "length": 9
+            }
+          },
+          {
+            "content": "Yes",
+            "source": "D(7,5.1008,9.582,5.2544,9.582,5.2544,9.6787,5.1008,9.6787)",
+            "span": {
+              "offset": 1742,
+              "length": 3
+            }
+          },
+          {
+            "content": "Injuries:",
+            "source": "D(7,4.194,9.7355,4.4939,9.7444,4.4907,9.8532,4.1908,9.8443)",
+            "span": {
+              "offset": 1766,
+              "length": 9
+            }
+          },
+          {
+            "content": "None reported",
+            "source": "D(7,5.1009,9.7334,5.6374,9.7391,5.6362,9.8515,5.0997,9.8458)",
+            "span": {
+              "offset": 1797,
+              "length": 13
+            }
+          },
+          {
+            "content": "Other Driver:",
+            "source": "D(7,4.194,9.8977,4.6736,9.8989,4.6733,10.0064,4.1937,10.0051)",
+            "span": {
+              "offset": 1831,
+              "length": 13
+            }
+          },
+          {
+            "content": "Not applicable",
+            "source": "D(7,5.1009,9.8909,5.6409,9.8936,5.6404,10.0117,5.1003,10.009)",
+            "span": {
+              "offset": 1866,
+              "length": 14
+            }
+          },
+          {
+            "content": "Liability:",
+            "source": "D(7,4.1919,10.0543,4.5118,10.0555,4.5115,10.1629,4.1915,10.1618)",
+            "span": {
+              "offset": 1901,
+              "length": 10
+            }
+          },
+          {
+            "content": "Not determined",
+            "source": "D(7,5.1044,10.0519,5.6902,10.0484,5.6908,10.1514,5.105,10.1548)",
+            "span": {
+              "offset": 1933,
+              "length": 14
+            }
+          }
+        ],
+        "tables": [
+          {
+            "rowCount": 6,
+            "columnCount": 2,
+            "cells": [
+              {
+                "kind": "rowHeader",
+                "rowIndex": 0,
+                "columnIndex": 0,
+                "rowSpan": 1,
+                "columnSpan": 2,
+                "content": "Vehicle Information",
+                "source": "D(7,4.1341,7.3863,6.4987,7.3829,6.4994,7.5667,4.1338,7.5702)",
+                "span": {
+                  "offset": 1039,
+                  "length": 19
+                },
+                "elements": [
+                  "/paragraphs/12"
+                ]
+              },
+              {
+                "kind": "rowHeader",
+                "rowIndex": 1,
+                "columnIndex": 0,
+                "rowSpan": 1,
+                "columnSpan": 1,
+                "content": "Vehicle:",
+                "source": "D(7,4.1338,7.5702,5.0385,7.5687,5.0385,7.7326,4.134,7.7344)",
+                "span": {
+                  "offset": 1079,
+                  "length": 8
+                },
+                "elements": [
+                  "/paragraphs/13"
+                ]
+              },
+              {
+                "kind": "content",
+                "rowIndex": 1,
+                "columnIndex": 1,
+                "rowSpan": 1,
+                "columnSpan": 1,
+                "content": "2022 Hyundai IONIQ 5 SE",
+                "source": "D(7,5.0385,7.5687,6.4994,7.5667,6.5001,7.73,5.0385,7.7326)",
+                "span": {
+                  "offset": 1097,
+                  "length": 23
+                },
+                "elements": [
+                  "/paragraphs/14"
+                ]
+              },
+              {
+                "kind": "rowHeader",
+                "rowIndex": 2,
+                "columnIndex": 0,
+                "rowSpan": 1,
+                "columnSpan": 1,
+                "content": "Color:",
+                "source": "D(7,4.134,7.7344,5.0385,7.7326,5.0382,7.8914,4.134,7.8939)",
+                "span": {
+                  "offset": 1141,
+                  "length": 6
+                },
+                "elements": [
+                  "/paragraphs/15"
+                ]
+              },
+              {
+                "kind": "content",
+                "rowIndex": 2,
+                "columnIndex": 1,
+                "rowSpan": 1,
+                "columnSpan": 1,
+                "content": "White",
+                "source": "D(7,5.0385,7.7326,6.5001,7.73,6.5007,7.8878,5.0382,7.8914)",
+                "span": {
+                  "offset": 1157,
+                  "length": 5
+                },
+                "elements": [
+                  "/paragraphs/16"
+                ]
+              },
+              {
+                "kind": "rowHeader",
+                "rowIndex": 3,
+                "columnIndex": 0,
+                "rowSpan": 1,
+                "columnSpan": 1,
+                "content": "VIN:",
+                "source": "D(7,4.134,7.8939,5.0382,7.8914,5.0385,8.051,4.1341,8.0529)",
+                "span": {
+                  "offset": 1183,
+                  "length": 4
+                },
+                "elements": [
+                  "/paragraphs/17"
+                ]
+              },
+              {
+                "kind": "content",
+                "rowIndex": 3,
+                "columnIndex": 1,
+                "rowSpan": 1,
+                "columnSpan": 1,
+                "content": "KM8KNDAF4NA516248",
+                "source": "D(7,5.0382,7.8914,6.5007,7.8878,6.5018,8.0481,5.0385,8.051)",
+                "span": {
+                  "offset": 1197,
+                  "length": 17
+                },
+                "elements": [
+                  "/paragraphs/18"
+                ]
+              },
+              {
+                "kind": "rowHeader",
+                "rowIndex": 4,
+                "columnIndex": 0,
+                "rowSpan": 1,
+                "columnSpan": 1,
+                "content": "Registration:",
+                "source": "D(7,4.1341,8.0529,5.0385,8.051,5.0386,8.2104,4.1341,8.2147)",
+                "span": {
+                  "offset": 1235,
+                  "length": 13
+                },
+                "elements": [
+                  "/paragraphs/19"
+                ]
+              },
+              {
+                "kind": "content",
+                "rowIndex": 4,
+                "columnIndex": 1,
+                "rowSpan": 1,
+                "columnSpan": 1,
+                "content": "CA79535",
+                "source": "D(7,5.0385,8.051,6.5018,8.0481,6.5024,8.2036,5.0386,8.2104)",
+                "span": {
+                  "offset": 1258,
+                  "length": 7
+                },
+                "elements": [
+                  "/paragraphs/20"
+                ]
+              },
+              {
+                "kind": "rowHeader",
+                "rowIndex": 5,
+                "columnIndex": 0,
+                "rowSpan": 1,
+                "columnSpan": 1,
+                "content": "Use:",
+                "source": "D(7,4.1341,8.2147,5.0386,8.2104,5.0391,8.3717,4.1342,8.3748)",
+                "span": {
+                  "offset": 1286,
+                  "length": 4
+                },
+                "elements": [
+                  "/paragraphs/21"
+                ]
+              },
+              {
+                "kind": "content",
+                "rowIndex": 5,
+                "columnIndex": 1,
+                "rowSpan": 1,
+                "columnSpan": 1,
+                "content": "Personal / commute",
+                "source": "D(7,5.0386,8.2104,6.5024,8.2036,6.5035,8.3672,5.0391,8.3717)",
+                "span": {
+                  "offset": 1300,
+                  "length": 18
+                },
+                "elements": [
+                  "/paragraphs/22"
+                ]
+              }
+            ],
+            "source": "D(7,4.111,7.3906,6.4954,7.3745,6.5037,8.3521,4.1234,8.3843)",
+            "span": {
+              "offset": 1010,
+              "length": 328
+            }
+          },
+          {
+            "rowCount": 8,
+            "columnCount": 4,
+            "cells": [
+              {
+                "kind": "rowHeader",
+                "rowIndex": 0,
+                "columnIndex": 0,
+                "rowSpan": 1,
+                "columnSpan": 4,
+                "content": "Loss Details",
+                "source": "D(7,4.1366,8.5339,6.518,8.5231,6.5184,8.6765,4.1364,8.6884)",
+                "span": {
+                  "offset": 1370,
+                  "length": 12
+                },
+                "elements": [
+                  "/paragraphs/23"
+                ]
+              },
+              {
+                "kind": "columnHeader",
+                "rowIndex": 1,
+                "columnIndex": 0,
+                "rowSpan": 1,
+                "columnSpan": 1,
+                "content": "Date:",
+                "source": "D(7,4.1364,8.6884,5.0393,8.6835,5.0394,8.8411,4.1352,8.845)",
+                "span": {
+                  "offset": 1403,
+                  "length": 5
+                },
+                "elements": [
+                  "/paragraphs/24"
+                ]
+              },
+              {
+                "kind": "columnHeader",
+                "rowIndex": 1,
+                "columnIndex": 1,
+                "rowSpan": 1,
+                "columnSpan": 1,
+                "content": "2026-05-14",
+                "source": "D(7,5.0393,8.6835,5.7726,8.6801,5.7722,8.8379,5.0394,8.8411)",
+                "span": {
+                  "offset": 1418,
+                  "length": 10
+                },
+                "elements": [
+                  "/paragraphs/25"
+                ]
+              },
+              {
+                "kind": "columnHeader",
+                "rowIndex": 1,
+                "columnIndex": 2,
+                "rowSpan": 1,
+                "columnSpan": 1,
+                "content": "Time:",
+                "source": "D(7,5.7726,8.6801,6.1109,8.6786,6.1097,8.8366,5.7722,8.8379)",
+                "span": {
+                  "offset": 1438,
+                  "length": 5
+                },
+                "elements": [
+                  "/paragraphs/26"
+                ]
+              },
+              {
+                "kind": "columnHeader",
+                "rowIndex": 1,
+                "columnIndex": 3,
+                "rowSpan": 1,
+                "columnSpan": 1,
+                "content": "10:42",
+                "source": "D(7,6.1109,8.6786,6.5184,8.6765,6.5187,8.8353,6.1097,8.8366)",
+                "span": {
+                  "offset": 1453,
+                  "length": 5
+                },
+                "elements": [
+                  "/paragraphs/27"
+                ]
+              },
+              {
+                "kind": "rowHeader",
+                "rowIndex": 2,
+                "columnIndex": 0,
+                "rowSpan": 1,
+                "columnSpan": 1,
+                "content": "Location:",
+                "source": "D(7,4.1352,8.845,5.0394,8.8411,5.0398,9.1256,4.1356,9.1287)",
+                "span": {
+                  "offset": 1479,
+                  "length": 9
+                },
+                "elements": [
+                  "/paragraphs/28"
+                ]
+              },
+              {
+                "kind": "content",
+                "rowIndex": 2,
+                "columnIndex": 1,
+                "rowSpan": 1,
+                "columnSpan": 3,
+                "content": "Sierra Parkway northbound, Sierra Vista Grove, CA 95825",
+                "source": "D(7,5.0394,8.8411,6.5187,8.8353,6.5199,9.1207,5.0398,9.1256)",
+                "span": {
+                  "offset": 1510,
+                  "length": 55
+                },
+                "elements": [
+                  "/paragraphs/29"
+                ]
+              },
+              {
+                "kind": "rowHeader",
+                "rowIndex": 3,
+                "columnIndex": 0,
+                "rowSpan": 1,
+                "columnSpan": 1,
+                "content": "Damage:",
+                "source": "D(7,4.1356,9.1287,5.0398,9.1256,5.0401,9.5438,4.1353,9.5472)",
+                "span": {
+                  "offset": 1586,
+                  "length": 7
+                },
+                "elements": [
+                  "/paragraphs/30"
+                ]
+              },
+              {
+                "kind": "content",
+                "rowIndex": 3,
+                "columnIndex": 1,
+                "rowSpan": 1,
+                "columnSpan": 3,
+                "content": "Windshield crack across forward camera viewing area; no body- panel damage.",
+                "source": "D(7,5.0398,9.1256,6.5199,9.1207,6.521,9.5385,5.0401,9.5438)",
+                "span": {
+                  "offset": 1615,
+                  "length": 75
+                },
+                "elements": [
+                  "/paragraphs/31"
+                ]
+              },
+              {
+                "kind": "rowHeader",
+                "rowIndex": 4,
+                "columnIndex": 0,
+                "rowSpan": 1,
+                "columnSpan": 1,
+                "content": "Drivable:",
+                "source": "D(7,4.1353,9.5472,5.0401,9.5438,5.0404,9.7008,4.1356,9.7042)",
+                "span": {
+                  "offset": 1711,
+                  "length": 9
+                },
+                "elements": [
+                  "/paragraphs/32"
+                ]
+              },
+              {
+                "kind": "content",
+                "rowIndex": 4,
+                "columnIndex": 1,
+                "rowSpan": 1,
+                "columnSpan": 3,
+                "content": "Yes",
+                "source": "D(7,5.0401,9.5438,6.521,9.5385,6.5212,9.6957,5.0404,9.7008)",
+                "span": {
+                  "offset": 1742,
+                  "length": 3
+                },
+                "elements": [
+                  "/paragraphs/33"
+                ]
+              },
+              {
+                "kind": "rowHeader",
+                "rowIndex": 5,
+                "columnIndex": 0,
+                "rowSpan": 1,
+                "columnSpan": 1,
+                "content": "Injuries:",
+                "source": "D(7,4.1356,9.7042,5.0404,9.7008,5.0405,9.8606,4.1362,9.8642)",
+                "span": {
+                  "offset": 1766,
+                  "length": 9
+                },
+                "elements": [
+                  "/paragraphs/34"
+                ]
+              },
+              {
+                "kind": "content",
+                "rowIndex": 5,
+                "columnIndex": 1,
+                "rowSpan": 1,
+                "columnSpan": 3,
+                "content": "None reported",
+                "source": "D(7,5.0404,9.7008,6.5212,9.6957,6.5217,9.8548,5.0405,9.8606)",
+                "span": {
+                  "offset": 1797,
+                  "length": 13
+                },
+                "elements": [
+                  "/paragraphs/35"
+                ]
+              },
+              {
+                "kind": "rowHeader",
+                "rowIndex": 6,
+                "columnIndex": 0,
+                "rowSpan": 1,
+                "columnSpan": 1,
+                "content": "Other Driver:",
+                "source": "D(7,4.1362,9.8642,5.0405,9.8606,5.041,10.0149,4.1372,10.0186)",
+                "span": {
+                  "offset": 1831,
+                  "length": 13
+                },
+                "elements": [
+                  "/paragraphs/36"
+                ]
+              },
+              {
+                "kind": "content",
+                "rowIndex": 6,
+                "columnIndex": 1,
+                "rowSpan": 1,
+                "columnSpan": 3,
+                "content": "Not applicable",
+                "source": "D(7,5.0405,9.8606,6.5217,9.8548,6.5224,10.0088,5.041,10.0149)",
+                "span": {
+                  "offset": 1866,
+                  "length": 14
+                },
+                "elements": [
+                  "/paragraphs/37"
+                ]
+              },
+              {
+                "kind": "rowHeader",
+                "rowIndex": 7,
+                "columnIndex": 0,
+                "rowSpan": 1,
+                "columnSpan": 1,
+                "content": "Liability:",
+                "source": "D(7,4.1372,10.0186,5.041,10.0149,5.0412,10.1725,4.1349,10.1749)",
+                "span": {
+                  "offset": 1901,
+                  "length": 10
+                },
+                "elements": [
+                  "/paragraphs/38"
+                ]
+              },
+              {
+                "kind": "content",
+                "rowIndex": 7,
+                "columnIndex": 1,
+                "rowSpan": 1,
+                "columnSpan": 3,
+                "content": "Not determined",
+                "source": "D(7,5.041,10.0149,6.5224,10.0088,6.5225,10.1696,5.0412,10.1725)",
+                "span": {
+                  "offset": 1933,
+                  "length": 14
+                },
+                "elements": [
+                  "/paragraphs/39"
+                ]
+              }
+            ],
+            "source": "D(7,4.1151,8.5454,6.5161,8.5186,6.5244,10.1675,4.1234,10.1782)",
+            "span": {
+              "offset": 1341,
+              "length": 626
+            }
+          }
+        ],
+        "segments": [
+          {
+            "span": {
+              "offset": 0,
+              "length": 1990
+            },
+            "segmentId": "segment6",
+            "startPageNumber": 7,
+            "endPageNumber": 7,
+            "category": "statement",
+            "confidence": 0.92
+          }
+        ],
+        "metadata": {
+          "contentType": "application/pdf",
+          "pageCount": "11"
+        },
+        "signatures": [
+          {
+            "source": "D(7,1.0044,8.1318,2.5815,8.1318,2.5898,8.5723,1.0132,8.5776)",
+            "span": {
+              "offset": 13538,
+              "length": 29
+            },
+            "elements": [
+              "/paragraphs/374"
+            ],
+            "id": "7.1"
+          }
+        ],
+        "analyzerId": "lab664_statement_ab3f812d0991491d"
+      },
+      {
         "path": "input1/segment7",
         "category": "repair_estimate",
         "markdown": "\n# PROJECTED MOBILE GLASS QUOTE & CAMERA SERVICE WORKSHEET\n\nGrove Mobile Glass & Scan\n226 Works Road\nSierra Vista Grove, CA 95825\n(916) 555-0148\n\n\n<table>\n<tr>\n<td>Quote Reference:</td>\n<td>Q-CA-67390</td>\n</tr>\n<tr>\n<td>Claim Reference:</td>\n<td>SLI-26-394117</td>\n</tr>\n<tr>\n<td>Policy Reference:</td>\n<td>SLI-A1508902</td>\n</tr>\n<tr>\n<td>Inspection Date:</td>\n<td>05/17/2026</td>\n</tr>\n<tr>\n<td>Scheduled Service:</td>\n<td>05/19/2026</td>\n</tr>\n<tr>\n<td>Repair Status:</td>\n<td>Scheduled</td>\n</tr>\n<tr>\n<td>Inspector:</td>\n<td>Luis Mora</td>\n</tr>\n</table>\n\n\nINSURED\nEthan Park\n428 Linden Terrace\nSierra Vista Grove, CA 95825\n(916) 555-0108\nethan.park@example.com\n\nVEHICLE\n2022 Hyundai IONIQ 5 SE\nColor: White\nVIN: KM8KNDAF4NA516248\nRegistration: CA79535\nUse: Personal / commute\nMileage: 30,910\n\nLOSS INFORMATION\n\nDate:\n05/14/2026\nTime: 10:42\nLocation:\nSierra Parkway northbound,\nSierra Vista Grove, CA 95825\n\nDrivable: Yes\nInjuries: None reported\n\nOther Driver: Not applicable\n\nLiability: Not determined\n\nINSURER\n\nSierra Lantern Insurance\n504 Civic Lane\nSierra Vista Grove, CA 95825\n(916) 555-0128\nAdjuster: Jules Mercer\n\nLOSS NARRATIVE / DAMAGE\n\nA road stone struck Ethan's windshield and the crack extended across the\nforward camera area. No body damage or other-vehicle contact was\nreported. Mobile glass replacement and a shop camera check were\nscheduled. The glass endorsement specifies a zero deductible; rental\nwas not used.\n\nWindshield crack across forward camera viewing area; no body-panel\ndamage.\n\n\n<table>\n<tr>\n<th>Line</th>\n<th>Description</th>\n<th>Quantity</th>\n<th>Unit Price</th>\n<th>Amount</th>\n<th>Status</th>\n</tr>\n<tr>\n<td>1</td>\n<td>Camera-compatible windshield</td>\n<td>1</td>\n<td>1,203.20</td>\n<td>1,203.20</td>\n<td>Scheduled</td>\n</tr>\n<tr>\n<td>2</td>\n<td>Adhesive and molding kit</td>\n<td>1</td>\n<td>186.00</td>\n<td>186.00</td>\n<td>Scheduled</td>\n</tr>\n<tr>\n<td>3</td>\n<td>Camera calibration service</td>\n<td>1</td>\n<td>210.80</td>\n<td>210.80</td>\n<td>Scheduled</td>\n</tr>\n<tr>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n</tr>\n<tr>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n</tr>\n<tr>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n</tr>\n</table>\n\n\n<table>\n<tr>\n<td colspan=\"2\">COVERAGE / STATUS</td>\n</tr>\n<tr>\n<td>Glass deductible:</td>\n<td>0.00</td>\n</tr>\n<tr>\n<td>Repair authorization:</td>\n<td>Pending</td>\n</tr>\n<tr>\n<td>Payment:</td>\n<td>Pending</td>\n</tr>\n</table>\n\n\n<table>\n<tr>\n<td>Service Subtotal (Parts &amp; Labor)</td>\n<td>1,600.00</td>\n</tr>\n<tr>\n<td>Parts Tax (8.25% of $1,104.00)</td>\n<td>91.08</td>\n</tr>\n<tr>\n<td>Projected Total</td>\n<td>1,691.08</td>\n</tr>\n</table>\n\n\n<table>\n<tr>\n<th>PARTS &amp; LABOR SUMMARY</th>\n<th>TAX DETAIL</th>\n</tr>\n<tr>\n<td>Parts Subtotal<br>1,104.00</td>\n<td>Taxable Parts Base<br>1,104.00</td>\n</tr>\n<tr>\n<td>Labor<br>496.00</td>\n<td>Tax Rate<br>8.25%</td>\n</tr>\n<tr>\n<td>Service Subtotal (Parts &amp; Labor)<br>1,600.00</td>\n<td>Tax on Parts<br>91.08</td>\n</tr>\n</table>\n\n\nSCHEDULED SERVICE\nService Type: Mobile glass replacement and camera calibration\nScheduled Date: 05/19/2026\n\nTechnician: To be assigned\n\nNotes: Vehicle will be road-tested after service to confirm camera functionality.\n\n<!-- PageNumber: Page 1 of 2 -->\n<!-- PageBreak -->\n\n<!-- PageHeader: ![GROVE MOBILE GLASS & SCAN](figures/9.1) -->\n<!-- PageHeader: Grove Mobile Glass & Scan 226 Works Road Sierra Vista Grove, CA 95825 (916) 555-0148 -->\n\n\n# PLAN AND BILLING RECORD\n\n<!-- PageNumber: Page 2 of 2 -->\n\n\n<table>\n<tr>\n<td colspan=\"2\">VEHICLE</td>\n</tr>\n<tr>\n<td>Description:</td>\n<td>2022 Hyundai IONIQ 5 SE</td>\n</tr>\n<tr>\n<td>Color:</td>\n<td>White</td>\n</tr>\n<tr>\n<td>VIN:</td>\n<td>KM8KNDAF4NA516248</td>\n</tr>\n<tr>\n<td>Registration:</td>\n<td>CA79535</td>\n</tr>\n<tr>\n<td>Use:</td>\n<td>Personal / commute</td>\n</tr>\n</table>\n\n\n## INSURED\n\n\n<table>\n<tr>\n<td>Name:</td>\n<td>Ethan Park</td>\n</tr>\n<tr>\n<td>Address:</td>\n<td>428 Linden Terrace Sierra Vista Grove, CA 95825</td>\n</tr>\n<tr>\n<td>Phone:<br>Email:</td>\n<td>(916) 555-0108<br>ethan.park@example.com</td>\n</tr>\n</table>\n\n\n<table>\n<tr>\n<td colspan=\"2\">LOSS SUMMARY</td>\n</tr>\n<tr>\n<td>Date:</td>\n<td>2026-05-14</td>\n</tr>\n<tr>\n<td>Time:</td>\n<td>10:42</td>\n</tr>\n<tr>\n<td>Location:</td>\n<td>Sierra Parkway northbound, Sierra Vista Grove, CA 95825</td>\n</tr>\n<tr>\n<td>Claim / VIN:</td>\n<td>SLI-26-394117 / KM8KNDAF4NA516248</td>\n</tr>\n<tr>\n<td>Drivable:</td>\n<td>Yes</td>\n</tr>\n<tr>\n<td>Injuries:</td>\n<td>None reported</td>\n</tr>\n<tr>\n<td>Other Driver:</td>\n<td>Not applicable</td>\n</tr>\n<tr>\n<td>Liability:</td>\n<td>Not determined</td>\n</tr>\n<tr>\n<td>Damage:</td>\n<td>Windshield crack across forward camera viewing area; no body- panel damage.</td>\n</tr>\n<tr>\n<td>Narrative:</td>\n<td>A road stone struck Ethan's windshield and the crack extended across the forward camera area. No body damage or other-vehicle contact was reported. Mobile glass replacement and a shop camera check were scheduled. The glass endorsement specifies a zero deductible; rental was not used.</td>\n</tr>\n</table>\n\n\n<table>\n<tr>\n<td>Policy Reference:</td>\n<td>SLI-A1508902</td>\n</tr>\n<tr>\n<td>Claim Reference:</td>\n<td>SLI-26-394117</td>\n</tr>\n</table>\n\n\n## INSURER\n\n\n<table>\n<tr>\n<td>Company:</td>\n<td>Sierra Lantern Insurance</td>\n</tr>\n<tr>\n<td>Address:</td>\n<td>504 Civic Lane Sierra Vista Grove, CA 95825</td>\n</tr>\n<tr>\n<td>Phone:</td>\n<td>(916) 555-0128</td>\n</tr>\n<tr>\n<td>Adjuster:</td>\n<td>Jules Mercer</td>\n</tr>\n</table>\n\n\n<table>\n<tr>\n<td colspan=\"2\">INSPECTION</td>\n</tr>\n<tr>\n<td>Date:</td>\n<td>2026-05-17</td>\n</tr>\n<tr>\n<td>Mileage:</td>\n<td>30,910</td>\n</tr>\n<tr>\n<td>Inspector:</td>\n<td>Luis Mora</td>\n</tr>\n<tr>\n<td>Findings:</td>\n<td>Existing crack extends through the camera sightline.</td>\n</tr>\n</table>\n\n\n<table>\n<tr>\n<td>Camera Aiming / Verification:</td>\n<td>PENDING</td>\n</tr>\n<tr>\n<td>Viewing-Area Clearance:</td>\n<td>PENDING</td>\n</tr>\n<tr>\n<td>Scan Results:</td>\n<td>PENDING</td>\n</tr>\n<tr>\n<td>Road Test:</td>\n<td>PENDING</td>\n</tr>\n<tr>\n<td>Repair Status:</td>\n<td>Scheduled</td>\n</tr>\n<tr>\n<td>Scheduled Service Date:</td>\n<td>2026-05-19</td>\n</tr>\n</table>\n\n\n## REPAIR PLAN\n\n\n<table>\n<tr>\n<td>Work to be Performed:</td>\n<td>Replace windshield, then perform shop camera check per manufacturer procedure.</td>\n</tr>\n<tr>\n<td>Planned Location:</td>\n<td>Mobile service at insured's location</td>\n</tr>\n<tr>\n<td>Notes:</td>\n<td>Parts ordered. Service scheduled for 2026-05-19.</td>\n</tr>\n</table>\n\n\n<table>\n<tr>\n<td colspan=\"4\">BILLING RECORD (ESTIMATE)</td>\n</tr>\n<tr>\n<td colspan=\"4\">Estimate Reference: Q-CA-67390<br>Date: 2026-05-17</td>\n</tr>\n<tr>\n<td>Item</td>\n<td colspan=\"2\">Description</td>\n<td>Amount (USD)</td>\n</tr>\n<tr>\n<td>1</td>\n<td colspan=\"2\">Camera-compatible windshield</td>\n<td>1,203.20</td>\n</tr>\n<tr>\n<td>2</td>\n<td colspan=\"2\">Adhesive and molding kit</td>\n<td>186.00</td>\n</tr>\n<tr>\n<td>3</td>\n<td colspan=\"2\">Camera calibration service</td>\n<td>210.80</td>\n</tr>\n<tr>\n<td colspan=\"3\">Subtotal</td>\n<td>1,600.00</td>\n</tr>\n<tr>\n<td colspan=\"2\">Tax Detail:</td>\n<td>Tax on parts<br>Tax Total</td>\n<td>91.08</td>\n</tr>\n<tr>\n<td colspan=\"3\">Estimate Total</td>\n<td>1,691.08</td>\n</tr>\n</table>\n\n\nGlass Deductible (Estimated)\n0.00\n\nEstimate Total\n1,691.08\n\nCustomer Responsibility (Estimated)\n\nUndetermined\n\nPayment Status: Pending\n\nPayment Method: To be determined\n\n\n### IMPORTANT NOTES\n\n. Work, camera aiming/verification, scan results, and road test are PENDING.\n\n. Estimate valid for 30 days from date above. Additional damage or parts availability may affect pricing.\n\n. Customer responsibility is undetermined pending final plan and insurer disposition.\n\n<!-- PageFooter: Document ID: GMGS-PL-67390 -->\n<!-- PageFooter: Form Edition: 2026-05 -->\n<!-- PageBreak -->\n\n",
@@ -54705,7 +58557,7 @@
           },
           "CountryRegion": {
             "type": "string",
-            "valueString": "United States",
+            "valueString": "US",
             "spans": [
               {
                 "offset": 101,
@@ -54849,7 +58701,7 @@
                             "length": 12
                           }
                         ],
-                        "confidence": 0.579,
+                        "confidence": 0.77,
                         "source": "D(9,6.4995,7.6773,7.0813,7.6807,7.0806,7.8048,6.4988,7.8014)"
                       }
                     }
@@ -54882,7 +58734,7 @@
                             "length": 12
                           }
                         ],
-                        "confidence": 0.579,
+                        "confidence": 0.77,
                         "source": "D(9,6.4995,7.6773,7.0813,7.6807,7.0806,7.8048,6.4988,7.8014)"
                       }
                     }
@@ -54911,7 +58763,7 @@
                             "length": 12
                           }
                         ],
-                        "confidence": 0.579,
+                        "confidence": 0.77,
                         "source": "D(9,6.4995,7.6773,7.0813,7.6807,7.0806,7.8048,6.4988,7.8014)"
                       }
                     }
@@ -54973,7 +58825,7 @@
                             "length": 12
                           }
                         ],
-                        "confidence": 0.579,
+                        "confidence": 0.77,
                         "source": "D(9,6.4995,7.6773,7.0813,7.6807,7.0806,7.8048,6.4988,7.8014)"
                       }
                     }
@@ -55006,7 +58858,7 @@
                             "length": 12
                           }
                         ],
-                        "confidence": 0.579,
+                        "confidence": 0.77,
                         "source": "D(9,6.4995,7.6773,7.0813,7.6807,7.0806,7.8048,6.4988,7.8014)"
                       }
                     }
@@ -55035,7 +58887,7 @@
                             "length": 12
                           }
                         ],
-                        "confidence": 0.579,
+                        "confidence": 0.77,
                         "source": "D(9,6.4995,7.6773,7.0813,7.6807,7.0806,7.8048,6.4988,7.8014)"
                       }
                     }
@@ -55097,7 +58949,7 @@
                             "length": 12
                           }
                         ],
-                        "confidence": 0.579,
+                        "confidence": 0.77,
                         "source": "D(9,6.4995,7.6773,7.0813,7.6807,7.0806,7.8048,6.4988,7.8014)"
                       }
                     }
@@ -55130,7 +58982,7 @@
                             "length": 12
                           }
                         ],
-                        "confidence": 0.579,
+                        "confidence": 0.77,
                         "source": "D(9,6.4995,7.6773,7.0813,7.6807,7.0806,7.8048,6.4988,7.8014)"
                       }
                     }
@@ -55159,7 +59011,7 @@
                             "length": 12
                           }
                         ],
-                        "confidence": 0.579,
+                        "confidence": 0.77,
                         "source": "D(9,6.4995,7.6773,7.0813,7.6807,7.0806,7.8048,6.4988,7.8014)"
                       }
                     }
@@ -55263,7 +59115,7 @@
                             "length": 12
                           }
                         ],
-                        "confidence": 0.579,
+                        "confidence": 0.77,
                         "source": "D(9,6.4995,7.6773,7.0813,7.6807,7.0806,7.8048,6.4988,7.8014)"
                       }
                     }
@@ -55304,7 +59156,7 @@
                             "length": 12
                           }
                         ],
-                        "confidence": 0.579,
+                        "confidence": 0.77,
                         "source": "D(9,6.4995,7.6773,7.0813,7.6807,7.0806,7.8048,6.4988,7.8014)"
                       }
                     }
@@ -55375,16 +59227,16 @@
                 "valueNumber": 91.08,
                 "spans": [
                   {
-                    "offset": 2545,
-                    "length": 30
+                    "offset": 2958,
+                    "length": 12
                   },
                   {
-                    "offset": 2585,
+                    "offset": 2974,
                     "length": 5
                   }
                 ],
-                "confidence": 0.682,
-                "source": "D(8,4.1628,7.6106,5.5989,7.6106,5.5989,7.7557,4.1628,7.7557);D(8,6.9146,7.6107,7.2217,7.6113,7.2217,7.7295,6.9146,7.7289)"
+                "confidence": 0.645,
+                "source": "D(8,4.1649,8.8408,4.6982,8.8408,4.6982,8.9590,4.1649,8.9590);D(8,6.8025,8.8301,7.0889,8.8301,7.0889,8.9482,6.8025,8.9482)"
               },
               "CurrencyCode": {
                 "type": "string",
@@ -69666,7 +73518,7 @@
             "startPageNumber": 8,
             "endPageNumber": 9,
             "category": "repair_estimate",
-            "confidence": 0.89
+            "confidence": 0.9
           }
         ],
         "metadata": {
@@ -73246,14 +77098,15 @@
     "documentPagesStandard": 11,
     "contextualizationTokens": 11000,
     "tokens": {
-      "gpt-5-input": 5130,
+      "gpt-5-input": 5221,
+      "gpt-5-cached-input": 1024,
       "gpt-5-output": 249,
-      "gpt-5.5-input": 17127,
-      "gpt-5.5-cached-input": 7680,
-      "gpt-5.5-output": 2810,
+      "gpt-5.5-input": 22382,
+      "gpt-5.5-cached-input": 11520,
+      "gpt-5.5-output": 3171,
       "gpt-5.2-input": 7055,
-      "gpt-5.2-output": 558,
-      "gpt-5.2-cached-input": 1280
+      "gpt-5.2-cached-input": 3584,
+      "gpt-5.2-output": 558
     }
   }
 }

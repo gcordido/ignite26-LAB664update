@@ -1,3 +1,12 @@
+/**
+ * @param {{
+ *   fetch?: (route: string, init: { method: string, headers: Record<string, string>, body?: string }) => Promise<Response>,
+ *   selectedRun?: () => string | undefined,
+ *   onSession?: (id: string) => void,
+ *   onRestored?: () => void,
+ *   storage?: Pick<Storage, "getItem" | "setItem">
+ * }} options
+ */
 export function createSessionApi({
   fetch: request = globalThis.fetch,
   selectedRun = () => undefined,
@@ -42,8 +51,11 @@ export function createSessionApi({
       if (runId) checked(await send("cache/load", { runId }));
       onRestored();
     })();
-    try { await restoring; }
-    finally { restoring = undefined; }
+    try {
+      await restoring;
+    } finally {
+      restoring = undefined;
+    }
   }
   return async function api(route, body) {
     if (route === "session") return start();
@@ -53,7 +65,9 @@ export function createSessionApi({
     if (result.response.status === 401) {
       await restore(id);
       if (body !== undefined && route !== "cache/load")
-        throw new Error("Your private workbench session was restored. No live operation was retried. Select the action again to continue.");
+        throw new Error(
+          "Your private workbench session was restored. No live operation was retried. Select the action again to continue.",
+        );
       result = await send(route, body);
     }
     return checked(result);

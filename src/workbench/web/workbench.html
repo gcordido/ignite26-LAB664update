@@ -10,6 +10,7 @@
     <header>
       <h1>Insurance Workbench App</h1>
       <span class="muted">Synthetic data</span>
+      <span class="badge">Combined preview</span>
       <nav>
         <a href="/lab.html">Lab</a
         ><a href="https://contentunderstanding.ai.azure.com/">Studio</a>
@@ -41,6 +42,10 @@
           <button id="analyze" disabled>Run live</button>
         </div>
       </div>
+      <p id="cache-loading" class="cache-loading" role="status" hidden>
+        <span class="spinner" aria-hidden="true"></span>
+        Loading saved results and reviews...
+      </p>
       <p id="error" class="error" role="alert" hidden></p>
       <p id="session-status" class="muted" role="status"></p>
       <dialog id="run-confirmation">
@@ -61,7 +66,12 @@
             <button data-view="classification" aria-pressed="true">
               Classification
             </button>
-            <button data-view="id_document" aria-pressed="false" hidden>
+            <button
+              class="view-divider"
+              data-view="id_document"
+              aria-pressed="false"
+              hidden
+            >
               ID
             </button>
             <button data-view="tax_1099a" aria-pressed="false" hidden>
@@ -70,18 +80,37 @@
             <button data-view="repair_estimate" aria-pressed="false" hidden>
               Repair Estimate
             </button>
+            <button data-view="statement" aria-pressed="false" hidden>
+              Statement
+            </button>
             <button data-view="towing_invoice" aria-pressed="false" hidden>
               Towing Invoice
             </button>
             <button data-view="rental_invoice" aria-pressed="false" hidden>
               Rental Invoice
             </button>
-            <button data-view="policy" aria-pressed="false">
-              Policy checks
+            <button
+              id="review-packet"
+              class="view-divider"
+              data-view="policies"
+              aria-pressed="false"
+              title="Compare fixed checks across packets using the loaded results and saved LLM Agent reviews."
+              disabled
+              hidden
+            >
+              Extraction checks
+            </button>
+            <button
+              data-view="policy"
+              aria-pressed="false"
+              title="Agent review of rental claims using retrieved state SOPs and verified policy sources."
+            >
+              Policy review
             </button>
           </div>
           <span id="origin" class="badge"></span>
         </div>
+        <p id="checks-description" class="muted" hidden></p>
         <div id="policy-toolbar" hidden>
           <div class="actions">
             <label for="policy-mode">Policy retrieval</label>
@@ -112,9 +141,10 @@
               </div>
               <div class="columns-toolbar">
                 <label id="field-setting" class="toggle" hidden
-                  ><input id="all-fields" type="checkbox" /> All fields</label
+                  ><input id="all-fields" type="checkbox" />
+                  <span id="field-setting-label">All fields</span></label
                 >
-                <label class="toggle"
+                <label id="confidence-setting" class="toggle"
                   ><input id="show-confidence" type="checkbox" />
                   Confidence</label
                 >
@@ -139,28 +169,57 @@
         title="Drag to resize preview"
       ></div>
       <aside id="preview" aria-label="Document preview">
-        <div id="policy-pane-modes" class="actions" aria-label="Policy sidebar mode" hidden>
-          <button id="policy-result-mode" aria-pressed="true">Result</button>
-          <button id="policy-chat-mode" class="secondary" aria-pressed="false">Chat</button>
-        </div>
         <div id="policy-source-toolbar" hidden>
-          <button id="policy-source-back" class="secondary">Back to policy checks</button>
+          <button id="policy-source-back" class="secondary">
+            Back to policy checks
+          </button>
           <span id="policy-source-title"></span>
         </div>
-        <div id="policy-document-tabs" role="tablist" aria-label="Policy document representation" hidden>
-          <button id="policy-document-pdf-tab" role="tab" data-representation="pdf" aria-selected="true" aria-controls="pdf-scroll">Document</button>
-          <button id="policy-document-layout-tab" role="tab" data-representation="layout" aria-selected="false" aria-controls="policy-document-content" tabindex="-1" class="secondary">CU Layout</button>
-          <button id="policy-document-digital-tab" role="tab" data-representation="digital" aria-selected="false" aria-controls="policy-document-content" tabindex="-1" class="secondary">Digital parse</button>
+        <div
+          id="policy-document-tabs"
+          role="tablist"
+          aria-label="Policy document representation"
+          hidden
+        >
+          <button
+            id="policy-document-pdf-tab"
+            role="tab"
+            data-representation="pdf"
+            aria-selected="true"
+            aria-controls="pdf-scroll"
+          >
+            Document
+          </button>
+          <button
+            id="policy-document-layout-tab"
+            role="tab"
+            data-representation="layout"
+            aria-selected="false"
+            aria-controls="policy-document-content"
+            tabindex="-1"
+            class="secondary"
+          >
+            CU Layout
+          </button>
+          <button
+            id="policy-document-digital-tab"
+            role="tab"
+            data-representation="digital"
+            aria-selected="false"
+            aria-controls="policy-document-content"
+            tabindex="-1"
+            class="secondary"
+          >
+            Digital parse
+          </button>
         </div>
         <p id="policy-document-status" class="muted" role="status" hidden></p>
-        <section id="policy-document-content" role="tabpanel" aria-label="Extracted policy document" hidden></section>
-        <section id="policy-output" aria-label="Policy check output" hidden>
-          <h2>Policy checks</h2>
-          <p>Select a case to see the agent's checks, reasons and rule sources.</p>
-        </section>
-        <section id="policy-chat" aria-label="Policy check chat" hidden>
-          <p>Select a reviewed case to ask follow-up questions.</p>
-        </section>
+        <section
+          id="policy-document-content"
+          role="tabpanel"
+          aria-label="Extracted policy document"
+          hidden
+        ></section>
         <div id="pdf-scroll" title="Mouse wheel to zoom; drag to pan">
           <div id="preview-empty" aria-hidden="true">
             <svg viewBox="0 0 48 48">
@@ -220,8 +279,8 @@
           <button
             id="fit-page"
             class="icon-button"
-            aria-label="Fit page"
-            title="Fit page"
+            aria-label="Fit page width"
+            title="Fit page width"
           >
             <svg viewBox="0 0 24 24">
               <path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5M8 8h8v8H8z" />
@@ -247,31 +306,134 @@
         </div>
         <p id="pdf-status" role="status" hidden></p>
       </aside>
+      <div id="inline-panels" hidden>
+        <section
+          id="array-panel"
+          class="inline-panel"
+          aria-labelledby="array-title"
+        >
+          <div class="inline-toolbar">
+            <h3 id="array-title"></h3>
+            <span id="array-summary"></span>
+            <button
+              id="close-array"
+              class="icon-button"
+              aria-label="Collapse item table"
+              title="Close"
+            >
+              &times;
+            </button>
+          </div>
+          <div id="array-table" class="table"></div>
+        </section>
+        <section
+          id="packet-review"
+          class="inline-panel"
+          aria-labelledby="review-title"
+        >
+          <p id="policy-summary" class="muted" role="status" hidden></p>
+          <p id="review-error" class="error" role="alert" hidden></p>
+          <div class="table policy-table">
+            <table aria-label="Packet checks">
+              <caption id="review-title" class="visually-hidden">
+                Policy issues
+              </caption>
+              <thead>
+                <tr>
+                  <th>Source document</th>
+                  <th id="policy-problem-header">Problem / evidence</th>
+                  <th id="policy-review-header">
+                    LLM Agent review
+                    <button
+                      id="close-review"
+                      class="icon-button policy-close"
+                      aria-label="Collapse policy details"
+                    >
+                      &times;
+                    </button>
+                  </th>
+                </tr>
+              </thead>
+              <tbody id="policy-checks"></tbody>
+            </table>
+          </div>
+          <details class="review-options">
+            <summary>Review options</summary>
+            <p class="muted">
+              Saved reviews load with Cache Results. Refresh requests fresh
+              Azure model calls for all failed checks in this packet and may
+              incur charges. These temporary advisory previews are not saved and
+              never change original fields, policy status, or cached reviews.
+            </p>
+            <button
+              id="rerun-checks"
+              class="secondary"
+              data-cloud
+              title="Force fresh LLM Agent reviews for all failed checks in this packet, not only the selected column"
+            >
+              Refresh LLM review
+            </button>
+          </details>
+        </section>
+        <section
+          id="agent-panel"
+          class="inline-panel"
+          aria-labelledby="agent-title"
+        >
+          <div class="inline-toolbar">
+            <h3 id="agent-title">Policy review</h3>
+            <div
+              id="policy-pane-modes"
+              class="actions"
+              aria-label="Policy detail mode"
+            >
+              <button id="policy-result-mode" aria-pressed="true">
+                Result
+              </button>
+              <button
+                id="policy-chat-mode"
+                class="secondary"
+                aria-pressed="false"
+              >
+                Ask agent
+              </button>
+            </div>
+            <button
+              id="close-agent"
+              class="icon-button"
+              aria-label="Collapse policy review"
+            >
+              &times;
+            </button>
+          </div>
+          <section
+            id="policy-output"
+            aria-label="Policy check output"
+          ></section>
+          <section
+            id="policy-chat"
+            aria-label="Policy check chat"
+            hidden
+          ></section>
+        </section>
+      </div>
       <dialog id="policy-confirmation">
         <h2>Run policy checks?</h2>
         <p id="policy-confirm-summary"></p>
-        <p>Missing claim summaries are extracted once with Content Understanding.
-          Each uncached case is then sent to the selected policy agent.
-          Azure charges apply. Existing matching results are reused.</p>
+        <p>
+          Missing claim summaries are extracted once with Content Understanding.
+          Each uncached case is then sent to the selected policy agent. Azure
+          charges apply. Existing matching results are reused.
+        </p>
+        <p class="muted">
+          A first ten-case run can take tens of minutes. Keep this tab open;
+          refreshing the same tab resumes progress without submitting another
+          run.
+        </p>
         <div class="actions">
           <button id="confirm-policy">Run</button>
           <button id="cancel-policy" class="secondary">Cancel</button>
         </div>
-      </dialog>
-      <dialog id="array-dialog">
-        <div class="dialog-toolbar">
-          <h2 id="array-title"></h2>
-          <span id="array-summary"></span>
-          <button
-            id="close-array"
-            class="icon-button"
-            aria-label="Close item table"
-            title="Close"
-          >
-            &times;
-          </button>
-        </div>
-        <div id="array-table" class="table"></div>
       </dialog>
     </main>
     <script type="module" src="/web/workbench.js"></script>

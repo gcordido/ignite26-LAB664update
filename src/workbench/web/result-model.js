@@ -1,16 +1,133 @@
 /** @typedef {import("../src/results.ts").Fact} Fact */
 /** @typedef {import("../src/results.ts").ResultField} ResultField */
 /** @typedef {{category: string, start: number, end: number, documents: import("../src/results.ts").Document[]}} Segment */
-/** @typedef {{review?: {segments: Segment[]} | null}} PacketResult */
+/** @typedef {{review?: {segments: Segment[]} | null, policies?: {checks: import("../src/policies.ts").PolicyCheck[]}}} PacketResult */
 
 export const typeNames = {
   classification: "Classification",
+  policies: "Policy checks",
   id_document: "ID",
   tax_1099a: "1099-A",
   repair_estimate: "Repair Estimate",
+  statement: "Statement",
   towing_invoice: "Towing Invoice",
   rental_invoice: "Rental Invoice",
 };
+const policyLabels = {
+  "financial.total": "Amount balance",
+  "financial.line_items": "Item sum",
+  "financial.tax_details": "Tax sum",
+  "required.id": "ID completeness",
+  "required.repair": "Repair completeness",
+  "required.statement": "Statement completeness",
+  "cross.claimant_name": "Claimant match",
+  "cross.vin": "VIN match",
+  "cross.vehicle": "Vehicle match",
+};
+/** @param {{category: string, start: number, end: number}} doc */
+export function documentLabel(doc) {
+  return `${typeNames[doc.category] ?? doc.category} (p${doc.start}${doc.end === doc.start ? "" : `-${doc.end}`})`;
+}
+/** @param {string} text @param {{id: string, category: string, start: number, end: number}[]} documents */
+export function readableReferences(text, documents) {
+  for (const doc of [...documents].sort((a, b) => b.id.length - a.id.length)) {
+    const id = doc.id.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    text = text.replace(
+      new RegExp(`(?<![\\w:-])(?:document\\s+)?${id}(?![\\w-]|:\\d)`, "gi"),
+      documentLabel(doc),
+    );
+  }
+  return text;
+}
+/** @param {import("../src/policies.ts").PolicyCheck} check @param {{id: string, category: string, start: number, end: number}[]} documents */
+export function policyProblem(check, documents) {
+  const required = check.message.match(
+    /required field\(s\): (.+?)(?:\. This|\.$)/,
+  )?.[1];
+  const missing = new Set(
+    required
+      ? [...required.matchAll(/\(([^()]+)\)/g)].map((match) => match[1])
+      : [],
+  );
+  if (check.status !== "pass" && !policyFamily(check).startsWith("cross."))
+    for (const item of check.evidence)
+      if (
+        item.value == null ||
+        (typeof item.value === "string" && !item.value.trim())
+      )
+        missing.add(item.field);
+  let text = check.message;
+  const doc = documents.find(
+    (doc) =>
+      text.startsWith(`Document ${doc.id}:`) ||
+      text.startsWith(`Document ${doc.id} `),
+  );
+  if (doc)
+    text = text.slice(`Document ${doc.id}`.length).replace(/^:\s*|^\s+/, "");
+  return {
+    missing: [...missing],
+    text: readableReferences(text, documents),
+  };
+}
+/** @param {import("../src/policies.ts").PolicyCheck} check */
+export function policyFamily(check) {
+  return check.id.split(":")[0];
+}
+/** @param {string} family */
+export function policyLabel(family) {
+  return (
+    policyLabels[family] ??
+    family.split(".").at(-1).replaceAll("_", " ").slice(0, 12)
+  );
+}
+/** @param {PacketResult | undefined} result @param {string} family */
+export function policyChecks(result, family) {
+  return (result?.policies?.checks ?? []).filter(
+    (check) => policyFamily(check) === family,
+  );
+}
+/** @param {import("../src/policies.ts").PolicyCheck[]} checks */
+export function policySummary(checks) {
+  if (!checks.length) return undefined;
+  const counts = { pass: 0, not_checkable: 0, fail: 0 };
+  for (const check of checks) {
+    if (!Object.hasOwn(counts, check.status))
+      throw new Error(`Unknown policy status: ${check.status}`);
+    counts[check.status]++;
+  }
+  return {
+    status: counts.fail
+      ? "fail"
+      : counts.not_checkable
+        ? "not_checkable"
+        : "pass",
+    counts,
+    total: checks.length,
+  };
+}
+/** @param {PacketResult[]} results @param {boolean} all */
+export function policyColumns(results, all = false) {
+  const checks = results.flatMap((result) => result.policies?.checks ?? []);
+  const present = new Set(checks.map(policyFamily));
+  return [
+    ...Object.keys(policyLabels),
+    ...[...present].filter((family) => !Object.hasOwn(policyLabels, family)),
+  ]
+    .filter((family) => present.has(family))
+    .filter(
+      (family) =>
+        all ||
+        ["financial.total", "cross.claimant_name"].includes(family) ||
+        checks.some(
+          (check) => policyFamily(check) === family && check.status !== "pass",
+        ),
+    )
+    .map((id) => ({
+      id,
+      label: policyLabel(id),
+      description: checks.find((check) => policyFamily(check) === id).rule,
+    }));
+}
 const invoiceDefaults = [
   "VendorName",
   "InvoiceId",
@@ -43,12 +160,26 @@ const defaults = {
     "TotalTaxAmount.Amount",
     "LineItems",
   ],
+  statement: [
+    "claimant_name",
+    "incident_date",
+    "incident_location",
+    "vehicle",
+    "vin",
+    "reported_damage",
+    "summary",
+  ],
   towing_invoice: invoiceDefaults,
   rental_invoice: invoiceDefaults,
 };
 const labels = {
+  claimant_name: "Claimant Name",
+  incident_date: "Incident Date",
+  incident_location: "Incident Location",
   vehicle: "Vehicle",
   vin: "VIN",
+  reported_damage: "Reported Damage",
+  summary: "Summary",
   odometer: "Odometer",
   "TotalAmount.Amount": "Total",
   "TotalTaxAmount.Amount": "Tax",
@@ -168,9 +299,11 @@ export function availableTypes(results) {
   return Object.keys(typeNames).filter(
     (category) =>
       category === "classification" ||
-      results.some((result) =>
-        firstEntry(result, category).entry?.document.fields.some(hasValue),
-      ),
+      (category === "policies"
+        ? results.some((result) => result.policies?.checks.length)
+        : results.some((result) =>
+            firstEntry(result, category).entry?.document.fields.some(hasValue),
+          )),
   );
 }
 /** @param {PacketResult[]} results @param {string} category @param {boolean} all */

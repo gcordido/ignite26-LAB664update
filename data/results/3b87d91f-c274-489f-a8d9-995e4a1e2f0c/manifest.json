@@ -1,11 +1,11 @@
 {
-  "id": "6e3b62d2-abe5-4ea7-9898-d2d11f4dc5f1",
+  "id": "3b87d91f-c274-489f-a8d9-995e4a1e2f0c",
   "origin": "Live CU",
   "status": "completed",
   "endpoint": "https://ignite-anatolip-test-scus.services.ai.azure.com",
   "apiVersion": "2026-06-01-preview",
   "analyzer": {
-    "id": "lab664_anatolip_scus_routerg5",
+    "id": "lab664_statement_router_0699239b9914",
     "mode": "routed",
     "categories": {
       "id_document": {
@@ -29,7 +29,11 @@
         "analyzerId": "prebuilt-invoice"
       },
       "other": {
-        "description": "Each distinct unrouted supporting document: policy declarations/endorsements, claim intake forms, incident reports, handwritten statements, glass/panel service supporting records, valuation/downtime schedules, and workshop inspection records. Towing bills and rental billing belong to their named invoice categories, not Other. Identify logical document boundaries even when adjacent documents both have category other. Keep paginated continuation pages together; do not merge different titles or document identifiers. These documents are intentionally unrouted, not discarded."
+        "description": "Each distinct unrouted supporting document: policy declarations/endorsements, claim intake forms, incident reports, glass/panel service supporting records, valuation/downtime schedules, and workshop inspection records. Towing bills and rental billing belong to their named invoice categories, not Other. Identify logical document boundaries even when adjacent documents both have category other. Keep paginated continuation pages together; do not merge different titles or document identifiers. These documents are intentionally unrouted, not discarded. Personal handwritten or email accounts belong to statement, not Other."
+      },
+      "statement": {
+        "description": "A first-person handwritten, signed or email narrative from the claimant or vehicle owner describing the incident, discovery, circumstances or reported damage. May be a personal letter without a printed form title. Keep continuation pages of the same statement together. Exclude police/incident reports, claim intake forms, workshop estimates, invoices and policy documents. Do not infer liability or coverage.",
+        "analyzerId": "lab664_statement_ab3f812d0991491d"
       }
     },
     "models": {
@@ -68,7 +72,11 @@
             "analyzerId": "prebuilt-invoice"
           },
           "other": {
-            "description": "Each distinct unrouted supporting document: policy declarations/endorsements, claim intake forms, incident reports, handwritten statements, glass/panel service supporting records, valuation/downtime schedules, and workshop inspection records. Towing bills and rental billing belong to their named invoice categories, not Other. Identify logical document boundaries even when adjacent documents both have category other. Keep paginated continuation pages together; do not merge different titles or document identifiers. These documents are intentionally unrouted, not discarded."
+            "description": "Each distinct unrouted supporting document: policy declarations/endorsements, claim intake forms, incident reports, glass/panel service supporting records, valuation/downtime schedules, and workshop inspection records. Towing bills and rental billing belong to their named invoice categories, not Other. Identify logical document boundaries even when adjacent documents both have category other. Keep paginated continuation pages together; do not merge different titles or document identifiers. These documents are intentionally unrouted, not discarded. Personal handwritten or email accounts belong to statement, not Other."
+          },
+          "statement": {
+            "description": "A first-person handwritten, signed or email narrative from the claimant or vehicle owner describing the incident, discovery, circumstances or reported damage. May be a personal letter without a printed form title. Keep continuation pages of the same statement together. Exclude police/incident reports, claim intake forms, workshop estimates, invoices and policy documents. Do not infer liability or coverage.",
+            "analyzerId": "lab664_statement_ab3f812d0991491d"
           }
         },
         "enableSegment": true,
@@ -1387,98 +1395,160 @@
               }
             }
           }
+        },
+        {
+          "id": "lab664_statement_ab3f812d0991491d",
+          "definition": {
+            "config": {
+              "returnDetails": true,
+              "enableOcr": true,
+              "enableLayout": true,
+              "enableFormula": true,
+              "enableFigureDescription": false,
+              "enableFigureAnalysis": false,
+              "chartFormat": "chartjs",
+              "workflow": "standard.2026-06-01-preview",
+              "tableFormat": "html",
+              "estimateFieldSourceAndConfidence": true,
+              "enableSegment": false,
+              "omitContent": false,
+              "segmentPerPage": false,
+              "annotationFormat": "markdown",
+              "allowInputTruncation": false
+            },
+            "models": {
+              "completion": "gpt-5.5",
+              "embedding": "text-embedding-3-large"
+            },
+            "fieldSchema": {
+              "fields": {
+                "claimant_name": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "Name explicitly identifying the claimant or insured vehicle owner. A signed first-person claimant statement may identify its author. Do not substitute the other driver, witness, adjuster or recipient. Leave absent if unclear."
+                },
+                "incident_date": {
+                  "type": "date",
+                  "method": "extract",
+                  "description": "Date of the reported incident, not the date the email or statement was written. Leave absent if not stated."
+                },
+                "incident_location": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "Reported incident location, using only the document text."
+                },
+                "vehicle": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "The claimant's vehicle as explicitly stated, including year, make, model and trim when present. Exclude color and the other party's vehicle. Do not decode a VIN or infer missing details."
+                },
+                "vin": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "Exact explicitly stated VIN of the claimant's vehicle. Do not infer, correct or substitute a plate, policy number or the other driver's VIN. Leave absent if not stated."
+                },
+                "reported_damage": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "Damage reported to the claimant's vehicle. Attribute it as reported, not independently verified. Leave absent if not stated."
+                },
+                "summary": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "Concise summary of the writer's reported sequence of events, including any explicit uncertainty. Do not infer fault, coverage, credibility, injuries or facts not in the source."
+                }
+              }
+            }
+          }
         }
       ]
     },
-    "fingerprint": "ae8056c9b381c89ce8a8f660f46e9ad865d05d6f0f22350cd861bb381fbed9cc",
+    "fingerprint": "c2a85f9fd6722c8488d5cbf5201004b7144aad347af15ecd80b8a36b269785aa",
     "verifiedReadOnly": true
   },
   "datasetHash": "94f17cd9ac8ecf44c39a92c2244c6546e5a81d297d339689c61b29b0148c9bf2",
-  "startedAt": "2026-10-23T03:09:35.031Z",
-  "maxInFlight": 5,
+  "startedAt": "2026-10-23T07:08:40.933Z",
+  "maxInFlight": 1,
   "items": [
     {
       "id": "packet-01",
       "status": "completed",
-      "startedAt": "2026-10-23T03:09:35.034Z",
+      "startedAt": "2026-10-23T07:08:40.937Z",
       "rawSaved": true,
-      "completedAt": "2026-10-23T03:10:21.565Z",
-      "reusedFromRunId": "0f315c28-63a6-4e58-9dff-192540423be5"
+      "reviewStatus": "completed",
+      "completedAt": "2026-10-23T07:09:41.233Z"
     },
     {
       "id": "packet-02",
       "status": "completed",
-      "startedAt": "2026-10-23T03:09:35.034Z",
+      "startedAt": "2026-10-23T07:09:41.237Z",
       "rawSaved": true,
-      "completedAt": "2026-10-23T03:10:21.342Z",
-      "reusedFromRunId": "0f315c28-63a6-4e58-9dff-192540423be5"
+      "reviewStatus": "completed",
+      "completedAt": "2026-10-23T07:10:43.342Z"
     },
     {
       "id": "packet-03",
       "status": "completed",
-      "startedAt": "2026-10-23T04:32:03.722Z",
+      "startedAt": "2026-10-23T07:10:43.345Z",
       "rawSaved": true,
-      "completedAt": "2026-10-23T04:32:48.746Z",
-      "responseFromTargetedRunId": "e4e94ddb-b291-4fdb-b647-08d2270ff507"
+      "reviewStatus": "completed",
+      "completedAt": "2026-10-23T07:11:30.438Z"
     },
     {
       "id": "packet-04",
       "status": "completed",
-      "startedAt": "2026-10-23T03:12:51.919Z",
+      "startedAt": "2026-10-23T07:11:30.441Z",
       "rawSaved": true,
-      "completedAt": "2026-10-23T03:14:02.031Z",
-      "reusedFromRunId": "0f315c28-63a6-4e58-9dff-192540423be5"
+      "reviewStatus": "completed",
+      "completedAt": "2026-10-23T07:12:22.577Z"
     },
     {
       "id": "packet-05",
       "status": "completed",
-      "startedAt": "2026-10-23T04:33:22.858Z",
+      "startedAt": "2026-10-23T07:12:22.581Z",
       "rawSaved": true,
-      "completedAt": "2026-10-23T04:34:04.170Z",
-      "responseFromTargetedRunId": "e4e94ddb-b291-4fdb-b647-08d2270ff507"
+      "reviewStatus": "completed",
+      "completedAt": "2026-10-23T07:13:10.536Z"
     },
     {
       "id": "packet-06",
       "status": "completed",
-      "startedAt": "2026-10-23T03:14:46.573Z",
+      "startedAt": "2026-10-23T07:13:10.539Z",
       "rawSaved": true,
-      "completedAt": "2026-10-23T03:15:42.402Z",
-      "reusedFromRunId": "0f315c28-63a6-4e58-9dff-192540423be5"
+      "reviewStatus": "completed",
+      "completedAt": "2026-10-23T07:14:00.133Z"
     },
     {
       "id": "packet-07",
       "status": "completed",
-      "startedAt": "2026-10-23T03:37:39.786Z",
+      "startedAt": "2026-10-23T07:14:00.137Z",
       "rawSaved": true,
-      "completedAt": "2026-10-23T03:38:28.339Z",
-      "responseFromTargetedRunId": "aa38d622-f1ba-4b81-8600-4432253f5083",
-      "reusedFromRunId": "0f315c28-63a6-4e58-9dff-192540423be5"
+      "reviewStatus": "completed",
+      "completedAt": "2026-10-23T07:14:57.249Z"
     },
     {
       "id": "packet-08",
       "status": "completed",
-      "startedAt": "2026-10-23T04:05:32.273Z",
+      "startedAt": "2026-10-23T07:14:57.253Z",
       "rawSaved": true,
-      "completedAt": "2026-10-23T04:06:20.209Z",
-      "responseFromTargetedRunId": "798bc209-dd08-4a81-b13f-0c1ca788833b",
-      "reusedFromRunId": "0f315c28-63a6-4e58-9dff-192540423be5"
+      "reviewStatus": "completed",
+      "completedAt": "2026-10-23T07:15:50.087Z"
     },
     {
       "id": "packet-09",
       "status": "completed",
-      "startedAt": "2026-10-23T04:06:20.212Z",
+      "startedAt": "2026-10-23T07:15:50.091Z",
       "rawSaved": true,
-      "completedAt": "2026-10-23T04:07:06.505Z",
-      "responseFromTargetedRunId": "798bc209-dd08-4a81-b13f-0c1ca788833b",
-      "reusedFromRunId": "0f315c28-63a6-4e58-9dff-192540423be5"
+      "reviewStatus": "completed",
+      "completedAt": "2026-10-23T07:17:13.720Z"
     },
     {
       "id": "packet-10",
       "status": "completed",
-      "startedAt": "2026-10-23T03:19:08.335Z",
+      "startedAt": "2026-10-23T07:17:13.724Z",
       "rawSaved": true,
-      "completedAt": "2026-10-23T03:20:04.343Z",
-      "reusedFromRunId": "0f315c28-63a6-4e58-9dff-192540423be5"
+      "reviewStatus": "completed",
+      "completedAt": "2026-10-23T07:18:31.617Z"
     }
   ],
   "source": [
@@ -2263,266 +2333,5 @@
       }
     }
   ],
-  "resumeHistory": [
-    {
-      "startedAt": "2026-10-23T03:12:00.080Z",
-      "concurrency": 1,
-      "reason": "Retry only unresolved packets after initial CU DeploymentIdNotFound responses while the new GPT-5.2 deployment reported Succeeded.",
-      "previousStatus": "failed",
-      "previousCompletedAt": "2026-10-23T03:10:21.571Z",
-      "previousItems": [
-        {
-          "id": "packet-03",
-          "status": "failed",
-          "startedAt": "2026-10-23T03:09:35.034Z",
-          "error": "CU HTTP 400: {\"error\":{\"code\":\"InvalidRequest\",\"message\":\"Invalid request.\",\"innererror\":{\"code\":\"DeploymentIdNotFound\",\"message\":\"Validation of existing deployment failed: the OpenAI deployment 'gpt-5.2' does not exist. Please update your defaults to remove this entry.\"}}}",
-          "completedAt": "2026-10-23T03:09:36.359Z"
-        },
-        {
-          "id": "packet-04",
-          "status": "failed",
-          "startedAt": "2026-10-23T03:09:35.034Z",
-          "error": "CU HTTP 400: {\"error\":{\"code\":\"InvalidRequest\",\"message\":\"Invalid request.\",\"innererror\":{\"code\":\"DeploymentIdNotFound\",\"message\":\"Validation of existing deployment failed: the OpenAI deployment 'gpt-5.2' does not exist. Please update your defaults to remove this entry.\"}}}",
-          "completedAt": "2026-10-23T03:09:36.565Z"
-        },
-        {
-          "id": "packet-05",
-          "status": "failed",
-          "startedAt": "2026-10-23T03:09:35.034Z",
-          "error": "CU HTTP 400: {\"error\":{\"code\":\"InvalidRequest\",\"message\":\"Invalid request.\",\"innererror\":{\"code\":\"DeploymentIdNotFound\",\"message\":\"Validation of existing deployment failed: the OpenAI deployment 'gpt-5.2' does not exist. Please update your defaults to remove this entry.\"}}}",
-          "completedAt": "2026-10-23T03:09:36.413Z"
-        },
-        {
-          "id": "packet-06",
-          "status": "not processed"
-        },
-        {
-          "id": "packet-07",
-          "status": "not processed"
-        },
-        {
-          "id": "packet-08",
-          "status": "not processed"
-        },
-        {
-          "id": "packet-09",
-          "status": "not processed"
-        },
-        {
-          "id": "packet-10",
-          "status": "not processed"
-        }
-      ],
-      "status": "failed",
-      "error": "CU HTTP 500: { \"statusCode\": 500, \"message\": \"Internal server error\", \"activityId\": \"a7eaf976-cec8-48e2-b670-f79727965d2a\" }",
-      "completedAt": "2026-10-23T03:15:42.599Z"
-    },
-    {
-      "startedAt": "2026-10-23T03:16:31.692Z",
-      "concurrency": 1,
-      "reason": "Resume only four unresolved packets after transient CU HTTP 500 (activityId a7eaf976-cec8-48e2-b670-f79727965d2a); six completed native responses retained without resubmission.",
-      "previousStatus": "failed",
-      "previousCompletedAt": "2026-10-23T03:15:42.599Z",
-      "previousItems": [
-        {
-          "id": "packet-07",
-          "status": "failed",
-          "startedAt": "2026-10-23T03:15:42.410Z",
-          "error": "CU HTTP 500: { \"statusCode\": 500, \"message\": \"Internal server error\", \"activityId\": \"a7eaf976-cec8-48e2-b670-f79727965d2a\" }",
-          "completedAt": "2026-10-23T03:15:42.592Z"
-        },
-        {
-          "id": "packet-08",
-          "status": "not processed"
-        },
-        {
-          "id": "packet-09",
-          "status": "not processed"
-        },
-        {
-          "id": "packet-10",
-          "status": "not processed"
-        }
-      ],
-      "status": "completed",
-      "completedAt": "2026-10-23T03:20:04.349Z"
-    }
-  ],
-  "completedAt": "2026-10-23T04:34:04.170Z",
-  "parentRunId": "0f315c28-63a6-4e58-9dff-192540423be5",
-  "originDescription": "Selective refresh for compact one-page towing excerpts in packets 03 and 05: removed-page objects/images excluded, retained visible page streams unchanged, eight unrelated native responses reused unchanged.",
-  "refreshHistory": [
-    {
-      "comparisonId": "aa38d622-f1ba-4b81-8600-4432253f5083",
-      "sourceRunId": "5f9955a4-d650-4f27-b113-d6b97538bd6d",
-      "startedAt": "2026-10-23T03:36:54.925Z",
-      "completedAt": "2026-10-23T03:38:28.344Z",
-      "refreshedPacketIds": [
-        "packet-03",
-        "packet-07"
-      ],
-      "reusedPacketIds": [
-        "packet-01",
-        "packet-02",
-        "packet-04",
-        "packet-05",
-        "packet-06",
-        "packet-08",
-        "packet-09",
-        "packet-10"
-      ],
-      "sameDatasetHash": true,
-      "sameAnalyzerFingerprint": true
-    },
-    {
-      "comparisonId": "798bc209-dd08-4a81-b13f-0c1ca788833b",
-      "sourceRunId": "b7d4663e-3063-46e4-a448-db1b2e8168aa",
-      "startedAt": "2026-10-23T04:05:31.820Z",
-      "completedAt": "2026-10-23T04:07:06.507Z",
-      "sourceDatasetHash": "c9ef58832becdaf083ede2dc04032ce96282f3f34d852bf09bfd36fef4b7db76",
-      "datasetHash": "8e2b1c7f7c61450f3d43c6e70fea5771419f4cf776fbd7792b1964490a85632e",
-      "refreshedPacketIds": [
-        "packet-08",
-        "packet-09"
-      ],
-      "reusedPacketIds": [
-        "packet-01",
-        "packet-02",
-        "packet-03",
-        "packet-04",
-        "packet-05",
-        "packet-06",
-        "packet-07",
-        "packet-10"
-      ],
-      "documentOrder": [
-        "05-estimate",
-        "01-card",
-        "02-policy",
-        "03-claim_form",
-        "04-incident_report",
-        "06-handwriting",
-        "07-invoice",
-        "09-form-1099-a",
-        "08-inspection"
-      ],
-      "sourceContentsUnchanged": true,
-      "reusedSourceHashesVerified": true,
-      "categoryPolicy": "User selected publish reordered only: retain Ethan standalone estimate and separate supplemental quote as native repair instances; do not change classifier or source reference categories."
-    },
-    {
-      "comparisonId": "ce7cf41c-9dc2-4da5-9159-fa1de4cd8852",
-      "sourceRunId": "19acb92a-89ba-43ce-8cad-ecea5e1d4f09",
-      "startedAt": "2026-10-23T04:24:06.125Z",
-      "completedAt": "2026-10-23T04:25:30.012Z",
-      "sourceDatasetHash": "8e2b1c7f7c61450f3d43c6e70fea5771419f4cf776fbd7792b1964490a85632e",
-      "datasetHash": "d7285741de8cef9004f31f9a05d75a1494eb63c704d42b18a3868331bbadd4bd",
-      "refreshedPacketIds": [
-        "packet-03",
-        "packet-05"
-      ],
-      "reusedPacketIds": [
-        "packet-01",
-        "packet-02",
-        "packet-04",
-        "packet-06",
-        "packet-07",
-        "packet-08",
-        "packet-09",
-        "packet-10"
-      ],
-      "removedPages": [
-        {
-          "packet": "packet-03",
-          "document": "07-invoice",
-          "originalDocumentPage": 2,
-          "originalPacketPage": 11
-        },
-        {
-          "packet": "packet-05",
-          "document": "07-invoice",
-          "originalDocumentPage": 2,
-          "originalPacketPage": 9
-        }
-      ],
-      "allRetainedPageStreamsIdentical": true,
-      "reusedSourceHashesVerified": true
-    },
-    {
-      "comparisonId": "e4e94ddb-b291-4fdb-b647-08d2270ff507",
-      "sourceRunId": "0f315c28-63a6-4e58-9dff-192540423be5",
-      "startedAt": "2026-10-23T04:32:03.461Z",
-      "completedAt": "2026-10-23T04:34:04.170Z",
-      "sourceDatasetHash": "d7285741de8cef9004f31f9a05d75a1494eb63c704d42b18a3868331bbadd4bd",
-      "datasetHash": "94f17cd9ac8ecf44c39a92c2244c6546e5a81d297d339689c61b29b0148c9bf2",
-      "refreshedPacketIds": [
-        "packet-03",
-        "packet-05"
-      ],
-      "reusedPacketIds": [
-        "packet-01",
-        "packet-02",
-        "packet-04",
-        "packet-06",
-        "packet-07",
-        "packet-08",
-        "packet-09",
-        "packet-10"
-      ],
-      "orphanedRemovedPageAssetsExcluded": true,
-      "retainedPageStreamsIdentical": true,
-      "compactedFiles": [
-        {
-          "file": "documents/packet-03/07-invoice.pdf",
-          "oldBytes": 3171996,
-          "newBytes": 1567701,
-          "pages": 1,
-          "retainedPageStreamsIdentical": true
-        },
-        {
-          "file": "packets/packet-03.pdf",
-          "oldBytes": 17460470,
-          "newBytes": 15856148,
-          "pages": 12,
-          "retainedPageStreamsIdentical": true
-        },
-        {
-          "file": "documents/packet-05/07-invoice.pdf",
-          "oldBytes": 3512712,
-          "newBytes": 1755137,
-          "pages": 1,
-          "retainedPageStreamsIdentical": true
-        },
-        {
-          "file": "packets/packet-05.pdf",
-          "oldBytes": 15690414,
-          "newBytes": 13932833,
-          "pages": 10,
-          "retainedPageStreamsIdentical": true
-        }
-      ],
-      "retryHistory": [
-        {
-          "reason": "Retry only packet-05 after transient HTTP 500, activityId 18f9a272-71ad-46f7-ad8d-6a0fe7eb2cf1. Successful packet-03 was not resubmitted.",
-          "startedAt": "2026-10-23T04:33:22.857Z",
-          "previousItem": {
-            "id": "packet-05",
-            "status": "failed",
-            "oldSha256": "47050f0019e78ea50deb1391570bd5e1af1f9b0613dc3ebdbd5102af0a3d69f9",
-            "newSha256": "6c7104afd8a160719c26e7dc6c93483132356f2b9659097fe9901121dfec8bce",
-            "pages": 10,
-            "expectedTowing": [
-              {
-                "start": 8,
-                "end": 8
-              }
-            ],
-            "startedAt": "2026-10-23T04:32:48.747Z",
-            "error": "CU HTTP 500: { \"statusCode\": 500, \"message\": \"Internal server error\", \"activityId\": \"18f9a272-71ad-46f7-ad8d-6a0fe7eb2cf1\" }"
-          },
-          "status": "completed"
-        }
-      ]
-    }
-  ]
+  "completedAt": "2026-10-23T07:18:31.620Z"
 }
