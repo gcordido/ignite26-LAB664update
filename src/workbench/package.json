@@ -19,7 +19,7 @@
     "marked": "^16.0.0",
     "pdfjs-dist": "^5.4.624",
     "tsx": "^4.20.0",
-    "zod": "^4.1.0"
+    "zod": "^4.6.6"
   },
   "devDependencies": {
     "@types/express": "^5.0.6",
