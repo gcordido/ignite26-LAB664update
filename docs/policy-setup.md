@@ -1,6 +1,9 @@
 # Set up the policy index
 
 Use one managed ingestion pipeline on the existing Azure AI Search service.
+Search-managed Standard ingestion combines Content Understanding (CU) layout
+extraction and figure understanding, optimized for search. It produces searchable
+text, structured tables and model-generated figure descriptions.
 The Python Agent Framework agent queries the resulting ordinary index directly.
 No knowledge base, hosted agent or new Search service is needed.
 
@@ -90,6 +93,8 @@ until apply succeeds, retain the working Layout index and label it accurately.
 
 ## Understand Standard extraction
 
+Standard isn't a separate document understanding product: it combines CU layout
+extraction with figure understanding in a search-oriented ingestion pipeline.
 The pipeline uses the Search-managed
 [Content Understanding skill](https://learn.microsoft.com/azure/search/cognitive-search-skill-content-understanding)
 for OCR, structured Markdown, tables and model-generated figure descriptions.
@@ -99,7 +104,8 @@ The notebook exposes the actual skill, model and API settings.
 property. This ordinary-index workflow configures the corresponding CU
 extraction capabilities explicitly through its skillset. Semantic chunking and
 figure descriptions require the documented preview API and a supported model;
-plain Layout output must not be relabeled as Standard.
+layout-only OCR doesn't include the figure understanding and search-oriented
+processing provided by this pipeline.
 
 The Arizona figure, Texas table with blanks and scanned Washington SOP are
 verification cases. Model-generated descriptions can still be wrong or
@@ -125,8 +131,10 @@ conflicts are errors, not permission to mix policy generations.
 
 ### Extend an existing CU Layout index
 
-For this evidence demo, keep the current CU Layout workflow rather than
-requiring a managed Standard pipeline. The declarations, rental terms/diagram,
+This evidence demo currently uses a directly populated CU Layout index.
+Search-managed Standard ingestion builds on CU layout extraction with figure
+understanding optimized for search; the current Layout-only path doesn't add
+those figure descriptions. The declarations, rental terms/diagram,
 and issued amendment are registered alongside the existing SOPs. They apply
 only when both the CU policy ID and insured VIN match their `policyScope`.
 Missing or contradictory identifiers exclude these contract documents, not

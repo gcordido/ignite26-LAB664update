@@ -989,7 +989,7 @@ function renderWorkflowNavigation() {
   get("view-types").hidden = workflow !== "extract";
   get("extraction-toolbar").hidden = workflow !== "extract";
   get("results-heading").textContent = {
-    extract: "Parse and extract", policies: "Check consistency", policy: "Check policies",
+    extract: "Parse and extract", policies: "Check consistency", policy: "Check Policies: Rental Car",
   }[workflow];
 }
 function activateView(next) {
