@@ -65,6 +65,10 @@ export function createPolicyChat({ container, api, onSource, onError }) {
       original.append(summary, prompt);
       const chat = document.createElement("deep-chat");
       chat.setAttribute("aria-label", "Policy review follow-up conversation");
+      const revealComposer = () => requestAnimationFrame(() => {
+        if (revision === generation && selectionKey === key && chat.getClientRects().length)
+          chat.scrollIntoView({ block: "end", inline: "nearest" });
+      });
       const citations = [...context.citations.flat(), ...context.replies.flatMap((reply) => reply.citations)];
       const originalSources = context.citations.flat();
       chat.history = [
@@ -76,7 +80,7 @@ export function createPolicyChat({ container, api, onSource, onError }) {
             ? context.replies[Math.floor(index / 2)]?.citations ?? [] : []),
         })),
       ];
-      chat.chatStyle = { width: "100%", height: "100%", border: "none", backgroundColor: "#fff", fontFamily: "Segoe UI, sans-serif" };
+      chat.chatStyle = { width: "100%", height: "auto", overflow: "visible", border: "none", backgroundColor: "#fff", fontFamily: "Segoe UI, sans-serif" };
       chat.messageStyles = { default: { shared: { bubble: { maxWidth: "96%", fontSize: "13px" } } } };
       chat.textInput = { placeholder: { text: "Ask about this case or a policy rule…" } };
       chat.requestBodyLimits = { maxMessages: 1 };
@@ -84,6 +88,7 @@ export function createPolicyChat({ container, api, onSource, onError }) {
       chat.errorMessages = { displayServiceErrorMessages: true };
       chat.connect = { handler: async (body, signals) => {
         reload.disabled = true;
+        revealComposer();
         try {
           const message = body.messages?.at(-1)?.text;
           if (typeof message !== "string" || !message.trim()) throw new Error("Enter a follow-up question.");
@@ -93,7 +98,7 @@ export function createPolicyChat({ container, api, onSource, onError }) {
           await signals.onResponse({ html: chatMessageHtml(reply.text, reply.citations) });
         } catch (error) {
           await signals.onResponse({ error: error instanceof Error ? error.message : String(error) });
-        } finally { reload.disabled = false; signals.onClose(); }
+        } finally { reload.disabled = false; signals.onClose(); revealComposer(); }
       } };
       let listening = false;
       chat.onComponentRender = () => {

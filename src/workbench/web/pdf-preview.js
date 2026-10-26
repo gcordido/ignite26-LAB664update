@@ -56,10 +56,7 @@ async function render({ anchor, reset = false, focus } = {}) {
   const availableWidth = scroll.clientWidth;
   const availableHeight = scroll.clientHeight;
   const base = page.getViewport({ scale: 1 });
-  const fit = Math.min(
-    Math.max(100, availableWidth - 26) / base.width,
-    Math.max(100, availableHeight - 26) / base.height,
-  );
+  const fit = Math.max(100, availableWidth - 26) / base.width;
   const viewport = page.getViewport({ scale: fit * zoom });
   const canvas = document.createElement("canvas");
   canvas.id = "pdf-canvas";
@@ -132,15 +129,16 @@ async function render({ anchor, reset = false, focus } = {}) {
     const area = scroll.getBoundingClientRect();
     scroll.scrollLeft += box.left - area.left + anchor.u * box.width - anchor.x;
     scroll.scrollTop += box.top - area.top + anchor.v * box.height - anchor.y;
-  } else if (zoom > 1 && (focus || reset)) {
+  } else if (focus || (zoom > 1 && reset)) {
     const box = stage.getBoundingClientRect();
     const area = scroll.getBoundingClientRect();
     const xs = focus?.polygon.filter((_, index) => index % 2 === 0);
     const ys = focus?.polygon.filter((_, index) => index % 2 === 1);
     const x = xs ? (Math.min(...xs) + Math.max(...xs)) / 2 : 0.5;
     const y = ys ? (Math.min(...ys) + Math.max(...ys)) / 2 : 0.5;
-    scroll.scrollLeft +=
-      box.left - area.left + x * box.width - scroll.clientWidth / 2;
+    if (zoom > 1)
+      scroll.scrollLeft +=
+        box.left - area.left + x * box.width - scroll.clientWidth / 2;
     scroll.scrollTop +=
       box.top - area.top + y * box.height - scroll.clientHeight / 2;
   }
@@ -189,15 +187,10 @@ export async function previewPdf(url, page, highlights = [], options = {}) {
     documentPdf = pdf;
   }
   if (current !== selection) return;
-  if (options.zoom !== undefined) {
-    if (
-      !Number.isFinite(options.zoom) ||
-      options.zoom < 0.5 ||
-      options.zoom > 5
-    )
-      throw new RangeError("PDF zoom must be between 50% and 500%.");
-    zoom = options.zoom;
-  }
+  const selectedZoom = options.zoom ?? 1;
+  if (!Number.isFinite(selectedZoom) || selectedZoom < 0.5 || selectedZoom > 5)
+    throw new RangeError("PDF zoom must be between 50% and 500%.");
+  zoom = selectedZoom;
   pageNumber = Math.min(documentPdf.numPages, Math.max(1, page));
   regions = highlights;
   get("pdf-controls").hidden = false;
