@@ -22,7 +22,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 ROOT = Path(__file__).resolve().parents[1]
 CHECKS = [
-    "Rental eligibility and need", "Daily rate", "Duration and repair alignment",
+    "Amount", "Timing", "Effective terms",
     "Charges and reimbursement calculation", "Authorization and payment readiness",
 ]
 
@@ -39,7 +39,7 @@ class Citation(BaseModel):
 class Check(BaseModel):
     model_config = ConfigDict(extra="forbid")
     Check: Literal[
-        "Rental eligibility and need", "Daily rate", "Duration and repair alignment",
+        "Amount", "Timing", "Effective terms",
         "Charges and reimbursement calculation", "Authorization and payment readiness",
     ]
     Outcome: Literal["Satisfied", "ReviewRequired", "NotApplicable"]
@@ -61,11 +61,18 @@ class Answer(BaseModel):
     Citation: list[Citation]
 
 
+class PolicyScope(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    policyId: str | None = None
+    vin: str | None = None
+
+
 class Turn(BaseModel):
     model_config = ConfigDict(extra="forbid")
     mode: Literal["ungrounded", "search"]
     prompt: str = Field(min_length=1, max_length=180_000)
     lossState: str | None = None
+    policyScope: PolicyScope | None = None
     chat: bool = False
     history: list[dict[str, str]] = Field(default_factory=list, max_length=42)
     configPath: str
@@ -93,7 +100,18 @@ def validate_config(config: dict) -> None:
         raise ValueError("Unsupported policy extraction mode.")
 
 
-def source_evidence(row: dict, config: dict, sources: dict, citations: dict, state: str) -> dict:
+def applicable_source(source: dict, state: str, scope: PolicyScope | None = None) -> bool:
+    if state not in source["states"]:
+        return False
+    registered = source.get("policyScope")
+    if registered is None:
+        return True
+    return (scope is not None and bool(scope.policyId) and bool(scope.vin)
+            and scope.policyId == registered["policyId"] and scope.vin == registered["vin"])
+
+
+def source_evidence(row: dict, config: dict, sources: dict, citations: dict, state: str,
+                    scope: PolicyScope | None = None) -> dict:
     """Verify indexed source identity and derive citations from real page spans."""
     source = sources.get(row.get("file"))
     if not source:
@@ -105,8 +123,8 @@ def source_evidence(row: dict, config: dict, sources: dict, citations: dict, sta
         if row.get(field) != config[field]:
             raise ValueError(f"Search returned a different {field}.")
     state_codes = source["states"] + (["SHARED"] if source["documentType"] == "shared_standard" else [])
-    if state not in source["states"]:
-        raise ValueError("Search returned a different loss state's policy.")
+    if not applicable_source(source, state, scope):
+        raise ValueError("Search returned evidence outside the claim's state, policy or vehicle scope.")
     if config["extractionMode"] == "layout":
         if set(row.get("stateCodes", [])) != set(state_codes):
             raise ValueError("Search returned a different loss state's policy.")
@@ -122,7 +140,9 @@ def source_evidence(row: dict, config: dict, sources: dict, citations: dict, sta
     if page_to > max(sections.values()):
         raise ValueError("Search returned a page outside the registered PDF.")
     if config["extractionMode"] == "layout":
-        allowed = [name for name, number in sections.items() if number == page and name == row.get("section")]
+        allowed = [name for name, number in sections.items() if number == page]
+        if row.get("section") not in allowed:
+            raise ValueError("Layout chunk section is outside its verified source page.")
     else:
         allowed = [name for name, number in sections.items() if page <= number <= page_to]
     if not allowed:
@@ -131,16 +151,15 @@ def source_evidence(row: dict, config: dict, sources: dict, citations: dict, sta
             "stateCodes": state_codes, "ruleIds": source["ruleIds"]}
 
 
-def retrieval_filter(config: dict, sources: dict, state: str) -> str:
+def retrieval_filter(config: dict, sources: dict, state: str, scope: PolicyScope | None = None) -> str:
     generation = (f"corpusHash eq '{config['corpusHash']}' and "
                   f"indexFingerprint eq '{config['indexFingerprint']}'")
-    if config["extractionMode"] == "layout":
-        return f"stateCodes/any(s: s eq '{state}') and {generation}"
-    ids = [source["documentId"] for source in sources.values() if state in source["states"]]
+    ids = [source["documentId"] for source in sources.values() if applicable_source(source, state, scope)]
     if not ids:
         raise ValueError("No policy sources apply to the CU loss state.")
     escaped = ",".join(value.replace("'", "''") for value in ids)
-    return f"search.in(documentId, '{escaped}', ',') and {generation}"
+    state_filter = f"stateCodes/any(s: s eq '{state}') and " if config["extractionMode"] == "layout" else ""
+    return f"{state_filter}search.in(documentId, '{escaped}', ',') and {generation}"
 
 
 def check_citations(value: Review | Answer, evidence: list[dict], mode: str) -> None:
@@ -185,6 +204,11 @@ async def run(turn: Turn) -> dict:
         if hashlib.sha256((manifest.parent / filename).read_bytes()).hexdigest() != source["sha256"]:
             raise ValueError("Policy PDF changed. Re-run index setup.")
         sources[filename] = source
+        scope = source.get("policyScope")
+        if (source.get("documentType") == "policy_contract" and
+                (not isinstance(scope, dict) or set(scope) != {"policyId", "vin"}
+                 or not all(isinstance(v, str) and v.strip() for v in scope.values()))):
+            raise ValueError("Contract evidence requires an explicit policy and vehicle scope.")
     citations = {item["documentId"]: item for item in json.loads(
         (manifest.parent / "citations.json").read_text(encoding="utf-8")
     )}
@@ -203,7 +227,7 @@ async def run(turn: Turn) -> dict:
 
     @tool(approval_mode="never_require", max_invocations=6, max_invocation_exceptions=1)
     def search_policy_rules(
-        query: Annotated[str, "Keywords for the applicable SOP section, such as rental eligibility, daily rate, duration or authorization."],
+        query: Annotated[str, "Keywords for declarations, limits, timing, Figure R-1, effective amendment, or SOP authorization."],
     ) -> str:
         """Retrieve state and shared rental SOP rules from the configured Azure Search index.
 
@@ -221,7 +245,7 @@ async def run(turn: Turn) -> dict:
         try:
             results = search.search(
                 search_text=query,
-                filter=retrieval_filter(config, sources, turn.lossState),
+                filter=retrieval_filter(config, sources, turn.lossState, turn.policyScope),
                 top=8,
                 search_fields=["content"],
                 select=["id", "content", "documentId", "version", "file", "section",
@@ -230,7 +254,7 @@ async def run(turn: Turn) -> dict:
                     ["id", "content", "documentId", "version", "file", "page", "pageTo",
                      "sha256", "corpusHash", "indexFingerprint"],
             )
-            documents = [source_evidence(dict(row), config, sources, citations, turn.lossState)
+            documents = [source_evidence(dict(row), config, sources, citations, turn.lossState, turn.policyScope)
                          for row in results]
         except Exception as error:
             retrieval_errors.append(type(error).__name__)
@@ -254,9 +278,12 @@ async def run(turn: Turn) -> dict:
         instructions += (
             "Use search_policy_rules before answering, including follow-ups. Retrieve both the "
             "matching state SOP and shared standard and all relevant sections; you may query multiple "
-            "times. No usable policy evidence means ReviewRequired with explicit missing-rule reason. "
+            "times. Also retrieve the policy-scoped declarations, terms/diagram and issued amendment "
+            "when available. Use the contract for benefits and the SOP only for handling authority. "
+            "Do not apply another policy or vehicle's terms. No usable policy evidence means "
+            "ReviewRequired with explicit missing-rule reason. "
             "An API/authentication failure is an operational error, not a business review result. "
-            "The tool returns only the selected CU loss state's rules plus shared evidence. "
+            "The tool enforces CU loss state, policy ID and insured VIN plus shared evidence. "
             "Missing or ambiguous diagram/table evidence requires review; never reconstruct "
             "Arizona Figure 1 from general knowledge. "
         )

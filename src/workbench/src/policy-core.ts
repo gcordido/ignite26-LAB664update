@@ -7,9 +7,9 @@ import { normalize } from "./results.ts";
 import { fieldValue, type packetJson } from "./packet-json.ts";
 
 export const checkNames = [
-  "Rental eligibility and need",
-  "Daily rate",
-  "Duration and repair alignment",
+  "Amount",
+  "Timing",
+  "Effective terms",
   "Charges and reimbursement calculation",
   "Authorization and payment readiness",
 ] as const;

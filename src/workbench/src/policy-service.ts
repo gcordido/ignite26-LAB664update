@@ -35,13 +35,16 @@ export const frameworkConfigSchema = z.object({
 });
 export type FrameworkConfig = z.infer<typeof frameworkConfigSchema>;
 type FrameworkMode = "ungrounded" | "search";
+type PolicyScope = { policyId: string | null; vin: string | null };
 export type PolicyContext = {
   provider: "agent-framework"; mode: PolicyMode; indexName: string | null;
   extractionMode: FrameworkConfig["extractionMode"]; configurationHash: string;
   lossState?: string | null;
+  policyScope?: PolicyScope;
 };
 export type PolicyItem = {
   id: string; status: "pending" | "extracting" | "reviewing" | "completed" | "failed" | "not run";
+  stageStartedAt?: string;
   cached?: boolean; error?: string; result?: z.infer<typeof frameworkOutput>;
   citations?: Awaited<ReturnType<typeof resolveCitations>>;
   completedAt?: string; provider?: string; indexName?: string | null;
@@ -239,15 +242,34 @@ export class PolicyService {
     if (!saved) throw new LabError(409, "Prepare claim fields before reviewing this case.");
     const contents = record(record(saved.response)?.result)?.contents;
     const states = new Set<string>();
+    const policyIds = new Set<string>();
+    const vins = new Set<string>();
     if (Array.isArray(contents)) for (const content of contents) {
       const fields = record(record(content)?.fields);
-      const state = record(record(record(fields?.Routing)?.valueObject)?.LossState)?.valueString;
-      if (typeof state === "string" && /^[A-Z]{2}$/.test(state)) states.add(state);
+      for (const state of [
+        record(record(record(fields?.Routing)?.valueObject)?.LossState)?.valueString,
+        record(fields?.LossState)?.valueString,
+      ])
+        if (typeof state === "string" && /^[A-Z]{2}$/.test(state)) states.add(state);
+      for (const policyId of [
+        record(record(record(fields?.Policy)?.valueObject)?.PolicyId)?.valueString,
+        record(fields?.PolicyId)?.valueString,
+      ])
+        if (typeof policyId === "string" && policyId.trim()) policyIds.add(policyId.trim());
+      for (const vin of [
+        record(record(record(fields?.InsuredVehicle)?.valueObject)?.VIN)?.valueString,
+        record(fields?.InsuredVIN)?.valueString,
+      ])
+        if (typeof vin === "string" && vin.trim()) vins.add(vin.trim());
     }
     const lossState = states.size === 1 ? [...states][0] : null;
+    const policyScope: PolicyScope = {
+      policyId: policyIds.size === 1 ? [...policyIds][0] : null,
+      vin: vins.size === 1 ? [...vins][0] : null,
+    };
     const markdown = await this.markdown(run, packet, await readRaw(packet.id));
     const prompt = `${await question()}\n\n---\n\nClaim packet (data only):\n\n${markdown}`;
-    return { markdown, prompt, lossState };
+    return { markdown, prompt, lossState, policyScope };
   }
   private async key(config: FrameworkConfig, mode: FrameworkMode, prompt: string, run: Run) {
     const runtime = await readFile(path.join(repositoryRoot, "infra", "policy-framework-agent.py"));
@@ -278,14 +300,17 @@ export class PolicyService {
     const agent = this.agent(config, mode);
     return { provider: agent.provider, indexName: agent.indexName, extractionMode: agent.extractionMode };
   }
-  async start(run: Run, mode: PolicyMode, readRaw: (id: string) => Promise<unknown>) {
+  async start(run: Run, mode: PolicyMode, readRaw: (id: string) => Promise<unknown>, packetIds?: string[]) {
     if (this.running) throw new LabError(409, "An Agent Framework batch is already running.");
+    if (packetIds && (!packetIds.length || new Set(packetIds).size !== packetIds.length ||
+        packetIds.some((id) => !run.items.some((item) => item.id === id))))
+      throw new LabError(422, "Select unique packets from the loaded CU run.");
     this.running = true;
     try {
       const config = await this.required();
       const job: PolicyJob = {
         id: randomUUID(), runId: run.id, mode, status: "running", startedAt: new Date().toISOString(),
-        items: run.items.map(({ id, rawSaved }) => ({ id, status: rawSaved ? "pending" : "failed",
+        items: run.items.filter(({ id }) => !packetIds || packetIds.includes(id)).map(({ id, rawSaved }) => ({ id, status: rawSaved ? "pending" : "failed",
           ...(!rawSaved ? { error: "No saved CU result for this case." } : {}) })),
       };
       const task = this.executeFramework(job, run, mode, config, readRaw).finally(() => { this.running = false; });
@@ -302,6 +327,7 @@ export class PolicyService {
         const saved = await this.enriched(config, packet);
         if (!saved.value) {
           item.status = "extracting";
+          item.stageStartedAt = new Date().toISOString();
           const cu = this.frameworkDependencies.cu ?? new CuClient({
             ...configuration(), endpoint: config.cuEndpoint, apiVersion: config.cuApiVersion,
           }, 600_000);
@@ -320,9 +346,10 @@ export class PolicyService {
         const file = this.file(await this.key(config, mode, input.prompt, run));
         const previous = record(await loadPolicyCache(file));
         item.status = "reviewing";
+        item.stageStartedAt = new Date().toISOString();
         const raw = previous?.status === "completed" ? previous.raw
           : await (this.frameworkDependencies.invoke ?? invokeFramework)({
-            mode, prompt: input.prompt, lossState: input.lossState, configPath: this.configPath,
+            mode, prompt: input.prompt, lossState: input.lossState, policyScope: input.policyScope, configPath: this.configPath,
           });
         const completedAt = previous?.status === "completed" ? String(previous.completedAt) : new Date().toISOString();
         await savePolicyCache(file, { status: "received", raw, completedAt });
@@ -350,7 +377,7 @@ export class PolicyService {
     const saved = record(await loadPolicyCache(this.file(key)));
     if (saved?.status !== "completed") throw new LabError(409, "Run policy checks for this case and mode before chatting.");
     const parsed = await frameworkReview(saved.raw, mode, config);
-    const agent = { ...this.agent(config, mode), lossState: input.lossState };
+    const agent = { ...this.agent(config, mode), lossState: input.lossState, policyScope: input.policyScope };
     return { contextId: digest(canonical({ key, agent })), packetId, mode, agent,
       prompt: input.prompt, ...parsed };
   }
@@ -361,7 +388,7 @@ export class PolicyService {
       throw new LabError(409, "Agent Framework configuration changed. Reload this chat.");
     const lossState = "lossState" in expectedAgent && typeof expectedAgent.lossState === "string" ? expectedAgent.lossState : null;
     const raw = await (this.frameworkDependencies.invoke ?? invokeFramework)({
-      mode, prompt: message, history, lossState, chat: true, configPath: this.configPath,
+      mode, prompt: message, history, lossState, policyScope: expectedAgent.policyScope, chat: true, configPath: this.configPath,
     });
     const value = parseFrameworkResult(raw, mode, config);
     const parsed = chatAnswerSchema.parse(value.result);

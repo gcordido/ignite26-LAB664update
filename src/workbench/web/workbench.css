@@ -337,6 +337,19 @@ nav {
   display: flex;
   gap: 16px;
 }
+#workflow-pivots {
+  margin: 0;
+  padding: 10px 24px;
+  gap: 8px;
+  flex-wrap: wrap;
+  background: white;
+  border-bottom: 1px solid #d6dce2;
+}
+#workflow-pivots [aria-pressed="false"] {
+  background: white;
+  border-color: #ccd6df;
+  color: #365567;
+}
 a {
   color: #116b9c;
   text-decoration: none;
@@ -350,7 +363,7 @@ main {
   grid-template-rows: auto auto minmax(0, 1fr);
   column-gap: 8px;
   padding: 12px 24px;
-  height: calc(100dvh - 64px);
+  height: calc(100dvh - 122px);
   max-width: 2200px;
   margin: auto;
 }
@@ -402,7 +415,8 @@ input,
 select {
   font: inherit;
 }
-.toolbar select {
+.toolbar select,
+#policy-toolbar select {
   appearance: none;
   -webkit-appearance: none;
   padding-right: 36px;
@@ -414,10 +428,12 @@ select {
     border-color 120ms,
     box-shadow 120ms;
 }
-.toolbar select:hover {
+.toolbar select:hover,
+#policy-toolbar select:hover {
   border-color: #8ca8bd;
 }
-.toolbar select:focus {
+.toolbar select:focus,
+#policy-toolbar select:focus {
   outline: none;
   border-color: #3f88b8;
   box-shadow: 0 0 0 3px #116b9c1c;
@@ -475,6 +491,17 @@ select {
   gap: 8px;
   flex: 1;
   min-width: min(360px, 100%);
+}
+@media (max-width: 600px) {
+  .toolbar-group {
+    flex-wrap: wrap;
+  }
+  .toolbar-group label {
+    flex-basis: 100%;
+  }
+  .toolbar-group select {
+    flex-basis: 100%;
+  }
 }
 .toolbar-intro {
   flex: 0 0 100%;
@@ -678,23 +705,59 @@ body.resizing-column * {
 .results-toolbar {
   margin-bottom: 0;
 }
+.results-toolbar > #origin {
+  margin-left: auto;
+}
+.results-toolbar > #view-types:not([hidden]) {
+  flex-basis: 100%;
+  order: 1;
+}
 .results-heading {
-  margin: 0 0 8px;
+  margin: 0;
   font-size: 18px;
   line-height: 24px;
   font-weight: 600;
   color: #29475a;
 }
 #policy-toolbar {
-  padding: 8px 0;
+  padding: 4px 0;
 }
 #policy-toolbar p {
-  margin: 6px 0;
+  margin: 3px 0;
   font-size: 12px;
+}
+#checks-description {
+  margin: 4px 0;
+}
+#session-status:empty {
+  display: none;
+}
+.table-status:has(#run-progress[hidden]):not(:has(.columns-toolbar label:not([hidden]))) {
+  display: none;
 }
 #policy-output {
   overflow: visible;
   padding: 0 6px 6px;
+}
+.policy-activity {
+  padding-block: 8px;
+}
+.policy-activity-heading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+}
+.policy-activity p {
+  margin-block: 8px;
+}
+.policy-activity-time {
+  font-variant-numeric: tabular-nums;
+}
+@media (prefers-reduced-motion: reduce) {
+  .policy-activity .spinner {
+    animation: none;
+  }
 }
 #policy-pane-modes {
   padding: 0;
@@ -890,7 +953,7 @@ progress::-moz-progress-bar {
   border: 1px solid #cbd4dc;
 }
 #packets {
-  flex: 0 1 auto;
+  flex: 1 1 auto;
   min-height: 0;
   scrollbar-gutter: stable;
   border-bottom: 2px solid #b8c8d4;
@@ -1310,6 +1373,9 @@ dialog h2 {
   }
   header {
     padding: 12px;
+  }
+  #workflow-pivots {
+    padding: 8px 12px;
   }
   header .muted {
     display: none;

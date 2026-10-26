@@ -30,6 +30,7 @@ let busy = false;
 let run;
 let origin = "cached";
 let view = "classification";
+let lastExtractionView = "classification";
 let allFields = false;
 let showConfidence = false;
 let selectedPacket = "";
@@ -39,6 +40,8 @@ let clickTimer;
 let focusedCell = "";
 let focusedZoom = 1;
 let catalog;
+let savedExtractionRun;
+let savedPolicyEntries = [];
 let expansion;
 const detailPanels = {
   policy: get("packet-review"),
@@ -52,18 +55,22 @@ let policyMode = "search";
 let policySource;
 let policyPaneMode = "result";
 const policyResults = new Map();
+const policyPolls = new Map();
+const policyProgressErrors = new Map();
+let policyCacheBusy = false;
+let policyCacheVersion = 0;
 const policyResultScroll = new Map();
 const policyCheckNames = [
-  "Rental eligibility and need",
-  "Daily rate",
-  "Duration and repair alignment",
+  "Amount",
+  "Timing",
+  "Effective terms",
   "Charges and reimbursement calculation",
   "Authorization and payment readiness",
 ];
 const policyShortNames = [
-  "Rental eligibility",
-  "Daily rate",
-  "Rental period",
+  "Amount",
+  "Timing",
+  "Effective terms",
   "Reimbursement",
   "Payment readiness",
 ];
@@ -130,6 +137,7 @@ function updateElapsed() {
     `${minutes}:${String(elapsed % 60).padStart(2, "0")}`;
 }
 setInterval(updateElapsed, 1000);
+setInterval(updatePolicyActivity, 1000);
 function fail(error) {
   get("error").hidden = false;
   get("error").textContent =
@@ -154,8 +162,7 @@ function arrayLabel(field) {
 function controls() {
   get("analyze").disabled =
     busy || !sessionId || !catalog || !get("analyzer").value.trim();
-  get("load-cache").disabled = busy || policyBusy || !get("cache").value;
-  get("refresh-cache").disabled = busy || !sessionId;
+  get("load-cache").disabled = busy || policyBusy || !savedExtractionRun;
   get("review-packet").disabled = busy || !run;
   for (const button of get("packet-table").querySelectorAll(
     ".packet-policy-summary, .policy-matrix-button",
@@ -172,36 +179,46 @@ function controls() {
     policyMode === "search"
       ? ""
       : "Select Azure Search retrieval to run policy checks.";
-  get("policy-mode").disabled = !policyStatus?.configured;
+  get("policy-mode").disabled = busy || policyBusy || !policyStatus?.configured;
+  get("load-policy-cache").disabled = busy || policyBusy || policyCacheBusy ||
+    policyStatus?.batchRunning || !savedPolicyEntries.some((entry) => entry.mode === policyMode);
+}
+async function policyCaches() {
+  const version = ++policyCacheVersion;
+  const runId = run?.id;
+  if (!runId) return;
+  policyCacheBusy = true;
+  get("policy-cache-status").textContent = "Checking for compatible saved policy results…";
+  controls();
+  try {
+    const saved = await api("policy/cache");
+    if (version !== policyCacheVersion || run?.id !== runId || saved.runId !== runId) return;
+    savedPolicyEntries = saved.entries;
+    const entry = savedPolicyEntries.find((entry) => entry.mode === policyMode);
+    get("policy-cache-status").textContent = saved.message ??
+      (entry
+        ? `${entry.count}/${entry.total} saved cases available. Loading makes no Azure calls.`
+        : "No saved checks match this CU run and current policy configuration. Run policy checks to save results.");
+  } catch (error) {
+    if (version === policyCacheVersion && run?.id === runId) {
+      savedPolicyEntries = [];
+      get("policy-cache-status").textContent = `Could not list saved policy results: ${error.message}. Return to Check policies to retry.`;
+    }
+    throw error;
+  } finally {
+    if (version === policyCacheVersion) {
+      policyCacheBusy = false;
+      controls();
+    }
+  }
 }
 async function caches() {
   const savedRuns = await api("cache");
-  const previous = get("cache").value;
-  get("cache").replaceChildren(
-    ...savedRuns.map((saved) => {
-      const date = new Date(saved.startedAt).toLocaleString(undefined, {
-        month: "short",
-        day: "numeric",
-        hour: "numeric",
-        minute: "2-digit",
-      });
-      const count = saved.items.filter((item) => item.rawSaved).length;
-      const option = element(
-        "option",
-        `${date} \u00b7 ${saved.analyzer.id} \u00b7 ${count}/${saved.items.length}${saved.status === "completed" ? "" : ` \u00b7 ${saved.status}`}`,
-      );
-      option.value = saved.id;
-      option.dataset.analyzerId = saved.analyzer.id;
-      option.title = `${saved.analyzer.id} / ${saved.apiVersion}`;
-      return option;
-    }),
-  );
-  if (savedRuns.some((saved) => saved.id === previous))
-    get("cache").value = previous;
-  else {
-    const complete = savedRuns.find((saved) => saved.status === "completed");
-    if (complete) get("cache").value = complete.id;
-  }
+  savedExtractionRun = savedRuns.find((saved) => saved.id === savedExtractionRun?.id) ??
+    savedRuns.find((saved) => saved.status === "completed") ?? savedRuns[0];
+  get("load-cache").title = savedExtractionRun
+    ? `${savedExtractionRun.analyzer.id} · ${new Date(savedExtractionRun.startedAt).toLocaleString()}`
+    : "No saved extraction results available.";
   controls();
 }
 async function renderRun(nextRun, nextOrigin) {
@@ -230,6 +247,9 @@ async function renderRun(nextRun, nextOrigin) {
     expansion = undefined;
     parkDetails();
     policyResults.clear();
+    savedPolicyEntries = [];
+    policyPolls.clear();
+    policyProgressErrors.clear();
     policyResultScroll.clear();
     policyChat.reset();
     showPolicyPanel(view === "policy");
@@ -281,6 +301,7 @@ async function renderRun(nextRun, nextOrigin) {
     else await refreshPolicy();
     const job = policyResults.get(policyMode);
     if (job?.status === "running") void watchPolicy(job).catch(fail);
+    await policyCaches();
   }
   renderTable();
   if (run.status === "failed") {
@@ -393,6 +414,7 @@ function renderTable() {
     view = "classification";
     allFields = false;
   }
+  renderWorkflowNavigation();
   for (const button of get("view-types").querySelectorAll("[data-view]")) {
     button.hidden = !types.includes(button.dataset.view);
     button.setAttribute("aria-pressed", String(button.dataset.view === view));
@@ -960,16 +982,36 @@ function showArray(id, entry, field) {
   });
   get("array-table").replaceChildren(table);
 }
-for (const button of get("view-types").querySelectorAll("[data-view]"))
-  button.onclick = () => {
-    clearTimeout(clickTimer);
-    ++selectionVersion;
-    view = button.dataset.view;
-    allFields = false;
-    showPolicyPanel(view === "policy");
-    renderTable();
-    if (view === "policy") renderPolicyOutput();
-    else if (selectedPacket) showCustomer(selectedPacket).catch(fail);
+function renderWorkflowNavigation() {
+  const workflow = ["policies", "policy"].includes(view) ? view : "extract";
+  for (const button of get("workflow-pivots").querySelectorAll("[data-workflow]"))
+    button.setAttribute("aria-pressed", String(button.dataset.workflow === workflow));
+  get("view-types").hidden = workflow !== "extract";
+  get("extraction-toolbar").hidden = workflow !== "extract";
+  get("results-heading").textContent = {
+    extract: "Parse and extract", policies: "Check consistency", policy: "Check policies",
+  }[workflow];
+}
+function activateView(next) {
+  clearTimeout(clickTimer);
+  ++selectionVersion;
+  if (!["policies", "policy"].includes(view)) lastExtractionView = view;
+  view = next;
+  allFields = false;
+  showPolicyPanel(view === "policy");
+  renderWorkflowNavigation();
+  if (!run) return;
+  renderTable();
+  if (view === "policy") renderPolicyOutput();
+  else if (selectedPacket) showCustomer(selectedPacket).catch(fail);
+  if (view === "policy" && !busy && !policyBusy && !policyCacheBusy)
+    void policyCaches().catch(fail);
+}
+for (const button of document.querySelectorAll("[data-view]"))
+  button.onclick = () => activateView(button.dataset.view);
+get("workflow-pivots").querySelector('[data-workflow="extract"]').onclick =
+  () => {
+    if (["policies", "policy"].includes(view)) activateView(lastExtractionView);
   };
 get("all-fields").onchange = () => {
   allFields = get("all-fields").checked;
@@ -982,7 +1024,6 @@ get("show-confidence").onchange = () => {
 };
 get("close-array").onclick = collapseDetails;
 get("analyzer").onchange = controls;
-get("cache").onchange = controls;
 get("analyze").onclick = () => {
   if (busy || !catalog) return;
   const dialog = get("run-confirmation");
@@ -1015,7 +1056,7 @@ get("confirm-run").onclick = async () => {
       await renderRun(current.run, "live");
       if (!current.busy) {
         await caches();
-        get("cache").value = current.run.id;
+        savedExtractionRun = current.run;
         if (current.run.status === "failed")
           throw new Error(current.error ?? "Analysis failed.");
         break;
@@ -1036,7 +1077,7 @@ get("load-cache").onclick = async () => {
   get("batch").setAttribute("aria-busy", "true");
   controls();
   try {
-    const id = get("cache").value;
+    const id = savedExtractionRun.id;
     await renderRun(await api("cache/load", { runId: id }), "cached");
     if (run.status === "running") {
       void (async () => {
@@ -1061,7 +1102,6 @@ get("load-cache").onclick = async () => {
     controls();
   }
 };
-get("refresh-cache").onclick = () => caches().catch(fail);
 async function downloadNative(route, filename) {
   const response = await api(route);
   const url = URL.createObjectURL(
@@ -1111,7 +1151,7 @@ api("session", {})
         policyMessage();
       }),
     ]);
-    const cachedAnalyzer = get("cache").selectedOptions[0]?.dataset.analyzerId;
+    const cachedAnalyzer = savedExtractionRun?.analyzer.id;
     if (
       [...get("analyzer").options].some(
         (option) => option.value === cachedAnalyzer,
@@ -1177,6 +1217,8 @@ async function refreshPolicy(mode = policyMode) {
     controls();
   }
   policyResults.set(mode, value);
+  policyPolls.set(mode, Date.now());
+  policyProgressErrors.delete(mode);
   if (view === "policy" && mode === policyMode) {
     renderTable();
     renderPolicyOutput();
@@ -1223,13 +1265,35 @@ async function watchPolicy(job) {
       renderTable();
     }
   } catch (error) {
+    policyProgressErrors.set(mode, error.message);
+    renderPolicyOutput();
     throw new Error(
       `Policy progress could not be refreshed: ${error.message}. The server batch may still be running. Reload this tab to reconnect; do not submit another batch.`,
     );
   } finally {
     policyBusy = false;
     await updatePolicyAvailability();
+    await policyCaches();
   }
+}
+function updatePolicyActivity() {
+  const activity = get("policy-output").querySelector(".policy-activity");
+  if (!activity) return;
+  const job = policyResults.get(policyMode);
+  const item = job?.items.find((item) => item.id === selectedPacket);
+  const started = Date.parse(item?.stageStartedAt ?? job?.startedAt);
+  const elapsed = Math.max(0, Math.floor((Date.now() - started) / 1000));
+  const timer = activity.querySelector(".policy-activity-time");
+  if (timer) timer.textContent = Number.isFinite(elapsed)
+    ? `${Math.floor(elapsed / 60)}m ${elapsed % 60}s in this stage`
+    : "Waiting for the next status update";
+  const connection = activity.querySelector(".policy-activity-connection");
+  const last = policyPolls.get(policyMode);
+  if (connection) connection.textContent = policyProgressErrors.has(policyMode)
+    ? `Progress updates stopped: ${policyProgressErrors.get(policyMode)}. Reload to reconnect; do not start a duplicate review.`
+    : last
+      ? `Workbench responded ${Math.max(0, Math.floor((Date.now() - last) / 1000))}s ago.`
+      : "Connecting to workbench progress…";
 }
 function renderPolicyTable() {
   get("field-setting").hidden = true;
@@ -1369,6 +1433,32 @@ function renderPolicyOutput(focused) {
     .get(policyMode)
     ?.items.find((item) => item.id === selectedPacket);
   if (!item?.result) {
+    if (item && ["pending", "extracting", "reviewing"].includes(item.status)) {
+      const activity = element("div", undefined, "policy-activity");
+      const heading = element("p", undefined, "policy-activity-heading");
+      const paused = policyProgressErrors.has(policyMode);
+      if (!paused && item.status !== "pending")
+        heading.append(element("span", undefined, "spinner"));
+      heading.querySelector(".spinner")?.setAttribute("aria-hidden", "true");
+      const title = element("span", paused ? "Progress connection interrupted" : ({
+        pending: "Queued for policy review",
+        extracting: "Extracting claim evidence",
+        reviewing: "Agent checking policy rules",
+      }[item.status]));
+      title.setAttribute("role", "status");
+      heading.append(title);
+      activity.append(heading,
+        element("p", item.status === "pending"
+          ? "Cases run sequentially. This case will start after the cases ahead of it."
+          : item.status === "extracting"
+            ? "Content Understanding is preparing the claim facts used by all five checks."
+            : "The agent is evaluating all five checks. Search and model calls can take several minutes; results appear after the response and source citations are verified."),
+        element("p", "", "policy-activity-time"),
+        element("p", "", "policy-activity-connection muted"));
+      panel.append(activity);
+      updatePolicyActivity();
+      return;
+    }
     panel.append(
       element(
         "p",
@@ -1509,8 +1599,37 @@ get("policy-mode").onchange = async () => {
   renderPolicyOutput();
   try {
     await refreshPolicy();
+    await policyCaches();
   } catch (error) {
     fail(error);
+  }
+};
+get("load-policy-cache").onclick = async () => {
+  if (get("load-policy-cache").disabled) return;
+  const runId = run.id;
+  const mode = policyMode;
+  busy = true;
+  get("error").hidden = true;
+  get("policy-cache-status").textContent = "Loading saved policy checks and verifying their sources…";
+  controls();
+  try {
+    const value = await api("policy/cache/load", { runId, mode });
+    if (run?.id !== runId || value.runId !== runId) return;
+    policyMode = mode;
+    get("policy-mode").value = mode;
+    policyResults.set(mode, value);
+    policyChat.reset();
+    renderTable();
+    renderPolicyOutput();
+    const count = value.items.filter((item) => item.status === "completed").length;
+    get("policy-cache-status").textContent = `Loaded ${count}/${value.items.length} saved cases. No Azure calls were made.`;
+    policyMessage();
+  } catch (error) {
+    get("policy-cache-status").textContent = `Could not load saved policy results: ${error.message}. Return to Check policies to reload the list.`;
+    fail(error);
+  } finally {
+    busy = false;
+    controls();
   }
 };
 get("policy-run").onclick = () => {
@@ -1530,6 +1649,8 @@ get("confirm-policy").onclick = async () => {
   const mode = policyMode;
   try {
     const job = await api("policy/batch", { mode, live: true });
+    policyProgressErrors.delete(mode);
+    policyPolls.set(mode, Date.now());
     policyResults.set(mode, job);
     if (view === "policy") {
       renderTable();

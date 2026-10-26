@@ -8,7 +8,8 @@ The workflow has three parts:
 
 1. **Claim facts:** Content Understanding extracts structured facts from a packet.
 2. **Policy rules:** Azure AI Search holds searchable chunks of the synthetic
-   SOP PDFs. The active configuration identifies the index and extraction mode.
+   SOP PDFs and policy-scoped contractual PDFs. The active configuration
+   identifies the index and extraction mode.
 3. **Review:** A Python Microsoft Agent Framework agent evaluates five checks
    and answers follow-up questions using the selected retrieval mode.
 
@@ -17,6 +18,14 @@ Use the [setup guide](policy-setup.md) and
 the policy index on your existing Search service.
 
 ## Compare packets 01 and 02
+
+The top-level pivots are **Parse and extract**, **Check consistency**, and
+**Check policies**. Cache/analyzer controls appear only in **Parse and extract**;
+the loaded results remain shared across all three pivots. Classification and
+document-type views live under **Parse and extract**; policy retrieval controls
+appear only under **Check policies**. Switching pivots preserves the loaded run
+and reuses the same table, document viewer and debugger. Returning to **Parse
+and extract** restores the previously selected document type.
 
 The workbench now enables **Run policy checks** only when **Azure Search
 retrieval** is selected. **No policy retrieval** remains available to inspect
@@ -27,7 +36,7 @@ Start here on a prepared lab machine. You don't need to inspect or redeploy
 Azure resources before trying the agent.
 
 1. In the workbench's **Cache Results**, load the included completed **10/10**
-   run. Select **Policy review**.
+   run. Select **Check policies**.
 2. In **Policy retrieval**, select **Azure Search retrieval**. Select **Run policy
    checks** and confirm. This runs the Agent Framework agent against saved CU
    claim facts, not just a local rules engine. Azure charges apply, including
@@ -35,20 +44,24 @@ Azure resources before trying the agent.
    cases, not only the selected row.
 3. Wait for the batch to finish. The status line shows the active case and
    whether CU is extracting claim fields or the agent is checking policy rules.
+   Open a check's **Result** tab for an activity indicator, elapsed stage time
+   and the age of the last successful workbench response. This confirms the
+   progress connection, not individual Search/model-call completion. If updates
+   stop, reconnect rather than starting another batch.
 4. Optionally select **No policy retrieval** to inspect a previously saved
    baseline. Without an SOP, the agent must not invent a rate threshold.
    Return to **Azure Search retrieval** to inspect this run. Changing the
    dropdown doesn't submit another batch.
-5. Compare **Daily rate** for packets **01** and **02**, using the expected
+5. Compare **Amount** for packets **01** and **02**, using the expected
    evidence below. Select each check to inspect **Expected**, **Actual** and
    **Reasoning** in the expandable row below that customer. The PDF viewer remains available alongside it.
 6. For packet **01**, select the Texas **Source** link. In the **Document** tab,
    inspect rule **TX-R2** on page 2 and **Schedule A** on page 3 of
    `tx-rental-review-sop-v2.pdf`. The inline review stays open; select **Back to claim document** to restore the packet preview.
 
-| Case | Extracted daily base | Contractual daily cap | Retrieved routine authority | Expected daily-rate result |
+| Case | Extracted daily base | Contractual daily cap | Retrieved routine authority | Expected amount result |
 |---|---:|---:|---:|---|
-| Packet 01 / Texas | $54 | $85 | $75, inclusive | **Satisfied**: below both limits |
+| Packet 01 / Texas | $54 | $85 | $75, inclusive | **Satisfied**: numerical fit, conditional on timing |
 | Packet 02 / Washington | $61 | $85 | $60, inclusive | **Review required**: above routine authority; supervisor exception evidence is missing |
 
 These are source-based expectations, not hardcoded agent answers. If returned
@@ -58,8 +71,11 @@ other checks can still require review. For example, the refreshed packet 01 CU
 summary can omit the contractual daily cap. Even though $54 is below Texas's
 $75 routine authority, the agent must return **Review required** until the
 claim's contractual cap is established; the SOP can't supply that missing fact.
+The matching revised declarations and effective amendment can establish the
+contractual limit when the policy ID and insured VIN are verified. They cannot
+establish that repairs actually began or ended.
 
-In the source viewer, compare **CU Layout** and **Digital parse** with the PDF.
+In the source viewer, compare **CU Search** and **Digital parse** with the PDF.
 Texas's page 3 table deliberately contains blank cells: a blank rate or duration
 doesn't grant extra authority. Washington's SOP is entirely scanned, so Digital
 parse may have no readable text. Arizona adds an image-based eligibility
@@ -141,9 +157,30 @@ Framework implementation or a hosted Foundry agent.
 
 1. Launch the workbench with `.\infra\launch-workbench.ps1`.
 2. Load saved CU results, or explicitly run your connected analyzer.
-3. In **Policy review**, select **Azure Search retrieval**.
+3. In **Check policies**, select **Azure Search retrieval**.
 4. Select **Run policy checks** and confirm the Azure operation.
 5. Select a check in the grid to expand its review directly below the customer.
+
+### Load saved policy results
+
+Both **Parse and extract** and **Check policies** have a single selector with
+**Run live** and **Load cached results** beside it. There is no cache dropdown
+or Refresh button. The extraction button loads the saved CU run (preferring a
+completed run); its tooltip identifies the analyzer and saved time.
+
+After loading CU results, select the retrieval mode in **Check policies**, then
+select **Load cached results**. The button loads the compatible saved checks for
+that mode and loaded CU run. Availability updates when entering **Check
+policies**, changing retrieval mode, or completing a policy batch.
+Listing or loading saved policy results makes no Azure calls.
+
+The saved checks must match the loaded CU run, exact claim input, review
+question, runtime and active policy configuration, including the corpus/index
+generation and claim analyzer. Results from another run or an older
+configuration are not offered as current results. Source citations are verified
+again when loading. A partially completed set loads only saved completed cases;
+remaining cases stay **Not run**. Live runs still save successful cases
+automatically. Loading is disabled while this session is processing a batch.
 6. Optionally switch to **No policy retrieval** to inspect saved baseline
    results. The app doesn't start new runs in this mode.
 
@@ -154,10 +191,12 @@ tab or source link doesn't submit an agent request or start ingestion.
 | Mode | What the agent receives |
 |---|---|
 | No policy retrieval | Claim facts only. Internal SOP thresholds aren't available; all five checks require review, with no invented citations. |
-| Azure Search retrieval | The same claim facts, plus a tool that retrieves the applicable state SOP and shared evidence standard. |
+| Azure Search retrieval | The same claim facts, plus a tool that retrieves the applicable state SOP, shared evidence standard and matching policy/vehicle contract evidence. |
 
-The application fixes the loss state and source generation in the Search
-filter. The model chooses keywords, not a different state's rules. Missing
+The application fixes the loss state, policy ID, insured VIN and source
+generation in the Search filter. Policy-specific documents require both
+identifiers to match; state/shared SOPs remain available without them.
+The model chooses keywords, not a different state's rules. Missing
 routing or evidence remains explicit; a similar state's SOP isn't substituted.
 
 Claim preparation runs only when explicitly requested by a policy batch and
@@ -186,8 +225,33 @@ remain available for the next explicitly confirmed run.
 
 ## Read the five checks
 
-The checks cover rental eligibility, daily rate, duration and repair alignment,
-charges and reimbursement calculation, and authorization/payment readiness.
+The checks appear in this order:
+
+| Check | Question |
+|---|---|
+| Amount | How much of the bill fits the effective policy's numerical limits, conditional on an eligible period? |
+| Timing | When can rental begin/end, and do actual repair evidence and remaining days support the billed interval? |
+| Effective terms | Does the original limit or an effective carrier-issued amendment govern this vehicle and loss? |
+| Charges and reimbursement calculation | Does the invoice reconcile, with supported taxes/fees, exclusions and credits counted once? |
+| Authorization and payment readiness | Are the required insurer authority and payment documents established? |
+
+For Packet #1, inspect the revised declarations, rental terms/diagram and
+scanned amendment in the source viewer. The Honda row's blank optional-code
+cell must not shift the $500 collision deductible, $85 daily rental limit, or
+30-day maximum. The separate Toyota row does not establish the Honda's
+coverage. R.4 states no separate rental deductible and mandatory taxes
+additional. A numerical fit is not proof of an eligible repair period.
+
+Effective terms requires the issued amendment and its effective time, not
+just a customer signature. Timing requires actual repair dates; a scheduled
+appointment or rental return is insufficient. Missing drivability remains
+unknown, with both branches explained rather than guessed.
+
+For a bounded owner evaluation, `POST /api/policy/batch` accepts
+`{"mode":"search","live":true,"packetIds":["packet-01"]}` in the current
+private workbench session after loading CU results. The normal UI confirmation
+still runs all loaded cases; selecting a row alone does not restrict a batch.
+Without `packetIds`, the existing all-loaded-cases behavior is unchanged.
 Each shows a status, bold **Expected** and **Actual** values, italic
 **Reasoning**, and verified **Source** links.
 
@@ -241,7 +305,7 @@ Three tabs display representations of the same PDF:
 | Tab | What it shows |
 |---|---|
 | Document | The source PDF, initially at the cited page |
-| CU Layout | Cached Markdown from `prebuilt-layout`, with OCR and table layout |
+| CU Search | Cached Markdown from `prebuilt-documentSearch`, with document, table and figure understanding |
 | Digital parse | Cached Markdown from `prebuilt-digitalParse`, using embedded digital content |
 
 **These extraction tabs aren't the Search-managed Standard output.** Layout
@@ -252,6 +316,11 @@ digital text; that result is shown honestly.
 The Markdown views show the whole document. **Raw extraction Markdown** exposes
 the returned text. Rendering preserves table spans and empty cells, sanitizes
 HTML and doesn't load remote images.
+
+CU Search has its own analyzer-keyed cache. Existing `prebuilt-layout` output is
+not relabeled or reused as documentSearch output; generate it again with
+`prebuilt-documentSearch`. Changing this viewer does not rebuild or change the
+active Azure Search index or its extraction-mode label.
 
 Switching tabs reads the cache. Missing output has an explicit
 **Generate with CU (Azure charges)** action. To generate both representations

@@ -123,4 +123,45 @@ There is no fixed document-count requirement. Changed PDF bytes require fresh
 ingestion and invalidate the corresponding extraction caches. Scope or version
 conflicts are errors, not permission to mix policy generations.
 
+### Extend an existing CU Layout index
+
+For this evidence demo, keep the current CU Layout workflow rather than
+requiring a managed Standard pipeline. The declarations, rental terms/diagram,
+and issued amendment are registered alongside the existing SOPs. They apply
+only when both the CU policy ID and insured VIN match their `policyScope`.
+Missing or contradictory identifiers exclude these contract documents, not
+the state SOP or shared standard.
+
+Use the existing signed-in Azure CLI identity, model deployment and claim
+analyzer. First run the read-only check:
+
+```powershell
+python .\infra\setup-policy-layout.py --source-index lab664-rental-v2-agent-framework-3428a1feb437 --model-deployment gpt-5 --claim-analyzer-id lab664_policy_checks_claim_summary
+```
+
+Repeat with `--apply` to extract new PDFs and activate a separate verified
+Layout generation on the same Search service. This can incur CU and Search
+charges. The script reuses the existing hash-verified SOP chunks, checks every
+registered source page, uploads and reads back the new chunks, and updates the
+machine-local configuration only after verification. It never changes or
+deletes the source index. New extracted content is labeled CU Layout, not
+Standard; diagram text remains OCR evidence, not a guaranteed interpretation.
+
+The Layout extraction cache under `.tools/policy-layout-cache/` is keyed by
+source bytes, endpoint, API version and analyzer. A changed PDF cannot reuse an
+old extraction. Don't index the local scenario HTML or its expected answers.
+The SOP generator preserves separately registered `policy_contract` documents
+and their citation maps when regenerating its state/shared sources.
+
+For claim-extractor authoring, `claim_evidence_analyzer_definition()` in
+`infra/setup-policy-index.py` defines a flat, literal fact schema for this
+review. It retains verbatim drivability and authorization evidence as strings
+instead of generating false defaults from missing booleans. The runtime accepts
+both this flat schema and the existing nested schema for routing, policy ID and
+insured VIN; contradictory identifiers exclude policy-specific retrieval.
+Use an isolated analyzer version when changing extraction descriptions, then
+pass its existing ID to Layout setup only after checking the returned fields
+against the packet. The setup scripts read analyzer definitions and hashes;
+they do not overwrite shared analyzers.
+
 See [Policy checks in the workbench](policy-checks.md) for the customer workflow.
