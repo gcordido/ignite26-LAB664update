@@ -186,7 +186,7 @@
       <p class="note">
         <strong>Model choice:</strong> use the Preview workflow with
         <strong>GPT-5 for classification/segmentation</strong>,
-        <strong>GPT-5.5 for custom repair extraction</strong>, and
+        <strong>GPT-5.5 for custom repair and statement extraction</strong>, and
         <strong>GPT-5.2 for prebuilt extraction</strong>. Ask the lab owner to
         configure those models if unavailable; do not change shared resource
         deployments or defaults yourself. The app uses
@@ -388,9 +388,128 @@
             above. Do not overwrite another learner's analyzer.
           </li>
         </ol>
+        <h3>Add a Statement extractor</h3>
+        <ol start="6">
+          <li>
+            Create a second Preview <strong>Standard Extraction</strong> project
+            from the <strong>Blank / Document template</strong>. In project
+            Advanced, select <strong>GPT-5.5</strong>. In the field-schema
+            toolbar, choose <strong>Import</strong> and select
+            <a
+              href="../data/step2/statement-schema.json"
+              download="statement-schema.json"
+              >statement-schema.json</a
+            >
+            from <code>data\step2</code>. Confirm schema replacement if prompted,
+            then <strong>Save</strong>. This imports the fields and descriptions;
+            no field-by-field typing is needed.
+          </li>
+        </ol>
+        <p>
+          After import, verify
+          <strong>seven flat fields: five Extract and two Generate</strong>, with
+          <strong>Source &amp; Confidence</strong> enabled.
+          <code>incident_date</code> is <strong>Date</strong>; the other six fields
+          are <strong>String</strong>. Use the table below to validate the import;
+          do not add these fields again.
+        </p>
+        <div class="table">
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type / method</th>
+                <th>Validate after import</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>claimant_name</code></td>
+                <td>String / Extract</td>
+                <td>
+                  Name explicitly identifying the claimant or insured vehicle
+                  owner. Do not substitute a witness, other driver, adjuster, or
+                  recipient. Leave unset if unclear.
+                </td>
+              </tr>
+              <tr>
+                <td><code>incident_date</code></td>
+                <td>Date / Extract</td>
+                <td>
+                  Date the reported incident occurred, not the date the
+                  statement or email was written or sent. Leave unset if absent.
+                </td>
+              </tr>
+              <tr>
+                <td><code>incident_location</code></td>
+                <td>String / Extract</td>
+                <td>
+                  Location explicitly reported for the incident. Leave unset if
+                  absent.
+                </td>
+              </tr>
+              <tr>
+                <td><code>vehicle</code></td>
+                <td>String / Extract</td>
+                <td>
+                  Claimant vehicle as one string, including year, make, model,
+                  and trim when stated. Do not include color or the other
+                  vehicle.
+                </td>
+              </tr>
+              <tr>
+                <td><code>vin</code></td>
+                <td>String / Extract</td>
+                <td>
+                  Exact VIN explicitly stated for the claimant vehicle. Do not
+                  decode, correct, or infer it; leave unset if absent.
+                </td>
+              </tr>
+              <tr>
+                <td><code>reported_damage</code></td>
+                <td>String / Generate</td>
+                <td>
+                  A concise synthesis of claimant-reported damage, combining
+                  mentions without inventing damage or presenting it as
+                  inspected or verified.
+                </td>
+              </tr>
+              <tr>
+                <td><code>summary</code></td>
+                <td>String / Generate</td>
+                <td>
+                  A concise synthesis of the reported narrative, preserving
+                  uncertainty without inferring fault, coverage, liability, or
+                  payment.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <ol start="7">
+          <li>
+            Upload and test both
+            <a href="../data/documents/packet-01/06-handwriting.pdf"
+              >06-handwriting.pdf</a
+            >
+            and
+            <a href="../data/samples/email-statement.pdf"
+              >email-statement.pdf</a
+            >. In the email, check <code>claimant_name = "Danielle Ortiz"</code>
+            and <code>incident_date = 2026-02-12</code>, not the email's sent date.
+            The five Extract fields contain stated facts; the two Generate
+            fields provide readable, grounded synthesis rather than verbatim
+            quotes. Inspect source highlights and confidence where returned; for
+            generated text, they support the synthesis rather than prove every
+            word is quoted. Missing facts must stay unset. Then
+            <strong>Build analyzer</strong> with a unique ID such
+            as <code>lab664_lee_statement</code>; record the actual
+            <code>..._statement</code> ID for step 4.
+          </li>
+        </ol>
         <p class="done">
-          Checkpoint: a tested custom repair analyzer is ready, and you have its
-          analyzer ID.
+          Checkpoint: tested custom repair and Statement analyzers are ready,
+          and you have both analyzer IDs.
         </p>
         <p>
           <strong>Workbench:</strong> no app launch is needed here;
@@ -517,8 +636,9 @@
             For packet 01, the authored groups are: membership card p1; policy
             p2-4; claim p5-6; incident p7; repair p8; statement p9; rental
             invoice p10-11; inspection p12; 1099-A p13. At this four-class
-            stage, the rental invoice belongs to Other. Review discrepancies
-            rather than assuming authored grouping proves the model wrong.
+            stage, both the statement and rental invoice belong to Other. Review
+            discrepancies rather than assuming authored grouping proves the
+            model wrong.
           </li>
           <li>
             After testing, build a unique <code>..._classifier</code> analyzer
@@ -544,7 +664,7 @@
           <a href="../data/step4/classification-packet.pdf"
             >classification-packet.pdf</a
           >, <a href="../data/step4/packet-01.pdf">packet-01.pdf</a> (rental
-          invoice), and
+          invoice and statement), and
           <a href="../data/step4/packet-03.pdf">packet-03.pdf</a> (towing
           invoice). This makes the before/after comparison about routing, not a
           changed source.
@@ -568,10 +688,12 @@
             >; use your actual custom repair ID.
           </li>
           <li>
-            Add <code>towing_invoice</code> and <code>rental_invoice</code>,
-            using the descriptions below, and route both to Invoice. Update
-            Other's description to the new version. Keep the custom repair
-            extractor on <strong>GPT-5.5</strong>. The resource's
+            Add <code>statement</code>, <code>towing_invoice</code>, and
+            <code>rental_invoice</code>, using the descriptions below. Route
+            Statement to your custom <code>..._statement</code> analyzer and
+            both invoice categories to Invoice. Update Other's description to
+            the new version. Keep both custom extractors on
+            <strong>GPT-5.5</strong>. The resource's
             <code>prebuilt-analyzer-completion</code> mapping must use
             <strong>GPT-5.2</strong>; verify with the lab owner rather than
             changing a shared mapping.
@@ -603,6 +725,17 @@
                 <td>Keep the step 3 description.</td>
               </tr>
               <tr>
+                <td><code>statement</code></td>
+                <td>Your <code>..._statement</code> ID</td>
+                <td>
+                  A handwritten or typed claimant statement or email describing
+                  the incident, claimant vehicle, and reported damage. Keep
+                  continuation pages of the same statement together. Exclude
+                  claim forms, incident reports, witness or other-driver
+                  accounts, and repair or invoice documents.
+                </td>
+              </tr>
+              <tr>
                 <td><code>towing_invoice</code></td>
                 <td><code>prebuilt-invoice</code></td>
                 <td>
@@ -632,14 +765,13 @@
                 <td>
                   Each distinct unrouted supporting document: policy
                   declarations/endorsements, claim intake forms, incident
-                  reports, handwritten statements, glass/panel service
-                  supporting records, valuation/downtime schedules, and workshop
-                  inspection records. Towing bills and rental billing belong to
-                  their named invoice categories, not Other. Identify logical
-                  boundaries even when adjacent documents both have category
-                  other. Keep continuation pages together; do not merge
-                  different titles or identifiers. These documents are unrouted,
-                  not discarded.
+                  reports, glass/panel service supporting records,
+                  valuation/downtime schedules, and workshop inspection records.
+                  Statements, towing bills, and rental billing belong to their
+                  named categories, not Other. Identify logical boundaries even
+                  when adjacent documents both have category other. Keep
+                  continuation pages together; do not merge different titles or
+                  identifiers. These documents are unrouted, not discarded.
                 </td>
               </tr>
             </tbody>
@@ -650,20 +782,23 @@
             Save and <strong>Run analysis in Studio before building</strong>,
             first on the core packet and then on both full packets. Compare
             categories and ranges with step 3, now with child fields and source
-            highlights. Rental and towing have moved out of Other; other logical
-            boundaries should remain meaningful.
+            highlights. Statement, rental, and towing have moved out of Other;
+            other logical boundaries should remain meaningful.
           </li>
           <li>
             For the core packet, inspect ID p1, nested tax fields p2, and the
             three custom repair fields p3. For packet 01, inspect repair p8 and
-            rental p10-11. Inspect the towing invoice in packet 03. Keep the
-            proposed repair amount distinct from actual invoiced charges.
+            the native Statement route on p9, and rental p10-11. Inspect the
+            towing invoice in packet 03. Keep reported statement details
+            distinct from verified facts, and the proposed repair amount
+            distinct from actual invoiced charges.
           </li>
           <li>
             Only after review, <strong>Build analyzer</strong> with a new unique
-            <code>..._router</code> ID. Do not overwrite the classification-only
-            analyzer. Wait for status <strong>ready</strong> and record this
-            exact ID and the resource endpoint for step 5.
+            <code>..._router</code> ID. This is the ready seven-category demo
+            router; do not overwrite the classification-only analyzer. Wait for
+            status <strong>ready</strong> and record this exact ID and the
+            resource endpoint for step 5.
           </li>
         </ol>
         <p class="done">
@@ -735,14 +870,17 @@ powershell -ExecutionPolicy Bypass -File .\infra\launch-workbench.ps1</code></pr
           <strong>Ctrl+C</strong>. This lab page can remain open independently
           of the app.
         </p>
-        <h3>Explore the included results first - no Azure analysis</h3>
+        <h3>Explore the included results first - no Azure analysis on load</h3>
         <ol>
           <li>
             In <strong>Cache Results</strong>, select the included completed
             <strong>10/10</strong> run and click <strong>Load</strong>. The
             Cached badge identifies historical native CU JSON, not a fresh run
             or your new analyzer. Its tooltip preserves the original analyzer,
-            API version, timestamp, and dataset fingerprint.
+            API version, timestamp, and dataset fingerprint. Results, fixed checks,
+            and all matching saved LLM Agent and policy reviews load together before the table
+            appears. Loading the cache or opening either check view
+            makes no paid model calls.
           </li>
           <li>
             Start with <strong>Classification</strong>. Each row is one
@@ -752,15 +890,21 @@ powershell -ExecutionPolicy Bypass -File .\infra\launch-workbench.ps1</code></pr
           </li>
           <li>
             Switch to <strong>ID</strong>, <strong>1099-A</strong>,
-            <strong>Repair Estimate</strong>, <strong>Towing Invoice</strong>,
-            and <strong>Rental Invoice</strong>. Only returned types appear.
-            Repair defaults show vendor, vehicle, VIN, total, tax, and line
-            items; use <strong>All fields</strong> for odometer.
+            <strong>Repair Estimate</strong>, <strong>Statement</strong>,
+            <strong>Towing Invoice</strong>, and
+            <strong>Rental Invoice</strong>. Only returned types appear. Repair
+            defaults show vendor, vehicle, VIN, total, tax, and line items; use
+            <strong>All fields</strong> for odometer. Statement defaults show
+            returned fields from its seven-field schema with native source
+            and confidence; unstated values are not invented, and globally empty
+            columns are hidden.
           </li>
           <li>
             Turn on <strong>Confidence</strong> to inspect returned scores.
             Blank means the service omitted a score, not zero. Click line items
-            for source boxes or their table icon for the item popup. Drag column
+            for source boxes or their table icon to expand item rows below the
+            customer. Click a subfield to highlight its source while keeping the
+            rows open. Drag column
             edges or the PDF divider to resize. Double-click a field to focus at
             300%; double-click again to fit. Use wheel zoom, drag-to-pan, and
             the bottom page controls.
@@ -784,7 +928,10 @@ powershell -ExecutionPolicy Bypass -File .\infra\launch-workbench.ps1</code></pr
         <ol>
           <li>
             With the included completed <strong>10/10</strong> run loaded,
-            select <strong>Policy checks</strong>.
+            select <strong>Policy review</strong>. <strong>Extraction checks</strong>
+            validate returned fields and arithmetic; <strong>Policy review</strong>
+            evaluates rental-processing rules using the agent and retrieved SOPs.
+            Both use expandable details in the same grid and keep source PDFs visible.
           </li>
           <li>
             In <strong>Policy retrieval</strong>, select
@@ -803,7 +950,7 @@ powershell -ExecutionPolicy Bypass -File .\infra\launch-workbench.ps1</code></pr
             Compare <strong>Daily rate</strong> for packets <strong>01</strong>
             and <strong>02</strong>. Select each check to read
             <strong>Expected</strong>, <strong>Actual</strong> and
-            <strong>Reasoning</strong> in the right-hand panel.
+            <strong>Reasoning</strong> in the expanded table row below that customer.
           </li>
         </ol>
         <div class="table">
@@ -848,14 +995,15 @@ powershell -ExecutionPolicy Bypass -File .\infra\launch-workbench.ps1</code></pr
           <li>
             In the source viewer, compare <strong>Document</strong>,
             <strong>CU Layout</strong> and <strong>Digital parse</strong>.
-            Then select <strong>Back to policy checks</strong>.
+            The inline review stays open. Select <strong>Back to claim document</strong>
+            to restore the packet preview.
             Optionally inspect Washington's scanned SOP or Arizona's
             image-based eligibility flowchart. A missing extraction has an
             explicit billable generation action; switching tabs alone doesn't
             call CU.
           </li>
           <li>
-            Optionally select <strong>Chat</strong> and ask, "Explain this
+            Select <strong>Ask agent</strong> inside the expanded review and ask, "Explain this
             case's daily-rate result. Cite the SOP and distinguish routine
             authority from the contractual cap." Chat uses the selected case
             and mode; each submitted question can incur Azure charges.
@@ -933,7 +1081,8 @@ powershell -ExecutionPolicy Bypass -File .\infra\launch-workbench.ps1</code></pr
           does not authenticate this Node app. Choose the subscription
           containing <strong>your approved CU resource</strong>. Use its
           resource-root endpoint, not a Studio or Foundry project URL. Your
-          identity needs permission to list and invoke its analyzers.
+          Azure identity needs permission to list and invoke CU analyzers and to
+          invoke the configured Azure GPT deployments used by packet checks.
         </p>
         <pre><code>az login
 az account set --subscription "YOUR-SUBSCRIPTION-ID"
@@ -954,15 +1103,19 @@ powershell -ExecutionPolicy Bypass -File .\infra\launch-workbench.ps1 `
           <li>
             Click <strong>Run live</strong>. Read the confirmation for ten
             packets / 120 pages; only confirm when you intend to incur Azure
-            charges. The app verifies the existing analyzer and linked
-            extractors; it does not deploy models or create analyzers.
+            charges. The app submits each packet once to the selected ready
+            router and uses its linked extraction routes. It does not create
+            analyzers, deploy models, or add a separate Statement pass.
           </li>
           <li>
             Watch progress and elapsed time. Each native response is saved under
             <code>data\results\RUN-ID</code> before results are derived.
-            Completed results become a new cache entry. A failed run remains
-            visibly failed; inspect its error before explicitly starting another
-            billable run.
+            The live batch then runs fixed checks and automatically caches LLM
+            Agent review for failed findings, reusing an existing matching review
+            when available. Both packet analysis and uncached LLM Agent review can
+            incur Azure charges. Completed results become a new cache entry. A failed
+            run remains visibly failed; inspect its error before explicitly
+            starting another billable run.
           </li>
           <li>
             Compare your live extraction with the PDFs and the saved run. To see
@@ -977,6 +1130,58 @@ powershell -ExecutionPolicy Bypass -File .\infra\launch-workbench.ps1 `
           compared policy checks with and without retrieval, and traced a
           daily-rate result to its SOP.
         </p>
+        <h3>Extraction checks, LLM Agent review, and targeted reruns</h3>
+        <ol>
+          <li>
+            Select <strong>Extraction checks</strong> after the extraction views to
+            compare all customers in the same grid. Two-line check names have
+            full descriptions in tooltips.
+            <strong>Primary checks</strong> keep every warning/error across the
+            packets, plus Amount balance and Claimant match; enable
+            <strong>All checks</strong> to reveal the other clean checks. Each
+            cell shows the worst result across the packet's documents: green
+            <strong>Pass</strong>, yellow <strong>Warn</strong> for not-checkable
+            evidence, or red <strong>Error</strong>. Amount balance compares
+            subtotal + tax with total; optional discount/deductible fields are
+            ignored. The live batch automatically caches LLM Agent reviews for
+            failed findings. Cache Results loads these saved reviews; passing
+            checks have no LLM review.
+          </li>
+          <li>
+            Click a cell for a compact table of source documents, specific
+            problems, and <strong>LLM Agent review</strong> badges:
+            <strong>Extraction issue</strong> or <strong>Document issue</strong>.
+            These are advisory diagnoses, not proven causes. Click a
+            problem or document to highlight its source at full page width;
+            missing values show available context rather than
+            an invented box. Open a review badge for reasoning, suggested action,
+            a field/value table, and model/cache details. <strong>Highlight all values</strong>
+            shows the returned boxes together; use the page controls when evidence spans pages.
+            Inline details expand vertically, so only the results grid scrolls. Click the cell again or the
+            close icon to collapse it. The service prefers deployed
+            <strong>GPT-6.1 Sol</strong> and falls back to existing
+            <strong>GPT-5.5</strong> only if the primary deployment is missing.
+            <strong>Refresh LLM review</strong> under <strong>Review options</strong>
+            forces fresh paid model calls for all failed findings in this packet.
+            Its temporary review is not saved and never changes policy status or
+            cached reviews.
+          </li>
+          <li>
+            Both issue types support <strong>Rerun this document</strong>. For an
+            extraction problem, first update and build the affected extractor in
+            CU Studio. Open the check's review badge, expand
+            <strong>Refine extractor / rerun one document</strong>, and enter the
+            existing or updated analyzer ID. Only that already extracted PDF is
+            submitted, with a fresh Azure call every time. Fresh fields and the
+            selected check's preview result appear inside this policy panel;
+            use <strong>Highlight all values</strong> to inspect their source together. Previews are not cached
+            or saved and disappear when the panel is reopened or Cache Results
+            is loaded again. Original extraction grids, native JSON, policy
+            statuses, and cached reviews stay unchanged. If a split or merged
+            segment cannot be matched to one source PDF, review its boundaries
+            in Studio first.
+          </li>
+        </ol>
         <details>
           <summary>Where the files are</summary>
           <p>
@@ -991,7 +1196,7 @@ powershell -ExecutionPolicy Bypass -File .\infra\launch-workbench.ps1 `
             <code>data\documents\packet-01</code> through
             <code>packet-10</code>: 90 individual logical-document PDFs,
             extracted from the authored page groups. <code>data\samples</code>:
-            five small Studio specimens. <code>data\packets.json</code>: source
+            six small Studio specimens. <code>data\packets.json</code>: source
             hashes and authored page ranges. <code>data\results</code>: one
             included completed run with its original manifest and ten native
             JSON responses; future live runs save here too.
@@ -1000,9 +1205,10 @@ powershell -ExecutionPolicy Bypass -File .\infra\launch-workbench.ps1 `
             <code>data\step1</code> through <code>data\step4</code> are
             convenience copies of the recommended inputs, not a second dataset.
             The app uses the canonical PDFs under <code>data</code>. Full packet
-            01 contains rental billing; full packet 03 contains towing. The
-            authored four-class reference labels both as Other, while the
-            six-class routed run gives them separate invoice categories.
+            01 contains a statement and rental billing; full packet 03 contains
+            towing. The authored four-class reference labels statements and
+            both invoice types as Other, while the seven-class routed run gives
+            them separate categories.
           </p>
         </details>
       </section>
