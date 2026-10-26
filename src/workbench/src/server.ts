@@ -12,6 +12,8 @@ import {
 } from "./config.ts";
 import { CuClient, CuOperationError } from "./cu.ts";
 import { verifyAnalyzer } from "./definitions.ts";
+import { DocumentService } from "./documents.ts";
+import { diagnose, policyDiagnoses } from "./triage.ts";
 import { packetJson } from "./packet-json.ts";
 import { PolicyService, type PolicyJob } from "./policy-service.ts";
 import { modeSchema } from "./policy-core.ts";
@@ -24,13 +26,19 @@ import {
   packetBytes,
   summarize,
   type Analyzer,
+  type Packet,
   type Run,
 } from "./batch.ts";
 
 export function createApp(
   client: Pick<CuClient, "detail" | "analyze"> &
     Partial<Pick<CuClient, "list">> = new CuClient(),
-  options: { cache?: Cache; policy?: PolicyService; documents?: PolicyDocuments } = {},
+  options: {
+    cache?: Cache;
+    diagnose?: typeof diagnose;
+    policy?: PolicyService;
+    documents?: PolicyDocuments;
+  } = {},
 ) {
   const app = express();
   app.disable("x-powered-by");
@@ -39,7 +47,9 @@ export function createApp(
     res.sendFile("workbench.html", { root: path.join(root, "web") }),
   );
   app.get("/lab.html", (_req, res) =>
-    res.sendFile("lab.html", { root: path.join(repositoryRoot, "instructions") }),
+    res.sendFile("lab.html", {
+      root: path.join(repositoryRoot, "instructions"),
+    }),
   );
   for (const [folder, filename] of [
     ["docs", "policy-checks.md"],
@@ -66,7 +76,8 @@ export function createApp(
   app.use(
     "/vendor/deep-chat",
     express.static(path.join(root, "node_modules", "deep-chat", "dist"), {
-      dotfiles: "deny", index: false,
+      dotfiles: "deny",
+      index: false,
     }),
   );
   app.use(
@@ -77,9 +88,15 @@ export function createApp(
     }),
   );
   app.get("/vendor/marked.js", (_req, res) =>
-    res.sendFile("marked.esm.js", { root: path.join(root, "node_modules", "marked", "lib") }));
+    res.sendFile("marked.esm.js", {
+      root: path.join(root, "node_modules", "marked", "lib"),
+    }),
+  );
   app.get("/vendor/purify.js", (_req, res) =>
-    res.sendFile("purify.es.mjs", { root: path.join(root, "node_modules", "dompurify", "dist") }));
+    res.sendFile("purify.es.mjs", {
+      root: path.join(root, "node_modules", "dompurify", "dist"),
+    }),
+  );
   app.use(
     "/vendor/pdfjs-fonts",
     express.static(
@@ -102,9 +119,71 @@ export function createApp(
   };
   const sessions = new Map<string, Session>();
   const cache = options.cache ?? new Cache();
+  const documents = new DocumentService(client, cache);
   const policy = options.policy ?? new PolicyService();
-  const documents = options.documents ?? new PolicyDocuments();
+  const policyDocuments = options.documents ?? new PolicyDocuments();
   let batchActive = false;
+  let triageActive = false;
+  async function packetResult(run: Run, packet: Packet) {
+    const response = await cache.raw(run.id, packet.id);
+    try {
+      const review = summarize(response, packet, run.analyzer.mode);
+      const report = await documents.review(run, packet, response);
+      const policyReview = {
+        ...report,
+        diagnoses: await policyDiagnoses(report, documents.folder),
+      };
+      let exportValue: ReturnType<typeof packetJson> | null = null;
+      let packetJsonError: string | undefined;
+      let markdown: string | null = null;
+      let claimSummaryPrepared = false;
+      try {
+        exportValue = packetJson(response, packet, run, review);
+        markdown = await policy.markdown(run, packet, response);
+        claimSummaryPrepared = await policy.summaryPrepared(packet);
+      } catch (error) {
+        packetJsonError =
+          error instanceof Error ? error.message : String(error);
+        console.error(
+          JSON.stringify({
+            event: "lab_packet_export_failed",
+            packetId: packet.id,
+            message: packetJsonError,
+          }),
+        );
+      }
+      return {
+        packet,
+        response,
+        review,
+        policies: report.policies,
+        policyReview,
+        packetJson: exportValue,
+        packetMarkdown: markdown,
+        claimSummaryPrepared,
+        packetJsonError,
+      };
+    } catch (error) {
+      if (!(error instanceof LabError) || error.status !== 422) throw error;
+      console.error(
+        JSON.stringify({
+          event: "lab_cached_review_failed",
+          packetId: packet.id,
+          message: error.message,
+        }),
+      );
+      return { packet, response, review: null, reviewError: error.message };
+    }
+  }
+  function loadedPacket(s: Session, id: string) {
+    const run = s.run;
+    if (!run)
+      throw new LabError(409, "Load cached results or run a live batch first.");
+    const packet = run.source.find((packet) => packet.id === id);
+    if (!packet || !run.items.some((item) => item.id === id && item.rawSaved))
+      throw new LabError(404, "No saved CU result exists for this packet.");
+    return { run, packet };
+  }
   function session(req: Request) {
     const id = req.header("x-labmachine-session");
     const value = id ? sessions.get(id) : undefined;
@@ -129,12 +208,19 @@ export function createApp(
     const existing = existingId ? sessions.get(existingId) : undefined;
     if (existing) {
       existing.touched = Date.now();
-      res.json({ sessionId: existingId, runId: existing.run?.id,
-        policyMode: existing.policyJob?.mode });
+      res.json({
+        sessionId: existingId,
+        runId: existing.run?.id,
+        policyMode: existing.policyJob?.mode,
+      });
       return;
     }
     for (const [id, value] of sessions)
-      if (!value.busy && !value.chatBusy && Date.now() - value.touched > 60 * 60_000)
+      if (
+        !value.busy &&
+        !value.chatBusy &&
+        Date.now() - value.touched > 60 * 60_000
+      )
         sessions.delete(id);
     if (sessions.size >= 20)
       throw new LabError(
@@ -173,7 +259,8 @@ export function createApp(
   });
   app.post("/api/connect", async (req, res) => {
     const s = session(req);
-    if (s.busy || s.chatBusy) throw new LabError(409, "Wait for the current analysis or chat.");
+    if (s.busy || s.chatBusy)
+      throw new LabError(409, "Wait for the current analysis or chat.");
     const { analyzerId } = z
       .object({
         analyzerId: z.string().regex(/^[A-Za-z0-9_-]{3,64}$/),
@@ -196,34 +283,57 @@ export function createApp(
     session(req);
     res.json(await policy.status());
   });
-  const documentSelection = z.object({
-    file: z.string().max(180), mode: representationSchema,
-  }).strict();
+  const documentSelection = z
+    .object({
+      file: z.string().max(180),
+      mode: representationSchema,
+    })
+    .strict();
   app.get("/api/policy/document", async (req, res) => {
     session(req);
     const { file, mode } = documentSelection.parse(req.query);
-    res.json(await documents.get(file, mode));
+    res.json(await policyDocuments.get(file, mode));
   });
   app.post("/api/policy/document", async (req, res) => {
     session(req);
-    const { file, mode } = documentSelection.extend({ live: z.literal(true) }).parse(req.body);
-    res.json(await documents.get(file, mode, true));
+    const { file, mode } = documentSelection
+      .extend({ live: z.literal(true) })
+      .parse(req.body);
+    res.json(await policyDocuments.get(file, mode, true));
   });
   const chatSelection = z.object({
-    mode: modeSchema, packetId: z.string().regex(/^packet-\d{2}$/), runId: z.string().uuid(),
+    mode: modeSchema,
+    packetId: z.string().regex(/^packet-\d{2}$/),
+    runId: z.string().uuid(),
   });
-  async function chatContext(s: Session, mode: z.infer<typeof modeSchema>, packetId: string) {
-    if (!s.run) throw new LabError(409, "Load Content Understanding results first.");
+  async function chatContext(
+    s: Session,
+    mode: z.infer<typeof modeSchema>,
+    packetId: string,
+  ) {
+    if (!s.run)
+      throw new LabError(409, "Load Content Understanding results first.");
     const run = s.run;
-    const context = await policy.chatContext(run, mode, packetId, (id) => cache.raw(run.id, id));
+    const context = await policy.chatContext(run, mode, packetId, (id) =>
+      cache.raw(run.id, id),
+    );
     s.policyChats ??= new Map();
     let state = s.policyChats.get(context.contextId);
     if (!state) {
-      if (s.policyChats.size >= 30) throw new LabError(409, "Chat limit reached for this private session. Reload to start a new session.");
-      state = { contextId: context.contextId, busy: false, replies: [], messages: [
-        { role: "user", content: context.prompt },
-        { role: "assistant", content: JSON.stringify(context.result) },
-      ] };
+      if (s.policyChats.size >= 30)
+        throw new LabError(
+          409,
+          "Chat limit reached for this private session. Reload to start a new session.",
+        );
+      state = {
+        contextId: context.contextId,
+        busy: false,
+        replies: [],
+        messages: [
+          { role: "user", content: context.prompt },
+          { role: "assistant", content: JSON.stringify(context.result) },
+        ],
+      };
       s.policyChats.set(context.contextId, state);
     }
     return { context, state };
@@ -231,98 +341,204 @@ export function createApp(
   app.get("/api/policy/chat", async (req, res) => {
     const s = session(req);
     const { mode, packetId, runId } = chatSelection.parse(req.query);
-    if (s.run?.id !== runId) throw new LabError(409, "The selected CU run changed. Reload this chat.");
+    if (s.run?.id !== runId)
+      throw new LabError(409, "The selected CU run changed. Reload this chat.");
     const { context, state } = await chatContext(s, mode, packetId);
-    res.json({ ...context, messages: state.messages, replies: state.replies, busy: state.busy });
+    res.json({
+      ...context,
+      messages: state.messages,
+      replies: state.replies,
+      busy: state.busy,
+    });
   });
   app.post("/api/policy/chat", async (req, res) => {
     const s = session(req);
-    const { mode, packetId, runId, contextId, message } = chatSelection.extend({
-      contextId: z.string().regex(/^[a-f0-9]{64}$/),
-      message: z.string().trim().min(1).max(6000), live: z.literal(true),
-    }).strict().parse(req.body);
-    if (s.busy || s.chatBusy) throw new LabError(409, "Wait for the current policy request.");
-    if (s.run?.id !== runId) throw new LabError(409, "The selected CU run changed. Reload this chat.");
+    const { mode, packetId, runId, contextId, message } = chatSelection
+      .extend({
+        contextId: z.string().regex(/^[a-f0-9]{64}$/),
+        message: z.string().trim().min(1).max(6000),
+        live: z.literal(true),
+      })
+      .strict()
+      .parse(req.body);
+    if (s.busy || s.chatBusy)
+      throw new LabError(409, "Wait for the current policy request.");
+    if (s.run?.id !== runId)
+      throw new LabError(409, "The selected CU run changed. Reload this chat.");
     s.chatBusy = true;
     try {
       const { context, state } = await chatContext(s, mode, packetId);
-      if (context.contextId !== contextId) throw new LabError(409, "Claim, result or agent changed. Reload this chat.");
-      if (state.messages.length >= 42) throw new LabError(409, "This chat reached 20 follow-ups. Start a new private session to continue.");
+      if (context.contextId !== contextId)
+        throw new LabError(
+          409,
+          "Claim, result or agent changed. Reload this chat.",
+        );
+      if (state.messages.length >= 42)
+        throw new LabError(
+          409,
+          "This chat reached 20 follow-ups. Start a new private session to continue.",
+        );
       state.busy = true;
       try {
-        const reply = await policy.followup(mode, message, state.messages, context.agent);
-        state.messages.push({ role: "user", content: message },
-          { role: "assistant", content: reply.text });
+        const reply = await policy.followup(
+          mode,
+          message,
+          state.messages,
+          context.agent,
+        );
+        state.messages.push(
+          { role: "user", content: message },
+          { role: "assistant", content: reply.text },
+        );
         state.replies.push(reply);
         res.json(reply);
-      } finally { state.busy = false; }
+      } finally {
+        state.busy = false;
+      }
     } catch (error) {
-      console.error(JSON.stringify({ event: "policy_chat_failed", message: String(error) }));
+      console.error(
+        JSON.stringify({ event: "policy_chat_failed", message: String(error) }),
+      );
       throw error;
-    } finally { s.chatBusy = false; }
+    } finally {
+      s.chatBusy = false;
+    }
   });
   app.get("/api/policy/results", async (req, res) => {
     const s = session(req);
-    if (!s.run) throw new LabError(409, "Load Content Understanding results first.");
+    if (!s.run)
+      throw new LabError(409, "Load Content Understanding results first.");
     const mode = modeSchema.parse(req.query.mode);
     const readiness = await policy.status();
     if (!readiness.configured) {
-      res.json({ runId: s.run.id, mode, status: "completed",
+      res.json({
+        runId: s.run.id,
+        mode,
+        status: "completed",
         configurationMessage: readiness.message,
-        items: s.run.items.map(({ id }) => ({ id, status: "not run" })) });
+        items: s.run.items.map(({ id }) => ({ id, status: "not run" })),
+      });
       return;
     }
-    if (s.policyJob?.runId === s.run.id && s.policyJob.mode === mode && s.policyJob.status === "running") {
+    if (
+      s.policyJob?.runId === s.run.id &&
+      s.policyJob.mode === mode &&
+      s.policyJob.status === "running"
+    ) {
       res.json(s.policyJob);
       return;
     }
     const run = s.run;
-    const items = await policy.snapshot(run, mode, (id) => cache.raw(run.id, id));
+    const items = await policy.snapshot(run, mode, (id) =>
+      cache.raw(run.id, id),
+    );
     if (s.policyJob?.runId === run.id && s.policyJob.mode === mode)
       for (const item of s.policyJob.items) {
         const index = items.findIndex((value) => value.id === item.id);
         if (index < 0) continue;
-        if (item.status === "failed" && items[index].status !== "completed") items[index] = item;
-        else if (item.inputHash === items[index].inputHash &&
-          item.provider === items[index].provider && item.indexName === items[index].indexName)
+        if (item.status === "failed" && items[index].status !== "completed")
+          items[index] = item;
+        else if (
+          item.inputHash === items[index].inputHash &&
+          item.provider === items[index].provider &&
+          item.indexName === items[index].indexName
+        )
           items[index].cached = item.cached;
       }
     res.json({ runId: run.id, mode, status: "completed", items });
   });
   app.post("/api/policy/batch", async (req, res) => {
     const s = session(req);
-    const { mode } = z.object({ mode: modeSchema, live: z.literal(true) }).parse(req.body);
-    if (!s.run) throw new LabError(409, "Load Content Understanding results first.");
-    if (s.policyJob?.status === "running" && s.policyJob.runId === s.run.id && s.policyJob.mode === mode) {
+    const { mode } = z
+      .object({ mode: modeSchema, live: z.literal(true) })
+      .parse(req.body);
+    if (!s.run)
+      throw new LabError(409, "Load Content Understanding results first.");
+    if (
+      s.policyJob?.status === "running" &&
+      s.policyJob.runId === s.run.id &&
+      s.policyJob.mode === mode
+    ) {
       res.status(202).json(s.policyJob);
       return;
     }
-    if (s.busy || s.chatBusy) throw new LabError(409, "Wait for the current batch or chat.");
+    if (s.busy || s.chatBusy)
+      throw new LabError(409, "Wait for the current batch or chat.");
     s.busy = true;
     const run = s.run;
     try {
-      const { job, task } = await policy.start(run, mode, (id) => cache.raw(run.id, id));
+      const { job, task } = await policy.start(run, mode, (id) =>
+        cache.raw(run.id, id),
+      );
       s.policyJob = job;
-      void task.catch((error) => {
-        console.error(JSON.stringify({ event: "policy_batch_failed", message: String(error) }));
-        job.status = "completed";
-        for (const item of job.items) if (!["completed", "failed"].includes(item.status)) {
-          item.status = "failed";
-          item.error = "Policy batch stopped. Check the server error log.";
-        }
-      }).finally(() => { s.busy = false; });
+      void task
+        .catch((error) => {
+          console.error(
+            JSON.stringify({
+              event: "policy_batch_failed",
+              message: String(error),
+            }),
+          );
+          job.status = "completed";
+          for (const item of job.items)
+            if (!["completed", "failed"].includes(item.status)) {
+              item.status = "failed";
+              item.error = "Policy batch stopped. Check the server error log.";
+            }
+        })
+        .finally(() => {
+          s.busy = false;
+        });
       res.status(202).json(job);
-    } catch (error) { s.busy = false; throw error; }
+    } catch (error) {
+      s.busy = false;
+      throw error;
+    }
   });
-  app.post("/api/cache/load", async (req, res) => {
-    const s = session(req);
-    if (s.busy || s.chatBusy) throw new LabError(409, "Wait for the current analysis or chat.");
-    const { runId } = z.object({ runId: z.string().uuid() }).parse(req.body);
-    const run = await cache.load(runId);
+  async function hydratedRun(s: Session, run: Run) {
     const data = await dataset();
-    s.run = run;
-    res.json({
+    const packetResults = await Promise.all(
+      run.items
+        .filter((item) => item.rawSaved)
+        .map((item) => {
+          const packet = run.source.find((packet) => packet.id === item.id);
+          if (!packet)
+            throw new LabError(
+              422,
+              "A cached packet is missing its source metadata.",
+            );
+          return packetResult(run, packet);
+        }),
+    );
+    const readiness = await policy.status();
+    const agentReviews = Object.fromEntries(
+      await Promise.all(
+        modeSchema.options.map(async (mode) => [
+          mode,
+          s.policyJob?.runId === run.id &&
+          s.policyJob.mode === mode &&
+          s.policyJob.status === "running"
+            ? s.policyJob
+            : {
+                runId: run.id,
+                mode,
+                status: "completed",
+                items: readiness.configured
+                  ? await policy.snapshot(run, mode, (id) =>
+                      cache.raw(run.id, id),
+                    )
+                  : run.items.map(({ id }) => ({ id, status: "not run" })),
+                ...(!readiness.configured
+                  ? { configurationMessage: readiness.message }
+                  : {}),
+              },
+        ]),
+      ),
+    );
+    return {
       ...run,
+      packetResults,
+      agentReviews,
       origin: "Cached CU JSON",
       sourceEndpoint: run.endpoint,
       currentDatasetMatches: data.datasetHash === run.datasetHash,
@@ -331,7 +547,23 @@ export function createApp(
         : null,
       warning:
         "Saved historical responses, not a fresh analysis. No Azure call was made.",
-    });
+    };
+  }
+  app.get("/api/cache/current", async (req, res) => {
+    const s = session(req);
+    if (!s.run)
+      throw new LabError(409, "Load Content Understanding results first.");
+    res.json(await hydratedRun(s, s.run));
+  });
+  app.post("/api/cache/load", async (req, res) => {
+    const s = session(req);
+    if (s.busy || s.chatBusy)
+      throw new LabError(409, "Wait for the current analysis or chat.");
+    const { runId } = z.object({ runId: z.string().uuid() }).parse(req.body);
+    const run = await cache.load(runId);
+    const hydrated = await hydratedRun(s, run);
+    s.run = run;
+    res.json(hydrated);
   });
   app.get("/api/packet/:packetId", async (req, res) => {
     const s = session(req);
@@ -348,47 +580,98 @@ export function createApp(
         404,
         "No saved CU JSON exists for that packet in this run.",
       );
-    const response = await cache.raw(s.run.id, packetId);
-    try {
-      const review = summarize(response, packet, s.run.analyzer.mode);
-      let exportValue: ReturnType<typeof packetJson> | null = null;
-      let packetJsonError: string | undefined;
-      let markdown: string | null = null;
-      let claimSummaryPrepared = false;
-      try {
-        exportValue = packetJson(response, packet, s.run, review);
-        markdown = await policy.markdown(s.run, packet, response);
-        claimSummaryPrepared = await policy.summaryPrepared(packet);
-      } catch (error) {
-        markdown = null;
-        packetJsonError = error instanceof Error ? error.message : String(error);
-        console.error(
-          JSON.stringify({
-            event: "lab_packet_export_failed",
-            packetId,
-            message: packetJsonError,
-          }),
-        );
-      }
-      res.json({
-        packet,
-        response,
-        review,
-        packetJson: exportValue,
-        packetMarkdown: markdown,
-        claimSummaryPrepared,
-        packetJsonError,
-      });
-    } catch (error) {
-      if (!(error instanceof LabError) || error.status !== 422) throw error;
-      console.error(
-        JSON.stringify({
-          event: "lab_cached_review_failed",
-          packetId,
-          message: error.message,
-        }),
+    res.json(await packetResult(s.run, packet));
+  });
+  app.get("/api/review/:packetId", async (req, res) => {
+    const { run, packet } = loadedPacket(
+      session(req),
+      String(req.params.packetId),
+    );
+    const report = await documents.review(run, packet);
+    res.json({
+      ...report,
+      diagnoses: await policyDiagnoses(report, documents.folder),
+    });
+  });
+  app.post("/api/document/:packetId", async (req, res) => {
+    const s = session(req);
+    const { run, packet } = loadedPacket(s, String(req.params.packetId));
+    const body = z
+      .object({
+        live: z.literal(true),
+        sourceId: z.string().max(40),
+        analyzerId: z
+          .string()
+          .regex(/^[A-Za-z0-9_.-]{3,128}$/)
+          .optional(),
+      })
+      .strict()
+      .parse(req.body);
+    if (batchActive || s.busy || s.chatBusy)
+      throw new LabError(
+        409,
+        "Wait for the current analysis before submitting another document.",
       );
-      res.json({ packet, response, review: null, reviewError: error.message });
+    batchActive = true;
+    s.busy = true;
+    try {
+      const review = await documents.review(run, packet);
+      const original = review.documents.find(
+        (doc) => doc.sourceId === body.sourceId,
+      );
+      const category = original?.category;
+      const analyzerId = body.analyzerId ?? original?.analyzerId;
+      if (!category || !analyzerId)
+        throw new LabError(
+          422,
+          "Select an existing extracted document and its analyzer.",
+        );
+      const preview = await documents.analyze(
+        run,
+        packet,
+        body.sourceId,
+        category,
+        analyzerId,
+      );
+      res.json({ preview });
+    } finally {
+      s.busy = false;
+      batchActive = false;
+    }
+  });
+  app.post("/api/checks/:packetId", async (req, res) => {
+    const s = session(req);
+    const { run, packet } = loadedPacket(s, String(req.params.packetId));
+    const { refresh } = z
+      .object({
+        run: z.literal(true),
+        refresh: z.literal(true),
+      })
+      .strict()
+      .parse(req.body);
+    if (s.busy || s.chatBusy || batchActive || triageActive)
+      throw new LabError(
+        409,
+        "Wait for the current operation before requesting diagnosis.",
+      );
+    s.busy = true;
+    triageActive = true;
+    try {
+      const report = await documents.review(run, packet);
+      res.json({
+        ...report,
+        preview: true,
+        persisted: false,
+        diagnoses: await policyDiagnoses(report, documents.folder, {
+          run: true,
+          refresh,
+          persist: false,
+          diagnose: options.diagnose,
+        }),
+      });
+    } finally {
+      s.busy = false;
+      triageActive = false;
     }
   });
   app.get("/api/raw/:packetId", async (req, res) => {
@@ -411,7 +694,9 @@ export function createApp(
   });
   app.post("/api/batch", async (req, res) => {
     const s = session(req);
-    z.object({ live: z.literal(true) }).parse(req.body);
+    z.object({ live: z.literal(true) })
+      .strict()
+      .parse(req.body);
     if (!s.analyzer)
       throw new LabError(409, "Connect an existing Studio analyzer first.");
     if (batchActive || s.busy || s.chatBusy)
@@ -467,6 +752,17 @@ export function createApp(
               item.rawSaved = true;
               // Cache native evidence before deriving or displaying any result.
               summarize(response, packet, run.analyzer.mode);
+              const report = await documents.review(run, packet, response);
+              const diagnoses = await policyDiagnoses(
+                report,
+                documents.folder,
+                { run: true, diagnose: options.diagnose },
+              );
+              item.reviewStatus = Object.values(diagnoses).some(
+                (diagnosis) => diagnosis.status === "unavailable",
+              )
+                ? "partial"
+                : "completed";
               item.status = "completed";
               item.completedAt = new Date().toISOString();
               await save();

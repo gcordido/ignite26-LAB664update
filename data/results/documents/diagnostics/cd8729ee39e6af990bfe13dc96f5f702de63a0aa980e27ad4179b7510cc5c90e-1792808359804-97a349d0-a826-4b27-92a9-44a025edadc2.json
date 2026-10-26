@@ -1,0 +1,125 @@
+{
+  "version": "azure-policy-v2",
+  "id": "e224a69b-f2bc-4a47-b98a-06dc8f7b2d19",
+  "timestamp": "2026-10-24T02:19:19.803Z",
+  "endpoint": "https://ignite-anatolip-test-scus.services.ai.azure.com",
+  "cacheKey": "cd8729ee39e6af990bfe13dc96f5f702de63a0aa980e27ad4179b7510cc5c90e",
+  "status": "completed",
+  "deployment": "gpt-5.5",
+  "model": "gpt-5.5",
+  "fallbackFrom": "gpt-6.1-sol",
+  "responseId": "resp_0864bbc3299d2678016adc15a5be3c8196af5a30b3c9a29edf",
+  "usage": {
+    "input_tokens": 1109,
+    "input_tokens_details": {
+      "cache_write_tokens": 0,
+      "cached_tokens": 0
+    },
+    "output_tokens": 124,
+    "output_tokens_details": {
+      "reasoning_tokens": 0
+    },
+    "total_tokens": 1233
+  },
+  "advisoryOnly": true,
+  "payloadSha256": "5012c6e9381046b184b7c7c7e67ab8323d2f31a882377d23c1be5b82f089a660",
+  "input": {
+    "source": {
+      "endpoint": "https://ignite-anatolip-test-scus.services.ai.azure.com",
+      "runId": "3b87d91f-c274-489f-a8d9-995e4a1e2f0c",
+      "packetSha256": "5eb468325e0f55c66e9b2e911a16decc2d66ae62ec67ff322a77d0111126d35e",
+      "analyzerFingerprint": "c2a85f9fd6722c8488d5cbf5201004b7144aad347af15ecd80b8a36b269785aa"
+    },
+    "ruleset": "1.1.0",
+    "check": {
+      "id": "required.id:1-1:0",
+      "rule": "Named-holder ID extraction requires FirstName, LastName, and DocumentNumber (schema assumption; advisory).",
+      "status": "fail",
+      "message": "Document 1-1:0 is missing configured required field(s): last name (LastName). This is a schema assumption and advisory, not a person mismatch.",
+      "evidence": [
+        {
+          "documentId": "1-1:0",
+          "category": "id_document",
+          "analyzerId": "prebuilt-idDocument.generic",
+          "start": 1,
+          "end": 1,
+          "field": "FirstName",
+          "value": "Priya Raman",
+          "confidence": 0.639,
+          "regions": [
+            {
+              "page": 1,
+              "polygon": [
+                0.5434588235294118,
+                0.23150909090909091,
+                0.7736352941176471,
+                0.23235454545454545,
+                0.7734235294117646,
+                0.26534545454545455,
+                0.5432588235294118,
+                0.2645
+              ]
+            }
+          ]
+        },
+        {
+          "documentId": "1-1:0",
+          "category": "id_document",
+          "analyzerId": "prebuilt-idDocument.generic",
+          "start": 1,
+          "end": 1,
+          "field": "LastName",
+          "value": null,
+          "confidence": 0.816,
+          "regions": []
+        },
+        {
+          "documentId": "1-1:0",
+          "category": "id_document",
+          "analyzerId": "prebuilt-idDocument.generic",
+          "start": 1,
+          "end": 1,
+          "field": "DocumentNumber",
+          "value": "MR-203323",
+          "confidence": 0.905,
+          "regions": [
+            {
+              "page": 1,
+              "polygon": [
+                0.5441411764705882,
+                0.33894545454545455,
+                0.7719764705882353,
+                0.33756363636363634,
+                0.7722823529411764,
+                0.3670818181818181,
+                0.544435294117647,
+                0.3684636363636363
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "documents": [
+      {
+        "id": "1-1:0",
+        "category": "id_document",
+        "pages": {
+          "start": 1,
+          "end": 1
+        },
+        "analyzerId": "prebuilt-idDocument.generic",
+        "sourceTextTruncated": false,
+        "untrustedSourceText": "Delta Road Network\nROADSIDE ASSISTANCE MEMBERSHIP\n\nMEMBER NAME\nPriya Raman\n\nMEMBERSHIP NUMBER\nMR-203323\n\nVALID FROM\n04/10/2025\n\nVALID THROUGH\n04/10/2026\n\nEMERGENCY ASSISTANCE\nPriority roadside help for covered\nbreakdowns and emergencies.\n\n\\+\n\nMEMBERSHIP BENEFITS\nTowing, battery boost, lockout service,\ntire change, and more.\n\nMEMBER REFERENCE\n\n\n![Priya Raman](signatures/1.1)\n\n"
+      }
+    ]
+  },
+  "result": {
+    "category": "extraction_error",
+    "reason": "The roadside assistance membership document (pages 1-1) contains the member name “Priya Raman” and membership number “MR-203323.” The extractor returned the full name in FirstName and left LastName missing, which is an extraction/mapping issue under the required separate-name schema.",
+    "suggestion": "Refine the extractor to split the member name into FirstName and LastName, then rerun the affected roadside assistance membership document (pages 1-1).",
+    "documentIds": [
+      "1-1:0"
+    ]
+  }
+}

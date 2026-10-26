@@ -1,0 +1,238 @@
+{
+  "id": "81215596-7c74-4043-961e-21df8e62a79d",
+  "timestamp": "2026-10-23T16:11:30.628Z",
+  "endpoint": "https://ignite-anatolip-test-scus.services.ai.azure.com",
+  "cacheKey": "b7a48887149467daad02a9ec96d6b736a986216b4259089a4637539476eb8dfd",
+  "status": "completed",
+  "deployment": "gpt-5.5",
+  "model": "gpt-5.5",
+  "fallbackFrom": "gpt-6.1-sol",
+  "responseId": "resp_0693c3552b41a737016adb872fab1481979f162c59dc313659",
+  "usage": {
+    "input_tokens": 3662,
+    "input_tokens_details": {
+      "cache_write_tokens": 0,
+      "cached_tokens": 0
+    },
+    "output_tokens": 164,
+    "output_tokens_details": {
+      "reasoning_tokens": 0
+    },
+    "total_tokens": 3826
+  },
+  "advisoryOnly": true,
+  "payloadSha256": "5e7de10918bd8765b5e5e4cf4e75070083012694cf894bd24e521f0c00d51086",
+  "input": {
+    "source": {
+      "endpoint": "https://ignite-anatolip-test-scus.services.ai.azure.com",
+      "runId": "3b87d91f-c274-489f-a8d9-995e4a1e2f0c",
+      "packetSha256": "408b92ebe2d82646b8a381712143d92860cee9c6432bda69f8bf89350ac866c8",
+      "analyzerFingerprint": "c2a85f9fd6722c8488d5cbf5201004b7144aad347af15ecd80b8a36b269785aa"
+    },
+    "ruleset": "1.1.0",
+    "check": {
+      "id": "financial.tax_details:8-9:0",
+      "rule": "Tax-detail amounts must sum to the explicit total tax.",
+      "status": "fail",
+      "message": "Document 8-9:0: tax details sum to USD 301.80; total tax is USD 150.90.",
+      "evidence": [
+        {
+          "documentId": "8-9:0",
+          "category": "repair_estimate",
+          "analyzerId": "lab664_anatolip_scus_repair",
+          "start": 8,
+          "end": 9,
+          "field": "TaxDetails[0].Amount.Amount",
+          "value": 150.9,
+          "confidence": 0.555,
+          "regions": [
+            {
+              "page": 9,
+              "polygon": [
+                0.8540000000000001,
+                0.6635727272727272,
+                0.8881882352941176,
+                0.6635727272727272,
+                0.8881882352941176,
+                0.6752909090909092,
+                0.8540000000000001,
+                0.6752909090909092
+              ]
+            }
+          ]
+        },
+        {
+          "documentId": "8-9:0",
+          "category": "repair_estimate",
+          "analyzerId": "lab664_anatolip_scus_repair",
+          "start": 8,
+          "end": 9,
+          "field": "TaxDetails[0].Amount.CurrencyCode",
+          "value": "USD",
+          "confidence": 0.379,
+          "regions": [
+            {
+              "page": 9,
+              "polygon": [
+                0.8560235294117647,
+                0.6361727272727272,
+                0.8875294117647058,
+                0.6372727272727272,
+                0.8867058823529411,
+                0.6514,
+                0.8552,
+                0.6503
+              ]
+            }
+          ]
+        },
+        {
+          "documentId": "8-9:0",
+          "category": "repair_estimate",
+          "analyzerId": "lab664_anatolip_scus_repair",
+          "start": 8,
+          "end": 9,
+          "field": "TaxDetails[1].Amount.Amount",
+          "value": 150.9,
+          "confidence": 0.714,
+          "regions": [
+            {
+              "page": 9,
+              "polygon": [
+                0.8540000000000001,
+                0.7011999999999999,
+                0.889164705882353,
+                0.7012090909090909,
+                0.889164705882353,
+                0.7139,
+                0.8540000000000001,
+                0.7139
+              ]
+            }
+          ]
+        },
+        {
+          "documentId": "8-9:0",
+          "category": "repair_estimate",
+          "analyzerId": "lab664_anatolip_scus_repair",
+          "start": 8,
+          "end": 9,
+          "field": "TaxDetails[1].Amount.CurrencyCode",
+          "value": "USD",
+          "confidence": 0.379,
+          "regions": [
+            {
+              "page": 9,
+              "polygon": [
+                0.8560235294117647,
+                0.6361727272727272,
+                0.8875294117647058,
+                0.6372727272727272,
+                0.8867058823529411,
+                0.6514,
+                0.8552,
+                0.6503
+              ]
+            }
+          ]
+        },
+        {
+          "documentId": "8-9:0",
+          "category": "repair_estimate",
+          "analyzerId": "lab664_anatolip_scus_repair",
+          "start": 8,
+          "end": 9,
+          "field": "TotalTaxAmount.Amount",
+          "value": 150.9,
+          "confidence": 0.833,
+          "regions": [
+            {
+              "page": 9,
+              "polygon": [
+                0.11596470588235294,
+                0.683590909090909,
+                0.22851764705882352,
+                0.683590909090909,
+                0.22851764705882352,
+                0.6992181818181818,
+                0.11596470588235294,
+                0.6992181818181818
+              ]
+            },
+            {
+              "page": 9,
+              "polygon": [
+                0.43530588235294115,
+                0.6840818181818181,
+                0.47265882352941174,
+                0.6840818181818181,
+                0.47265882352941174,
+                0.6967818181818182,
+                0.43530588235294115,
+                0.6967818181818182
+              ]
+            }
+          ]
+        },
+        {
+          "documentId": "8-9:0",
+          "category": "repair_estimate",
+          "analyzerId": "lab664_anatolip_scus_repair",
+          "start": 8,
+          "end": 9,
+          "field": "TotalTaxAmount.CurrencyCode",
+          "value": "USD",
+          "confidence": 0.681,
+          "regions": [
+            {
+              "page": 9,
+              "polygon": [
+                0.11596470588235294,
+                0.683590909090909,
+                0.22851764705882352,
+                0.683590909090909,
+                0.22851764705882352,
+                0.6992181818181818,
+                0.11596470588235294,
+                0.6992181818181818
+              ]
+            },
+            {
+              "page": 9,
+              "polygon": [
+                0.43530588235294115,
+                0.6840818181818181,
+                0.47265882352941174,
+                0.6840818181818181,
+                0.47265882352941174,
+                0.6967818181818182,
+                0.43530588235294115,
+                0.6967818181818182
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "documents": [
+      {
+        "id": "8-9:0",
+        "category": "repair_estimate",
+        "pages": {
+          "start": 8,
+          "end": 9
+        },
+        "analyzerId": "lab664_anatolip_scus_repair",
+        "untrustedSourceText": "Q-OH-25766\n\nBTU-26-717497\n\nBTU-A6414610\n\n08/07/2026\n\nPAGE 1 OF 2\n\n\n![DEPOTLINE FLEET BODYWORKS](figures/8.1)\n\n\n<!-- PageHeader: ESTIMATE -->\n\nREPAIRER\n\nDepotline Fleet Bodyworks\n260 Works Road\nBuckeye Depot, OH 43229\n(614) 555-0150\n\nInspector: Andre Lima\n\nINSURER\nBuckeye Transit Underwriters\n530 Civic Lane\nBuckeye Depot, OH 43229\n(614) 555-0130\n\nAdjuster: Tessa Boyd\n\n\n<table>\n<tr>\n<td>QUOTE:</td>\n<td>Q-OH-25766</td>\n</tr>\n<tr>\n<td>CLAIM:</td>\n<td>BTU-26-717497</td>\n</tr>\n<tr>\n<td>POLICY:</td>\n<td>BTU-A6414610</td>\n</tr>\n<tr>\n<td>INSPECTION DATE:</td>\n<td>08/07/2026</td>\n</tr>\n<tr>\n<td>REPAIR STATUS:</td>\n<td>Scheduled</td>\n</tr>\n<tr>\n<td>SCHEDULED START:</td>\n<td>08/09/2026</td>\n</tr>\n<tr>\n<td>LABOR RATE:</td>\n<td>121.00/hour</td>\n</tr>\n</table>\n\n\nCUSTOMER\n\nMinh Tran\n490 Linden Terrace\nBuckeye Depot, OH 43229\n(614) 555-0110\nminh.tran@example.com\n\nVEHICLE\n\n\n<table>\n<tr>\n<th>DESCRIPTION:</th>\n<th>2021 Ram ProMaster City</th>\n<th>USE:</th>\n<th>Commercial delivery</th>\n</tr>\n<tr>\n<td>COLOR:</td>\n<td>White</td>\n<td>ODOMETER:</td>\n<td>84,510</td>\n</tr>\n<tr>\n<td>VIN:</td>\n<td>ZFBERFAB8MA517810</td>\n<td>INSPECTION DATE:</td>\n<td>08/07/2026</td>\n</tr>\n<tr>\n<td>REGISTRATION:</td>\n<td colspan=\"3\">OH13629</td>\n</tr>\n</table>\n\n\n<table>\n<tr>\n<th rowspan=\"2\">#</th>\n<th rowspan=\"2\">DESCRIPTION</th>\n<th rowspan=\"2\">QTY</th>\n<th rowspan=\"2\">HOURS</th>\n<th colspan=\"3\">AMOUNT</th>\n</tr>\n<tr>\n<th>PARTS</th>\n<th>LABOR</th>\n<th>LINE TOTAL</th>\n</tr>\n<tr>\n<td>1</td>\n<td>Right sliding-door outer panel</td>\n<td>1</td>\n<td>3.2</td>\n<td>1,064.00</td>\n<td>387.20</td>\n<td>1,451.20</td>\n</tr>\n<tr>\n<td>2</td>\n<td>Lower sill repair</td>\n<td>1</td>\n<td>4.1</td>\n<td>287.00</td>\n<td>496.10</td>\n<td>783.10</td>\n</tr>\n<tr>\n<td>3</td>\n<td>Right side step</td>\n<td>1</td>\n<td>1.2</td>\n<td>412.00</td>\n<td>145.20</td>\n<td>557.20</td>\n</tr>\n<tr>\n<td colspan=\"6\">PAGE 1 OPERATIONS SUBTOTAL (CARRY FORWARD)</td>\n<td>2,791.50</td>\n</tr>\n</table>\n\n\n<table>\n<tr>\n<td>INSPECTION NOTE</td>\n<td>Right-side low-speed loading-bay impact, no front/rear damage.</td>\n</tr>\n<tr>\n<td>ESTIMATE NOTE</td>\n<td>Remaining operations and combined totals continue on page 2.</td>\n</tr>\n</table>\n\n\n<!-- PageFooter: Supplement dated at inspection 08/07/2026. -->\n<!-- PageNumber: Page 1 of 2 -->\n<!-- PageBreak -->\n\n\n![DEPOTLINE FLEET BODYWORKS](figures/9.1)\n\n\nESTIMATE SUPPLEMENT\nQ-OH-25766\n\n\n<table>\n<tr>\n<td>Inspection Date:</td>\n<td>08/07/2026</td>\n</tr>\n<tr>\n<td>Supplement Date:</td>\n<td>08/07/2026</td>\n</tr>\n<tr>\n<td>Prepared By:</td>\n<td>Andre Lima</td>\n</tr>\n</table>\n\n\nCUSTOMER\n\nMinh Tran\n490 Linden Terrace\nBuckeye Depot, OH 43229\n(614) 555-0110\nminh.tran@example.com\n\nVEHICLE\n\n2021 Ram ProMaster City\n\nColor:\nWhite\n\nVIN:\nZFBERFAB8MA517810\n\nRegistration:\nOH13629\n\nUse:\n\nCommercial delivery\n\nOdometer:\n84,510\n\n\n## CLAIM & POLICY\n\n\n<table>\n<tr>\n<td>Claim Reference:</td>\n<td>BTU-26-717497</td>\n</tr>\n<tr>\n<td>Policy Reference:</td>\n<td>BTU-A6414610</td>\n</tr>\n<tr>\n<td>Quote Reference:</td>\n<td>Q-OH-25766</td>\n</tr>\n</table>\n\n\nREPAIRER\nDepotline Fleet Bodyworks\n260 Works Road\nBuckeye Depot, OH 43229\n(614) 555-0150\nInspector: Andre Lima\n\nINSURER\n\nBuckeye Transit Underwriters\n530 Civic Lane\nBuckeye Depot, OH 43229\n(614) 555-0130\nAdjuster: Tessa Boyd\n\nLABOR RATE\n$121.00 / hour\n\n\n## OPERATIONS (CONTINUED)\n\n\n<table>\n<tr>\n<th>Line</th>\n<th>Description</th>\n<th>Qty</th>\n<th>Parts ($)</th>\n<th>Hours</th>\n<th>Labor ($)</th>\n<th>Line Total ($)</th>\n</tr>\n<tr>\n<td>21</td>\n<td>Commercial panel refinish</td>\n<td>1</td>\n<td>249.00</td>\n<td>3.5</td>\n<td>423.50</td>\n<td>672.50</td>\n</tr>\n<tr>\n<td>22</td>\n<td>Door travel inspection</td>\n<td>1</td>\n<td>0.00</td>\n<td>0.8</td>\n<td>96.80</td>\n<td>96.80</td>\n</tr>\n</table>\n\n\nPage 2 Operations Subtotal\n769.30\n\nCarried from page 1 subtotal\n\n2,791.50\n\n\n### SUMMARY\n\n\n<table>\n<tr>\n<td>Subtotal (Pages 1 &amp; 2)</td>\n<td>3,560.80</td>\n</tr>\n<tr>\n<td>Taxable Parts Total</td>\n<td>2,012.00</td>\n</tr>\n<tr>\n<td>Tax on Parts (7.50%)</td>\n<td>150.90</td>\n</tr>\n<tr>\n<td>Gross Estimate</td>\n<td>3,711.70</td>\n</tr>\n<tr>\n<td>Deductible</td>\n<td>1,500.00</td>\n</tr>\n<tr>\n<td>Estimated Repair Less Deductible</td>\n<td>2,211.70</td>\n</tr>\n</table>\n\n\n## TAX DETAILS\n\n\n<table>\n<tr>\n<th>Description</th>\n<th>Rate</th>\n<th>Taxable Amount ($)</th>\n<th>Tax ($)</th>\n</tr>\n<tr>\n<td>Tax on parts</td>\n<td>7.50%</td>\n<td>2,012.00</td>\n<td>150.90</td>\n</tr>\n<tr>\n<td>Total Parts Tax</td>\n<td></td>\n<td></td>\n<td>150.90</td>\n</tr>\n</table>\n\n\n### ESTIMATE STATUS\n\n\n<table>\n<tr>\n<td>Repair Status:</td>\n<td>Scheduled</td>\n</tr>\n<tr>\n<td>Scheduled Repair Start:</td>\n<td>08/09/2026</td>\n</tr>\n<tr>\n<td>Projected Completion:</td>\n<td>08/13/2026</td>\n</tr>\n<tr>\n<td>Payment Authorization:</td>\n<td>Pending</td>\n</tr>\n</table>\n\n\nNOTES\n\nProvisional valuation, authorization required.\n\n<!-- PageFooter: Depotline Fleet Bodyworks 260 Works Road, Buckeye Depot, OH 43229 (614) 555-0150 -->\n<!-- PageNumber: Page 2 of 2 -->\n<!-- PageBreak -->\n\n"
+      }
+    ]
+  },
+  "result": {
+    "category": "policy_code_error_or_too_strict",
+    "reason": "The Repair Estimate (p2) tax details table includes one tax line, “Tax on parts” of USD 150.90, followed by a summary/total row, “Total Parts Tax” of USD 150.90. The check appears to add both the detail line and the total row, producing USD 301.80, then compares that to the explicit total tax of USD 150.90. This is an inappropriate assumption for a tax-details table that contains its own total row.",
+    "suggestion": "Refine the tax-details extraction or rule logic to exclude summary rows such as “Total Parts Tax,” then rerun the Repair Estimate.",
+    "documentIds": [
+      "8-9:0"
+    ]
+  }
+}

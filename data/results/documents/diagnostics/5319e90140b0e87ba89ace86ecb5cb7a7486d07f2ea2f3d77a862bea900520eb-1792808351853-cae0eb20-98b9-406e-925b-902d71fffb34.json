@@ -1,0 +1,224 @@
+{
+  "version": "azure-policy-v2",
+  "id": "d83392d3-65bf-43b0-a32f-d9fabcd3b094",
+  "timestamp": "2026-10-24T02:19:11.852Z",
+  "endpoint": "https://ignite-anatolip-test-scus.services.ai.azure.com",
+  "cacheKey": "5319e90140b0e87ba89ace86ecb5cb7a7486d07f2ea2f3d77a862bea900520eb",
+  "status": "completed",
+  "deployment": "gpt-5.5",
+  "model": "gpt-5.5",
+  "fallbackFrom": "gpt-6.1-sol",
+  "responseId": "resp_07e49541ef8b9515016adc159d0ce081968a0ede55c6d0b38e",
+  "usage": {
+    "input_tokens": 3700,
+    "input_tokens_details": {
+      "cache_write_tokens": 0,
+      "cached_tokens": 0
+    },
+    "output_tokens": 155,
+    "output_tokens_details": {
+      "reasoning_tokens": 0
+    },
+    "total_tokens": 3855
+  },
+  "advisoryOnly": true,
+  "payloadSha256": "4f1191ff6447315fe6d22272844c49ffd9007846918ace70579a684cd30a31e5",
+  "input": {
+    "source": {
+      "endpoint": "https://ignite-anatolip-test-scus.services.ai.azure.com",
+      "runId": "3b87d91f-c274-489f-a8d9-995e4a1e2f0c",
+      "packetSha256": "9539d6fe4047c0f445ca202fed235dbe8ffc86d020ffd9c8fa0af2a6c2d20265",
+      "analyzerFingerprint": "c2a85f9fd6722c8488d5cbf5201004b7144aad347af15ecd80b8a36b269785aa"
+    },
+    "ruleset": "1.1.0",
+    "check": {
+      "id": "financial.tax_details:8-9:0",
+      "rule": "Tax-detail amounts must sum to the explicit total tax.",
+      "status": "fail",
+      "message": "Document 8-9:0: tax details sum to USD 107.98; total tax is USD 53.99.",
+      "evidence": [
+        {
+          "documentId": "8-9:0",
+          "category": "rental_invoice",
+          "analyzerId": "prebuilt-invoice",
+          "start": 8,
+          "end": 9,
+          "field": "TaxDetails[0].Amount.Amount",
+          "value": 30.5,
+          "confidence": 0.721,
+          "regions": [
+            {
+              "page": 9,
+              "polygon": [
+                0.8359411764705883,
+                0.5293,
+                0.8715764705882353,
+                0.5293,
+                0.8715764705882353,
+                0.542009090909091,
+                0.8359411764705883,
+                0.5417272727272727
+              ]
+            }
+          ]
+        },
+        {
+          "documentId": "8-9:0",
+          "category": "rental_invoice",
+          "analyzerId": "prebuilt-invoice",
+          "start": 8,
+          "end": 9,
+          "field": "TaxDetails[0].Amount.CurrencyCode",
+          "value": "USD",
+          "regions": []
+        },
+        {
+          "documentId": "8-9:0",
+          "category": "rental_invoice",
+          "analyzerId": "prebuilt-invoice",
+          "start": 8,
+          "end": 9,
+          "field": "TaxDetails[1].Amount.Amount",
+          "value": 18,
+          "confidence": 0.482,
+          "regions": [
+            {
+              "page": 9,
+              "polygon": [
+                0.8378941176470588,
+                0.5532181818181818,
+                0.8720705882352942,
+                0.5532181818181818,
+                0.8720705882352942,
+                0.5659181818181819,
+                0.8378941176470588,
+                0.5659181818181819
+              ]
+            }
+          ]
+        },
+        {
+          "documentId": "8-9:0",
+          "category": "rental_invoice",
+          "analyzerId": "prebuilt-invoice",
+          "start": 8,
+          "end": 9,
+          "field": "TaxDetails[1].Amount.CurrencyCode",
+          "value": "USD",
+          "regions": []
+        },
+        {
+          "documentId": "8-9:0",
+          "category": "rental_invoice",
+          "analyzerId": "prebuilt-invoice",
+          "start": 8,
+          "end": 9,
+          "field": "TaxDetails[2].Amount.Amount",
+          "value": 5.49,
+          "confidence": 0.567,
+          "regions": [
+            {
+              "page": 9,
+              "polygon": [
+                0.844729411764706,
+                0.5771454545454545,
+                0.8730470588235294,
+                0.5771454545454545,
+                0.8730470588235294,
+                0.5898454545454546,
+                0.844729411764706,
+                0.5898454545454546
+              ]
+            }
+          ]
+        },
+        {
+          "documentId": "8-9:0",
+          "category": "rental_invoice",
+          "analyzerId": "prebuilt-invoice",
+          "start": 8,
+          "end": 9,
+          "field": "TaxDetails[2].Amount.CurrencyCode",
+          "value": "USD",
+          "regions": []
+        },
+        {
+          "documentId": "8-9:0",
+          "category": "rental_invoice",
+          "analyzerId": "prebuilt-invoice",
+          "start": 8,
+          "end": 9,
+          "field": "TaxDetails[3].Amount.Amount",
+          "value": 53.99,
+          "confidence": 0.878,
+          "regions": [
+            {
+              "page": 9,
+              "polygon": [
+                0.8364235294117648,
+                0.6031454545454545,
+                0.8745058823529411,
+                0.6024636363636364,
+                0.8745058823529411,
+                0.6172818181818182,
+                0.8364235294117648,
+                0.6167454545454546
+              ]
+            }
+          ]
+        },
+        {
+          "documentId": "8-9:0",
+          "category": "rental_invoice",
+          "analyzerId": "prebuilt-invoice",
+          "start": 8,
+          "end": 9,
+          "field": "TaxDetails[3].Amount.CurrencyCode",
+          "value": "USD",
+          "regions": []
+        },
+        {
+          "documentId": "8-9:0",
+          "category": "rental_invoice",
+          "analyzerId": "prebuilt-invoice",
+          "start": 8,
+          "end": 9,
+          "field": "TotalTaxAmount.Amount",
+          "value": 53.99,
+          "regions": []
+        },
+        {
+          "documentId": "8-9:0",
+          "category": "rental_invoice",
+          "analyzerId": "prebuilt-invoice",
+          "start": 8,
+          "end": 9,
+          "field": "TotalTaxAmount.CurrencyCode",
+          "value": "USD",
+          "regions": []
+        }
+      ]
+    },
+    "documents": [
+      {
+        "id": "8-9:0",
+        "category": "rental_invoice",
+        "pages": {
+          "start": 8,
+          "end": 9
+        },
+        "analyzerId": "prebuilt-invoice",
+        "sourceTextTruncated": true,
+        "untrustedSourceText": "<!-- PageHeader: ![SOUNDWAY RENTALS](figures/8.1) -->\n<!-- PageHeader: RENTAL AGREEMENT -->\n<!-- PageHeader: AGREEMENT NO. RA-327722 -->\n\n\n# 1 RENTER INFORMATION\n\n\n<table>\n<tr>\n<td>Name:</td>\n<td>Victor Bennett</td>\n</tr>\n<tr>\n<td>Address:</td>\n<td>242 Linden Terrace Alder Sound, WA 98052</td>\n</tr>\n<tr>\n<td>Phone:</td>\n<td>(425) 555-0102</td>\n</tr>\n<tr>\n<td>Email:</td>\n<td>victor.bennett@example.com</td>\n</tr>\n</table>\n\n\n# 2 RENTAL DETAILS\n\n\n<table>\n<tr>\n<td>Pickup Date/Time:</td>\n<td>2025-04-13 09:30</td>\n</tr>\n<tr>\n<td>Scheduled Return:</td>\n<td>2025-04-18 09:30</td>\n</tr>\n<tr>\n<td>Rental Days:</td>\n<td>5</td>\n</tr>\n<tr>\n<td>Unit Number:</td>\n<td>RV-102</td>\n</tr>\n<tr>\n<td>Status:</td>\n<td>OPEN; no payment or insurance authorization</td>\n</tr>\n</table>\n\n\n# 3 VEHICLE INFORMATION\n\n\n<table>\n<tr>\n<td>Vehicle:</td>\n<td>2023 Toyota RAV4 LE</td>\n</tr>\n<tr>\n<td>Color:</td>\n<td>Gray</td>\n</tr>\n<tr>\n<td>Class:</td>\n<td>Compact SUV</td>\n</tr>\n<tr>\n<td>License Plate:</td>\n<td></td>\n</tr>\n</table>\n\n\n![LEFT FRONT REAR RIGHT X = Existing Damage](figures/8.2)\n\n\n# 4 ODOMETER & FUEL\n\n\n<table>\n<tr>\n<th>Miles Out</th>\n<th>Miles In</th>\n<th>Estimated Distance</th>\n<th>Fuel Out</th>\n<th>Fuel In</th>\n</tr>\n<tr>\n<td>23314</td>\n<td>-</td>\n<td>-</td>\n<td>Full out</td>\n<td>-</td>\n</tr>\n</table>\n\n\n# 5 CONDITION CHECKLIST\n\n\n<table>\n<tr>\n<th>Item</th>\n<th>OK</th>\n<th>Existing Damage</th>\n<th>Comments</th>\n<th>Item</th>\n<th>OK</th>\n<th>Existing Damage</th>\n<th>Comments</th>\n</tr>\n<tr>\n<td>Exterior Body</td>\n<td>☐</td>\n<td>☑</td>\n<td>Pre-existing left-rear bumper scuff</td>\n<td>Interior Upholstery</td>\n<td>☑</td>\n<td>☐</td>\n<td>Clean</td>\n</tr>\n<tr>\n<td>Glass / Lights</td>\n<td>☑</td>\n<td>☐</td>\n<td>Clean</td>\n<td>Interior Trim</td>\n<td>☑</td>\n<td>☐</td>\n<td>OK</td>\n</tr>\n<tr>\n<td>Tires / Wheels</td>\n<td>☑</td>\n<td>☐</td>\n<td>OK</td>\n<td>Dashboard / Instruments</td>\n<td>☑</td>\n<td>☐</td>\n<td>OK</td>\n</tr>\n<tr>\n<td>Mirrors</td>\n<td>☑</td>\n<td>☐</td>\n<td>OK</td>\n<td>Spare Tire / Jack</td>\n<td>☑</td>\n<td>☐</td>\n<td>Present</td>\n</tr>\n</table>\n\n\nAdditional Notes:\nPre-existing left-rear bumper scuff noted; return inspection Pending\n\n\n## 6 RATE & CHARGES\n\n\n<table>\n<tr>\n<th>Description</th>\n<th>Daily Rate</th>\n<th>Days</th>\n<th>Amount</th>\n</tr>\n<tr>\n<td>Time &amp; Mileage</td>\n<td>61.00</td>\n<td>5</td>\n<td>305.00</td>\n</tr>\n<tr>\n<td colspan=\"4\"></td>\n</tr>\n<tr>\n<td colspan=\"3\">Subtotal</td>\n<td>305.00</td>\n</tr>\n<tr>\n<td>Taxes &amp; Fees</td>\n<td></td>\n<td></td>\n<td>-</td>\n</tr>\n<tr>\n<td>Estimated Total</td>\n<td></td>\n<td></td>\n<td>305.00</td>\n</tr>\n</table>\n\n\nFinal charges may vary based on actual usage, fuel level, and\ncondition upon return.\n\n\n# 7 TERMS & RETURN\n\n\n<table>\n<tr>\n<td>Scheduled Return:</td>\n<td>2025-04-18 09:30</td>\n</tr>\n<tr>\n<td>Late Return Fee:</td>\n<td>Applies after scheduled return time</td>\n</tr>\n<tr>\n<td>Fuel Policy:</td>\n<td>Full out / Full in</td>\n</tr>\n<tr>\n<td>Mileage Policy:</td>\n<td>Unlimited miles</td>\n</tr>\n<tr>\n<td>Return Condition:</td>\n<td>Return inspection Pending</td>\n</tr>\n<tr>\n<td>Inspection:</td>\n<td>Pending</td>\n</tr>\n</table>\n\n\n## 8 RENTER ACKNOWLEDGMENT\n\nI acknowledge receipt of the vehicle listed above in the condition noted. I agree to the terms and conditions of this rental\nagreement.\n\nRenter Signature\n\nDate/Time\n\nAgent Signature\n\nDate/Time\n\n<!-- PageFooter: Soundway Rentals . 88 Station Street, Alder Sound, WA 98052 . (425) 555-0162 -->\n<!-- PageNumber: Page 1 of 2 -->\n<!-- PageBreak -->\n\n\n![SOUNDWAY RENTALS](figures/9.1)\n\n\nSoundway Rentals\n88 Station Street\nAlder Sound, WA 98052\n(425) 555-0162\n\n\n<table>\n<tr>\n<td>Rental Agreement No.</td>\n<td>RA-327722</td>\n</tr>\n<tr>\n<td>Invoice Date</td>\n<td>2025-04-18</td>\n</tr>\n<tr>\n<td>Due Date</td>\n<td>2025-05-02</td>\n</tr>\n</table>\n\n\nRenter\n\nVictor Bennett\n242 Linden Terrace\nAlder Sound, WA 98052\n(425) 555-0102\nvictor.bennett@example.com\n\nVehicle Information\n\nUnit No.:\nRV-102\n\nVehicle:\n2023 Toyota RAV4 LE\n\nColor:\n\nGray\n\nClass:\n\nCompact SUV\n\nPickup\n\n2025-04-13 09:30\n\nReturned\n\n2025-04-18 09:30\n\nDays Billed\n\n5\n\n\n# 6. CHARGES\n\n\n<table>\n<tr>\n<th>Date</th>\n<th>Description</th>\n<th>Daily Rate</th>\n<th>Amount</th>\n</tr>\n<tr>\n<td>2025-04-13</td>\n<td>Rental day 2025-04-13</td>\n<td>61.00</td>\n<td>61.00</td>\n</tr>\n<tr>\n<td>2025-04-14</td>\n<td>Rental day 2025-04-14</td>\n<td>61.00</td>\n<td>61.00</td>\n</tr>\n<tr>\n<td>2025-04-15</td>\n<td>Rental day 2025-04-15</td>\n<td>61.00</td>\n<td>61.00</td>\n</tr>\n<tr>\n<td>2025-04-16</td>\n<td>Rental day 2025-04-16</td>\n<td>61.00</td>\n<td>61.00</td>\n</tr>\n<tr>\n<td>2025-04-17</td>\n<td>Rental day 2025-04-17</td>\n<td>61.00</td>\n<td>61.00</td>\n</tr>\n<tr>\n<td colspan=\"3\">Subtotal</td>\n<td>305.00</td>\n</tr>\n</table>\n\n\n<table>\n<tr>\n<th>7. TAX BREAKDOWN</th>\n<th>Amount</th>\n</tr>\n<tr>\n<td>Quoted retail sales tax</td>\n<td>30.50</td>\n</tr>\n<tr>\n<td>State rental car tax - 2025</td>\n<td>18.00</td>\n</tr>\n<tr>\n<td>Quoted local rental levies</td>\n<td>5.49</td>\n</tr>\n<tr>\n<td>Total Taxes</td>\n<td>53.99</td>\n</tr>\n</table>\n\n\n## 8. TOTALS\n\nInvoice Total\n\n35"
+      }
+    ]
+  },
+  "result": {
+    "category": "extraction_error",
+    "reason": "For the rental invoice on pages 8-9, the tax breakdown lists three component taxes (30.50, 18.00, and 5.49) and then an explicit Total Taxes of 53.99. The extracted TaxDetails array includes the Total Taxes row as an additional tax detail, so the details sum to 107.98 while TotalTaxAmount is 53.99. This indicates the extractor included an aggregate total row among component tax details.",
+    "suggestion": "Refine the extractor to exclude the Total Taxes aggregate row from TaxDetails, then rerun the rental invoice on pages 8-9.",
+    "documentIds": [
+      "8-9:0"
+    ]
+  }
+}

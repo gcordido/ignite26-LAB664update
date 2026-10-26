@@ -1,0 +1,119 @@
+{
+  "id": "4112fc04-3dc5-4e0d-bad5-1ec3314d3c41",
+  "timestamp": "2026-10-23T07:14:51.978Z",
+  "endpoint": "https://ignite-anatolip-test-scus.services.ai.azure.com",
+  "cacheKey": "faef21aaf98bafb1568ff2190a9e0873bf024ea4e8024713fe3dd763191c5db9",
+  "status": "completed",
+  "deployment": "gpt-5.5",
+  "model": "gpt-5.5",
+  "fallbackFrom": "gpt-6.1-sol",
+  "responseId": "resp_0fd339bbc3ddc172016adb0966ae188195b223f6e8fd08349d",
+  "usage": {
+    "input_tokens": 933,
+    "input_tokens_details": {
+      "cache_write_tokens": 0,
+      "cached_tokens": 0
+    },
+    "output_tokens": 286,
+    "output_tokens_details": {
+      "reasoning_tokens": 126
+    },
+    "total_tokens": 1219
+  },
+  "advisoryOnly": true,
+  "payloadSha256": "5a09651a63fd4e342d40f14a7f05d1b3d61cfab50f564645411082f6d1447ec5",
+  "input": {
+    "source": {
+      "endpoint": "https://ignite-anatolip-test-scus.services.ai.azure.com",
+      "runId": "3b87d91f-c274-489f-a8d9-995e4a1e2f0c",
+      "packetSha256": "5eb468325e0f55c66e9b2e911a16decc2d66ae62ec67ff322a77d0111126d35e",
+      "analyzerFingerprint": "c2a85f9fd6722c8488d5cbf5201004b7144aad347af15ecd80b8a36b269785aa"
+    },
+    "ruleset": "1.0.0",
+    "check": {
+      "id": "required.id:1-1:0",
+      "rule": "Named-holder ID extraction requires FirstName, LastName, and DocumentNumber (schema assumption; advisory).",
+      "status": "fail",
+      "message": "Document 1-1:0 is missing configured required field(s): last name (LastName). This is a schema assumption and advisory, not a person mismatch.",
+      "evidence": [
+        {
+          "documentId": "1-1:0",
+          "category": "id_document",
+          "analyzerId": "prebuilt-idDocument.generic",
+          "start": 1,
+          "end": 1,
+          "field": "FirstName",
+          "value": "Priya Raman",
+          "confidence": 0.639,
+          "regions": [
+            {
+              "page": 1,
+              "polygon": [
+                0.5434588235294118,
+                0.23150909090909091,
+                0.7736352941176471,
+                0.23235454545454545,
+                0.7734235294117646,
+                0.26534545454545455,
+                0.5432588235294118,
+                0.2645
+              ]
+            }
+          ]
+        },
+        {
+          "documentId": "1-1:0",
+          "category": "id_document",
+          "analyzerId": "prebuilt-idDocument.generic",
+          "start": 1,
+          "end": 1,
+          "field": "LastName",
+          "value": null,
+          "confidence": 0.816,
+          "regions": []
+        },
+        {
+          "documentId": "1-1:0",
+          "category": "id_document",
+          "analyzerId": "prebuilt-idDocument.generic",
+          "start": 1,
+          "end": 1,
+          "field": "DocumentNumber",
+          "value": "MR-203323",
+          "confidence": 0.905,
+          "regions": [
+            {
+              "page": 1,
+              "polygon": [
+                0.5441411764705882,
+                0.33894545454545455,
+                0.7719764705882353,
+                0.33756363636363634,
+                0.7722823529411764,
+                0.3670818181818181,
+                0.544435294117647,
+                0.3684636363636363
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "documents": [
+      {
+        "id": "1-1:0",
+        "category": "id_document",
+        "analyzerId": "prebuilt-idDocument.generic",
+        "untrustedSourceText": "Delta Road Network\nROADSIDE ASSISTANCE MEMBERSHIP\n\nMEMBER NAME\nPriya Raman\n\nMEMBERSHIP NUMBER\nMR-203323\n\nVALID FROM\n04/10/2025\n\nVALID THROUGH\n04/10/2026\n\nEMERGENCY ASSISTANCE\nPriority roadside help for covered\nbreakdowns and emergencies.\n\n\\+\n\nMEMBERSHIP BENEFITS\nTowing, battery boost, lockout service,\ntire change, and more.\n\nMEMBER REFERENCE\n\n\n![Priya Raman](signatures/1.1)\n\n"
+      }
+    ]
+  },
+  "result": {
+    "category": "policy_code_error_or_too_strict",
+    "reason": "The source document 1-1:0 presents the holder as a single full-name string, “Priya Raman,” under “MEMBER NAME,” and the analyzer extracted that full string in FirstName while LastName is null. The failed check assumes separate FirstName and LastName fields are required for this document type, which appears too strict for a membership/roadside assistance ID that provides only a combined member name.",
+    "suggestion": "Refine the extractor or rule to support a combined MemberName/full-name field, or split the extracted full name into first/last before rerunning document 1-1:0.",
+    "documentIds": [
+      "1-1:0"
+    ]
+  }
+}
