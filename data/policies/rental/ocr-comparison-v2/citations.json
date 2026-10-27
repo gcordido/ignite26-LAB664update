@@ -1,5 +1,46 @@
 [
   {
+    "documentId": "DEC-TX-01",
+    "version": "2026-02-01",
+    "pdf": "01-revised-declarations.pdf",
+    "sha256": "c69bc0643e6588cff27b1e5b91006daba20b0b2d134d5b1515b552c41d45cc54",
+    "ruleIds": ["DEC-TX-01"],
+    "sections": {
+      "VEHICLE SCHEDULE": 1,
+      "COVERAGE SCHEDULE": 1,
+      "APPLICABLE FORMS": 1
+    }
+  },
+  {
+    "documentId": "RNT-TX-01",
+    "version": "2025-09",
+    "pdf": "02-rental-terms-and-diagram.pdf",
+    "sha256": "f5be1f288b9515dab20803b9f8b384f3077f7280821ea033602e9ce1b14078c8",
+    "ruleIds": ["R.1", "R.2", "R.3", "R.4", "R.5", "R.6", "Figure R-1"],
+    "sections": {
+      "R.1 COVERED BENEFIT": 1,
+      "R.2 WHEN ELIGIBILITY BEGINS": 1,
+      "R.3 WHEN ELIGIBILITY ENDS": 1,
+      "R.4 LIMITS AND CHARGES": 1,
+      "R.5 EVIDENCE AND OTHER PAYMENTS": 1,
+      "R.6 READING THIS FORM": 1,
+      "Rental eligibility at a glance": 2,
+      "BENEFIT AMOUNT": 2
+    }
+  },
+  {
+    "documentId": "END-02",
+    "version": "2026-02-01",
+    "pdf": "03-scanned-midterm-endorsement.pdf",
+    "sha256": "2a5c9e0e2665e3fa20c34139d84f49f66de6a92959ba76f217c9a0c696cab4d0",
+    "ruleIds": ["END-02"],
+    "sections": {
+      "AMENDMENT": 1,
+      "CUSTOMER REQUEST ACKNOWLEDGMENT": 1,
+      "CARRIER ISSUANCE": 1
+    }
+  },
+  {
     "documentId": "TX-RENTAL-002",
     "version": "2.0",
     "pdf": "tx-rental-review-sop-v2.pdf",

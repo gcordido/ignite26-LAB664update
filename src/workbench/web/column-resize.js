@@ -86,7 +86,7 @@ export function splitPreview(main, handle) {
     event.preventDefault();
     drag = {
       x: event.clientX,
-      width: main.querySelector(".toolbar").getBoundingClientRect().width,
+      width: main.querySelector("#batch").getBoundingClientRect().width,
     };
     handle.setPointerCapture(event.pointerId);
     document.body.classList.add("resizing-column");

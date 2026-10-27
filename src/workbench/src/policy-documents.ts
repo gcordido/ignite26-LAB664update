@@ -7,9 +7,9 @@ import { CuClient } from "./cu.ts";
 import { digest } from "./policy-core.ts";
 import { frameworkConfigSchema } from "./policy-service.ts";
 
-export const representationSchema = z.enum(["layout", "digital"]);
+export const representationSchema = z.enum(["search", "digital"]);
 export type Representation = z.infer<typeof representationSchema>;
-const analyzers = { layout: "prebuilt-layout", digital: "prebuilt-digitalParse" } as const;
+const analyzers = { search: "prebuilt-documentSearch", digital: "prebuilt-digitalParse" } as const;
 const cacheSchema = z.object({
   schemaVersion: z.literal(1), file: z.string(), sha256: z.string(), endpoint: z.string(),
   apiVersion: z.string(), analyzer: z.string(), createdAt: z.string(),

@@ -53,7 +53,7 @@ export function createPolicyDocument({ api, previewPdf, get }) {
     get("pdf-status").hidden = true;
     panel.hidden = pdf;
     metadata.hidden = pdf;
-    panel.setAttribute("aria-labelledby", mode === "layout" ? "policy-document-layout-tab" : "policy-document-digital-tab");
+    panel.setAttribute("aria-labelledby", mode === "search" ? "policy-document-search-tab" : "policy-document-digital-tab");
   }
   async function show(next = mode, live = false) {
     if (!selection) return;
@@ -72,8 +72,8 @@ export function createPolicyDocument({ api, previewPdf, get }) {
     }
     const requested = mode;
     panel.textContent = live ? "Extracting with Content Understanding. This may take a minute…" : "Loading cached extraction…";
-    metadata.textContent = requested === "layout"
-      ? "Whole document · CU Layout · OCR and document layout; not CU Standard semantic figure understanding."
+    metadata.textContent = requested === "search"
+      ? "Whole document · CU Search · document, table and figure understanding. This preview does not rebuild the Azure Search index."
       : "Whole document · CU Digital parse · embedded machine-readable content; not the exact Azure Search Minimal pipeline.";
     const render = (value) => {
       panel.replaceChildren();

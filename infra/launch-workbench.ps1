@@ -9,6 +9,14 @@ param(
 
 $ErrorActionPreference = 'Stop'
 $repositoryRoot = Split-Path -Parent $PSScriptRoot
+if (-not $Endpoint) {
+    $runtimeConfig = Join-Path $repositoryRoot '.tools\policy-agent-framework.json'
+    if (Test-Path -LiteralPath $runtimeConfig) {
+        $policyConfig = Get-Content -LiteralPath $runtimeConfig -Raw | ConvertFrom-Json
+        $Endpoint = $policyConfig.cuEndpoint
+        if (-not $Endpoint) { throw 'The verified policy configuration is missing cuEndpoint. Rerun policy setup.' }
+    }
+}
 $env:Path = "$(Join-Path $repositoryRoot '.tools\node');$env:Path;$([Environment]::GetEnvironmentVariable('Path', 'Machine'));$([Environment]::GetEnvironmentVariable('Path', 'User'))"
 if (-not (Get-Command node.exe -ErrorAction SilentlyContinue) -or
     -not (Test-Path -LiteralPath (Join-Path $repositoryRoot 'src\workbench\node_modules\tsx\dist\cli.mjs'))) {
@@ -33,7 +41,13 @@ if ($Endpoint) {
 $env:CU_ENDPOINT = $Endpoint
 $env:CU_API_VERSION = $ApiVersion
 $env:PORT = [string]$Port
+$logDirectory = Join-Path $repositoryRoot '.tools\logs'
+New-Item -ItemType Directory -Path $logDirectory -Force | Out-Null
+if (-not $env:CU_DIAGNOSTICS_LOG) {
+    $env:CU_DIAGNOSTICS_LOG = Join-Path $logDirectory 'cu-requests.jsonl'
+}
 Write-Host "Starting the separate Insurance Workbench App at http://127.0.0.1:$Port/"
+Write-Host "CU request diagnostics: $env:CU_DIAGNOSTICS_LOG"
 if (-not $Endpoint) {
     Write-Host 'CU cache-only mode: load the included completed results. Configured policy checks still call Azure and incur charges.'
 }

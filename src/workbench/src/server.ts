@@ -447,10 +447,45 @@ export function createApp(
       }
     res.json({ runId: run.id, mode, status: "completed", items });
   });
+  app.get("/api/policy/cache", async (req, res) => {
+    const s = session(req);
+    if (!s.run)
+      throw new LabError(409, "Load Content Understanding results first.");
+    const run = s.run;
+    const readiness = await policy.status();
+    if (!readiness.configured) {
+      res.json({ runId: run.id, entries: [], message: readiness.message });
+      return;
+    }
+    const entries = await Promise.all(modeSchema.options.map(async (mode) => {
+      const items = await policy.snapshot(run, mode, (id) => cache.raw(run.id, id));
+      const completed = items.filter((item) => item.status === "completed");
+      return {
+        mode, count: completed.length, total: items.length,
+        completedAt: completed.map((item) => item.completedAt ?? "").sort().at(-1),
+        indexName: completed[0]?.indexName ?? null,
+      };
+    }));
+    res.json({ runId: run.id, entries: entries.filter((entry) => entry.count > 0) });
+  });
+  app.post("/api/policy/cache/load", async (req, res) => {
+    const s = session(req);
+    const { runId, mode } = z.object({ runId: z.string().uuid(), mode: modeSchema }).strict().parse(req.body);
+    if (!s.run || s.run.id !== runId)
+      throw new LabError(409, "The selected CU run changed. Refresh saved policy results.");
+    if (s.busy || s.chatBusy || s.policyJob?.status === "running")
+      throw new LabError(409, "Wait for the current analysis, policy review or chat.");
+    const run = s.run;
+    const items = await policy.snapshot(run, mode, (id) => cache.raw(run.id, id));
+    if (!items.some((item) => item.status === "completed"))
+      throw new LabError(404, "No compatible saved policy results. Run policy checks first.");
+    res.json({ runId: run.id, mode, status: "completed", items, cached: true });
+  });
   app.post("/api/policy/batch", async (req, res) => {
     const s = session(req);
-    const { mode } = z
-      .object({ mode: modeSchema, live: z.literal(true) })
+    const { mode, packetIds } = z
+      .object({ mode: modeSchema, live: z.literal(true),
+        packetIds: z.array(z.string().regex(/^packet-\d{2}$/)).min(1).max(10).optional() })
       .parse(req.body);
     if (!s.run)
       throw new LabError(409, "Load Content Understanding results first.");
@@ -459,6 +494,11 @@ export function createApp(
       s.policyJob.runId === s.run.id &&
       s.policyJob.mode === mode
     ) {
+      const requested = (packetIds ?? s.run.items.map(({ id }) => id)).toSorted();
+      const running = s.policyJob.items.map(({ id }) => id).toSorted();
+      if (requested.length !== running.length ||
+          requested.some((id, index) => id !== running[index]))
+        throw new LabError(409, "A policy review with a different packet selection is already running.");
       res.status(202).json(s.policyJob);
       return;
     }
@@ -468,8 +508,7 @@ export function createApp(
     const run = s.run;
     try {
       const { job, task } = await policy.start(run, mode, (id) =>
-        cache.raw(run.id, id),
-      );
+        cache.raw(run.id, id), packetIds);
       s.policyJob = job;
       void task
         .catch((error) => {

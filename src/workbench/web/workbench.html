@@ -8,7 +8,11 @@
   </head>
   <body>
     <header>
-      <h1>Insurance Workbench App</h1>
+      <span class="app-brand" aria-label="Document Intelligence and Content Understanding">DICU</span>
+      <div class="app-title">
+        <h1>Insurance Workbench App</h1>
+        <p class="app-subhead">using Azure Document Intelligence and Content Understanding in Foundry</p>
+      </div>
       <span class="muted">Synthetic data</span>
       <span class="badge">Combined preview</span>
       <nav>
@@ -16,30 +20,38 @@
         ><a href="https://contentunderstanding.ai.azure.com/">Studio</a>
       </nav>
     </header>
+    <nav id="workflow-pivots" aria-label="Workbench sections">
+      <button data-workflow="extract" aria-pressed="true">Parse and extract</button>
+      <button
+        id="review-packet"
+        data-workflow="policies"
+        data-view="policies"
+        aria-pressed="false"
+        title="Compare fixed checks across packets using the loaded results and saved LLM Agent reviews."
+        disabled
+      >
+        Check consistency
+      </button>
+      <button
+        data-workflow="policy"
+        data-view="policy"
+        aria-pressed="false"
+        title="Agent review of rental claims using retrieved SOPs and verified policy sources."
+      >
+        Check policies
+      </button>
+    </nav>
     <main>
-      <div class="toolbar">
+      <div id="extraction-toolbar" class="toolbar">
         <p class="toolbar-intro">
           Load cached results for 10 different customers, or run your live
           analyzer (it will take a few minutes).
         </p>
-        <div class="toolbar-group cache-group">
-          <label class="cache-label" for="cache">Cache Results:</label>
-          <select id="cache" aria-label="Saved results"></select>
-          <button id="load-cache" disabled>Load</button>
-          <button
-            id="refresh-cache"
-            class="icon-button"
-            disabled
-            title="Refresh saved results"
-            aria-label="Refresh saved results"
-          >
-            &#8635;
-          </button>
-        </div>
         <div class="toolbar-group analyzer-group">
           <label for="analyzer">Analyzer:</label>
           <select id="analyzer" aria-label="Analyzer" disabled></select>
           <button id="analyze" disabled>Run live</button>
+          <button id="load-cache" class="secondary" disabled>Load cached results</button>
         </div>
       </div>
       <p id="cache-loading" class="cache-loading" role="status" hidden>
@@ -60,8 +72,8 @@
         </div>
       </dialog>
       <section id="batch" hidden>
-        <h2 class="results-heading">Content Understanding Results</h2>
         <div class="results-toolbar">
+          <h2 id="results-heading" class="results-heading">Parse and extract</h2>
           <div id="view-types" class="actions" aria-label="Result type">
             <button data-view="classification" aria-pressed="true">
               Classification
@@ -89,36 +101,22 @@
             <button data-view="rental_invoice" aria-pressed="false" hidden>
               Rental Invoice
             </button>
-            <button
-              id="review-packet"
-              class="view-divider"
-              data-view="policies"
-              aria-pressed="false"
-              title="Compare fixed checks across packets using the loaded results and saved LLM Agent reviews."
-              disabled
-              hidden
-            >
-              Extraction checks
-            </button>
-            <button
-              data-view="policy"
-              aria-pressed="false"
-              title="Agent review of rental claims using retrieved state SOPs and verified policy sources."
-            >
-              Policy review
-            </button>
           </div>
           <span id="origin" class="badge"></span>
         </div>
         <p id="checks-description" class="muted" hidden></p>
         <div id="policy-toolbar" hidden>
-          <div class="actions">
+          <div class="toolbar-group">
             <label for="policy-mode">Policy retrieval</label>
             <select id="policy-mode" disabled>
               <option value="">Loading policy configuration...</option>
             </select>
-            <button id="policy-run" disabled>Run policy checks</button>
+            <button id="policy-run" disabled>Run live</button>
+            <button id="load-policy-cache" class="secondary" aria-describedby="policy-cache-status" disabled>Load cached results</button>
           </div>
+          <p id="policy-cache-status" class="muted" role="status">
+            Saved checks for the loaded CU run. Loading makes no Azure calls.
+          </p>
           <p id="policy-status" class="muted" role="status"></p>
         </div>
         <div class="workspace">
@@ -188,18 +186,18 @@
             aria-selected="true"
             aria-controls="pdf-scroll"
           >
-            Document
+            Original
           </button>
           <button
-            id="policy-document-layout-tab"
+            id="policy-document-search-tab"
             role="tab"
-            data-representation="layout"
+            data-representation="search"
             aria-selected="false"
             aria-controls="policy-document-content"
             tabindex="-1"
             class="secondary"
           >
-            CU Layout
+            Prebuilt Search
           </button>
           <button
             id="policy-document-digital-tab"
@@ -210,7 +208,7 @@
             tabindex="-1"
             class="secondary"
           >
-            Digital parse
+            Prebuilt Digital Parse
           </button>
         </div>
         <p id="policy-document-status" class="muted" role="status" hidden></p>

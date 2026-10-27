@@ -577,7 +577,7 @@ test("policy status helper is callable from module scope during startup and mode
   );
   assert.equal(
     vm.runInContext('policyModeLabel("search")', context),
-    "Azure Search retrieval",
+    "FoundryIQ",
   );
   assert.equal(
     vm.runInContext('policyModeLabel("ungrounded")', context),
@@ -599,6 +599,122 @@ test("retrieval choices are disabled placeholders until verified configuration l
   assert.ok(!select[1].includes('value="minimal"'));
 });
 
+test("policy choices survive unrelated startup failures and missing classifiers do not block saved runs", async () => {
+  const source = await readFile(
+    new URL("../web/workbench.js", import.meta.url),
+    "utf8",
+  );
+  const helpers = source.slice(
+    source.indexOf("function policyMessage("),
+    source.indexOf("function storePolicyResults("),
+  );
+  const startup = source.slice(
+    source.indexOf('api("session", {})'),
+    source.indexOf("function showPolicyPanel("),
+  );
+  for (const failedRoute of ["analyzers", "cache"]) {
+    const errors: Error[] = [];
+    let restored = false;
+    const select = {
+      value: "",
+      options: [] as { value: string; textContent: string }[],
+      replaceChildren(...options: typeof this.options) {
+        this.options = options;
+      },
+    };
+    const context = vm.createContext({
+      get: (id: string) => id === "policy-mode" ? select : { options: [] },
+      element: (_tag: string, textContent: string) => ({ value: "", textContent }),
+      api: async (route: string) => {
+        if (route === failedRoute) throw new Error(`${route} unavailable`);
+        if (route === "session") return { sessionId: "session", runId: "saved-run" };
+        if (route === "policy/status") return {
+          configured: true, batchRunning: false,
+          modes: { ungrounded: {}, search: { indexName: "policy-index" } },
+        };
+        return {};
+      },
+      analyzers: async () => context.api("analyzers"),
+      caches: async () => context.api("cache"),
+      renderRun: async () => { restored = true; },
+      controls: () => {},
+      fail: (error: Error) => errors.push(error),
+      clearTimeout: () => {},
+      policyAvailabilityTimer: undefined,
+      policyStatus: undefined,
+      policyBusy: false,
+      policyMode: "search",
+      savedExtractionRun: undefined,
+    });
+    vm.runInContext(helpers, context);
+    await vm.runInContext(startup, context);
+    assert.deepEqual(select.options.map((option) => option.value), ["ungrounded", "search"]);
+    assert.equal(select.value, "search");
+    assert.equal(errors.length, 1);
+    assert.equal(errors[0].message, `${failedRoute} unavailable`);
+    assert.equal(restored, failedRoute === "analyzers");
+  }
+});
+
+test("policy availability refresh restores choices and explains configuration failures", async () => {
+  const source = await readFile(
+    new URL("../web/workbench.js", import.meta.url),
+    "utf8",
+  );
+  const configured = {
+    configured: true, batchRunning: false,
+    modes: { ungrounded: {}, search: { indexName: "policy-index" } },
+  };
+  let response: unknown = configured;
+  const select = {
+    value: "",
+    options: [] as { value: string; textContent: string }[],
+    replaceChildren(...options: typeof this.options) {
+      this.options = options;
+    },
+  };
+  const status = { textContent: "", title: "" };
+  const context = vm.createContext({
+    get: (id: string) => id === "policy-mode" ? select : status,
+    element: (_tag: string, textContent: string) => ({ value: "", textContent }),
+    api: async () => {
+      if (response instanceof Error) throw response;
+      return response;
+    },
+    controls: () => {},
+    clearTimeout: () => {},
+    policyAvailabilityTimer: undefined,
+    policyStatus: undefined,
+    policyBusy: false,
+    policyMode: "ungrounded",
+  });
+  vm.runInContext(
+    source.slice(
+      source.indexOf("function policyMessage("),
+      source.indexOf("function storePolicyResults("),
+    ),
+    context,
+  );
+  await vm.runInContext("updatePolicyAvailability()", context);
+  assert.deepEqual(select.options.map((option) => option.textContent), [
+    "No policy retrieval", "FoundryIQ",
+  ]);
+  assert.equal(select.value, "ungrounded");
+  response = { configured: false, message: "Run policy setup." };
+  await vm.runInContext("updatePolicyAvailability()", context);
+  assert.equal(select.options.length, 1);
+  assert.match(select.options[0].textContent, /unavailable/);
+  assert.equal(status.textContent, "Run policy setup.");
+  response = new Error("Status request failed");
+  await assert.rejects(vm.runInContext("updatePolicyAvailability()", context), /Status request failed/);
+  assert.equal(vm.runInContext("policyStatus.configured", context), false);
+  assert.match(status.textContent, /Could not load policy configuration: Status request failed/);
+  response = configured;
+  await vm.runInContext("updatePolicyAvailability()", context);
+  assert.deepEqual(select.options.map((option) => option.value), ["ungrounded", "search"]);
+  assert.equal(select.value, "ungrounded");
+});
+
 test("policy progress watcher is callable outside refreshPolicy after a page reload", async () => {
   const source = await readFile(
     new URL("../web/workbench.js", import.meta.url),
@@ -610,6 +726,7 @@ test("policy progress watcher is callable outside refreshPolicy after a page rel
   );
   let restoredAvailability = 0;
   const context = vm.createContext({
+    policyCaches: async () => {},
     policyBusy: false,
     run: { id: "saved-run", items: [] },
     policyResults: new Map([["search", { status: "completed", items: [] }]]),
@@ -631,7 +748,7 @@ test("policy progress watcher is callable outside refreshPolicy after a page rel
   assert.equal(vm.runInContext("policyBusy", context), false);
 });
 
-test("policy Run requires Search but busy batches don't disable the retrieval dropdown", async () => {
+test("policy Run requires Search and only this session's busy work disables the retrieval dropdown", async () => {
   const source = await readFile(
     new URL("../web/workbench.js", import.meta.url),
     "utf8",
@@ -658,6 +775,9 @@ test("policy Run requires Search but busy batches don't disable the retrieval dr
     policyMode: "ungrounded",
     policyBusy: false,
     policyStatus: { configured: true, batchRunning: false },
+    savedExtractionRun: undefined,
+    savedPolicyEntries: [],
+    policyCacheBusy: false,
   });
   vm.runInContext(
     source.slice(
@@ -673,7 +793,7 @@ test("policy Run requires Search but busy batches don't disable the retrieval dr
   assert.equal(nodes.get("policy-run")!.disabled, false);
   vm.runInContext("policyBusy = true; controls()", context);
   assert.equal(nodes.get("policy-run")!.disabled, true);
-  assert.equal(nodes.get("policy-mode")!.disabled, false);
+  assert.equal(nodes.get("policy-mode")!.disabled, true);
   vm.runInContext(
     "policyBusy = false; policyStatus.batchRunning = true; controls()",
     context,
@@ -695,6 +815,7 @@ test("changing retrieval mode restores the claim PDF instead of retaining a prev
   let reads = 0;
   const context = vm.createContext({
     get: () => selection,
+    policyCaches: async () => {},
     policyMode: "search",
     selectedPacket: "packet-01",
     controls: () => {},

@@ -657,6 +657,18 @@ def comparison_probes() -> dict:
 
 
 def main() -> None:
+    manifest_path, citations_path = OUT / "manifest.json", OUT / "citations.json"
+    preserved = []
+    preserved_citations = []
+    if manifest_path.exists():
+        previous = json.loads(manifest_path.read_text(encoding="utf-8"))
+        preserved = [d for d in previous["documents"] if d.get("documentType") == "policy_contract"]
+        if preserved:
+            previous_citations = json.loads(citations_path.read_text(encoding="utf-8"))
+            preserved_citations = [c for c in previous_citations
+                                   if c["documentId"] in {d["documentId"] for d in preserved}]
+            if len(preserved_citations) != len(preserved):
+                raise ValueError("Policy contract citation registrations are incomplete.")
     fonts = Path(r"C:\Windows\Fonts")
     pdfmetrics.registerFont(TTFont("Sop", str(fonts / "segoeui.ttf")))
     pdfmetrics.registerFont(TTFont("SopBold", str(fonts / "segoeuib.ttf")))
@@ -703,17 +715,19 @@ def main() -> None:
         "description": "Fictional figure/table/OCR test corpus; not law, policy benefits or payment approval.",
         "defaultIndexFormat": "pdf", "applicabilityDateField": "loss_date",
         "effectiveDateBounds": "inclusive", "status": "local-artifacts-not-deployed",
-        "ingestOnly": "The eleven manifest pdf paths; not editable/, controls/, fixture or guides.",
+        "ingestOnly": "Only manifest PDF paths; not editable/, controls/, fixtures, HTML or answer guides.",
         "documents": entries,
     }
+    fixture = expected_fixture()
+    validate(manifest, fixture)
+    manifest["documents"].extend(preserved)
+    citations.extend(preserved_citations)
     for name, value in [("manifest.json", manifest), ("citations.json", citations)]:
         (OUT / name).write_text(json.dumps(value, indent=2) + "\n", encoding="utf-8")
-    fixture = expected_fixture()
     (ROOT / "data" / "scenarios" / "rental-review-v2.expected.json").write_text(
         json.dumps(fixture, indent=2) + "\n", encoding="utf-8")
     (ROOT / "data" / "scenarios" / "rental-ocr-comparison.probes.json").write_text(
         json.dumps(comparison_probes(), indent=2) + "\n", encoding="utf-8")
-    validate(manifest, fixture)
 
 
 def validate(manifest: dict, fixture: dict) -> None:

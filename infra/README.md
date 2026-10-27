@@ -66,6 +66,18 @@ missing permissions rather than granting roles. The
 [policy walkthrough](../docs/policy-checks.md#compare-packets-01-and-02)
 then starts with the app, not Azure provisioning.
 
+Provision `.tools\policy-deployment.json` with the machine's Search, Storage
+and Foundry resource IDs plus its model/analyzer names. Both policy deployment
+scripts use these settings instead of environment-specific source constants.
+The deployment file does not enable policy checks by itself; only verified
+activation writes the runtime configuration.
+The launcher uses that verified configuration's CU endpoint when neither
+`-Endpoint` nor `CU_ENDPOINT` is supplied.
+It also writes CU request diagnostics to `.tools\logs\cu-requests.jsonl`;
+`CU_DIAGNOSTICS_LOG` can select an existing writable directory's log file.
+Logs contain request metadata and correlation IDs, not tokens or document
+payloads. See [retry and diagnostic guidance](../docs/policy-checks.md).
+
 ## Regenerate the policy corpus
 
 The optional [`generate-rental-sop-corpus.py`](generate-rental-sop-corpus.py)

@@ -74,11 +74,14 @@ On a prepared lab machine, load the included **10/10** cached run, select
 **Policy checks**, and select **Azure Search retrieval**. Select **Run policy
 checks** and confirm. New runs require Search; **No policy retrieval** only
 displays saved baseline results. Compare
-packet **01**'s expected **Satisfied** daily rate ($54 against Texas's $75 routine
-authority) versus packet **02**'s **Review required** daily rate ($61 against
-Washington's $60). Open the cited SOP in the right-hand panel to inspect the rule.
+packet **01**'s expected **Satisfied** Amount check ($54/day against its $85
+contractual cap and Texas's $75 routine authority) versus packet **02**'s
+**Review required** amount ($61/day against Washington's $60 routine authority).
+The first three boxes are **Amount**, **Timing**, and **Effective terms**.
+For packet **01**, open the revised declarations, rental diagram and issued
+amendment alongside the cited SOP to inspect the supporting evidence.
 These are expected evidence-based results, not payment approval. Missing CU
-fields, including the contractual cap, correctly keep a check in review.
+facts or controlling policy evidence correctly keep the affected check in review.
 
 For guided and self-paced sessions, follow
 [step 5: compare policy checks](instructions/lab.html#policy-checks).
