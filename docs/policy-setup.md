@@ -18,8 +18,9 @@ Policy PDFs -> Blob Storage -> Search indexer + Content Understanding skill
   `infra/requirements-policy-agent-framework.txt` installed.
 - Azure CLI sign-in for the identity running setup and the local workbench.
 - The existing Search, Blob Storage, Content Understanding and model resources.
-- An existing model deployment and CU claim analyzer. For a fresh clone,
-  supply their names in the notebook's `SEED` cell or the script flags below.
+- An existing model deployment and CU claim analyzer, or explicit opt-in to
+  create the lab's claim extractor on a fresh environment.
+  Supply resource IDs and model/analyzer names through the deployment settings below.
   Setup reads the analyzer definition and computes its hash; you don't enter
   hashes or create a runtime configuration manually.
 - Policy PDFs registered in the
@@ -44,29 +45,60 @@ Open the [Python setup notebook](../infra/policy-agent-framework-setup.ipynb)
 for a step-by-step walkthrough. The notebook calls the same Python functions
 as the automatic script.
 
-From the repository root:
+An existing workbench configuration supplies the current model and analyzer
+names. Resource targets are never hardcoded in the scripts. Provision
+`.tools\policy-deployment.json` on each lab machine using its actual ARM
+resource IDs and existing model deployment:
+
+```json
+{
+  "searchResourceId": "/subscriptions/YOUR-SUBSCRIPTION-ID/resourceGroups/YOUR-RESOURCE-GROUP/providers/Microsoft.Search/searchServices/YOUR-SEARCH",
+  "storageResourceId": "/subscriptions/YOUR-SUBSCRIPTION-ID/resourceGroups/YOUR-RESOURCE-GROUP/providers/Microsoft.Storage/storageAccounts/YOUR-STORAGE",
+  "foundryResourceId": "/subscriptions/YOUR-SUBSCRIPTION-ID/resourceGroups/YOUR-RESOURCE-GROUP/providers/Microsoft.CognitiveServices/accounts/YOUR-FOUNDRY",
+  "modelDeployment": "YOUR-EXISTING-MODEL-DEPLOYMENT",
+  "cuModelName": "YOUR-MODEL-NAME",
+  "claimAnalyzerId": "lab664_policy_checks_claim_summary",
+  "cuApiVersion": "2026-06-01-preview"
+}
+```
+
+This ignored file contains deployment inputs, not verified runtime state or
+credentials. Never put tokens or account keys in it. The scripts derive the
+public Azure Search, Blob and Foundry endpoints from the resource IDs.
+Settings resolve in this order: previously verified runtime configuration,
+deployment settings file, then explicit command-line overrides. Successful
+activation saves the resource IDs with the runtime configuration, so subsequent
+runs do not require editing scripts. Existing configurations without resource
+IDs need the deployment file once.
+
+Both setup scripts accept `--search-resource-id`, `--storage-resource-id` and
+`--foundry-resource-id`. The Standard script also accepts `--cu-model-name` when
+the model name differs from its deployment name. The notebook reads the same
+deployment file; its `SEED` dictionary is only for optional overrides.
+
+The default operation validates inputs and checks prerequisites without
+creating or changing Azure resources. Inspect its report before applying.
+Run from the repository root:
 
 ```powershell
 .\.tools\policy-venv\Scripts\python.exe .\infra\setup-policy-index.py
 ```
 
-An existing workbench configuration supplies the current model and analyzer
-names. Without it, use explicit existing-resource settings:
-
-```powershell
-.\.tools\policy-venv\Scripts\python.exe .\infra\setup-policy-index.py --model-deployment gpt-5 --claim-analyzer-id lab664_policy_checks_claim_summary
-```
-
-These names match this lab environment; substitute the names in your
-environment. Use `--cu-model-name` when the model name differs from its
-deployment name. Repeat these flags with `--apply` on a fresh clone.
-
-The default operation validates inputs and checks prerequisites without
-creating or changing Azure resources. Inspect its report before applying.
-
 ```powershell
 .\.tools\policy-venv\Scripts\python.exe .\infra\setup-policy-index.py --apply
 ```
+
+For a fresh lab without a claim extractor, first preview and then explicitly
+create the provided literal-fact extraction schema:
+
+```powershell
+.\.tools\policy-venv\Scripts\python.exe .\infra\setup-policy-index.py --create-claim-analyzer
+.\.tools\policy-venv\Scripts\python.exe .\infra\setup-policy-index.py --apply --create-claim-analyzer
+```
+
+This option never overwrites an existing analyzer. A conflicting definition is
+an error; choose a different analyzer ID, or omit the option to use an existing
+ready analyzer unchanged. No roles are assigned by setup.
 
 The explicit apply operation can incur Blob, Search, CU and model charges.
 It scopes uploads and ingestion objects to this lab's manifest-listed PDFs,
@@ -85,11 +117,10 @@ policy checks**. The lab owner must prepare a verified index and configuration
 before attendees arrive. An existing Layout configuration on another machine
 isn't automatically available on a newly deployed lab VM.
 
-For the shared environment, the last preflight reported that the Search managed
-identity lacked **Storage Blob Data Reader** on the policy storage account and
-**Cognitive Services User** on the Foundry resource. These are administrator
-prerequisites, not attendee setup tasks. Rerun preflight for current status;
-until apply succeeds, retain the working Layout index and label it accurately.
+Missing **Storage Blob Data Reader** on Storage or **Cognitive Services User**
+on Foundry for the Search identity are administrator prerequisites, not attendee
+setup tasks. Rerun preflight in the configured environment for current status;
+until apply succeeds, retain any working index and label it accurately.
 
 ## Understand Standard extraction
 
@@ -144,7 +175,7 @@ Use the existing signed-in Azure CLI identity, model deployment and claim
 analyzer. First run the read-only check:
 
 ```powershell
-python .\infra\setup-policy-layout.py --source-index lab664-rental-v2-agent-framework-3428a1feb437 --model-deployment gpt-5 --claim-analyzer-id lab664_policy_checks_claim_summary
+.\.tools\policy-venv\Scripts\python.exe .\infra\setup-policy-layout.py --source-index YOUR-VERIFIED-LAYOUT-INDEX
 ```
 
 Repeat with `--apply` to extract new PDFs and activate a separate verified

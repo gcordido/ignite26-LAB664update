@@ -18,6 +18,15 @@ setup = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(setup)
 
 STATES = ["TX", "WA", "AZ", "CA", "OR", "NV"]
+SUBSCRIPTION = "00000000-0000-0000-0000-000000000001"
+RESOURCE_ROOT = f"/subscriptions/{SUBSCRIPTION}/resourceGroups/test-lab/providers"
+RESOURCES = {
+    "searchResourceId": f"{RESOURCE_ROOT}/Microsoft.Search/searchServices/test-search",
+    "storageResourceId": f"{RESOURCE_ROOT}/Microsoft.Storage/storageAccounts/teststorage",
+    "foundryResourceId": f"{RESOURCE_ROOT}/Microsoft.CognitiveServices/accounts/test-foundry",
+}
+FOUNDRY_ROOT = "https://test-foundry.services.ai.azure.com"
+SEARCH_ENDPOINT = "https://test-search.search.windows.net"
 
 
 def make_root(count: int = 3) -> Path:
@@ -46,7 +55,8 @@ def make_root(count: int = 3) -> Path:
     (root / ".tools").mkdir(exist_ok=True)
     (root / setup.CONFIG_PATH).write_text(json.dumps({
         "schemaVersion": 1, "provider": "agent-framework", "extractionMode": "layout",
-        "azureOpenAIEndpoint": setup.FOUNDRY_ROOT, "cuEndpoint": setup.FOUNDRY_ROOT,
+        **RESOURCES,
+        "azureOpenAIEndpoint": FOUNDRY_ROOT, "cuEndpoint": FOUNDRY_ROOT,
         "modelDeployment": "gpt-5", "claimAnalyzerId": "claim_summary", "cuApiVersion": "2025-11-01", "indexName": "legacy-index",
     }), encoding="utf-8")
     return root
@@ -71,6 +81,11 @@ class FakeAzure:
     def request(self, method, url, scope, body=None, headers=None, raw=None):
         self.calls.append((method, url))
         if "/contentunderstanding/analyzers/" in url:
+            if method == "PUT":
+                if self.analyzer is not None:
+                    return 412, {"error": {"message": "already exists"}}, {}
+                self.analyzer = {"status": "ready", **copy.deepcopy(body)}
+                return 201, self.analyzer, {}
             if self.analyzer is None:
                 return 404, {"error": {"message": "missing"}}, {}
             return 200, self.analyzer, {}
@@ -159,6 +174,51 @@ class PolicyIndexTests(unittest.TestCase):
         fake = FakeAzure(self.sources, **kw)
         fake.chunks = good_chunks(self.sources, self.generation)
         return fake
+
+    def test_deployment_settings_override_active_config_and_derive_endpoints(self):
+        deployment = {**RESOURCES, "modelDeployment": "lab-model", "cuModelName": "gpt-5.2",
+                      "claimAnalyzerId": "lab_claims",
+                      "foundryResourceId": f"{RESOURCE_ROOT}/Microsoft.CognitiveServices/accounts/other-foundry"}
+        (self.root / setup.DEPLOYMENT_PATH).write_text(json.dumps(deployment), encoding="utf-8")
+        settings = setup.runtime_settings(self.root)
+        self.assertEqual(settings["cuEndpoint"], "https://other-foundry.services.ai.azure.com")
+        self.assertEqual(settings["azureOpenAIEndpoint"], settings["cuEndpoint"])
+        self.assertEqual(settings["searchEndpoint"], SEARCH_ENDPOINT)
+        self.assertEqual(settings["modelName"], "gpt-5.2")
+        self.assertEqual(setup.runtime_settings(self.root, {"modelDeployment": "explicit"})["modelDeployment"], "explicit")
+        self.assertNotEqual(setup.generation_hash(self.sources, settings), self.generation)
+
+    def test_invalid_or_missing_resource_settings_fail_before_azure_calls(self):
+        for key in RESOURCES:
+            for value in ("", "https://example.com", RESOURCES[key] + "/child", RESOURCES[key] + "?query"):
+                with self.subTest(key=key, value=value), self.assertRaises(setup.SetupError):
+                    setup.runtime_settings(self.root, {key: value or "invalid"})
+        (self.root / setup.DEPLOYMENT_PATH).write_text('{"unknown": "value"}', encoding="utf-8")
+        with self.assertRaisesRegex(setup.SetupError, "Unknown deployment"):
+            setup.runtime_settings(self.root)
+
+    def test_explicit_claim_bootstrap_is_read_only_until_apply_and_never_overwrites(self):
+        fake = self.fake()
+        fake.analyzer = None
+        report = setup.preflight(fake, self.root, create_claim_analyzer=True)
+        self.assertTrue(report["ready"], report["problems"])
+        self.assertEqual(report["claimAnalyzer"]["status"], "planned")
+        self.assertTrue(all(method == "GET" for method, _ in fake.calls))
+        result = setup.apply(fake, self.root, sleep=lambda _: None, create_claim_analyzer=True)
+        self.assertEqual(result["status"], "verified")
+        self.assertIn("DrivabilityEvidence", fake.analyzer["fieldSchema"]["fields"])
+        writes = [c for c in fake.calls if c[0] == "PUT" and "/analyzers/" in c[1]]
+        setup.prepare_claim_analyzer(fake, self.settings, apply_changes=True, sleep=lambda _: None)
+        self.assertEqual(writes, [c for c in fake.calls if c[0] == "PUT" and "/analyzers/" in c[1]])
+        fake.analyzer["fieldSchema"]["fields"] = {}
+        with self.assertRaises(setup.ConflictError):
+            setup.prepare_claim_analyzer(fake, self.settings, apply_changes=True)
+
+    def test_missing_permissions_block_claim_bootstrap_before_any_writes(self):
+        fake = self.fake(roles_ok=False)
+        fake.analyzer = None
+        self.assertEqual(setup.apply(fake, self.root, create_claim_analyzer=True)["status"], "blocked")
+        self.assertFalse(any(method != "GET" for method, _ in fake.calls))
 
     # generation scope
     def test_generation_names_and_hash_follow_sources_pipeline_and_model(self):
@@ -263,9 +323,15 @@ class PolicyIndexTests(unittest.TestCase):
         self.assertEqual(set(mapped) | {"id", "parentId"}, index_fields)
         self.assertTrue(mapped["pageTo"].endswith("/pageNumberTo"))
         self.assertTrue(mapped["page"].endswith("/pageNumberFrom"))
+        for field in setup.BLOB_METADATA.values():
+            self.assertEqual(mapped[field], f"/document/{field}")
+        self.assertEqual(setup.indexer_definition(names, self.generation)["fieldMappings"],
+                         [{"sourceFieldName": key, "targetFieldName": field}
+                          for key, field in setup.BLOB_METADATA.items()])
         self.assertEqual(selector["parentKeyFieldName"], "parentId")
-        self.assertEqual(skillset["cognitiveServices"]["subdomainUrl"], setup.FOUNDRY_ROOT)
-        datasource = setup.datasource_definition(names, self.generation)
+        self.assertEqual(skillset["cognitiveServices"]["subdomainUrl"], FOUNDRY_ROOT)
+        datasource = setup.datasource_definition(names, self.generation, self.settings)
+        self.assertIn(RESOURCES["storageResourceId"], datasource["credentials"]["connectionString"])
         self.assertNotIn("AccountKey", json.dumps(datasource))
 
     def test_citation_sections_follow_page_range(self):
@@ -339,11 +405,11 @@ class PolicyIndexTests(unittest.TestCase):
     def test_drifted_blob_requires_refresh(self):
         names = setup.names_for(self.generation)
         fake = self.fake()
-        setup.upload_sources(fake, self.sources, names, self.generation, False)
+        setup.upload_sources(fake, self.sources, names, self.generation, False, self.settings)
         fake.blobs[f"{names['container']}/doc0.pdf"]["sha256"] = "drift"
         with self.assertRaises(setup.ConflictError):
-            setup.upload_sources(fake, self.sources, names, self.generation, False)
-        result = setup.upload_sources(fake, self.sources, names, self.generation, True)
+            setup.upload_sources(fake, self.sources, names, self.generation, False, self.settings)
+        result = setup.upload_sources(fake, self.sources, names, self.generation, True, self.settings)
         self.assertEqual(result["doc0.pdf"], "uploaded")
         self.assertEqual(result["doc1.pdf"], "unchanged")
 
@@ -396,17 +462,17 @@ class PolicyIndexTests(unittest.TestCase):
                 if "page=2" not in url:
                     return 200, {"value": [], "nextLink": setup.ARM + "/roles?page=2"}, {}
                 return 200, {"value": [{"properties": {
-                    "scope": setup.STORAGE_ID.upper(),
+                    "scope": RESOURCES["storageResourceId"].upper(),
                     "roleDefinitionId": "/roles/" + setup.ROLES["Storage Blob Data Reader"],
                 }}]}, {}
-        roles = setup.role_assignments(Pages(), setup.STORAGE_ID, "search-mi")
+        roles = setup.role_assignments(Pages(), RESOURCES["storageResourceId"], "search-mi")
         self.assertEqual(roles[0]["role"], setup.ROLES["Storage Blob Data Reader"])
 
     def test_unreadable_search_definitions_block_apply_before_writes(self):
         fake = self.fake()
         request = fake.request
         def denied(method, url, *args, **kwargs):
-            if setup.SEARCH_ENDPOINT in url:
+            if SEARCH_ENDPOINT in url:
                 return 403, {"error": {"message": "denied"}}, {}
             return request(method, url, *args, **kwargs)
         fake.request = denied
@@ -420,7 +486,7 @@ class PolicyIndexTests(unittest.TestCase):
             setup.runtime_settings(self.root)
         with self.assertRaises(setup.SetupError):
             setup.runtime_settings(self.root, {"bogus": "x"})
-        seed = {"modelDeployment": "gpt-5", "claimAnalyzerId": "claim_summary"}
+        seed = {**RESOURCES, "modelDeployment": "gpt-5", "claimAnalyzerId": "claim_summary"}
         fake = self.fake()
         report = setup.preflight(fake, self.root, seed=seed)
         self.assertTrue(report["ready"], report["problems"])

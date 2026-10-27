@@ -32,16 +32,16 @@ def request(http, method, url, scope=setup.SEARCH_SCOPE, body=None, raw=None, he
     return value, response_headers
 
 
-def index_url(name):
+def index_url(name, settings):
     if not re.fullmatch(r"[a-z0-9][a-z0-9-]{1,126}", name):
         raise setup.SetupError("Invalid source index name.")
-    return f"{setup.SEARCH_ENDPOINT}/indexes/{name}"
+    return f"{settings['searchEndpoint']}/indexes/{name}"
 
 
-def read_rows(http, name):
+def read_rows(http, name, settings):
     rows = []
     while True:
-        value, _ = request(http, "POST", f"{index_url(name)}/docs/search?api-version={API}",
+        value, _ = request(http, "POST", f"{index_url(name, settings)}/docs/search?api-version={API}",
                            body={"search": "*", "top": 1000, "skip": len(rows)})
         page = [{k: v for k, v in row.items() if not k.startswith("@")} for row in value["value"]]
         rows.extend(page)
@@ -145,13 +145,14 @@ def run(args):
     http, root = setup.Http(), setup.ROOT
     sources = setup.load_sources(root)
     settings = setup.resolve_analyzer(http, setup.runtime_settings(root, {
+        **setup.resource_seed(args),
         "modelDeployment": args.model_deployment, "claimAnalyzerId": args.claim_analyzer_id,
         "cuApiVersion": args.cu_api_version,
     }))
-    definition, _ = request(http, "GET", f"{index_url(args.source_index)}?api-version={API}")
+    definition, _ = request(http, "GET", f"{index_url(args.source_index, settings)}?api-version={API}")
     if {f["name"] for f in definition["fields"]} != set(FIELDS):
         raise setup.SetupError("The source index is not a supported CU Layout index.")
-    rows = read_rows(http, args.source_index)
+    rows = read_rows(http, args.source_index, settings)
     verify_rows(rows, sources, require_all=False)
     present = {r["documentId"] for r in rows}
     missing = [d for d in sources["documents"] if d["documentId"] not in present]
@@ -165,6 +166,7 @@ def run(args):
     for doc in missing:
         rows.extend(layout(http, doc, settings, root))
     generation = setup.digest({"pipeline": "verified-layout-extension-v1",
+                               "searchEndpoint": settings["searchEndpoint"],
                                "corpusHash": sources["corpusHash"],
                                "chunks": [{k: v for k, v in r.items()
                                            if k not in ("corpusHash", "indexFingerprint")} for r in
@@ -177,21 +179,21 @@ def run(args):
     verify_rows(rows, sources, generation)
     target = {"name": name, "description": f"LAB664 verified CU Layout extension; generation={generation}",
               "fields": definition["fields"]}
-    status, actual, _ = http.request("GET", f"{index_url(name)}?api-version={API}", setup.SEARCH_SCOPE)
+    status, actual, _ = http.request("GET", f"{index_url(name, settings)}?api-version={API}", setup.SEARCH_SCOPE)
     if status == 200:
         setup.assert_owned("index", target, actual)
     elif status == 404:
-        request(http, "PUT", f"{index_url(name)}?api-version={API}", body=target,
+        request(http, "PUT", f"{index_url(name, settings)}?api-version={API}", body=target,
                 headers={"If-None-Match": "*"}, allowed=(200, 201))
     else:
         raise setup.SetupError(setup._err(status, actual))
     for offset in range(0, len(rows), 100):
-        value, _ = request(http, "POST", f"{index_url(name)}/docs/index?api-version={API}",
+        value, _ = request(http, "POST", f"{index_url(name, settings)}/docs/index?api-version={API}",
                            body={"value": [{"@search.action": "upload", **r} for r in rows[offset:offset + 100]]})
         if len(value["value"]) != len(rows[offset:offset + 100]) or any(not r["status"] for r in value["value"]):
             raise setup.SetupError(f"Search rejected Layout chunks: {value}")
     for _ in range(30):
-        actual = read_rows(http, name)
+        actual = read_rows(http, name, settings)
         if len(actual) == len(rows):
             break
         time.sleep(2)
@@ -199,7 +201,7 @@ def run(args):
     if setup.digest(sorted(actual, key=lambda r: r["id"])) != setup.digest(sorted(rows, key=lambda r: r["id"])):
         raise setup.SetupError("Indexed Layout content differs from verified extraction.")
     for doc in sources["documents"]:
-        value, _ = request(http, "POST", f"{index_url(name)}/docs/search?api-version={API}",
+        value, _ = request(http, "POST", f"{index_url(name, settings)}/docs/search?api-version={API}",
                            body={"search": "*", "filter": f"documentId eq '{doc['documentId']}'", "top": 1})
         if not value.get("value"):
             raise setup.SetupError(f"No retrievable chunks for {doc['documentId']}.")
@@ -210,9 +212,11 @@ def run(args):
                       {"documents": sources["documents"], "chunks": actual, "indexFingerprint": generation})
     config = {
         "schemaVersion": 1, "provider": "agent-framework",
+        **{key: settings[key] for key in setup.RESOURCE_TYPES},
         "azureOpenAIEndpoint": settings["azureOpenAIEndpoint"],
         "modelDeployment": settings["modelDeployment"],
-        "searchEndpoint": setup.SEARCH_ENDPOINT, "indexName": name,
+        "cuModelName": settings["modelName"],
+        "searchEndpoint": settings["searchEndpoint"], "indexName": name,
         "corpusHash": sources["corpusHash"], "indexFingerprint": generation, "extractionMode": "layout",
         "cuEndpoint": settings["cuEndpoint"], "cuApiVersion": settings["cuApiVersion"],
         "claimAnalyzerId": settings["claimAnalyzerId"], "claimAnalyzerHash": settings["claimAnalyzerHash"],
@@ -225,10 +229,11 @@ def run(args):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--source-index", required=True)
-    parser.add_argument("--model-deployment", required=True)
-    parser.add_argument("--claim-analyzer-id", required=True)
-    parser.add_argument("--cu-api-version", default="2025-11-01")
+    parser.add_argument("--model-deployment")
+    parser.add_argument("--claim-analyzer-id")
+    parser.add_argument("--cu-api-version")
     parser.add_argument("--apply", action="store_true")
+    setup.add_resource_arguments(parser)
     try:
         print(json.dumps(run(parser.parse_args()), indent=2))
     except (setup.SetupError, KeyError, ValueError) as error:

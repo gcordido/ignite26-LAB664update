@@ -54,6 +54,7 @@ let policyAvailabilityTimer;
 let policyMode = "search";
 let policySource;
 let policyPaneMode = "result";
+let pendingPolicyRun;
 const policyResults = new Map();
 const policyPolls = new Map();
 const policyProgressErrors = new Map();
@@ -179,6 +180,12 @@ function controls() {
     policyMode === "search"
       ? ""
       : "Select Azure Search retrieval to run policy checks.";
+  for (const button of get("policy-output").querySelectorAll(".policy-retry")) {
+    button.disabled = get("policy-run").disabled;
+    button.title = button.disabled
+      ? "Wait for the current operation to finish before retrying."
+      : "Retry this case only. Azure charges may apply.";
+  }
   get("policy-mode").disabled = busy || policyBusy || !policyStatus?.configured;
   get("load-policy-cache").disabled = busy || policyBusy || policyCacheBusy ||
     policyStatus?.batchRunning || !savedPolicyEntries.some((entry) => entry.mode === policyMode);
@@ -1130,26 +1137,9 @@ api("session", {})
     }
     await Promise.all([
       caches(),
-      analyzers(),
+      analyzers().catch(fail),
       api("packets").then((data) => (catalog = data)),
-      api("policy/status").then((value) => {
-        policyStatus = value;
-        get("policy-mode").replaceChildren();
-        if (value.configured) {
-          const modes = Object.keys(value.modes);
-          get("policy-mode").replaceChildren(
-            ...modes.map((mode) => {
-              const option = element("option", policyModeLabel(mode));
-              option.value = mode;
-              return option;
-            }),
-          );
-          if (!modes.includes(policyMode)) policyMode = modes[0];
-          get("policy-mode").value = policyMode;
-        }
-        get("policy-mode").disabled = !value.configured;
-        policyMessage();
-      }),
+      updatePolicyAvailability(),
     ]);
     const cachedAnalyzer = savedExtractionRun?.analyzer.id;
     if (
@@ -1161,15 +1151,9 @@ api("session", {})
     if (value.runId) {
       await renderRun(await api("cache/current"), "cached");
     }
-    if (policyStatus?.batchRunning && !policyBusy)
-      void updatePolicyAvailability().catch(fail);
     controls();
   })
-  .catch((error) => {
-    get("policy-mode").replaceChildren();
-    get("policy-mode").disabled = true;
-    fail(error);
-  });
+  .catch(fail);
 
 function showPolicyPanel(show) {
   policyDocument.close();
@@ -1194,9 +1178,39 @@ function policyMessage() {
 function policyModeLabel(mode = policyMode) {
   return mode === "search" ? "Azure Search retrieval" : "No policy retrieval";
 }
+function renderPolicyModes() {
+  const modes = policyStatus?.configured ? Object.keys(policyStatus.modes) : [];
+  const options = modes.map((mode) => {
+    const option = element("option", policyModeLabel(mode));
+    option.value = mode;
+    return option;
+  });
+  if (!options.length) {
+    const option = element("option", "Policy retrieval unavailable - see status below");
+    option.value = "";
+    options.push(option);
+  }
+  get("policy-mode").replaceChildren(...options);
+  if (modes.length) {
+    if (!modes.includes(policyMode)) policyMode = modes[0];
+    get("policy-mode").value = policyMode;
+  }
+}
 async function updatePolicyAvailability() {
   clearTimeout(policyAvailabilityTimer);
-  policyStatus = await api("policy/status");
+  try {
+    policyStatus = await api("policy/status");
+  } catch (error) {
+    policyStatus = {
+      configured: false,
+      message: `Could not load policy configuration: ${error.message}`,
+    };
+    renderPolicyModes();
+    policyMessage();
+    controls();
+    throw error;
+  }
+  renderPolicyModes();
   controls();
   if (policyStatus.batchRunning && !policyBusy) {
     policyMessage();
@@ -1206,6 +1220,19 @@ async function updatePolicyAvailability() {
     );
   } else if (!policyBusy) policyMessage();
 }
+function storePolicyResults(mode, value) {
+  const previous = policyResults.get(mode);
+  if (!value.configurationMessage && previous && previous.runId === value.runId) {
+    const items = new Map(previous.items.map((item) => [item.id, item]));
+    for (const item of value.items) {
+      if (item.status === "not run" && items.get(item.id)?.status === "failed")
+        continue;
+      items.set(item.id, item);
+    }
+    value = { ...value, items: [...items.values()] };
+  }
+  policyResults.set(mode, value);
+}
 async function refreshPolicy(mode = policyMode) {
   if (!run) return;
   const id = run.id;
@@ -1213,10 +1240,11 @@ async function refreshPolicy(mode = policyMode) {
   if (run?.id !== id || value.runId !== id) return;
   if (value.configurationMessage) {
     policyStatus = { configured: false, message: value.configurationMessage };
+    renderPolicyModes();
     policyMessage();
     controls();
   }
-  policyResults.set(mode, value);
+  storePolicyResults(mode, value);
   policyPolls.set(mode, Date.now());
   policyProgressErrors.delete(mode);
   if (view === "policy" && mode === policyMode) {
@@ -1469,6 +1497,14 @@ function renderPolicyOutput(focused) {
         item?.error ? "error" : "muted",
       ),
     );
+    if (item?.status === "failed" && policyMode === "search") {
+      const packetId = selectedPacket;
+      const retry = element("button", "Retry this case", "policy-retry secondary");
+      retry.onclick = () => confirmPolicyRun([packetId]);
+      panel.append(retry,
+        element("p", "Retries all five checks for this case only. Matching saved claim fields and results are reused; Azure charges may apply.", "muted"));
+      controls();
+    }
     return;
   }
   for (const [index, check] of item.result.Checks.entries()) {
@@ -1632,26 +1668,40 @@ get("load-policy-cache").onclick = async () => {
     controls();
   }
 };
-get("policy-run").onclick = () => {
+function confirmPolicyRun(packetIds) {
   if (get("policy-run").disabled) return;
+  pendingPolicyRun = { runId: run.id, mode: policyMode, packetIds };
+  const packetId = packetIds?.[0];
   get("policy-confirm-summary").textContent =
-    `${run.items.filter((item) => item.rawSaved).length} cases · ${policyModeLabel()}. ` +
+    (packetId
+      ? `1 case: ${customerName(results.get(packetId)) || packetId} · ${policyModeLabel()}. Only this case will be retried. `
+      : `${run.items.filter((item) => item.rawSaved).length} cases · ${policyModeLabel()}. `) +
     "Cases run sequentially. Missing claim fields are extracted with CU first, even without policy retrieval.";
   get("policy-confirmation").showModal();
-};
+}
+get("policy-run").onclick = () => confirmPolicyRun();
+get("policy-confirmation").onclose = () => { pendingPolicyRun = undefined; };
 get("cancel-policy").onclick = () => get("policy-confirmation").close();
 get("confirm-policy").onclick = async () => {
-  if (policyMode !== "search" || busy || policyBusy) return;
+  if (get("policy-run").disabled || !pendingPolicyRun) return;
+  const selection = pendingPolicyRun;
+  if (run?.id !== selection.runId || policyMode !== selection.mode) {
+    get("policy-confirmation").close();
+    fail(new Error("The selected run or retrieval mode changed. Open the confirmation again."));
+    return;
+  }
   get("policy-confirmation").close();
+  pendingPolicyRun = undefined;
   busy = true;
   get("error").hidden = true;
   controls();
   const mode = policyMode;
   try {
-    const job = await api("policy/batch", { mode, live: true });
+    const job = await api("policy/batch", { mode, live: true,
+      ...(selection.packetIds ? { packetIds: selection.packetIds } : {}) });
     policyProgressErrors.delete(mode);
     policyPolls.set(mode, Date.now());
-    policyResults.set(mode, job);
+    storePolicyResults(mode, job);
     if (view === "policy") {
       renderTable();
       renderPolicyOutput();

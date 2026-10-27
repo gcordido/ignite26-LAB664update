@@ -32,6 +32,31 @@ retrieval** is selected. **No policy retrieval** remains available to inspect
 previously saved baseline results, but a new baseline run can't be started from
 the app.
 
+The dropdown loads from the policy configuration independently of the packet
+classifier. A missing live classifier does not prevent using cached claim
+results with the configured policy index. The choices are **No policy retrieval**
+and **Azure Search retrieval**, not Foundry IQ. If the policy configuration cannot
+be loaded, the dropdown shows an unavailable message and the status below it
+explains why.
+
+If a case shows **Run error**, open its **Result** and select **Retry this case**
+under the error. The confirmation names that one case; it does not rerun other
+customers. Wait for any active batch to finish first. Matching saved claim fields
+and completed reviews are reused, while missing extraction or agent work can
+incur Azure charges. Retrying evaluates all five checks for that case, not just
+the selected check. Historical failures remain available after restarting the
+workbench and are labeled with their previous attempt time.
+
+The launcher writes CU request diagnostics to `.tools\logs\cu-requests.jsonl`.
+Each request records its method, resource endpoint, path, API version, elapsed
+time, client request ID and available Azure request/activity IDs. Policy claim
+requests also identify the packet and job. Network failures record underlying
+error codes; logs distinguish authentication, sending the request and receiving
+an HTTP error. Tokens, request payloads and successful document responses are not
+logged. These local diagnostics do not enable Azure resource diagnostic logging
+or expose Microsoft's internal service trace. Use the activity/request IDs and
+UTC timestamps when escalating a service error.
+
 Start here on a prepared lab machine. You don't need to inspect or redeploy
 Azure resources before trying the agent.
 

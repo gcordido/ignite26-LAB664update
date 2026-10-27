@@ -1,5 +1,5 @@
 import { spawn } from "node:child_process";
-import { mkdir, readFile, writeFile, rename } from "node:fs/promises";
+import { mkdir, readFile, writeFile, rename, readdir } from "node:fs/promises";
 import path from "node:path";
 import { randomUUID } from "node:crypto";
 import { z } from "zod";
@@ -9,7 +9,7 @@ import { packetBytes, summarize, type Packet, type Run } from "./batch.ts";
 import { packetJson } from "./packet-json.ts";
 import { packetMarkdown } from "./packet-markdown.ts";
 import {
-  canonical, checkNames, citationSchema, digest, question, resolveCitations, withClaimSummary,
+  canonical, checkNames, citationSchema, digest, modeSchema, question, resolveCitations, withClaimSummary,
   type PolicyMode,
 } from "./policy-core.ts";
 import { chatAnswerSchema, type ChatMessage } from "./policy-chat.ts";
@@ -284,17 +284,52 @@ export class PolicyService {
   }
   async snapshot(run: Run, mode: PolicyMode, readRaw: (id: string) => Promise<unknown>): Promise<PolicyItem[]> {
     const config = await this.required();
+    const failures = await this.failedAttempts(run.id, mode);
     return Promise.all(run.items.map(async (item): Promise<PolicyItem> => {
       const packet = run.source.find((p) => p.id === item.id);
-      if (!packet || !item.rawSaved || !(await this.enriched(config, packet)).value)
+      if (!packet || !item.rawSaved)
         return { id: item.id, status: "not run" };
+      if (!(await this.enriched(config, packet)).value)
+        return failures.get(item.id) ?? { id: item.id, status: "not run" };
       const input = await this.input(run, packet, config, readRaw);
       const saved = record(await loadPolicyCache(this.file(await this.key(config, mode, input.prompt, run))));
-      if (saved?.status !== "completed") return { id: item.id, status: "not run" };
+      if (saved?.status !== "completed")
+        return failures.get(item.id) ?? { id: item.id, status: "not run" };
       return { id: item.id, status: "completed", cached: true,
         ...await frameworkReview(saved.raw, mode, config), ...this.metadata(config, mode),
         completedAt: String(saved.completedAt), inputHash: digest(input.markdown) };
     }));
+  }
+  private async failedAttempts(runId: string, mode: PolicyMode) {
+    let names: string[];
+    try { names = await readdir(this.cacheFolder); }
+    catch (error) {
+      if (record(error)?.code === "ENOENT") return new Map<string, PolicyItem>();
+      throw error;
+    }
+    const schema = z.object({
+      runId: z.string(), mode: modeSchema, status: z.literal("completed"),
+      completedAt: z.string().datetime(),
+      items: z.array(z.object({
+        id: z.string().regex(/^packet-\d{2}$/),
+        status: z.enum(["completed", "failed"]), error: z.string().optional(),
+      })),
+    });
+    const jobs: z.infer<typeof schema>[] = [];
+    for (const name of names.filter((name) => /^framework-job-[a-f0-9-]+\.json$/.test(name))) {
+      const saved = record(await loadPolicyCache(path.join(this.cacheFolder, name)));
+      if (saved?.runId === runId && saved.mode === mode) jobs.push(schema.parse(saved));
+    }
+    const failures = new Map<string, PolicyItem>();
+    for (const job of jobs.sort((a, b) => a.completedAt.localeCompare(b.completedAt)))
+      for (const item of job.items) {
+        if (item.status === "completed") failures.delete(item.id);
+        else failures.set(item.id, {
+          id: item.id, status: "failed", completedAt: job.completedAt,
+          error: `Previous attempt (${job.completedAt}): ${item.error ?? "Policy review failed. Check the workbench logs."}`,
+        });
+      }
+    return failures;
   }
   private metadata(config: FrameworkConfig, mode: FrameworkMode) {
     const agent = this.agent(config, mode);
@@ -330,7 +365,7 @@ export class PolicyService {
           item.stageStartedAt = new Date().toISOString();
           const cu = this.frameworkDependencies.cu ?? new CuClient({
             ...configuration(), endpoint: config.cuEndpoint, apiVersion: config.cuApiVersion,
-          }, 600_000);
+          }, 600_000, { packetId: item.id, jobId: job.id, purpose: "policy-claim-extraction" });
           const definition = record(await cu.detail(config.claimAnalyzerId));
           if (definition?.status !== "ready" || digest(canonical({
             baseAnalyzerId: definition.baseAnalyzerId, config: definition.config,
@@ -358,9 +393,13 @@ export class PolicyService {
         Object.assign(item, { status: "completed", ...parsed, completedAt,
           cached: previous?.status === "completed", inputHash: digest(input.markdown), ...this.metadata(config, mode) });
       } catch (error) {
+        const stage = item.status;
         item.status = "failed";
         item.error = error instanceof Error ? error.message : String(error);
-        console.error(JSON.stringify({ event: "framework_policy_failed", packetId: item.id, mode, message: item.error }));
+        console.error(JSON.stringify({
+          timestamp: new Date().toISOString(), event: "framework_policy_failed",
+          jobId: job.id, runId: run.id, packetId: item.id, mode, stage, message: item.error,
+        }));
       }
     }
     job.status = "completed";
