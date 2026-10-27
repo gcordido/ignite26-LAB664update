@@ -554,15 +554,6 @@ select {
   width: 0 !important;
   min-width: 100px;
 }
-.toolbar .cache-label {
-  margin-left: 0;
-}
-#cache {
-  width: min(520px, 38vw);
-}
-.cache-label {
-  margin-left: 24px;
-}
 #run-confirmation {
   position: fixed;
   margin: 0;
@@ -1418,18 +1409,10 @@ dialog h2 {
   header .muted {
     display: none;
   }
-  #cache {
-    width: 100%;
-    order: 2;
-  }
   #analyzer {
     width: calc(100% - 85px);
   }
-  .cache-label {
-    margin-left: 0;
-  }
-  #load-cache,
-  #refresh-cache {
+  #load-cache {
     order: 3;
   }
   #settings > div {

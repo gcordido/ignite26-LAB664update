@@ -14,7 +14,7 @@ test("refresh resumes the owning session's policy job and duplicate starts don't
   const task = new Promise<void>((resolve) => { release = resolve; });
   const job: PolicyJob = {
     id: "test-job", runId: saved.id, mode: "ungrounded", status: "running",
-    startedAt: new Date().toISOString(), items: [{ id: "packet-01", status: "extracting" }],
+    startedAt: new Date().toISOString(), items: saved.items.map(({ id }) => ({ id, status: "extracting" })),
   };
   class DeferredPolicy extends PolicyService {
     override async status() {

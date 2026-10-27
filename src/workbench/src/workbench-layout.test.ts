@@ -577,7 +577,7 @@ test("policy status helper is callable from module scope during startup and mode
   );
   assert.equal(
     vm.runInContext('policyModeLabel("search")', context),
-    "Azure Search retrieval",
+    "FoundryIQ",
   );
   assert.equal(
     vm.runInContext('policyModeLabel("ungrounded")', context),
@@ -697,7 +697,7 @@ test("policy availability refresh restores choices and explains configuration fa
   );
   await vm.runInContext("updatePolicyAvailability()", context);
   assert.deepEqual(select.options.map((option) => option.textContent), [
-    "No policy retrieval", "Azure Search retrieval",
+    "No policy retrieval", "FoundryIQ",
   ]);
   assert.equal(select.value, "ungrounded");
   response = { configured: false, message: "Run policy setup." };
@@ -726,6 +726,7 @@ test("policy progress watcher is callable outside refreshPolicy after a page rel
   );
   let restoredAvailability = 0;
   const context = vm.createContext({
+    policyCaches: async () => {},
     policyBusy: false,
     run: { id: "saved-run", items: [] },
     policyResults: new Map([["search", { status: "completed", items: [] }]]),
@@ -747,7 +748,7 @@ test("policy progress watcher is callable outside refreshPolicy after a page rel
   assert.equal(vm.runInContext("policyBusy", context), false);
 });
 
-test("policy Run requires Search but busy batches don't disable the retrieval dropdown", async () => {
+test("policy Run requires Search and only this session's busy work disables the retrieval dropdown", async () => {
   const source = await readFile(
     new URL("../web/workbench.js", import.meta.url),
     "utf8",
@@ -774,6 +775,9 @@ test("policy Run requires Search but busy batches don't disable the retrieval dr
     policyMode: "ungrounded",
     policyBusy: false,
     policyStatus: { configured: true, batchRunning: false },
+    savedExtractionRun: undefined,
+    savedPolicyEntries: [],
+    policyCacheBusy: false,
   });
   vm.runInContext(
     source.slice(
@@ -789,7 +793,7 @@ test("policy Run requires Search but busy batches don't disable the retrieval dr
   assert.equal(nodes.get("policy-run")!.disabled, false);
   vm.runInContext("policyBusy = true; controls()", context);
   assert.equal(nodes.get("policy-run")!.disabled, true);
-  assert.equal(nodes.get("policy-mode")!.disabled, false);
+  assert.equal(nodes.get("policy-mode")!.disabled, true);
   vm.runInContext(
     "policyBusy = false; policyStatus.batchRunning = true; controls()",
     context,
@@ -811,6 +815,7 @@ test("changing retrieval mode restores the claim PDF instead of retaining a prev
   let reads = 0;
   const context = vm.createContext({
     get: () => selection,
+    policyCaches: async () => {},
     policyMode: "search",
     selectedPacket: "packet-01",
     controls: () => {},

@@ -179,7 +179,7 @@ function controls() {
   get("policy-run").title =
     policyMode === "search"
       ? ""
-      : "Select Azure Search retrieval to run policy checks.";
+      : "Select FoundryIQ to run policy checks.";
   for (const button of get("policy-output").querySelectorAll(".policy-retry")) {
     button.disabled = get("policy-run").disabled;
     button.title = button.disabled
@@ -1176,7 +1176,7 @@ function policyMessage() {
         : (policyStatus?.message ?? "Policy configuration is loading.");
 }
 function policyModeLabel(mode = policyMode) {
-  return mode === "search" ? "Azure Search retrieval" : "No policy retrieval";
+  return mode === "search" ? "FoundryIQ" : "No policy retrieval";
 }
 function renderPolicyModes() {
   const modes = policyStatus?.configured ? Object.keys(policyStatus.modes) : [];

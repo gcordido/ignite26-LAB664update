@@ -33,7 +33,7 @@ test("top-level pivots preserve the selected extraction type and share the exist
   assert.equal(nodes["extraction-toolbar"].hidden, true);
   assert.equal(buttons[1].attributes["aria-pressed"], "true");
   vm.runInContext('activateView("policy")', context);
-  assert.equal(nodes["results-heading"].textContent, "Check policies");
+  assert.equal(nodes["results-heading"].textContent, "Check Policies: Rental Car");
   assert.equal(context.lastExtractionView, "rental_invoice");
   vm.runInContext("activateView(lastExtractionView)", context);
   assert.equal(nodes["view-types"].hidden, false);
