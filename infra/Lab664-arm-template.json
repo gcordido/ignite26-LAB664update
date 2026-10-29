@@ -50,6 +50,7 @@
     "accountName": "[concat('aifoundry-', parameters('uniqueSuffix'))]",
     "projectName": "[concat('project-', parameters('uniqueSuffix'))]",
     "storageAccountName": "[concat('st', uniqueString(resourceGroup().id, parameters('uniqueSuffix')))]",
+    "contentUnderstandingContainerName": "[concat('cu-projects-', parameters('uniqueSuffix'))]",
     "searchServiceName": "[toLower(concat('search-', parameters('uniqueSuffix')))]",
     "configureContentUnderstandingDefaultsScriptName": "[concat('configure-cu-defaults-', parameters('uniqueSuffix'))]",
     "cognitiveServicesUserRoleDefinitionId": "a97b65f3-24c7-4388-baec-2e87135dc908",
@@ -63,6 +64,8 @@
       "modelDeployments": {
         "text-embedding-3-large": "[variables('textEmbedding3LargeDeploymentName')]",
         "gpt-5.2": "[variables('gpt52DeploymentName')]",
+        "gpt-5.5": "[variables('gpt55DeploymentName')]",
+        "gpt-6.1-sol": "[variables('gpt61SolDeploymentName')]",
         "prebuilt-analyzer-completion": "[variables('gpt52DeploymentName')]",
         "prebuilt-analyzer-completion-mini": "[variables('gpt54MiniDeploymentName')]",
         "prebuilt-analyzer-embedding": "[variables('textEmbedding3LargeDeploymentName')]"
@@ -269,6 +272,51 @@
       }
     },
     {
+      "type": "Microsoft.Storage/storageAccounts/blobServices",
+      "apiVersion": "2023-05-01",
+      "name": "[concat(variables('storageAccountName'), '/default')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
+      ],
+      "properties": {
+        "cors": {
+          "corsRules": [
+            {
+              "allowedOrigins": [
+                "https://contentunderstanding.ai.azure.com"
+              ],
+              "allowedMethods": [
+                "GET",
+                "HEAD",
+                "PUT",
+                "POST",
+                "DELETE",
+                "OPTIONS"
+              ],
+              "allowedHeaders": [
+                "*"
+              ],
+              "exposedHeaders": [
+                "*"
+              ],
+              "maxAgeInSeconds": 120
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+      "apiVersion": "2023-05-01",
+      "name": "[concat(variables('storageAccountName'), '/default/', variables('contentUnderstandingContainerName'))]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts/blobServices', variables('storageAccountName'), 'default')]"
+      ],
+      "properties": {
+        "publicAccess": "None"
+      }
+    },
+    {
       "type": "Microsoft.Search/searchServices",
       "apiVersion": "2025-05-01",
       "name": "[variables('searchServiceName')]",
@@ -380,6 +428,18 @@
     "storageAccountResourceId": {
       "type": "string",
       "value": "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
+    },
+    "contentUnderstandingContainerName": {
+      "type": "string",
+      "value": "[variables('contentUnderstandingContainerName')]"
+    },
+    "contentUnderstandingContainerResourceId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.Storage/storageAccounts/blobServices/containers', variables('storageAccountName'), 'default', variables('contentUnderstandingContainerName'))]"
+    },
+    "contentUnderstandingContainerUrl": {
+      "type": "string",
+      "value": "[concat(reference(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), '2023-05-01').primaryEndpoints.blob, variables('contentUnderstandingContainerName'))]"
     },
     "searchServiceResourceId": {
       "type": "string",
