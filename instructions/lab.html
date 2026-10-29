@@ -873,8 +873,8 @@ powershell -ExecutionPolicy Bypass -File .\infra\launch-workbench.ps1</code></pr
         <h3>Explore the included results first - no Azure analysis on load</h3>
         <ol>
           <li>
-            In <strong>Cache Results</strong>, select the included completed
-            <strong>10/10</strong> run and click <strong>Load</strong>. The
+            In <strong>Parse and extract</strong>, select <strong>Load cached results</strong>
+            to load the included completed <strong>10/10</strong> run. The
             Cached badge identifies historical native CU JSON, not a fresh run
             or your new analyzer. Its tooltip preserves the original analyzer,
             API version, timestamp, and dataset fingerprint. Results, fixed checks,
@@ -920,39 +920,47 @@ powershell -ExecutionPolicy Bypass -File .\infra\launch-workbench.ps1</code></pr
           Use the prepared lab configuration. The lab owner must complete
           <a href="../docs/policy-setup.md">policy setup</a> before the session;
           installing dependencies alone doesn't configure an index.
-          Sign in with <code>az login</code> using your approved lab identity.
-          Saved CU results avoid rerunning the Studio router, but policy checks
-          still call Azure and incur charges, including missing claim-summary
-          extraction.
+          Before launching on a fresh machine, run
+          <code>.\infra\policy-demo-cache.ps1</code> to restore the included synthetic
+          reviews, claim fields and public resource configuration without Azure calls.
+          It includes no credentials and refuses to replace different local files.
+          For live work, sign in with <code>az login</code> using your approved lab identity.
+          Uncached policy reviews and missing claim-summary extraction incur Azure charges.
         </p>
         <ol>
           <li>
             With the included completed <strong>10/10</strong> run loaded,
-            select the <strong>Check policies</strong> pivot. <strong>Check consistency</strong>
+            select the <strong>Check policies</strong> tab. <strong>Check consistency</strong>
             validates returned fields and arithmetic; <strong>Check policies</strong>
             evaluates rental-processing rules using the agent and retrieved SOPs.
-            Both use expandable details in the same grid and keep source PDFs visible.
+            Select a policy check to open its finding and claim-versus-policy values
+            in the right panel. Select a linked value to inspect its source PDF.
+            In <strong>Check policies</strong>, select <strong>FoundryIQ</strong>,
+            then <strong>Load cached results</strong> to restore saved reviews without Azure calls.
           </li>
           <li>
             In <strong>Policy retrieval</strong>, select
-            <strong>Azure Search retrieval</strong>. Select
-            <strong>Run policy checks</strong> and confirm the operation for
+            <strong>FoundryIQ</strong>. Select
+            <strong>Run live</strong> and confirm the operation for
             all loaded cases. Wait for completion; the status line shows claim
-            extraction and agent review progress.
+            extraction and agent review progress. An uncached packet gets one Search
+            prefetch and five parallel Agent Framework calls, one per check.
+            Matching current reviews are reused; this isn't a force-refresh button.
           </li>
           <li>
             Optionally select <strong>No policy retrieval</strong> to inspect
-            a saved baseline, then return to <strong>Azure Search retrieval</strong>.
+            a saved baseline if available, then return to <strong>FoundryIQ</strong>.
             New runs require Search.
             Changing the dropdown alone doesn't submit a new run.
           </li>
           <li>
-            Compare <strong>Amount</strong> for packets <strong>01</strong>
-            and <strong>02</strong>. Select each check to read
-            <strong>Expected</strong>, <strong>Actual</strong> and
-            <strong>Reasoning</strong> in the expanded table row below that customer.
-            The first three boxes are <strong>Amount</strong>,
-            <strong>Timing</strong>, and <strong>Effective terms</strong>.
+            Inspect <strong>Daily cost</strong>, <strong>Rental dates</strong>,
+            and <strong>Active policy</strong>, followed by <strong>Covered charges</strong>
+            and <strong>Payment approval</strong>. A check mark means <strong>Satisfied</strong>;
+            an open circle means <strong>Review required</strong>. The circular-arrow
+            <strong>Waiting for info</strong> status means missing claim evidence or approval,
+            not an agent still running. <strong>N/A</strong> identifies checks that don't apply.
+            Select a check to read its short finding and linked values in the right panel.
           </li>
         </ol>
         <div class="table">
@@ -963,7 +971,7 @@ powershell -ExecutionPolicy Bypass -File .\infra\launch-workbench.ps1</code></pr
                 <th scope="col">CU daily base</th>
                 <th scope="col">Contractual daily cap</th>
                 <th scope="col">Retrieved SOP routine authority</th>
-                <th scope="col">Expected result</th>
+                <th scope="col">Included saved daily-cost result</th>
               </tr>
             </thead>
             <tbody>
@@ -972,19 +980,25 @@ powershell -ExecutionPolicy Bypass -File .\infra\launch-workbench.ps1</code></pr
                 <td>$54</td>
                 <td>$85</td>
                 <td>$75, inclusive</td>
-                <td><strong>Satisfied</strong>: numerical fit, conditional on timing</td>
+                <td><strong>Satisfied</strong>: $54/day and four billed days fit the contractual limits</td>
               </tr>
               <tr>
                 <td>Packet 02 / Washington</td>
                 <td>$61</td>
                 <td>$85</td>
                 <td>$60, inclusive</td>
-                <td><strong>Review required</strong>: routine authority exceeded;
-                  supervisor exception evidence missing</td>
+                <td><strong>Satisfied</strong>: $61/day and five billed days fit
+                  the contractual limits; payment authority is separate</td>
               </tr>
             </tbody>
           </table>
         </div>
+        <p>
+          In the refreshed saved reviews, both packets show <strong>Waiting for info</strong>
+          for rental dates and insurer approval. Packet 02's <strong>Covered charges</strong>
+          requires review because its local rental levy needs supporting evidence.
+          These saved reviews are model-generated, not scripted outcomes.
+        </p>
         <ol start="5">
           <li>
             For packet <strong>01</strong>, select the Texas
@@ -1002,15 +1016,14 @@ powershell -ExecutionPolicy Bypass -File .\infra\launch-workbench.ps1</code></pr
             <strong>CU Search</strong> and <strong>Digital parse</strong>.
             CU Search uses <code>prebuilt-documentSearch</code> with its own
             analyzer-keyed cache; Layout output is not relabeled.
-            The inline review stays open. Select <strong>Back to claim document</strong>
-            to restore the packet preview.
+            Select <strong>Back to policy check</strong> to restore the finding.
             Optionally inspect Washington's scanned SOP or Arizona's
             image-based eligibility flowchart. A missing extraction has an
             explicit billable generation action; switching tabs alone doesn't
             call CU.
           </li>
           <li>
-            Select <strong>Ask agent</strong> inside the expanded review and ask, "Explain this
+            Select <strong>Ask agent</strong> in the right panel and ask, "Explain this
             case's daily-rate result. Cite the SOP and distinguish routine
             authority from the contractual cap." Chat uses the selected case
             and mode; each submitted question can incur Azure charges.
@@ -1022,13 +1035,14 @@ powershell -ExecutionPolicy Bypass -File .\infra\launch-workbench.ps1</code></pr
           expectations, not guaranteed model answers. Inspect differing
           results, missing facts or errors rather than forcing a pass.
           If neither claim fields nor matching contractual evidence establish
-          packet 01's cap, <strong>Amount</strong> remains
+          packet 01's cap, <strong>Daily cost</strong> remains
           <strong>Review required</strong> despite being below Texas's $75
           routine authority. The SOP cannot supply a contractual benefit.
-          Missing actual repair delivery/completion keeps
-          <strong>Timing</strong> in review. An issued amendment and its
+          Missing actual repair delivery/completion or pending insurer approval produces
+          <strong>Waiting for info</strong>. Conflicting evidence or unclear controlling rules
+          require review. An issued amendment and its
           effective time, not a customer signature alone, establish changed terms.
-          <strong>Satisfied</strong> for Amount doesn't approve the claim
+          <strong>Satisfied</strong> for daily cost doesn't approve the claim
           or authorize payment; other checks can still require review.
         </p>
         <details>
@@ -1066,7 +1080,8 @@ powershell -ExecutionPolicy Bypass -File .\infra\launch-workbench.ps1</code></pr
               <a href="../infra/policy-framework-agent.py"><code>infra/policy-framework-agent.py</code></a>.
               Find <code>Agent</code>, <code>OpenAIChatClient</code> and
               <code>search_policy_rules</code>. The workbench invokes a
-              Python agent; the Search tool is attached only in retrieval mode.
+              Python agent. Initial reviews use five parallel calls with relevant
+              CU fields and prefetched rules; follow-up chat can use the Search tool.
             </li>
           </ol>
           <p>
@@ -1076,8 +1091,8 @@ powershell -ExecutionPolicy Bypass -File .\infra\launch-workbench.ps1</code></pr
           </p>
         </details>
         <p class="note">
-          This teaches search-backed grounding related to <strong>Foundry IQ</strong>,
-          but this PR queries an ordinary Azure AI Search index directly,
+          <strong>FoundryIQ</strong> is the lab's umbrella label for grounded retrieval.
+          This implementation queries an ordinary Azure AI Search index directly,
           not a Foundry IQ knowledge base. Read the actual extraction label:
           the currently configured shared index uses <strong>CU Layout</strong>.
           The optional <a href="../docs/policy-setup.md">managed CU pipeline</a>

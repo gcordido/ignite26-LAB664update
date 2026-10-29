@@ -1,7 +1,7 @@
 {
   "corpusId": "lab664-rental-ocr-comparison-v2",
   "synthetic": true,
-  "description": "Fictional figure/table/OCR test corpus; not law, policy benefits or payment approval.",
+  "description": "Fictional figure/table/OCR test corpus generated from the 10 claim packets currently present; the requested 11th packet is not in this checkout. Not law, policy benefits or payment approval.",
   "defaultIndexFormat": "pdf",
   "applicabilityDateField": "loss_date",
   "effectiveDateBounds": "inclusive",
@@ -13,45 +13,800 @@
       "version": "2026-02-01",
       "documentType": "policy_contract",
       "role": "revised_declarations",
-      "states": ["TX"],
-      "policyScope": {"policyId": "CMM-A4911741", "vin": "7FARW1H55NA510781"},
+      "states": [
+        "TX"
+      ],
+      "policyScope": {
+        "policyId": "CMM-A4911741",
+        "vin": "7FARW1H55NA510781"
+      },
       "effectiveFrom": "2026-02-01T00:01:00-06:00",
       "effectiveThrough": "2026-09-15",
       "pdf": "01-revised-declarations.pdf",
-      "sha256": "c69bc0643e6588cff27b1e5b91006daba20b0b2d134d5b1515b552c41d45cc54",
-      "ruleIds": ["DEC-TX-01"],
-      "rulePages": [1],
-      "pdfTextLayer": "none"
+      "sha256": "ca6bd9e77a27843718a947be04292f72c56567d3c186092e16ddfe3ac7bde243",
+      "ruleIds": [
+        "DEC-TX-01"
+      ],
+      "rulePages": [
+        1
+      ],
+      "pdfTextLayer": "digital-text-with-sparse-table"
     },
     {
       "documentId": "RNT-TX-01",
       "version": "2025-09",
       "documentType": "policy_contract",
       "role": "rental_terms",
-      "states": ["TX"],
-      "policyScope": {"policyId": "CMM-A4911741", "vin": "7FARW1H55NA510781"},
+      "diagramAuthority": "controlling",
+      "states": [
+        "TX"
+      ],
+      "policyScope": {
+        "policyId": "CMM-A4911741",
+        "vin": "7FARW1H55NA510781"
+      },
       "effectiveFrom": "2025-09-15",
       "effectiveThrough": "2026-09-15",
       "pdf": "02-rental-terms-and-diagram.pdf",
-      "sha256": "f5be1f288b9515dab20803b9f8b384f3077f7280821ea033602e9ce1b14078c8",
-      "ruleIds": ["R.1", "R.2", "R.3", "R.4", "R.5", "R.6", "Figure R-1"],
-      "rulePages": [1, 2],
-      "pdfTextLayer": "raster-terms-and-vector-diagram"
+      "sha256": "5790c4156d1a9a313ab931e04d9ede7cc0d6275916e31b8df472e22fb52cc007",
+      "ruleIds": [
+        "R.1",
+        "R.2",
+        "R.3",
+        "R.4",
+        "R.5",
+        "R.6",
+        "Figure R-1"
+      ],
+      "rulePages": [
+        1,
+        2
+      ],
+      "pdfTextLayer": "digital-text-and-vector-diagram"
     },
     {
       "documentId": "END-02",
       "version": "2026-02-01",
       "documentType": "policy_contract",
       "role": "issued_amendment",
-      "states": ["TX"],
-      "policyScope": {"policyId": "CMM-A4911741", "vin": "7FARW1H55NA510781"},
-      "issuedDate": "2026-01-30",
+      "states": [
+        "TX"
+      ],
+      "policyScope": {
+        "policyId": "CMM-A4911741",
+        "vin": "7FARW1H55NA510781"
+      },
       "effectiveFrom": "2026-02-01T00:01:00-06:00",
       "effectiveThrough": "2026-09-15",
       "pdf": "03-scanned-midterm-endorsement.pdf",
-      "sha256": "2a5c9e0e2665e3fa20c34139d84f49f66de6a92959ba76f217c9a0c696cab4d0",
-      "ruleIds": ["END-02"],
-      "rulePages": [1],
+      "sha256": "03aa4ddd979e1e3a01833b2352033547ab5c9fb32d4395fac0d0f0e3e3f297bc",
+      "ruleIds": [
+        "END-02"
+      ],
+      "rulePages": [
+        1
+      ],
+      "pdfTextLayer": "none",
+      "issuedDate": "2026-01-30"
+    },
+    {
+      "documentId": "DEC-WA-P02",
+      "version": "2024-11-09",
+      "documentType": "policy_contract",
+      "role": "revised_declarations",
+      "states": [
+        "WA"
+      ],
+      "policyScope": {
+        "policyId": "ASA-A6815200",
+        "vin": "4S4BTACC1LA511562"
+      },
+      "effectiveFrom": "2024-11-09",
+      "effectiveThrough": "2025-11-09",
+      "pdf": "declarations-wa-packet-02.pdf",
+      "sha256": "67b5f189e6127d7c155a00829c485235d5b877e6fd65f5957ad44d175d94a425",
+      "ruleIds": [
+        "DEC-WA-P02"
+      ],
+      "rulePages": [
+        1
+      ],
+      "pdfTextLayer": "digital-text-with-sparse-table"
+    },
+    {
+      "documentId": "RNT-WA-P02",
+      "version": "2024-11-09",
+      "documentType": "policy_contract",
+      "role": "rental_terms",
+      "diagramAuthority": "controlling",
+      "states": [
+        "WA"
+      ],
+      "policyScope": {
+        "policyId": "ASA-A6815200",
+        "vin": "4S4BTACC1LA511562"
+      },
+      "effectiveFrom": "2024-11-09",
+      "effectiveThrough": "2025-11-09",
+      "pdf": "rental-terms-wa-packet-02.pdf",
+      "sha256": "6ca83b35220bcab06a713bebbdba40d34bbb3b9b89852be9c54a63ccf9ce6a27",
+      "ruleIds": [
+        "R.1",
+        "R.2",
+        "R.3",
+        "R.4",
+        "R.5",
+        "R.6",
+        "Figure R-1"
+      ],
+      "rulePages": [
+        1,
+        2
+      ],
+      "pdfTextLayer": "digital-text-and-vector-diagram"
+    },
+    {
+      "documentId": "EFF-WA-P02",
+      "version": "2024-11-09",
+      "documentType": "policy_contract",
+      "role": "policy_effective_date",
+      "states": [
+        "WA"
+      ],
+      "policyScope": {
+        "policyId": "ASA-A6815200",
+        "vin": "4S4BTACC1LA511562"
+      },
+      "effectiveFrom": "2024-11-09",
+      "effectiveThrough": "2025-11-09",
+      "pdf": "effective-date-wa-packet-02.pdf",
+      "sha256": "1c9062d9579f3dc8ab96485e2f6b784200b15cce1dc38f60add0724d2005b84d",
+      "ruleIds": [
+        "POLICY-TERM"
+      ],
+      "rulePages": [
+        1
+      ],
+      "pdfTextLayer": "none"
+    },
+    {
+      "documentId": "DEC-AZ-P03",
+      "version": "2025-02-19",
+      "documentType": "policy_contract",
+      "role": "revised_declarations",
+      "states": [
+        "AZ"
+      ],
+      "policyScope": {
+        "policyId": "SCI-A1132557",
+        "vin": "KNDPMCAC0PA512343"
+      },
+      "effectiveFrom": "2025-02-19",
+      "effectiveThrough": "2026-02-19",
+      "pdf": "declarations-az-packet-03.pdf",
+      "sha256": "9cd78b610df0e9f8b15992ea7d2975639e9de297dbc56c781342247af9888524",
+      "ruleIds": [
+        "DEC-AZ-P03"
+      ],
+      "rulePages": [
+        1
+      ],
+      "pdfTextLayer": "digital-text-with-sparse-table"
+    },
+    {
+      "documentId": "RNT-AZ-P03",
+      "version": "2025-02-19",
+      "documentType": "policy_contract",
+      "role": "rental_terms",
+      "diagramAuthority": "illustrative",
+      "states": [
+        "AZ"
+      ],
+      "policyScope": {
+        "policyId": "SCI-A1132557",
+        "vin": "KNDPMCAC0PA512343"
+      },
+      "effectiveFrom": "2025-02-19",
+      "effectiveThrough": "2026-02-19",
+      "pdf": "rental-terms-az-packet-03.pdf",
+      "sha256": "8978fff124832c2c2db7b87adcb2d8d97ee86d189959c115dbf4c3885522c126",
+      "ruleIds": [
+        "R.1",
+        "R.2",
+        "R.3",
+        "R.4",
+        "R.5",
+        "R.6",
+        "Figure R-1"
+      ],
+      "rulePages": [
+        1,
+        2
+      ],
+      "pdfTextLayer": "digital-text-and-vector-diagram"
+    },
+    {
+      "documentId": "EFF-AZ-P03",
+      "version": "2025-02-19",
+      "documentType": "policy_contract",
+      "role": "policy_effective_date",
+      "states": [
+        "AZ"
+      ],
+      "policyScope": {
+        "policyId": "SCI-A1132557",
+        "vin": "KNDPMCAC0PA512343"
+      },
+      "effectiveFrom": "2025-02-19",
+      "effectiveThrough": "2026-02-19",
+      "pdf": "effective-date-az-packet-03.pdf",
+      "sha256": "ede029ba51ca03e4c0f046559b0dd8a8dc8d46c2076e7eeb7da29195582edcb5",
+      "ruleIds": [
+        "POLICY-TERM"
+      ],
+      "rulePages": [
+        1
+      ],
+      "pdfTextLayer": "none"
+    },
+    {
+      "documentId": "DEC-CO-P04",
+      "version": "2026-01-13",
+      "documentType": "policy_contract",
+      "role": "revised_declarations",
+      "states": [
+        "CO"
+      ],
+      "policyScope": {
+        "policyId": "ARC-A8669481",
+        "vin": "JM3KFBCM6RA513124"
+      },
+      "effectiveFrom": "2026-01-13",
+      "effectiveThrough": "2027-01-13",
+      "pdf": "declarations-co-packet-04.pdf",
+      "sha256": "97e06b4f609d6ee0995a22fd6f92547f4c6a0f8ada27c437cfef75662a82dd8a",
+      "ruleIds": [
+        "DEC-CO-P04"
+      ],
+      "rulePages": [
+        1
+      ],
+      "pdfTextLayer": "digital-text-with-sparse-table"
+    },
+    {
+      "documentId": "RNT-CO-P04",
+      "version": "2026-01-13",
+      "documentType": "policy_contract",
+      "role": "rental_terms",
+      "diagramAuthority": "illustrative",
+      "states": [
+        "CO"
+      ],
+      "policyScope": {
+        "policyId": "ARC-A8669481",
+        "vin": "JM3KFBCM6RA513124"
+      },
+      "effectiveFrom": "2026-01-13",
+      "effectiveThrough": "2027-01-13",
+      "pdf": "rental-terms-co-packet-04.pdf",
+      "sha256": "a430fbd39daac7fd27bf4274756559a5c0c52a075966988a28ee2693e1764ff0",
+      "ruleIds": [
+        "R.1",
+        "R.2",
+        "R.3",
+        "R.4",
+        "R.5",
+        "R.6",
+        "Figure R-1"
+      ],
+      "rulePages": [
+        1,
+        2
+      ],
+      "pdfTextLayer": "digital-text-and-vector-diagram"
+    },
+    {
+      "documentId": "EFF-CO-P04",
+      "version": "2026-01-13",
+      "documentType": "policy_contract",
+      "role": "policy_effective_date",
+      "states": [
+        "CO"
+      ],
+      "policyScope": {
+        "policyId": "ARC-A8669481",
+        "vin": "JM3KFBCM6RA513124"
+      },
+      "effectiveFrom": "2026-01-13",
+      "effectiveThrough": "2027-01-13",
+      "pdf": "effective-date-co-packet-04.pdf",
+      "sha256": "5e6dd4085fbae592304f863b5cc662a982eb63c787fc990dff557c18d6f1e495",
+      "ruleIds": [
+        "POLICY-TERM"
+      ],
+      "rulePages": [
+        1
+      ],
+      "pdfTextLayer": "none"
+    },
+    {
+      "documentId": "DEC-FL-P05",
+      "version": "2025-04-26",
+      "documentType": "policy_contract",
+      "role": "revised_declarations",
+      "states": [
+        "FL"
+      ],
+      "policyScope": {
+        "policyId": "PRC-A3933393",
+        "vin": "5YFEPMAE3KA513905"
+      },
+      "effectiveFrom": "2025-04-26",
+      "effectiveThrough": "2026-04-26",
+      "pdf": "declarations-fl-packet-05.pdf",
+      "sha256": "40c3e00941fdb86e3cf12712e95b4fee7740d01913eb640b857fa0a39a0664c8",
+      "ruleIds": [
+        "DEC-FL-P05"
+      ],
+      "rulePages": [
+        1
+      ],
+      "pdfTextLayer": "digital-text-with-sparse-table"
+    },
+    {
+      "documentId": "RNT-FL-P05",
+      "version": "2025-04-26",
+      "documentType": "policy_contract",
+      "role": "rental_terms",
+      "diagramAuthority": "illustrative",
+      "states": [
+        "FL"
+      ],
+      "policyScope": {
+        "policyId": "PRC-A3933393",
+        "vin": "5YFEPMAE3KA513905"
+      },
+      "effectiveFrom": "2025-04-26",
+      "effectiveThrough": "2026-04-26",
+      "pdf": "rental-terms-fl-packet-05.pdf",
+      "sha256": "e25767b32d8916ab0828414009af6f5a634e1f36b3953fbb1433beddbfd14e8c",
+      "ruleIds": [
+        "R.1",
+        "R.2",
+        "R.3",
+        "R.4",
+        "R.5",
+        "R.6",
+        "Figure R-1"
+      ],
+      "rulePages": [
+        1,
+        2
+      ],
+      "pdfTextLayer": "digital-text-and-vector-diagram"
+    },
+    {
+      "documentId": "EFF-FL-P05",
+      "version": "2025-04-26",
+      "documentType": "policy_contract",
+      "role": "policy_effective_date",
+      "states": [
+        "FL"
+      ],
+      "policyScope": {
+        "policyId": "PRC-A3933393",
+        "vin": "5YFEPMAE3KA513905"
+      },
+      "effectiveFrom": "2025-04-26",
+      "effectiveThrough": "2026-04-26",
+      "pdf": "effective-date-fl-packet-05.pdf",
+      "sha256": "75fc3423b5d51b2dd7c328f39bc636cbeeb332cf180e35087d0fcceeed2d6f07",
+      "ruleIds": [
+        "POLICY-TERM"
+      ],
+      "rulePages": [
+        1
+      ],
+      "pdfTextLayer": "none"
+    },
+    {
+      "documentId": "DEC-IL-P06",
+      "version": "2025-10-06",
+      "documentType": "policy_contract",
+      "role": "revised_declarations",
+      "states": [
+        "IL"
+      ],
+      "policyScope": {
+        "policyId": "PMM-A4329240",
+        "vin": "1FMCU0G63MA514686"
+      },
+      "effectiveFrom": "2025-10-06",
+      "effectiveThrough": "2026-10-06",
+      "pdf": "declarations-il-packet-06.pdf",
+      "sha256": "7fbb77aff398ad578c2c1107ac6c8cfaf03f9e46ed1537b2e9e2df6d5f645f27",
+      "ruleIds": [
+        "DEC-IL-P06"
+      ],
+      "rulePages": [
+        1
+      ],
+      "pdfTextLayer": "digital-text-with-sparse-table"
+    },
+    {
+      "documentId": "RNT-IL-P06",
+      "version": "2025-10-06",
+      "documentType": "policy_contract",
+      "role": "rental_terms",
+      "diagramAuthority": "illustrative",
+      "states": [
+        "IL"
+      ],
+      "policyScope": {
+        "policyId": "PMM-A4329240",
+        "vin": "1FMCU0G63MA514686"
+      },
+      "effectiveFrom": "2025-10-06",
+      "effectiveThrough": "2026-10-06",
+      "pdf": "rental-terms-il-packet-06.pdf",
+      "sha256": "36b4ded380b7e3efb683f7735377081751715f4004d71dbfb3215e7e7657b60e",
+      "ruleIds": [
+        "R.1",
+        "R.2",
+        "R.3",
+        "R.4",
+        "R.5",
+        "R.6",
+        "Figure R-1"
+      ],
+      "rulePages": [
+        1,
+        2
+      ],
+      "pdfTextLayer": "digital-text-and-vector-diagram"
+    },
+    {
+      "documentId": "EFF-IL-P06",
+      "version": "2025-10-06",
+      "documentType": "policy_contract",
+      "role": "policy_effective_date",
+      "states": [
+        "IL"
+      ],
+      "policyScope": {
+        "policyId": "PMM-A4329240",
+        "vin": "1FMCU0G63MA514686"
+      },
+      "effectiveFrom": "2025-10-06",
+      "effectiveThrough": "2026-10-06",
+      "pdf": "effective-date-il-packet-06.pdf",
+      "sha256": "8fac5a6e6f0bb865c8019e58acdd126685fae9e590ecbc039a762a0817aebcb5",
+      "ruleIds": [
+        "POLICY-TERM"
+      ],
+      "rulePages": [
+        1
+      ],
+      "pdfTextLayer": "none"
+    },
+    {
+      "documentId": "DEC-LA-P07",
+      "version": "2025-06-09",
+      "documentType": "policy_contract",
+      "role": "revised_declarations",
+      "states": [
+        "LA"
+      ],
+      "policyScope": {
+        "policyId": "CDA-A9636901",
+        "vin": "3VWC57BU3LA515467"
+      },
+      "effectiveFrom": "2025-06-09",
+      "effectiveThrough": "2026-06-09",
+      "pdf": "declarations-la-packet-07.pdf",
+      "sha256": "03d91e5d186c82026e95d4e51bc222767aaa045f79844bbbfdf681d2bf34dd13",
+      "ruleIds": [
+        "DEC-LA-P07"
+      ],
+      "rulePages": [
+        1
+      ],
+      "pdfTextLayer": "digital-text-with-sparse-table"
+    },
+    {
+      "documentId": "RNT-LA-P07",
+      "version": "2025-06-09",
+      "documentType": "policy_contract",
+      "role": "rental_terms",
+      "diagramAuthority": "illustrative",
+      "states": [
+        "LA"
+      ],
+      "policyScope": {
+        "policyId": "CDA-A9636901",
+        "vin": "3VWC57BU3LA515467"
+      },
+      "effectiveFrom": "2025-06-09",
+      "effectiveThrough": "2026-06-09",
+      "pdf": "rental-terms-la-packet-07.pdf",
+      "sha256": "2f0d3e502dca6ec393d30aee6ea3d2ac62469bd229bfce449664a62521acde6a",
+      "ruleIds": [
+        "R.1",
+        "R.2",
+        "R.3",
+        "R.4",
+        "R.5",
+        "R.6",
+        "Figure R-1"
+      ],
+      "rulePages": [
+        1,
+        2
+      ],
+      "pdfTextLayer": "digital-text-and-vector-diagram"
+    },
+    {
+      "documentId": "EFF-LA-P07",
+      "version": "2025-06-09",
+      "documentType": "policy_contract",
+      "role": "policy_effective_date",
+      "states": [
+        "LA"
+      ],
+      "policyScope": {
+        "policyId": "CDA-A9636901",
+        "vin": "3VWC57BU3LA515467"
+      },
+      "effectiveFrom": "2025-06-09",
+      "effectiveThrough": "2026-06-09",
+      "pdf": "effective-date-la-packet-07.pdf",
+      "sha256": "9a519880ff174bf6942874f59f1060a6b02cc84c6a408ec2c2134135fc15bb58",
+      "ruleIds": [
+        "POLICY-TERM"
+      ],
+      "rulePages": [
+        1
+      ],
+      "pdfTextLayer": "none"
+    },
+    {
+      "documentId": "DEC-CA-P08",
+      "version": "2025-12-15",
+      "documentType": "policy_contract",
+      "role": "revised_declarations",
+      "states": [
+        "CA"
+      ],
+      "policyScope": {
+        "policyId": "SLI-A1508902",
+        "vin": "KM8KNDAF4NA516248"
+      },
+      "effectiveFrom": "2025-12-15",
+      "effectiveThrough": "2026-12-15",
+      "pdf": "declarations-ca-packet-08.pdf",
+      "sha256": "3b0c2909101277d10376b11caee226b53df235de83948dccff65bdcc470f5be7",
+      "ruleIds": [
+        "DEC-CA-P08"
+      ],
+      "rulePages": [
+        1
+      ],
+      "pdfTextLayer": "digital-text-with-sparse-table"
+    },
+    {
+      "documentId": "RNT-CA-P08",
+      "version": "2025-12-15",
+      "documentType": "policy_contract",
+      "role": "rental_terms",
+      "diagramAuthority": "illustrative",
+      "states": [
+        "CA"
+      ],
+      "policyScope": {
+        "policyId": "SLI-A1508902",
+        "vin": "KM8KNDAF4NA516248"
+      },
+      "effectiveFrom": "2025-12-15",
+      "effectiveThrough": "2026-12-15",
+      "pdf": "rental-terms-ca-packet-08.pdf",
+      "sha256": "d179b3412e49fb3626d21d95def46249348d45429225574055a47fb347c80067",
+      "ruleIds": [
+        "R.1",
+        "R.2",
+        "R.3",
+        "R.4",
+        "R.5",
+        "R.6",
+        "Figure R-1"
+      ],
+      "rulePages": [
+        1,
+        2
+      ],
+      "pdfTextLayer": "digital-text-and-vector-diagram"
+    },
+    {
+      "documentId": "EFF-CA-P08",
+      "version": "2025-12-15",
+      "documentType": "policy_contract",
+      "role": "policy_effective_date",
+      "states": [
+        "CA"
+      ],
+      "policyScope": {
+        "policyId": "SLI-A1508902",
+        "vin": "KM8KNDAF4NA516248"
+      },
+      "effectiveFrom": "2025-12-15",
+      "effectiveThrough": "2026-12-15",
+      "pdf": "effective-date-ca-packet-08.pdf",
+      "sha256": "4ab15f261343ecfae79ee984fcc48983ffcc5d80621bf0f1fc6b2e2627f919e6",
+      "ruleIds": [
+        "POLICY-TERM"
+      ],
+      "rulePages": [
+        1
+      ],
+      "pdfTextLayer": "none"
+    },
+    {
+      "documentId": "DEC-NY-P09",
+      "version": "2025-07-18",
+      "documentType": "policy_contract",
+      "role": "revised_declarations",
+      "states": [
+        "NY"
+      ],
+      "policyScope": {
+        "policyId": "MCM-A4370409",
+        "vin": "3GNAXUEG3PA517029"
+      },
+      "effectiveFrom": "2025-07-18",
+      "effectiveThrough": "2026-07-18",
+      "pdf": "declarations-ny-packet-09.pdf",
+      "sha256": "0457dc5ddb7703a12eb9662bf630d4b28246d01bf90227a1ef0e613352fe7862",
+      "ruleIds": [
+        "DEC-NY-P09"
+      ],
+      "rulePages": [
+        1
+      ],
+      "pdfTextLayer": "digital-text-with-sparse-table"
+    },
+    {
+      "documentId": "RNT-NY-P09",
+      "version": "2025-07-18",
+      "documentType": "policy_contract",
+      "role": "rental_terms",
+      "diagramAuthority": "illustrative",
+      "states": [
+        "NY"
+      ],
+      "policyScope": {
+        "policyId": "MCM-A4370409",
+        "vin": "3GNAXUEG3PA517029"
+      },
+      "effectiveFrom": "2025-07-18",
+      "effectiveThrough": "2026-07-18",
+      "pdf": "rental-terms-ny-packet-09.pdf",
+      "sha256": "d30983700e123d068d3544f5d2d7d2a47ed36a431413a482384fafabd5417bce",
+      "ruleIds": [
+        "R.1",
+        "R.2",
+        "R.3",
+        "R.4",
+        "R.5",
+        "R.6",
+        "Figure R-1"
+      ],
+      "rulePages": [
+        1,
+        2
+      ],
+      "pdfTextLayer": "digital-text-and-vector-diagram"
+    },
+    {
+      "documentId": "EFF-NY-P09",
+      "version": "2025-07-18",
+      "documentType": "policy_contract",
+      "role": "policy_effective_date",
+      "states": [
+        "NY"
+      ],
+      "policyScope": {
+        "policyId": "MCM-A4370409",
+        "vin": "3GNAXUEG3PA517029"
+      },
+      "effectiveFrom": "2025-07-18",
+      "effectiveThrough": "2026-07-18",
+      "pdf": "effective-date-ny-packet-09.pdf",
+      "sha256": "0fc95e24b045beac7aa31899ae74b938293ac86af5f5166437980d781c277272",
+      "ruleIds": [
+        "POLICY-TERM"
+      ],
+      "rulePages": [
+        1
+      ],
+      "pdfTextLayer": "none"
+    },
+    {
+      "documentId": "DEC-OH-P10",
+      "version": "2026-03-07",
+      "documentType": "policy_contract",
+      "role": "revised_declarations",
+      "states": [
+        "OH"
+      ],
+      "policyScope": {
+        "policyId": "BTU-A6414610",
+        "vin": "ZFBERFAB8MA517810"
+      },
+      "effectiveFrom": "2026-03-07",
+      "effectiveThrough": "2027-03-07",
+      "pdf": "declarations-oh-packet-10.pdf",
+      "sha256": "a5a39fdf1a547fd50f409e1f0c55a2a063b9d6597755ef947dc078855bdcd7b3",
+      "ruleIds": [
+        "DEC-OH-P10"
+      ],
+      "rulePages": [
+        1
+      ],
+      "pdfTextLayer": "digital-text-with-sparse-table"
+    },
+    {
+      "documentId": "RNT-OH-P10",
+      "version": "2026-03-07",
+      "documentType": "policy_contract",
+      "role": "rental_terms",
+      "diagramAuthority": "illustrative",
+      "states": [
+        "OH"
+      ],
+      "policyScope": {
+        "policyId": "BTU-A6414610",
+        "vin": "ZFBERFAB8MA517810"
+      },
+      "effectiveFrom": "2026-03-07",
+      "effectiveThrough": "2027-03-07",
+      "pdf": "rental-terms-oh-packet-10.pdf",
+      "sha256": "49910aaa3bdc9372a545c36440acbad01829b513ca31299a09615072d413f20d",
+      "ruleIds": [
+        "R.1",
+        "R.2",
+        "R.3",
+        "R.4",
+        "R.5",
+        "R.6",
+        "Figure R-1"
+      ],
+      "rulePages": [
+        1,
+        2
+      ],
+      "pdfTextLayer": "digital-text-and-vector-diagram"
+    },
+    {
+      "documentId": "EFF-OH-P10",
+      "version": "2026-03-07",
+      "documentType": "policy_contract",
+      "role": "policy_effective_date",
+      "states": [
+        "OH"
+      ],
+      "policyScope": {
+        "policyId": "BTU-A6414610",
+        "vin": "ZFBERFAB8MA517810"
+      },
+      "effectiveFrom": "2026-03-07",
+      "effectiveThrough": "2027-03-07",
+      "pdf": "effective-date-oh-packet-10.pdf",
+      "sha256": "8000c49e2796e9d70a4600c805026da74599e3a5a0a0c66ce280c7b760d6fd3e",
+      "ruleIds": [
+        "POLICY-TERM"
+      ],
+      "rulePages": [
+        1
+      ],
       "pdfTextLayer": "none"
     },
     {

@@ -4,6 +4,7 @@ import { packetReviewer } from "./packet-review.js";
 import { createSessionApi } from "./session-api.js";
 import { createPolicyChat } from "./policy-chat.js";
 import { createPolicyDocument } from "./policy-document.js";
+import { claimFieldSources, policyRuleSources } from "./policy-evidence-links.js";
 import {
   typeNames,
   availableTypes,
@@ -53,6 +54,7 @@ let policyBusy = false;
 let policyAvailabilityTimer;
 let policyMode = "search";
 let policySource;
+const claimEvidenceRequests = new Map();
 let policyPaneMode = "result";
 let pendingPolicyRun;
 const policyResults = new Map();
@@ -69,11 +71,18 @@ const policyCheckNames = [
   "Authorization and payment readiness",
 ];
 const policyShortNames = [
-  "Amount",
-  "Timing",
-  "Effective terms",
-  "Reimbursement",
-  "Payment readiness",
+  "Daily cost",
+  "Rental dates",
+  "Active policy",
+  "Covered charges",
+  "Payment approval",
+];
+const policyCheckDescriptions = [
+  "Is the daily price within the rental limit?",
+  "Do rental dates match the covered repair period?",
+  "Which terms applied on the accident date?",
+  "Which fees and taxes can be reimbursed?",
+  "Is the required insurer approval documented?",
 ];
 let focusedPolicyCheck = 0;
 const columnWidths = new Map();
@@ -164,7 +173,6 @@ function controls() {
   get("analyze").disabled =
     busy || !sessionId || !catalog || !get("analyzer").value.trim();
   get("load-cache").disabled = busy || policyBusy || !savedExtractionRun;
-  get("review-packet").disabled = busy || !run;
   for (const button of get("packet-table").querySelectorAll(
     ".packet-policy-summary, .policy-matrix-button",
   ))
@@ -427,7 +435,7 @@ function renderTable() {
     button.setAttribute("aria-pressed", String(button.dataset.view === view));
   }
   get("policy-toolbar").hidden = view !== "policy";
-  get("checks-description").hidden = !["policies", "policy"].includes(view);
+  get("checks-description").hidden = view !== "policies";
   get("checks-description").textContent =
     view === "policy"
       ? "Agent review against rental SOPs. Satisfied does not authorize coverage or payment."
@@ -782,7 +790,7 @@ function renderTable() {
   mountDetails(columns.length);
 }
 function parkDetails() {
-  get("inline-panels").append(...Object.values(detailPanels));
+  get("inline-panels").append(detailPanels.policy, detailPanels.items);
 }
 function collapseDetails() {
   packetReview.reset();
@@ -805,7 +813,7 @@ function expandDetails(packetId, kind, key) {
   return true;
 }
 function sizeDetails() {
-  if (!expansion) return;
+  if (!expansion || expansion.kind === "agent") return;
   const owner = get("packet-table").querySelector(
     ":scope > tbody > .expanded-packet",
   );
@@ -824,18 +832,20 @@ function mountDetails(columnCount) {
     (row) => row.dataset.packet === expansion.packetId,
   );
   if (!owner) return;
-  const row = element("tr", undefined, "inline-detail-row");
-  row.id = "inline-details";
-  row.dataset.detailFor = expansion.packetId;
-  const cell = element("td");
-  cell.colSpan = columnCount;
   const panel = detailPanels[expansion.kind];
-  cell.append(panel);
-  row.append(cell);
-  owner.cells[0].rowSpan = 2;
   owner.classList.add("expanded-packet");
-  owner.after(row);
-  sizeDetails();
+  if (expansion.kind !== "agent") {
+    const row = element("tr", undefined, "inline-detail-row");
+    row.id = "inline-details";
+    row.dataset.detailFor = expansion.packetId;
+    const cell = element("td");
+    cell.colSpan = columnCount;
+    cell.append(panel);
+    row.append(cell);
+    owner.cells[0].rowSpan = 2;
+    owner.after(row);
+    sizeDetails();
+  }
   const button = [
     ...owner.querySelectorAll(
       expansion.kind === "policy"
@@ -852,7 +862,7 @@ function mountDetails(columnCount) {
   );
   if (button) {
     button.setAttribute("aria-expanded", "true");
-    button.setAttribute("aria-controls", row.id);
+    button.setAttribute("aria-controls", expansion.kind === "agent" ? panel.id : "inline-details");
     button.closest("td").classList.add("expanded-cell");
   }
 }
@@ -995,6 +1005,8 @@ function renderWorkflowNavigation() {
     button.setAttribute("aria-pressed", String(button.dataset.workflow === workflow));
   get("view-types").hidden = workflow !== "extract";
   get("extraction-toolbar").hidden = workflow !== "extract";
+  get("results-heading").hidden = workflow === "policy";
+  get("policy-table-intro").hidden = workflow !== "policy";
   get("results-heading").textContent = {
     extract: "Parse and extract", policies: "Check consistency", policy: "Check Policies: Rental Car",
   }[workflow];
@@ -1163,7 +1175,15 @@ function showPolicyPanel(show) {
   get("policy-pane-modes").hidden = !show;
   get("policy-output").hidden = !show || policyPaneMode !== "result";
   get("policy-chat").hidden = !show || policyPaneMode !== "chat";
-  get("pdf-scroll").hidden = false;
+  get("policy-review-pane").hidden = !show;
+  const selected = show && expansion?.kind === "agent" && expansion.view === view;
+  get("agent-panel").hidden = !selected;
+  get("policy-review-empty").hidden = selected;
+  get("preview").setAttribute("aria-label", show ? "Policy check details" : "Document preview");
+  get("pane-splitter").setAttribute("aria-label", show ? "Resize policy details" : "Resize document preview");
+  get("pdf-scroll").hidden = show;
+  get("pdf-controls").hidden = show || get("pdf-stage").dataset.ready !== "true";
+  get("pdf-status").hidden = show;
 }
 function policyMessage() {
   const mode = policyStatus?.modes?.[policyMode];
@@ -1260,22 +1280,7 @@ async function watchPolicy(job) {
   try {
     while (run?.id === runId) {
       const status = policyResults.get(mode);
-      const completed = status.items.filter((item) =>
-        ["completed", "failed"].includes(item.status),
-      ).length;
-      const active = status.items.find((item) =>
-        ["extracting", "reviewing"].includes(item.status),
-      );
-      const elapsed = Math.max(
-        0,
-        Math.floor((Date.now() - Date.parse(job.startedAt)) / 1000),
-      );
-      get("policy-status").textContent =
-        `${completed}/${status.items.length} cases · ${policyModeLabel(mode)} · ${status.status}` +
-        (active
-          ? ` · ${active.id}: ${active.status === "extracting" ? "Extracting claim fields with CU (also required without retrieval)" : "Agent checking rules"}`
-          : "") +
-        ` · ${Math.floor(elapsed / 60)}m ${elapsed % 60}s elapsed`;
+      renderPolicyRunStatus();
       if (status.status !== "running") break;
       await new Promise((resolve) => setTimeout(resolve, 1400));
       await refreshPolicy(mode);
@@ -1304,7 +1309,44 @@ async function watchPolicy(job) {
     await policyCaches();
   }
 }
+function renderPolicyRunStatus() {
+  const job = policyResults.get(policyMode);
+  const running = job?.status === "running";
+  get("policy-run-status").hidden = !running;
+  get("policy-status").hidden = running;
+  if (!running) return;
+  const setText = (id, value) => {
+    const node = get(id);
+    if (node.textContent !== value) node.textContent = value;
+  };
+  const active = job.items.find((item) =>
+    ["extracting", "reviewing"].includes(item.status),
+  );
+  const completed = job.items.filter((item) =>
+    ["completed", "failed"].includes(item.status),
+  ).length;
+  const interrupted = policyProgressErrors.has(policyMode);
+  setText("policy-run-label", interrupted
+    ? "Progress connection interrupted"
+    : active?.status === "extracting" ? "Preparing claim evidence" : "Agent running");
+  get("policy-run-status").querySelector(".spinner").hidden = interrupted;
+  const customer = active ? customerName(results.get(active.id)) : "";
+  setText("policy-run-packet", active
+    ? `${active.id}${customer ? ` · ${customer}` : ""}`
+    : "Waiting for the next packet");
+  setText("policy-run-detail", interrupted
+    ? "The server may still be running. Reload to reconnect; do not start a duplicate review."
+    : `${completed}/${job.items.length} packets finished · ${policyModeLabel()} · ${
+      active?.status === "extracting" ? "CU extracting claim fields"
+        : active ? "Checking policy rules and citations" : "Preparing next case"
+    }`);
+  const elapsed = Math.max(0, Math.floor((Date.now() - Date.parse(job.startedAt)) / 1000));
+  get("policy-run-elapsed").textContent = Number.isFinite(elapsed)
+    ? `${Math.floor(elapsed / 60)}:${String(elapsed % 60).padStart(2, "0")}`
+    : "—";
+}
 function updatePolicyActivity() {
+  renderPolicyRunStatus();
   const activity = get("policy-output").querySelector(".policy-activity");
   if (!activity) return;
   const job = policyResults.get(policyMode);
@@ -1344,8 +1386,12 @@ function renderPolicyTable() {
   const head = element("tr");
   head.append(element("th", "Customer/Packet"));
   for (const [index, label] of policyCheckNames.entries()) {
-    const cell = element("th", policyShortNames[index]);
-    cell.title = label;
+    const cell = element("th");
+    cell.append(
+      element("span", policyShortNames[index], "policy-column-title"),
+      element("span", policyCheckDescriptions[index], "policy-column-description"),
+    );
+    cell.title = policyCheckDescriptions[index];
     head.append(cell);
   }
   table.querySelector("thead").replaceChildren(head);
@@ -1379,7 +1425,9 @@ function renderPolicyTable() {
         const check = item?.result?.Checks[column];
         const text = check
           ? check.Outcome === "NotApplicable"
-            ? "Not applicable"
+            ? "N/A"
+            : check.Outcome === "InProgress"
+              ? "Waiting for info"
             : check.ReviewRequired
               ? "Review required"
               : "Satisfied"
@@ -1394,11 +1442,17 @@ function renderPolicyTable() {
         const state = element(
           "span",
           text,
-          `policy-state ${check ? (check.Outcome === "NotApplicable" ? "policy-na" : check.ReviewRequired ? "policy-review" : "policy-satisfied") : item?.error ? "policy-error" : ""}`,
+          `policy-state ${check ? (check.Outcome === "NotApplicable" ? "policy-na" : check.Outcome === "InProgress" ? "policy-waiting" : check.ReviewRequired ? "policy-review" : "policy-satisfied") : item?.error ? "policy-error" : ""}`,
         );
         button.replaceChildren(state);
+        if (check?.Outcome === "NotApplicable")
+          button.setAttribute("aria-label", `${policyShortNames[column]}: Not applicable`);
+        if (check?.Outcome === "InProgress")
+          button.setAttribute("aria-label", `${policyShortNames[column]}: Waiting for info, missing claim information`);
         button.title =
-          check?.Reason ??
+          (check?.Outcome === "InProgress"
+            ? `Waiting for claim data: ${check.Headline ?? check.Reason}`
+            : check?.Headline ?? check?.Reason) ??
           item?.error ??
           "Run policy checks explicitly for this extraction mode.";
         button.dataset.agentCheck = String(column);
@@ -1413,20 +1467,13 @@ function renderPolicyTable() {
   mountDetails(policyCheckNames.length);
 }
 function openAgentCheck(packetId, column) {
-  if (!expandDetails(packetId, "agent", String(column))) return;
+  if (!expandDetails(packetId, "agent", String(column))) {
+    showPolicyPanel(true);
+    return;
+  }
   focusedPolicyCheck = column;
   renderPolicyOutput(column);
-  void showAgentClaim(packetId).catch(fail);
-}
-async function showAgentClaim(packetId) {
-  const result = results.get(packetId);
-  const segment =
-    result?.review?.segments.find(
-      (segment) => segment.category === "rental_invoice",
-    ) ?? result?.review?.segments[0];
-  await inspect(packetId, segment, undefined, segment?.documents[0], {
-    zoom: 1,
-  });
+  get("policy-review-pane").scrollTop = 0;
 }
 function renderPolicyOutput(focused) {
   if (view !== "policy" || policySource) return;
@@ -1441,12 +1488,16 @@ function renderPolicyOutput(focused) {
         runId: run.id,
         mode: policyMode,
         packetId: selectedPacket,
+        check: policyCheckNames[focusedPolicyCheck],
         resultId: `${item?.inputHash ?? ""}:${item?.completedAt ?? ""}:${item?.indexName ?? ""}`,
       })
       .catch(fail);
   }
   const panel = get("policy-output");
-  get("agent-title").textContent = policyCheckNames[focusedPolicyCheck];
+  get("agent-title").textContent = policyShortNames[focusedPolicyCheck];
+  get("policy-check-context").textContent = selectedPacket
+    ? `${customerName(results.get(selectedPacket)) || selectedPacket} · ${selectedPacket}`
+    : "";
   panel.replaceChildren();
   if (!selectedPacket) {
     panel.append(
@@ -1515,34 +1566,85 @@ function renderPolicyOutput(focused) {
       element(
         "span",
         check.Outcome === "NotApplicable"
-          ? "Not applicable"
+          ? "N/A · Not applicable"
+          : check.Outcome === "InProgress"
+            ? "Waiting for info"
           : check.ReviewRequired
             ? "Review required"
             : "Satisfied",
-        `policy-state ${check.Outcome === "NotApplicable" ? "policy-na" : check.ReviewRequired ? "policy-review" : "policy-satisfied"}`,
+        `policy-state ${check.Outcome === "NotApplicable" ? "policy-na" : check.Outcome === "InProgress" ? "policy-waiting" : check.ReviewRequired ? "policy-review" : "policy-satisfied"}`,
       ),
     );
+    if (check.Outcome === "InProgress")
+      section.append(element("p", "Review complete. Waiting for claim information or approval; add it, then rerun.", "policy-waiting-note"));
+    if (check.Headline) section.append(element("h4", check.Headline, "policy-finding"));
+    else section.append(element("p",
+      "Saved review uses the earlier format. Run again for a short headline and field comparison.",
+      "muted"));
+    if (check.Comparisons?.length) {
+      const comparison = element("table", undefined, "policy-comparison");
+      const caption = element("caption", "Claim facts compared with policy rules");
+      const head = element("thead");
+      const header = element("tr");
+      for (const label of ["From", "Field or rule", "Value"]) {
+        const cell = element("th", label);
+        cell.scope = "col";
+        header.append(cell);
+      }
+      head.append(header);
+      const body = element("tbody");
+      for (const pair of check.Comparisons) {
+        for (const [source, field, label, value] of [
+          ["Claim", pair.ClaimField, pair.ClaimLabel, pair.ClaimValue],
+          ["Policy", pair.PolicyField, pair.PolicyLabel, pair.PolicyValue],
+        ]) {
+          const row = element("tr");
+          const name = element("td");
+          name.append(element("span", label, "policy-evidence-label"),
+            element("span", field, "policy-evidence-field"));
+          const amount = element("td");
+          amount.append(element("strong", value));
+          if (source === "Claim")
+            addClaimComparisonSources(amount, field, value, selectedPacket,
+              `${item.inputHash ?? ""}:${item.completedAt ?? ""}`);
+          else
+            addPolicyComparisonSources(amount, field, value, item.citations?.[index] ?? []);
+          row.append(element("td", source), name, amount);
+          body.append(row);
+        }
+      }
+      comparison.append(caption, head, body);
+      section.append(comparison, element("p", check.Reason, "policy-reasoning"));
+    }
+    const explanation = element("details", undefined, "policy-explanation");
+    explanation.append(element("summary", "Review details"));
     const values = element("dl", undefined, "policy-values");
     for (const [label, value] of [
-      ["Expected", check.ExpectedValue],
-      ["Actual", check.ActualValue],
+      ["Claim evidence", check.ActualValue],
+      ["Policy requirement", check.ExpectedValue],
     ]) {
       const description = element("dd");
       description.append(element("strong", value));
-      values.append(element("dt", `${label}:`), description);
+      values.append(element("dt", label), description);
     }
-    section.append(values);
-    const reasoning = element("p", undefined, "policy-reasoning");
-    reasoning.append(element("em", `Reasoning: ${check.Reason}`));
-    section.append(reasoning, element("p", "Source:", "policy-source-label"));
+    explanation.append(values, element("p", check.Reason));
+    section.append(explanation, element("p", "Sources", "policy-source-label"));
     const citations = item.citations?.[index] ?? [];
     if (!citations.length)
       section.append(element("p", "No applicable rule source cited.", "muted"));
     for (const citation of citations) {
-      const label = `${citation.DocumentId} v${citation.Version.replace(/^v(?=\d)/, "")} · ${citation.RuleId} · ${citation.Section}`;
+      const sourceName = citation.DocumentId.startsWith("DEC-") ? "Declarations"
+        : citation.DocumentId.startsWith("RNT-") ? "Rental terms"
+          : citation.DocumentId.startsWith("END-") ? "Endorsement"
+            : citation.DocumentId.startsWith("SHARED-") ? "Shared processing rules"
+              : /^[A-Z]{2}-RENTAL-/.test(citation.DocumentId) ? "State processing rules"
+                : citation.DocumentId;
+      const page = citation.href?.match(/#page=(\d+)$/)?.[1];
+      const label = `${sourceName}${page ? ` · page ${page}` : ""} · ${citation.RuleId}`;
       if (citation.href?.startsWith("/data/policies/rental/")) {
         const link = element("a", label);
         link.href = citation.href;
+        link.title = `${citation.DocumentId} v${citation.Version.replace(/^v(?=\d)/, "")} · ${citation.Section}`;
         link.onclick = (event) => {
           event.preventDefault();
           openPolicySource(citation, link).catch(fail);
@@ -1560,6 +1662,10 @@ function renderPolicyOutput(focused) {
     panel.append(section);
   }
   const details = element("details");
+  if (item.historical)
+    panel.append(element("p",
+      "Saved review from an earlier prompt. Run policy checks to evaluate with the current instructions.",
+      "muted"));
   details.append(
     element("summary", "Structured output and provenance"),
     element(
@@ -1578,6 +1684,104 @@ function renderPolicyOutput(focused) {
   if (focused !== undefined && policyPaneMode === "result")
     get(`policy-check-${focused}`)?.scrollIntoView({ block: "nearest" });
 }
+function comparisonLink(text, href, title, open) {
+  const link = element("a", text, "policy-value-link");
+  link.href = href;
+  link.title = title;
+  link.onclick = (event) => {
+    event.preventDefault();
+    open(link).catch(fail);
+  };
+  return link;
+}
+function addPolicyComparisonSources(cell, field, value, citations) {
+  const sources = policyRuleSources(citations, field);
+  if (sources.length === 1) {
+    const citation = sources[0];
+    cell.replaceChildren(element("strong"));
+    cell.firstChild.append(comparisonLink(value, citation.href,
+      `View ${citation.DocumentId} · ${citation.Section}`, (link) => openPolicySource(citation, link)));
+  } else if (sources.length > 1) {
+    for (const citation of sources) {
+      const link = comparisonLink(`${citation.DocumentId} · ${citation.Section}`, citation.href,
+        "View supporting policy page", (link) => openPolicySource(citation, link));
+      link.classList.add("policy-value-source");
+      cell.append(link);
+    }
+  } else cell.append(element("span", "No linked rule source", "policy-source-unavailable"));
+}
+function addClaimComparisonSources(cell, field, value, packetId, reviewVersion) {
+  const key = `${run.id}:${packetId}:${reviewVersion}`;
+  if (!claimEvidenceRequests.has(key)) {
+    const request = api(`policy/claim-evidence?runId=${encodeURIComponent(run.id)}&packetId=${encodeURIComponent(packetId)}`);
+    claimEvidenceRequests.set(key, request);
+    request.catch(() => claimEvidenceRequests.delete(key));
+  }
+  const notice = element("span", "Locating claim source…", "policy-source-unavailable");
+  cell.append(notice);
+  claimEvidenceRequests.get(key).then((evidence) => {
+    if (!cell.isConnected) return;
+    notice.remove();
+    const matches = claimFieldSources(evidence.fields, field);
+    const pages = new Map();
+    for (const fact of matches)
+      for (const region of fact.regions) {
+        const key = `${fact.href}:${region.page}`;
+        if (!pages.has(key)) pages.set(key, { ...fact, page: region.page, regions: [] });
+        pages.get(key).regions.push(region);
+      }
+    const sources = [...pages.values()];
+    if (sources.length === 1) {
+      const source = sources[0];
+      cell.replaceChildren(element("strong"));
+      cell.firstChild.append(comparisonLink(value, `${source.href}#page=${source.page}`,
+        `View extracted ${field} · claim page ${source.page}`, (link) => openClaimSource(source, field, link)));
+    } else if (sources.length > 1) {
+      for (const source of sources) {
+        const link = comparisonLink(`Claim · page ${source.page}`, `${source.href}#page=${source.page}`,
+          `View extracted ${field}`, (link) => openClaimSource(source, field, link));
+        link.classList.add("policy-value-source");
+        cell.append(link);
+      }
+    } else cell.append(element("span", "No extracted source location", "policy-source-unavailable"));
+  }).catch((error) => {
+    if (!cell.isConnected) return;
+    notice.textContent = `Claim source unavailable: ${error.message}`;
+    notice.classList.add("error");
+    if (!notice.isConnected) cell.append(notice);
+  });
+}
+function beginPolicySource(link, title) {
+  policyDocument.close();
+  policySource = {
+    link,
+    scrollTop: get("policy-review-pane").scrollTop,
+  };
+  get("policy-review-pane").hidden = true;
+  get("pdf-scroll").hidden = false;
+  get("policy-source-toolbar").hidden = false;
+  get("policy-source-title").textContent = title;
+  get("download").hidden = true;
+  get("policy-source-back").textContent = "Back to policy check";
+  get("policy-source-back").focus();
+  return policySource;
+}
+async function openClaimSource(source, field, link) {
+  if (source.href !== `/data/packets/${selectedPacket}.pdf` ||
+      !Number.isInteger(source.page) || source.page < 1)
+    throw new Error("The claim source is not from the selected packet.");
+  const selected = beginPolicySource(link, `${field} · Claim ${selectedPacket} · page ${source.page}`);
+  get("pdf-status").hidden = false;
+  try {
+    await previewPdf(source.href, source.page, source.regions);
+  } finally {
+    if (policySource !== selected && view === "policy") {
+      get("pdf-scroll").hidden = !policySource;
+      get("pdf-controls").hidden = !policySource;
+      get("pdf-status").hidden = !policySource;
+    }
+  }
+}
 async function openPolicySource(citation, link) {
   const match =
     /^\/data\/policies\/rental\/((?:ocr-comparison-v2\/)?[a-z0-9-]+\.pdf)#page=([1-9]\d*)$/.exec(
@@ -1585,17 +1789,7 @@ async function openPolicySource(citation, link) {
     );
   if (!match)
     throw new Error("The policy source link is not a verified local PDF.");
-  policySource = {
-    link,
-    scrollTop: get("packets").scrollTop,
-  };
-  get("pdf-scroll").hidden = false;
-  get("policy-source-toolbar").hidden = false;
-  get("policy-source-title").textContent =
-    `${citation.DocumentId} · ${citation.RuleId} · ${citation.Section}`;
-  get("download").hidden = true;
-  get("policy-source-back").textContent = "Back to claim document";
-  get("policy-source-back").focus();
+  beginPolicySource(link, `${citation.DocumentId} · ${citation.RuleId} · ${citation.Section}`);
   await policyDocument.open(
     `/data/policies/rental/${match[1]}`,
     Number(match[2]),
@@ -1604,16 +1798,19 @@ async function openPolicySource(citation, link) {
 get("policy-source-back").onclick = () => {
   const previous = policySource;
   showPolicyPanel(true);
-  void showAgentClaim(selectedPacket).catch(fail);
-  get("packets").scrollTop = previous?.scrollTop ?? 0;
+  get("policy-review-pane").scrollTop = previous?.scrollTop ?? 0;
   previous?.link.focus({ preventScroll: true });
 };
-get("close-agent").onclick = collapseDetails;
+get("close-agent").onclick = () => {
+  collapseDetails();
+  showPolicyPanel(true);
+  get("packet-table").querySelector(`tr.selected [data-agent-check="${focusedPolicyCheck}"]`)?.focus();
+};
 for (const mode of ["result", "chat"])
   get(`policy-${mode}-mode`).onclick = () => {
     const key = `${run?.id}:${policyMode}:${selectedPacket}`;
     if (policyPaneMode === "result")
-      policyResultScroll.set(key, get("packets").scrollTop);
+      policyResultScroll.set(key, get("policy-review-pane").scrollTop);
     policyPaneMode = mode;
     for (const value of ["result", "chat"]) {
       const button = get(`policy-${value}-mode`);
@@ -1623,13 +1820,12 @@ for (const mode of ["result", "chat"])
     showPolicyPanel(true);
     renderPolicyOutput();
     if (mode === "result")
-      get("packets").scrollTop = policyResultScroll.get(key) ?? 0;
+      get("policy-review-pane").scrollTop = policyResultScroll.get(key) ?? 0;
   };
 get("policy-mode").onchange = async () => {
   policyMode = get("policy-mode").value;
   controls();
   showPolicyPanel(true);
-  if (selectedPacket) void showAgentClaim(selectedPacket).catch(fail);
   policyMessage();
   renderTable();
   renderPolicyOutput();
@@ -1675,8 +1871,7 @@ function confirmPolicyRun(packetIds) {
   get("policy-confirm-summary").textContent =
     (packetId
       ? `1 case: ${customerName(results.get(packetId)) || packetId} · ${policyModeLabel()}. Only this case will be retried. `
-      : `${run.items.filter((item) => item.rawSaved).length} cases · ${policyModeLabel()}. `) +
-    "Cases run sequentially. Missing claim fields are extracted with CU first, even without policy retrieval.";
+      : `${run.items.filter((item) => item.rawSaved).length} cases · ${policyModeLabel()}.`);
   get("policy-confirmation").showModal();
 }
 get("policy-run").onclick = () => confirmPolicyRun();

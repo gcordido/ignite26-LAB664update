@@ -1,1 +1,2 @@
 *.pdf binary
+data/policy-demo/*.json text eol=lf

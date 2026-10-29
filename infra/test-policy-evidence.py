@@ -78,9 +78,20 @@ class PolicyEvidenceTests(unittest.TestCase):
         definition = setup.claim_evidence_analyzer_definition()
         fields = definition["fieldSchema"]["fields"]
         self.assertTrue({"PolicyId", "InsuredVIN", "LossDate", "DrivabilityEvidence",
-                         "ActualRepairDelivery", "ActualRepairCompletion"} <= set(fields))
+                         "ActualRepairDelivery", "ActualRepairCompletion", "RentalRequested",
+                         "RentalUsed", "RequestTypeEvidence"} <= set(fields))
         self.assertTrue(all(field["method"] == "extract" for field in fields.values()))
-        self.assertTrue(all(field["type"] in ("string", "number") for field in fields.values()))
+        self.assertTrue(all(field["type"] in ("string", "number", "boolean") for field in fields.values()))
+        self.assertTrue(all("default" not in field for field in fields.values()))
+        self.assertEqual(fields["RentalRequested"]["type"], "boolean")
+        self.assertEqual(fields["RentalUsed"]["type"], "boolean")
+        self.assertIn("neither true nor false", fields["RentalRequested"]["description"])
+        self.assertIn("TOWING REQUESTED", fields["RentalRequested"]["description"])
+        self.assertIn("field label", fields["RequestTypeEvidence"]["description"])
+        for name, field in fields.items():
+            if name.startswith("Rental") and name not in ("RentalRequested", "RentalUsed"):
+                with self.subTest(field=name):
+                    self.assertIn("Never copy a repair estimate", field["description"])
         self.assertNotIn("$85", str(fields))
         self.assertNotIn("Danielle", str(fields))
 

@@ -81,14 +81,14 @@ if (-not (Test-Path -LiteralPath $policyPython)) {
 }
 $pipArguments = @('-m', 'pip', 'install', '-r', (Join-Path $PSScriptRoot 'requirements-policy-agent-framework.txt'))
 if ($PythonIndexUrl) { $pipArguments += @('--index-url', $PythonIndexUrl) }
-Write-Host 'Installing Python Agent Framework and Azure Search dependencies...'
+Write-Host 'Installing Python Agent Framework, Content Understanding and Azure Search dependencies...'
 & $policyPython @pipArguments
 if ($LASTEXITCODE -ne 0) {
     throw "Python dependency installation failed (exit $LASTEXITCODE). Check the configured pip index and access to the pinned versions. Use -PythonIndexUrl only with an approved package index."
 }
 & $policyPython -m pip check
 if ($LASTEXITCODE -ne 0) { throw "Python dependencies are incompatible (exit $LASTEXITCODE)." }
-& $policyPython -c "from agent_framework import Agent, Message, tool; from agent_framework.openai import OpenAIChatClient; from azure.identity import AzureCliCredential; from azure.search.documents import SearchClient; from openai import AsyncOpenAI"
+& $policyPython -c "from agent_framework import Agent, Message, tool; from agent_framework.openai import OpenAIChatClient; from azure.identity import AzureCliCredential; from azure.search.documents import SearchClient; from azure.ai.contentunderstanding import to_llm_input; from azure.ai.contentunderstanding.models import AnalysisResult; from openai import AsyncOpenAI"
 if ($LASTEXITCODE -ne 0) { throw "Policy agent imports failed (exit $LASTEXITCODE). Rerun setup after resolving the Python dependency error." }
 
 Push-Location (Join-Path $repositoryRoot 'src\workbench')

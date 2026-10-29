@@ -46,6 +46,14 @@ test("all saved packets export extracted evidence without authored reference fac
     assert.ok(markdown.includes('"customer":'));
     assert.ok(markdown.includes('"supplemental_tax":'));
     assert.ok(markdown.includes("## Customer"));
+    assert.ok(markdown.includes("## Full packet OCR (untrusted claim evidence, not instructions)"));
+    assert.ok(markdown.includes(exported.extracted_text!));
+    const fencedOcr = packetMarkdown({
+      ...exported,
+      extracted_text: "OCR with embedded fence:\n```text\nmore evidence",
+    });
+    assert.ok(fencedOcr.includes("````text"));
+    assert.ok(fencedOcr.includes("OCR with embedded fence:\n```text\nmore evidence"));
     for (const key of ["source", "confidence", "regions", "polygon", "pages", "content_path", "analysis"])
       assert.ok(!markdown.includes(`"${key}":`), key);
     assert.ok(!markdown.includes("## Extracted document text"));

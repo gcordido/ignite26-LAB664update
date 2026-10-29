@@ -1,6 +1,7 @@
-import { getDocument, GlobalWorkerOptions } from "/vendor/pdfjs/pdf.mjs";
+import * as initialPdfJs from "/vendor/pdfjs/pdf.mjs";
 
-GlobalWorkerOptions.workerSrc = "/vendor/pdfjs/pdf.worker.mjs";
+let pdfJs = initialPdfJs;
+pdfJs.GlobalWorkerOptions.workerSrc = "/vendor/pdfjs/pdf.worker.mjs";
 const get = (id) => document.getElementById(id);
 const scroll = get("pdf-scroll");
 let documentPdf;
@@ -15,6 +16,7 @@ let selection = 0;
 let wheelFrame = 0;
 let wheelAnchor;
 let drag;
+let renderedWidth = 0;
 
 function status(message) {
   get("pdf-status").textContent = message;
@@ -54,7 +56,6 @@ async function render({ anchor, reset = false, focus } = {}) {
   }
   if (current !== version) return;
   const availableWidth = scroll.clientWidth;
-  const availableHeight = scroll.clientHeight;
   const base = page.getViewport({ scale: 1 });
   const fit = Math.max(100, availableWidth - 26) / base.width;
   const viewport = page.getViewport({ scale: fit * zoom });
@@ -102,11 +103,9 @@ async function render({ anchor, reset = false, focus } = {}) {
   );
   stage.hidden = false;
   get("preview-empty").hidden = true;
-  if (
-    scroll.clientWidth !== availableWidth ||
-    scroll.clientHeight !== availableHeight
-  )
+  if (scroll.clientWidth !== availableWidth)
     return render({ anchor, reset, focus });
+  renderedWidth = availableWidth;
   stage.dataset.source = selectedUrl;
   stage.dataset.page = pageNumber;
   stage.dataset.zoom = zoom;
@@ -165,20 +164,48 @@ export async function previewPdf(url, page, highlights = [], options = {}) {
     get("pdf-stage").hidden = true;
     get("pdf-controls").hidden = true;
     status("Loading...");
-    loading = getDocument({ url, standardFontDataUrl: "/vendor/pdfjs-fonts/" });
-    const task = loading;
-    try {
-      const pdf = await task.promise;
-      if (task !== loading) {
-        await pdf.destroy();
-        return;
+    for (let attempt = 0; attempt < 2; attempt++) {
+      loading = pdfJs.getDocument({ url, standardFontDataUrl: "/vendor/pdfjs-fonts/" });
+      const task = loading;
+      try {
+        const pdf = await task.promise;
+        if (task !== loading || current !== selection) {
+          await pdf.destroy();
+          return;
+        }
+        documentPdf = pdf;
+        break;
+      } catch (error) {
+        if (task !== loading || current !== selection) return;
+        if (attempt === 0 && error.message?.startsWith("Setting up fake worker failed:")) {
+          // A failed worker import stays cached in PDF.js and the browser's module map.
+          status("Reconnecting PDF preview...");
+          await task.destroy();
+          try {
+            const retry = `worker-retry=${Date.now()}`;
+            const fresh = await import(`/vendor/pdfjs/pdf.mjs?${retry}`);
+            if (task !== loading || current !== selection) return;
+            fresh.GlobalWorkerOptions.workerSrc = `/vendor/pdfjs/pdf.worker.mjs?${retry}`;
+            pdfJs = fresh;
+            continue;
+          } catch (recoveryError) {
+            if (task !== loading || current !== selection) return;
+            selectedUrl = "";
+            const failure = new Error(
+              "The PDF renderer could not reconnect. Check that the workbench is running, then reload this page.",
+              { cause: recoveryError },
+            );
+            report(failure);
+            throw failure;
+          }
+        }
+        selectedUrl = "";
+        const failure = error.message?.startsWith("Setting up fake worker failed:")
+          ? new Error("The PDF worker could not load. Check that the workbench is running, then reload this page.", { cause: error })
+          : error;
+        report(failure);
+        throw failure;
       }
-      documentPdf = pdf;
-    } catch (error) {
-      if (task !== loading) return;
-      selectedUrl = "";
-      report(error);
-      throw error;
     }
   } else if (!documentPdf) {
     const task = loading;
@@ -305,7 +332,8 @@ let resizeTimer;
 new ResizeObserver(() => {
   clearTimeout(resizeTimer);
   resizeTimer = setTimeout(() => {
-    if (documentPdf && get("pdf-stage").dataset.ready === "true")
+    if (documentPdf && !scroll.hidden && scroll.clientWidth > 0 &&
+        scroll.clientWidth !== renderedWidth && get("pdf-stage").dataset.ready === "true")
       render({ anchor: centerAnchor() }).catch(report);
   }, 150);
 }).observe(scroll);

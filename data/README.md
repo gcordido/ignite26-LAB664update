@@ -30,16 +30,38 @@ Select the image to open the sample PDF.
 
 ## Rental review policy corpus
 
-Synthetic rental-review SOPs for ten states and a shared evidence standard
-are in the [v2 corpus](policies/rental/ocr-comparison-v2/manifest.json), with
-editable DOCX exports and PDF ingestion copies. See the
+The [v2 Search corpus](policies/rental/ocr-comparison-v2/manifest.json) has
+41 manifest-listed PDFs: three claim-scoped evidence documents for each of the
+ten available packets, plus ten state SOPs and one shared evidence standard.
+Each claim set contains a sparse declarations table, rental terms with an
+eligibility diagram, and a scanned effective-date document. In the Texas and
+Washington contracts, Figure R-1 controls eligibility timing; in the other
+eight state contracts, the diagram is illustrative and the written clauses
+control. The
+[scenario questions and expected answers](policies/rental/ocr-comparison-v2/scenario-questions.json)
+are for offline verification and are not indexed. No eleventh claim packet is
+present in this dataset. See the
 [scenario guide](../docs/rental-ocr-comparison.md) and
 [recommended agent question](../docs/rental-review-agent-question-v2.md).
 Keep claim packets and expected evaluation outcomes separate from policy knowledge.
+The new CU Layout Search generation includes these contract PDFs alongside the
+existing state and shared SOP evidence; the source index remains unchanged.
 
-The corpus includes eleven mixed digital/scanned PDFs, editable DOCX exports
-and pre-scan PDF controls. The Python generator creates these assets from its
-rule definitions; the DOCX exports are not inputs to PDF generation. The controls
-and DOCX exports are used by generation validation and extraction comparisons.
-Index only the manifest-listed ingestion PDFs, not evaluation fixtures or controls.
-The retired v1 corpus and its ZIP archive have been removed.
+## Saved policy demo
+
+`policy-demo` contains ten real Agent Framework policy reviews of these synthetic
+packets, their per-check questions and relevant CU inputs, CU claim fields,
+and public resource configuration. It contains no
+credentials and isn't policy knowledge or a set of scripted runtime answers.
+After provisioning the existing workbench dependencies, restore it with
+`.\infra\policy-demo-cache.ps1` from the repository root, then load the included
+CU run and policy results in the app. Restoration validates file hashes, claim
+inputs and citations and refuses different local configuration or cache files.
+See [policy setup](../docs/policy-setup.md) for refreshing the bundle.
+
+The SOP corpus includes eleven mixed digital/scanned PDFs, editable DOCX exports
+and pre-scan PDF controls. Its Python generator creates the SOP assets from rule
+definitions; DOCX exports are not inputs to PDF generation. Controls and DOCX
+exports support generation validation and extraction comparisons. Index only the
+manifest-listed PDFs, not evaluation fixtures, answer guides or controls. The
+retired v1 corpus and its ZIP archive have been removed.

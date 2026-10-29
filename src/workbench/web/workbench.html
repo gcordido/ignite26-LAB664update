@@ -8,13 +8,11 @@
   </head>
   <body>
     <header>
-      <span class="app-brand" aria-label="Document Intelligence and Content Understanding">DICU</span>
+      <img class="app-brand" src="/web/dicu-logo.png" alt="Document Intelligence and Content Understanding" width="56" height="56" />
       <div class="app-title">
         <h1>Insurance Workbench App</h1>
         <p class="app-subhead">using Azure Document Intelligence and Content Understanding in Foundry</p>
       </div>
-      <span class="muted">Synthetic data</span>
-      <span class="badge">Combined preview</span>
       <nav>
         <a href="/lab.html">Lab</a
         ><a href="https://contentunderstanding.ai.azure.com/">Studio</a>
@@ -28,7 +26,6 @@
         data-view="policies"
         aria-pressed="false"
         title="Compare fixed checks across packets using the loaded results and saved LLM Agent reviews."
-        disabled
       >
         Check consistency
       </button>
@@ -118,6 +115,20 @@
             Saved checks for the loaded CU run. Loading makes no Azure calls.
           </p>
           <p id="policy-status" class="muted" role="status"></p>
+          <div id="policy-run-status" class="policy-run-status" role="status" hidden>
+            <div class="policy-run-details">
+              <strong class="policy-run-heading">
+                <span class="spinner" aria-hidden="true"></span>
+                <span id="policy-run-label">Agent running</span>
+              </strong>
+              <span id="policy-run-packet" class="policy-run-packet"></span>
+              <span id="policy-run-detail"></span>
+            </div>
+            <div class="policy-run-clock" role="timer" aria-live="off">
+              <span id="policy-run-elapsed">0:00</span>
+              <span>Total elapsed</span>
+            </div>
+          </div>
         </div>
         <div class="workspace">
           <div class="table-area">
@@ -148,6 +159,10 @@
                 >
               </div>
             </div>
+            <div id="policy-table-intro" hidden>
+              <h2 class="results-heading">Rental car policy check</h2>
+              <p>Compare the claim with its policy. Select a result to see the values and sources. A match is not payment approval.</p>
+            </div>
             <div id="packets" class="table">
               <table id="packet-table" aria-label="Customer results">
                 <colgroup></colgroup>
@@ -167,6 +182,22 @@
         title="Drag to resize preview"
       ></div>
       <aside id="preview" aria-label="Document preview">
+        <div id="policy-review-pane" hidden>
+          <p id="policy-review-empty">Select a policy check to see its finding, compared values and sources.</p>
+          <section id="agent-panel" class="inline-panel" aria-labelledby="agent-title" hidden>
+            <div class="inline-toolbar">
+              <h3 id="agent-title">Policy review</h3>
+              <div id="policy-pane-modes" class="actions" aria-label="Policy detail mode">
+                <button id="policy-result-mode" aria-pressed="true">Result</button>
+                <button id="policy-chat-mode" class="secondary" aria-pressed="false">Ask agent</button>
+              </div>
+              <button id="close-agent" class="icon-button" aria-label="Close policy review">&times;</button>
+            </div>
+            <p id="policy-check-context" class="muted"></p>
+            <section id="policy-output" aria-label="Policy check output"></section>
+            <section id="policy-chat" aria-label="Policy check chat" hidden></section>
+          </section>
+        </div>
         <div id="policy-source-toolbar" hidden>
           <button id="policy-source-back" class="secondary">
             Back to policy checks
@@ -373,64 +404,20 @@
             </button>
           </details>
         </section>
-        <section
-          id="agent-panel"
-          class="inline-panel"
-          aria-labelledby="agent-title"
-        >
-          <div class="inline-toolbar">
-            <h3 id="agent-title">Policy review</h3>
-            <div
-              id="policy-pane-modes"
-              class="actions"
-              aria-label="Policy detail mode"
-            >
-              <button id="policy-result-mode" aria-pressed="true">
-                Result
-              </button>
-              <button
-                id="policy-chat-mode"
-                class="secondary"
-                aria-pressed="false"
-              >
-                Ask agent
-              </button>
-            </div>
-            <button
-              id="close-agent"
-              class="icon-button"
-              aria-label="Collapse policy review"
-            >
-              &times;
-            </button>
-          </div>
-          <section
-            id="policy-output"
-            aria-label="Policy check output"
-          ></section>
-          <section
-            id="policy-chat"
-            aria-label="Policy check chat"
-            hidden
-          ></section>
-        </section>
       </div>
-      <dialog id="policy-confirmation">
-        <h2>Run policy checks?</h2>
+      <dialog id="policy-confirmation" aria-labelledby="policy-confirm-title" aria-describedby="policy-confirm-summary policy-confirm-cost">
+        <h2 id="policy-confirm-title">Run policy checks?</h2>
         <p id="policy-confirm-summary"></p>
-        <p>
-          Missing claim summaries are extracted once with Content Understanding.
-          Each uncached case is then sent to the selected policy agent. Azure
-          charges apply. Existing matching results are reused.
-        </p>
-        <p class="muted">
-          A first ten-case run can take tens of minutes. Keep this tab open;
-          refreshing the same tab resumes progress without submitting another
-          run.
-        </p>
-        <div class="actions">
-          <button id="confirm-policy">Run</button>
-          <button id="cancel-policy" class="secondary">Cancel</button>
+        <ul class="policy-confirm-steps">
+          <li>Reuse matching saved results.</li>
+          <li>Prepare any missing claim fields with Content Understanding.</li>
+          <li>Review remaining cases one at a time.</li>
+        </ul>
+        <p id="policy-confirm-cost"><strong>Azure charges apply</strong> to new extraction and agent calls.</p>
+        <p class="muted policy-confirm-note">You can follow progress in the workbench. Refreshing this tab reconnects without starting another run.</p>
+        <div class="actions policy-confirm-actions">
+          <button id="cancel-policy" class="secondary" autofocus>Cancel</button>
+          <button id="confirm-policy">Run policy checks</button>
         </div>
       </dialog>
     </main>
