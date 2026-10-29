@@ -3,7 +3,7 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { z } from "zod";
 import { LabError, record, repositoryRoot } from "./config.ts";
-import { normalize } from "./results.ts";
+import { contents, normalize } from "./results.ts";
 import { fieldValue, type packetJson } from "./packet-json.ts";
 
 export const checkNames = [
@@ -112,6 +112,57 @@ export function withClaimSummary(
         extractions,
       },
     ],
+  };
+}
+
+/** Values from extraction only, once per document; no OCR or duplicated prose. */
+export function policyClaimFacts(packet: ReturnType<typeof packetJson>): string {
+  return JSON.stringify({
+    packet_id: packet.packet_id,
+    documents: packet.documents.flatMap((document) =>
+      document.extractions.map((extraction) => ({
+        category: document.category,
+        fields: extraction.fields,
+      })),
+    ),
+  });
+}
+
+/** Retain CU's typed field values for SDK serialization, not OCR or provenance. */
+export function policyClaimAnalysis(
+  packet: ReturnType<typeof packetJson>, response: unknown, summary: unknown,
+) {
+  function typedField(value: unknown, name: string): Record<string, unknown> {
+    fieldValue(value, name);
+    const field = record(value);
+    if (!field || typeof field.type !== "string")
+      throw new LabError(422, `Missing CU field type: ${name}`);
+    const result: Record<string, unknown> = { type: field.type };
+    const object = record(field.valueObject);
+    if (Array.isArray(field.valueArray))
+      result.valueArray = field.valueArray.map((item, index) => typedField(item, `${name}[${index}]`));
+    else if (object) {
+      result.valueObject = Object.fromEntries(Object.entries(object)
+        .map(([key, child]) => [key, typedField(child, `${name}.${key}`)]));
+    } else
+      for (const key of ["valueString", "valueDate", "valueTime", "valueNumber", "valueInteger", "valueBoolean"])
+        if (field[key] !== undefined) result[key] = field[key];
+    return result;
+  }
+  const parsedContents = contents(response), summaryContents = contents(summary);
+  return {
+    contents: packet.documents.flatMap((document) =>
+      document.extractions.map((extraction) => {
+        const source = (document.category === "claim_summary" ? summaryContents : parsedContents)
+          .find((item) => item.path === extraction.content_path);
+        const fields = record(source?.fields);
+        if (!fields) throw new LabError(422, "CU fields are missing for a policy input document.");
+        return {
+          kind: "document", category: document.category,
+          fields: Object.fromEntries(Object.entries(fields).map(([name, value]) => [name, typedField(value, name)])),
+        };
+      }),
+    ),
   };
 }
 

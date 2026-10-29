@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtemp, readFile, rm, readdir } from "node:fs/promises";
+import { mkdtemp, readFile, rm, readdir, rename } from "node:fs/promises";
 import path from "node:path";
 import os from "node:os";
 import { test } from "node:test";
@@ -14,6 +14,8 @@ import {
   checkNames,
   digest,
   modeSchema,
+  policyClaimAnalysis,
+  policyClaimFacts,
   question,
   resolveCitations,
   withClaimSummary,
@@ -87,6 +89,7 @@ function result(mode: "ungrounded" | "search", value: FrameworkConfig) {
             },
           ]
         : [],
+    checkPrompts: Object.fromEntries(checkNames.map(name => [name, `Question for ${name}\nSelected CU fields`])),
     result: {
       Checks: checkNames.map((Check, index) => ({
         Check,
@@ -148,9 +151,46 @@ test("Framework output enforces honest no-retrieval and real per-turn indexed ci
       .Outcome,
     "NotApplicable",
   );
+  const waiting = result("search", value);
+  waiting.result.Checks[1].Outcome = "InProgress";
+  waiting.result.Checks[1].ReviewRequired = false;
+  assert.equal((await frameworkReview(waiting, "search", value)).result.Checks[1].Outcome, "InProgress");
+  assert.match(resultChatText(waiting.result), /Waiting for info - missing claim information or approval/);
+  waiting.result.Checks[1].ReviewRequired = true;
+  await assert.rejects(frameworkReview(waiting, "search", value), /Inconsistent/);
   baseline.result.Checks[0].Outcome = "Satisfied";
   baseline.result.Checks[0].ReviewRequired = false;
   await assert.rejects(frameworkReview(baseline, "ungrounded", value));
+});
+
+test("compact findings retain comparisons and reject unsupported policy-rule pointers", async () => {
+  const value = await config();
+  const raw = result("search", value);
+  const compact = {
+    ...raw,
+    result: {
+      Checks: raw.result.Checks.map((check) => ({
+        ...check,
+        Headline: "Daily price needs a policy check",
+        Comparisons: [{
+          ClaimField: "RentalDailyBaseRate",
+          ClaimLabel: "Daily rental price",
+          ClaimValue: "$54/day",
+          PolicyField: check.Citation[0]?.RuleId ?? "Not retrieved",
+          PolicyLabel: "Daily rental limit",
+          PolicyValue: check.Citation.length ? "$75/day" : "Not established",
+        }],
+      })),
+    },
+  };
+  const parsed = await frameworkReview(compact, "search", value);
+  assert.equal(parsed.result.Checks[1].Headline, "Daily price needs a policy check");
+  assert.equal(parsed.result.Checks[1].Comparisons?.[0].ClaimField, "RentalDailyBaseRate");
+  compact.result.Checks[1].Comparisons[0].PolicyField = "invented-rule";
+  await assert.rejects(frameworkReview(compact, "search", value), /uncited policy rule/);
+  compact.result.Checks[1].Comparisons[0].PolicyField = "TX-R2";
+  compact.result.Checks[1].Headline = "x".repeat(101);
+  await assert.rejects(frameworkReview(compact, "search", value));
 });
 
 test("Framework modes share prepared claim inputs but isolate review caches, chat and failures", async () => {
@@ -198,6 +238,10 @@ test("Framework modes share prepared claim inputs but isolate review caches, cha
       prompt: string;
       chat?: boolean;
       lossState: string;
+      claimAnalysis?: ReturnType<typeof policyClaimAnalysis>;
+      reviewStrategy?: string;
+      modelDeployment?: string;
+      reasoningEffort?: string;
     }[] = [];
     const service = new PolicyService({
       config: async () => value,
@@ -230,6 +274,13 @@ test("Framework modes share prepared claim inputs but isolate review caches, cha
     await noRules.task;
     assert.equal(noRules.job.items[0].status, "completed");
     assert.equal(requests[0].lossState, "TX");
+    const raw = await readRaw(packet.id);
+    const exported = packetJson(raw, packet, run, summarize(raw, packet, run.analyzer.mode));
+    assert.ok(!requests[0].prompt.includes(exported.extracted_text!));
+    assert.ok(!requests[0].prompt.includes("## Customer"));
+    assert.equal(requests[0].reviewStrategy, "parallel");
+    assert.ok(requests[0].claimAnalysis?.contents.length);
+    assert.ok(!JSON.stringify(requests[0].claimAnalysis).includes(exported.extracted_text!));
     const withRules = await service.start(run, "search", readRaw);
     await withRules.task;
     assert.equal(withRules.job.items[0].status, "completed");
@@ -249,6 +300,34 @@ test("Framework modes share prepared claim inputs but isolate review caches, cha
       "packet-01",
       readRaw,
     );
+    const savedNames = (await readdir(folder)).filter(name => name.startsWith("framework-saved-"));
+    assert.equal(savedNames.length, 2);
+    const savedSearch = await Promise.all(savedNames.map(async name => ({
+      name, value: JSON.parse(await readFile(path.join(folder, name), "utf8")),
+    })));
+    const archive = savedSearch.find(({ value }) => value.raw.mode === "search")!;
+    const originalReviewKey = archive.value.reviewKey;
+    await savePolicyCache(path.join(folder, archive.name), { ...archive.value, reviewKey: "0".repeat(64) });
+    const exactFile = path.join(folder, `framework-review-${originalReviewKey}.json`);
+    await rename(exactFile, `${exactFile}.bak`);
+    const reloaded = new PolicyService({ config: async () => value, cacheFolder: folder,
+      invoke: async () => { throw new Error("Cache loading must not invoke Azure"); } });
+    const historical = await reloaded.snapshot(run, "search", readRaw);
+    assert.equal(historical[0].status, "completed");
+    assert.equal(historical[0].historical, true);
+    assert.deepEqual(historical[0].result, withRules.job.items[0].result);
+    const oldChat = await reloaded.chatContext(run, "search", packet.id, readRaw);
+    assert.deepEqual(oldChat.result.Checks, [historical[0].result!.Checks[0]]);
+    assert.equal(oldChat.promptSource, "saved");
+    const timingChat = await reloaded.chatContext(run, "search", packet.id, readRaw, "Timing");
+    assert.deepEqual(timingChat.result.Checks, [historical[0].result!.Checks[1]]);
+    assert.notEqual(timingChat.contextId, oldChat.contextId);
+    assert.equal(timingChat.prompt, "Question for Timing\nSelected CU fields");
+    assert.deepEqual(timingChat.citations, [historical[0].citations![1]]);
+    await savePolicyCache(path.join(folder, archive.name), { ...archive.value, inputHash: "0".repeat(64) });
+    assert.equal((await reloaded.snapshot(run, "search", readRaw))[0].status, "not run");
+    await savePolicyCache(path.join(folder, archive.name), archive.value);
+    await rename(`${exactFile}.bak`, exactFile);
     const reply = await service.followup(
       "ungrounded",
       "What is missing?",
@@ -256,6 +335,25 @@ test("Framework modes share prepared claim inputs but isolate review caches, cha
       context.agent,
     );
     assert.equal(reply.text, "No rules established");
+    const previousModel = process.env.POLICY_CHAT_MODEL_DEPLOYMENT;
+    const previousEffort = process.env.POLICY_CHAT_REASONING_EFFORT;
+    try {
+      process.env.POLICY_CHAT_MODEL_DEPLOYMENT = "gpt-4.1-mini";
+      delete process.env.POLICY_CHAT_REASONING_EFFORT;
+      const fasterChat = await service.chatContext(run, "ungrounded", packet.id, readRaw, "Timing");
+      assert.equal(fasterChat.agent.modelDeployment, "gpt-4.1-mini");
+      assert.equal(fasterChat.agent.reasoningEffort, undefined);
+      assert.notEqual(fasterChat.contextId, context.contextId);
+      await service.followup("ungrounded", "What dates are missing?", [], fasterChat.agent);
+      assert.equal(requests.at(-1)?.modelDeployment, "gpt-4.1-mini");
+      assert.equal((await service.snapshot(run, "ungrounded", readRaw))[0].historical, false);
+      await assert.rejects(service.followup("ungrounded", "Old context", [], context.agent), /settings changed/);
+    } finally {
+      if (previousModel === undefined) delete process.env.POLICY_CHAT_MODEL_DEPLOYMENT;
+      else process.env.POLICY_CHAT_MODEL_DEPLOYMENT = previousModel;
+      if (previousEffort === undefined) delete process.env.POLICY_CHAT_REASONING_EFFORT;
+      else process.env.POLICY_CHAT_REASONING_EFFORT = previousEffort;
+    }
     await assert.rejects(
       service.followup("search", "wrong mode", [], context.agent),
       /configuration changed/,
@@ -283,6 +381,48 @@ test("Framework modes share prepared claim inputs but isolate review caches, cha
   } finally {
     await rm(folder, { recursive: true, force: true });
   }
+});
+
+test("policy claim facts preserve extracted values without OCR, prose or source metadata", async () => {
+  const cache = new Cache();
+  const run = await cache.load(await includedRunId(cache));
+  const packet = run.source[0];
+  const raw = await cache.raw(run.id, packet.id);
+  const exported = packetJson(raw, packet, run, summarize(raw, packet, run.analyzer.mode));
+  const summary = {
+    status: "Succeeded",
+    result: { contents: [{ path: "input1", fields: {
+      RentalRequested: { type: "boolean", valueBoolean: false },
+      PriorDays: { type: "number", valueNumber: 0 },
+      ActualRepairDeliveryDate: { type: "string" },
+    } }] },
+  };
+  const enriched = withClaimSummary(exported, summary);
+  const analysis = policyClaimAnalysis(enriched, raw, summary);
+  assert.deepEqual(analysis.contents.at(-1), {
+    kind: "document", category: "claim_summary",
+    fields: {
+      RentalRequested: { type: "boolean", valueBoolean: false },
+      PriorDays: { type: "number", valueNumber: 0 },
+      ActualRepairDeliveryDate: { type: "string" },
+    },
+  });
+  assert.ok(!JSON.stringify(analysis).includes('"markdown"'));
+  assert.ok(!JSON.stringify(analysis).includes('"source"'));
+  assert.ok(!JSON.stringify(analysis).includes('"confidence"'));
+  assert.ok(!JSON.stringify(analysis).includes(exported.extracted_text!));
+  const facts = policyClaimFacts(enriched);
+  const parsed = JSON.parse(facts);
+  assert.deepEqual(parsed.documents.at(-1), {
+    category: "claim_summary",
+    fields: { RentalRequested: false, PriorDays: 0, ActualRepairDeliveryDate: null },
+  });
+  assert.deepEqual(parsed.documents.flatMap((doc: { fields: unknown }) => [doc.fields]),
+    enriched.documents.flatMap((doc) => doc.extractions.map((entry) => entry.fields)));
+  assert.ok(!facts.includes(exported.extracted_text!));
+  assert.ok(!facts.includes('"extracted_text"'));
+  assert.ok(!facts.includes('"regions"'));
+  assert.ok(facts.length < packetMarkdown(enriched).length);
 });
 
 test("NotApplicable stays distinct in chat and v2 citations remain clickable", () => {
@@ -432,6 +572,13 @@ test("claim preparation preserves zero/false/unknowns and reuses extraction acro
   assert.ok(!markdown.includes('"Unknown"'));
   assert.ok(!markdown.includes("confidence"));
   assert.equal(await service.summaryPrepared(packet), true);
+  const evidence = await service.claimEvidence(run, packet, await readRaw(packet.id));
+  assert.equal(evidence.packetId, packet.id);
+  assert.equal(evidence.fields.find((field) => field.field === "Authorization.Authorized")?.value, false);
+  assert.equal(evidence.fields.find((field) => field.field === "Authorization.PriorDays")?.value, 0);
+  assert.ok(evidence.fields.every((field) => field.href === `/data/packets/${packet.id}.pdf`));
+  assert.ok(evidence.fields.every((field) => field.regions.every((region) =>
+    region.page >= 1 && region.page <= packet.pages)));
   const again = await service.start(run, "ungrounded", readRaw);
   await again.task;
   assert.equal(extractions, 1);
@@ -594,7 +741,7 @@ test("private API chats preserve history, isolate cases and never replay failed 
     return headers;
   }
   const headers = await privateSession();
-  const query = `policy/chat?mode=search&packetId=packet-01&runId=${runId}`;
+  const query = `policy/chat?mode=search&packetId=packet-01&runId=${runId}&check=Amount`;
   assert.equal((await fetch(base + query)).status, 401);
   const read = async () => (await fetch(base + query, { headers })).json();
   const context = await read();
@@ -604,6 +751,7 @@ test("private API chats preserve history, isolate cases and never replay failed 
   const body = {
     mode: "search",
     packetId: "packet-01",
+    check: "Amount",
     runId,
     contextId: context.contextId,
     message: "Explain the rate",
@@ -626,6 +774,12 @@ test("private API chats preserve history, isolate cases and never replay failed 
   assert.match(reply.citations[0].href, /#page=3$/);
   assert.deepEqual(histories[0], context.messages);
   assert.equal((await read()).messages.length, 4);
+  const timing = await (await fetch(base + query.replace("check=Amount", "check=Timing"), { headers })).json();
+  assert.notEqual(timing.contextId, context.contextId);
+  assert.equal(timing.messages.length, 2);
+  assert.deepEqual(timing.result.Checks.map((check: { Check: string }) => check.Check), ["Timing"]);
+  assert.equal((await send({ ...body, check: "Timing" })).status, 409);
+  assert.equal((await fetch(base + query.replace("&check=Amount", ""), { headers })).status, 400);
   const other = await privateSession();
   assert.equal(
     (await (await fetch(base + query, { headers: other })).json()).messages

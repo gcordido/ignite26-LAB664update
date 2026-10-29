@@ -1,6 +1,14 @@
 const escapeHtml = (value) => String(value).replace(/[&<>"']/g, (character) =>
   ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[character]);
 
+const checkLabels = {
+  Amount: "Daily cost",
+  Timing: "Rental dates",
+  "Effective terms": "Active policy",
+  "Charges and reimbursement calculation": "Covered charges",
+  "Authorization and payment readiness": "Payment approval",
+};
+
 export function chatMessageHtml(text, citations = []) {
   const sources = citations.map((citation) => {
     const label = `${citation.DocumentId} · ${citation.RuleId} · ${citation.Section}`;
@@ -12,8 +20,8 @@ export function chatMessageHtml(text, citations = []) {
 }
 
 export function resultChatText(result) {
-  return result.Checks.map((check, index) =>
-    `${index + 1}. ${check.Check}\n${check.Outcome === "NotApplicable" ? "Not applicable" : check.ReviewRequired ? "Review required" : "Satisfied"}\n` +
+  return result.Checks.map((check) =>
+    `${checkLabels[check.Check] ?? check.Check}\n${check.Outcome === "NotApplicable" ? "Not applicable" : check.Outcome === "InProgress" ? "Waiting for info - missing claim information or approval" : check.ReviewRequired ? "Review required" : "Satisfied"}\n` +
     `Expected: ${check.ExpectedValue}\nActual: ${check.ActualValue}\nReason: ${check.Reason}`).join("\n\n");
 }
 
@@ -25,7 +33,7 @@ export function createPolicyChat({ container, api, onSource, onError }) {
     generation++;
     selectionKey = "";
     widgets.clear();
-    container.textContent = "Select a reviewed case to ask follow-up questions.";
+    container.textContent = "Select a policy check to ask follow-up questions.";
   }
   async function show(selection) {
     const key = JSON.stringify(selection);
@@ -40,11 +48,12 @@ export function createPolicyChat({ container, api, onSource, onError }) {
     container.append(holder);
     widgets.set(key, holder);
     try {
-      const context = await api(`policy/chat?mode=${encodeURIComponent(selection.mode)}&packetId=${encodeURIComponent(selection.packetId)}&runId=${encodeURIComponent(selection.runId)}`);
+      const context = await api(`policy/chat?mode=${encodeURIComponent(selection.mode)}&packetId=${encodeURIComponent(selection.packetId)}&runId=${encodeURIComponent(selection.runId)}&check=${encodeURIComponent(selection.check)}`);
       await loadComponent();
       if (revision !== generation) return;
       const heading = document.createElement("h2");
-      heading.textContent = `Policy chat · ${selection.packetId}`;
+      const label = checkLabels[selection.check];
+      heading.textContent = `${label} · ${selection.packetId}`;
       const reload = document.createElement("button");
       reload.className = "secondary";
       reload.textContent = "Reload chat";
@@ -55,16 +64,19 @@ export function createPolicyChat({ container, api, onSource, onError }) {
       };
       const notice = document.createElement("p");
       notice.className = "muted";
-      notice.textContent = `${context.agent.indexName ?? "No policy retrieval"}. ` +
-        "Follow-ups use Azure and may be billed. Chat does not change the saved checks. History lasts for this private session.";
+      notice.textContent = `${context.agent.modelDeployment} · ${context.agent.indexName ?? "No policy retrieval"}. ` +
+        "This conversation covers only this check. Follow-ups use Azure and may be billed. Chat does not change saved results.";
       const original = document.createElement("details");
       const summary = document.createElement("summary");
-      summary.textContent = "Exact original prompt and claim fields";
+      const promptLabel = context.promptSource === "saved"
+        ? `${label}: original question and claim fields`
+        : `${label}: current question and claim fields`;
+      summary.textContent = promptLabel;
       const prompt = document.createElement("pre");
       prompt.textContent = context.prompt;
       original.append(summary, prompt);
       const chat = document.createElement("deep-chat");
-      chat.setAttribute("aria-label", "Policy review follow-up conversation");
+      chat.setAttribute("aria-label", `${label} follow-up conversation`);
       const revealComposer = () => requestAnimationFrame(() => {
         if (revision === generation && selectionKey === key && chat.getClientRects().length)
           chat.scrollIntoView({ block: "end", inline: "nearest" });
@@ -72,7 +84,7 @@ export function createPolicyChat({ container, api, onSource, onError }) {
       const citations = [...context.citations.flat(), ...context.replies.flatMap((reply) => reply.citations)];
       const originalSources = context.citations.flat();
       chat.history = [
-        { role: "user", html: `<details><summary>Original policy-review prompt and claim fields</summary>${chatMessageHtml(context.prompt)}</details>` },
+        { role: "user", html: `<details><summary>${escapeHtml(promptLabel)}</summary>${chatMessageHtml(context.prompt)}</details>` },
         { role: "ai", html: chatMessageHtml(resultChatText(context.result), originalSources) },
         ...context.messages.slice(2).map((message, index) => ({
           role: message.role === "assistant" ? "ai" : "user",
@@ -82,7 +94,7 @@ export function createPolicyChat({ container, api, onSource, onError }) {
       ];
       chat.chatStyle = { width: "100%", height: "auto", overflow: "visible", border: "none", backgroundColor: "#fff", fontFamily: "Segoe UI, sans-serif" };
       chat.messageStyles = { default: { shared: { bubble: { maxWidth: "96%", fontSize: "13px" } } } };
-      chat.textInput = { placeholder: { text: "Ask about this case or a policy rule…" } };
+      chat.textInput = { placeholder: { text: `Ask about ${label.toLowerCase()}…` } };
       chat.requestBodyLimits = { maxMessages: 1 };
       chat.remarkable = { html: false };
       chat.errorMessages = { displayServiceErrorMessages: true };
@@ -93,7 +105,7 @@ export function createPolicyChat({ container, api, onSource, onError }) {
           const message = body.messages?.at(-1)?.text;
           if (typeof message !== "string" || !message.trim()) throw new Error("Enter a follow-up question.");
           const reply = await api("policy/chat", { mode: selection.mode, packetId: selection.packetId,
-            runId: selection.runId, contextId: context.contextId, message, live: true });
+            runId: selection.runId, check: selection.check, contextId: context.contextId, message, live: true });
           citations.push(...reply.citations);
           await signals.onResponse({ html: chatMessageHtml(reply.text, reply.citations) });
         } catch (error) {

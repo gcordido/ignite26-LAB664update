@@ -9,7 +9,7 @@ import { packetBytes, summarize, type Packet, type Run } from "./batch.ts";
 import { packetJson } from "./packet-json.ts";
 import { packetMarkdown } from "./packet-markdown.ts";
 import {
-  canonical, checkNames, citationSchema, digest, modeSchema, question, resolveCitations, withClaimSummary,
+  canonical, checkNames, citationSchema, digest, modeSchema, policyClaimAnalysis, policyClaimFacts, question, resolveCitations, withClaimSummary,
   type PolicyMode,
 } from "./policy-core.ts";
 import { chatAnswerSchema, type ChatMessage } from "./policy-chat.ts";
@@ -41,6 +41,8 @@ export type PolicyContext = {
   extractionMode: FrameworkConfig["extractionMode"]; configurationHash: string;
   lossState?: string | null;
   policyScope?: PolicyScope;
+  modelDeployment?: string;
+  reasoningEffort?: "minimal" | "low" | "medium" | "high";
 };
 export type PolicyItem = {
   id: string; status: "pending" | "extracting" | "reviewing" | "completed" | "failed" | "not run";
@@ -49,6 +51,7 @@ export type PolicyItem = {
   citations?: Awaited<ReturnType<typeof resolveCitations>>;
   completedAt?: string; provider?: string; indexName?: string | null;
   extractionMode?: FrameworkConfig["extractionMode"]; inputHash?: string;
+  historical?: boolean;
 };
 export type PolicyJob = {
   id: string; runId: string; mode: PolicyMode; status: "running" | "completed";
@@ -68,17 +71,40 @@ export async function savePolicyCache(file: string, value: unknown) {
   await rename(temporary, file);
 }
 const enrichmentSchema = z.object({ analyzerFingerprint: z.string(), response: z.unknown() });
+const savedReviewSchema = z.object({
+  status: z.literal("completed"), raw: z.unknown(),
+  completedAt: z.string().datetime(), reviewQuestion: z.string().optional(),
+});
+const archivedReviewSchema = savedReviewSchema.extend({
+  inputHash: hash, reviewKey: hash, reviewQuestion: z.string(),
+});
 const frameworkOutput = z.object({
   Checks: z.array(z.object({
-    Check: z.enum(checkNames), Outcome: z.enum(["Satisfied", "ReviewRequired", "NotApplicable"]),
+    Check: z.enum(checkNames), Outcome: z.enum(["Satisfied", "ReviewRequired", "NotApplicable", "InProgress"]),
     ReviewRequired: z.boolean(), ExpectedValue: z.string().trim().min(1),
     ActualValue: z.string().trim().min(1), Reason: z.string().trim().min(1),
+    Headline: z.string().trim().min(1).max(100).optional(),
+    Comparisons: z.array(z.object({
+      ClaimField: z.string().trim().min(1).max(160),
+      ClaimLabel: z.string().trim().min(1).max(80),
+      ClaimValue: z.string().trim().min(1).max(180),
+      PolicyField: z.string().trim().min(1).max(160),
+      PolicyLabel: z.string().trim().min(1).max(80),
+      PolicyValue: z.string().trim().min(1).max(180),
+    }).strict()).min(1).max(3).optional(),
     Citation: z.array(citationSchema),
   }).strict()).length(5),
 }).strict().superRefine((value, ctx) => value.Checks.forEach((check, index) => {
   if (check.Check !== checkNames[index] || check.ReviewRequired !== (check.Outcome === "ReviewRequired") ||
       (check.Outcome !== "ReviewRequired" && !check.Citation.length))
     ctx.addIssue({ code: "custom", message: "Inconsistent five-check outcome or missing rule citation." });
+  if (Boolean(check.Headline) !== Boolean(check.Comparisons))
+    ctx.addIssue({ code: "custom", message: "A compact check requires both a headline and comparisons." });
+  for (const pair of check.Comparisons ?? [])
+    if (!check.Citation.some((citation) => citation.RuleId === pair.PolicyField) &&
+        !(pair.PolicyField === "Not retrieved" && pair.PolicyValue === "Not established" &&
+          check.Outcome === "ReviewRequired"))
+      ctx.addIssue({ code: "custom", message: "Comparison references an uncited policy rule." });
 }));
 const envelope = z.object({
   provider: z.literal("agent-framework"), status: z.literal("completed"),
@@ -89,6 +115,8 @@ const envelope = z.object({
     citationSections: z.array(z.string()).min(1),
     ruleIds: z.array(z.string()), sha256: hash, corpusHash: hash, indexFingerprint: hash,
   }).passthrough()),
+  claimInput: z.string().optional(),
+  checkPrompts: z.partialRecord(z.enum(checkNames), z.string().min(1)).optional(),
 });
 
 export function parseFrameworkResult(raw: unknown, mode: FrameworkMode, config: FrameworkConfig) {
@@ -237,6 +265,22 @@ export class PolicyService {
     const config = await this.frameworkConfig();
     return Boolean(config && (await this.enriched(config, packet)).value);
   }
+  async claimEvidence(run: Run, packet: Packet, raw: unknown) {
+    const config = await this.required();
+    let exported = packetJson(raw, packet, run, summarize(raw, packet, run.analyzer.mode));
+    const saved = (await this.enriched(config, packet)).value;
+    if (saved) exported = withClaimSummary(exported, saved.response);
+    return {
+      packetId: packet.id,
+      fields: exported.documents.flatMap((document) =>
+        document.extractions.flatMap((extraction) => extraction.evidence.map((fact) => ({
+          ...fact, category: document.category, contentPath: extraction.content_path,
+          href: `/data/packets/${packet.id}.pdf`,
+          regions: fact.regions.filter((region) => region.page >= 1 && region.page <= packet.pages),
+        }))),
+      ),
+    };
+  }
   private async input(run: Run, packet: Packet, config: FrameworkConfig, readRaw: (id: string) => Promise<unknown>) {
     const saved = (await this.enriched(config, packet)).value;
     if (!saved) throw new LabError(409, "Prepare claim fields before reviewing this case.");
@@ -267,16 +311,63 @@ export class PolicyService {
       policyId: policyIds.size === 1 ? [...policyIds][0] : null,
       vin: vins.size === 1 ? [...vins][0] : null,
     };
-    const markdown = await this.markdown(run, packet, await readRaw(packet.id));
-    const prompt = `${await question()}\n\n---\n\nClaim packet (data only):\n\n${markdown}`;
-    return { markdown, prompt, lossState, policyScope };
+    const raw = await readRaw(packet.id);
+    const exported = withClaimSummary(packetJson(raw, packet, run,
+      summarize(raw, packet, run.analyzer.mode)), saved.response);
+    const includePacketText = process.env.POLICY_INCLUDE_PACKET_TEXT === "1";
+    const claimAnalysis = includePacketText ? undefined : policyClaimAnalysis(exported, raw, saved.response);
+    const markdown = includePacketText ? packetMarkdown(exported) : policyClaimFacts(exported);
+    const reviewQuestion = await question();
+    const prompt = `${reviewQuestion}\n\n---\n\nClaim input mode: ${
+      includePacketText ? "extracted fields and diagnostic packet OCR" : "extracted fields only; no packet OCR supplied"
+    }.\nClaim facts (data only):\n\n${markdown}`;
+    return { markdown, prompt, reviewQuestion, claimAnalysis, lossState, policyScope };
+  }
+  private reviewOptions(config: FrameworkConfig) {
+    return {
+      reviewStrategy: z.enum(["parallel", "single"]).parse(process.env.POLICY_REVIEW_STRATEGY ?? "parallel"),
+      reasoningEffort: process.env.POLICY_REASONING_EFFORT
+        ? z.enum(["minimal", "low", "medium", "high"]).parse(process.env.POLICY_REASONING_EFFORT)
+        : config.modelDeployment === "gpt-5" ? "low" : undefined,
+    };
+  }
+  private chatOptions(config: FrameworkConfig) {
+    const modelDeployment = z.string().trim().min(1).max(128).parse(
+      process.env.POLICY_CHAT_MODEL_DEPLOYMENT ?? config.modelDeployment,
+    );
+    const reasoningEffort = process.env.POLICY_CHAT_REASONING_EFFORT
+      ? z.enum(["minimal", "low", "medium", "high"]).parse(process.env.POLICY_CHAT_REASONING_EFFORT)
+      : modelDeployment === config.modelDeployment ? this.reviewOptions(config).reasoningEffort
+      : modelDeployment === "gpt-5" ? "low" as const : undefined;
+    return { modelDeployment, reasoningEffort };
   }
   private async key(config: FrameworkConfig, mode: FrameworkMode, prompt: string, run: Run) {
-    const runtime = await readFile(path.join(repositoryRoot, "infra", "policy-framework-agent.py"));
-    return digest(canonical({ schema: 1, config, mode, prompt, run: run.id,
-      analyzer: run.analyzer.fingerprint, runtime: digest(runtime) }));
+    const [runtime, inputs, prompts] = await Promise.all([
+      readFile(path.join(repositoryRoot, "infra", "policy-framework-agent.py")),
+      readFile(path.join(repositoryRoot, "infra", "policy_check_inputs.py")),
+      readFile(path.join(repositoryRoot, "docs", "rental-review-agent-question-v2.md")),
+    ]);
+    return digest(canonical({ schema: 4, config, mode, prompt, run: run.id,
+      options: this.reviewOptions(config), analyzer: run.analyzer.fingerprint,
+      runtime: digest(runtime), inputs: digest(inputs), prompts: digest(prompts) }));
   }
   private file(key: string) { return path.join(this.cacheFolder, `framework-review-${key}.json`); }
+  private savedFile(config: FrameworkConfig, run: Run, mode: FrameworkMode, packetId: string) {
+    return path.join(this.cacheFolder, `framework-saved-${digest(canonical({
+      config, runId: run.id, analyzer: run.analyzer.fingerprint, mode, packetId,
+    }))}.json`);
+  }
+  private async savedReview(config: FrameworkConfig, run: Run, mode: FrameworkMode,
+    packetId: string, input: Awaited<ReturnType<PolicyService["input"]>>) {
+    const key = await this.key(config, mode, input.prompt, run);
+    const exact = record(await loadPolicyCache(this.file(key)));
+    if (exact?.status === "completed")
+      return { ...savedReviewSchema.parse(exact), key, historical: false };
+    const archived = record(await loadPolicyCache(this.savedFile(config, run, mode, packetId)));
+    if (archived?.status !== "completed" || archived.inputHash !== digest(input.markdown)) return undefined;
+    const saved = archivedReviewSchema.parse(archived);
+    return { ...saved, key: saved.reviewKey, historical: saved.reviewKey !== key };
+  }
   private async required() {
     const config = await this.frameworkConfig();
     if (!config) throw new LabError(409, "Run infra/setup-policy-index.py --apply to configure Agent Framework.");
@@ -292,12 +383,13 @@ export class PolicyService {
       if (!(await this.enriched(config, packet)).value)
         return failures.get(item.id) ?? { id: item.id, status: "not run" };
       const input = await this.input(run, packet, config, readRaw);
-      const saved = record(await loadPolicyCache(this.file(await this.key(config, mode, input.prompt, run))));
-      if (saved?.status !== "completed")
+      const saved = await this.savedReview(config, run, mode, item.id, input);
+      if (!saved)
         return failures.get(item.id) ?? { id: item.id, status: "not run" };
       return { id: item.id, status: "completed", cached: true,
         ...await frameworkReview(saved.raw, mode, config), ...this.metadata(config, mode),
-        completedAt: String(saved.completedAt), inputHash: digest(input.markdown) };
+        completedAt: String(saved.completedAt), inputHash: digest(input.markdown),
+        historical: saved.historical };
     }));
   }
   private async failedAttempts(runId: string, mode: PolicyMode) {
@@ -378,18 +470,26 @@ export class PolicyService {
           await savePolicyCache(saved.file, { analyzerFingerprint: config.claimAnalyzerHash, response });
         }
         const input = await this.input(run, packet, config, readRaw);
-        const file = this.file(await this.key(config, mode, input.prompt, run));
+        const reviewKey = await this.key(config, mode, input.prompt, run);
+        const file = this.file(reviewKey);
         const previous = record(await loadPolicyCache(file));
         item.status = "reviewing";
         item.stageStartedAt = new Date().toISOString();
         const raw = previous?.status === "completed" ? previous.raw
           : await (this.frameworkDependencies.invoke ?? invokeFramework)({
-            mode, prompt: input.prompt, lossState: input.lossState, policyScope: input.policyScope, configPath: this.configPath,
+            mode, prompt: input.claimAnalysis ? input.reviewQuestion : input.prompt,
+            claimAnalysis: input.claimAnalysis, ...this.reviewOptions(config),
+            ...(!input.claimAnalysis ? { reviewStrategy: "single" } : {}),
+            lossState: input.lossState, policyScope: input.policyScope, configPath: this.configPath, compact: true,
           });
         const completedAt = previous?.status === "completed" ? String(previous.completedAt) : new Date().toISOString();
         await savePolicyCache(file, { status: "received", raw, completedAt });
         const parsed = await frameworkReview(raw, mode, config);
         await savePolicyCache(file, { status: "completed", raw, completedAt });
+        await savePolicyCache(this.savedFile(config, run, mode, item.id), {
+          status: "completed", raw, completedAt, reviewKey,
+          inputHash: digest(input.markdown), reviewQuestion: input.reviewQuestion,
+        });
         Object.assign(item, { status: "completed", ...parsed, completedAt,
           cached: previous?.status === "completed", inputHash: digest(input.markdown), ...this.metadata(config, mode) });
       } catch (error) {
@@ -406,28 +506,45 @@ export class PolicyService {
     job.completedAt = new Date().toISOString();
     await savePolicyCache(path.join(this.cacheFolder, `framework-job-${job.id}.json`), job);
   }
-  async chatContext(run: Run, mode: PolicyMode, packetId: string, readRaw: (id: string) => Promise<unknown>) {
+  async chatContext(run: Run, mode: PolicyMode, packetId: string, readRaw: (id: string) => Promise<unknown>,
+    check: typeof checkNames[number] = checkNames[0]) {
     const config = await this.required();
     const packet = run.source.find((p) => p.id === packetId);
     if (!packet || !run.items.some((item) => item.id === packetId && item.rawSaved))
       throw new LabError(404, "No saved CU result for this case.");
     const input = await this.input(run, packet, config, readRaw);
-    const key = await this.key(config, mode, input.prompt, run);
-    const saved = record(await loadPolicyCache(this.file(key)));
-    if (saved?.status !== "completed") throw new LabError(409, "Run policy checks for this case and mode before chatting.");
+    const saved = await this.savedReview(config, run, mode, packetId, input);
+    if (!saved) throw new LabError(409, "Run policy checks for this case and mode before chatting.");
+    const key = saved.key;
     const parsed = await frameworkReview(saved.raw, mode, config);
-    const agent = { ...this.agent(config, mode), lossState: input.lossState, policyScope: input.policyScope };
-    return { contextId: digest(canonical({ key, agent })), packetId, mode, agent,
-      prompt: input.prompt, ...parsed };
+    const agent = { ...this.agent(config, mode), ...this.chatOptions(config),
+      lossState: input.lossState, policyScope: input.policyScope };
+    const savedPrompt = parseFrameworkResult(saved.raw, mode, config).checkPrompts?.[check];
+    const prompt = savedPrompt ?? z.object({ prompt: z.string().min(1) }).parse(
+      await (this.frameworkDependencies.invoke ?? invokeFramework)({
+        mode, prompt: input.reviewQuestion, prepareCheck: check,
+        claimAnalysis: input.claimAnalysis, configPath: this.configPath,
+      }),
+    ).prompt;
+    const index = checkNames.indexOf(check);
+    const result = { Checks: [parsed.result.Checks[index]] };
+    return { contextId: digest(canonical({ key, agent, check, prompt, result })), packetId, mode, check, agent,
+      prompt, promptSource: savedPrompt ? "saved" as const : "current" as const,
+      result, citations: [parsed.citations[index]] };
   }
   async followup(mode: PolicyMode, message: string, history: ChatMessage[], expectedAgent: PolicyContext) {
     const config = await this.required();
     const expected = this.agent(config, mode);
     if (expected.configurationHash !== expectedAgent.configurationHash || expected.mode !== expectedAgent.mode)
       throw new LabError(409, "Agent Framework configuration changed. Reload this chat.");
+    const chatOptions = this.chatOptions(config);
+    if (chatOptions.modelDeployment !== expectedAgent.modelDeployment ||
+        chatOptions.reasoningEffort !== expectedAgent.reasoningEffort)
+      throw new LabError(409, "Chat model settings changed. Reload this chat.");
     const lossState = "lossState" in expectedAgent && typeof expectedAgent.lossState === "string" ? expectedAgent.lossState : null;
     const raw = await (this.frameworkDependencies.invoke ?? invokeFramework)({
-      mode, prompt: message, history, lossState, policyScope: expectedAgent.policyScope, chat: true, configPath: this.configPath,
+      mode, prompt: message, history, lossState, policyScope: expectedAgent.policyScope, chat: true,
+      ...chatOptions, configPath: this.configPath,
     });
     const value = parseFrameworkResult(raw, mode, config);
     const parsed = chatAnswerSchema.parse(value.result);

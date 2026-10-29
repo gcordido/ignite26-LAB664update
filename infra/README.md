@@ -14,6 +14,11 @@ Use this folder for deployment or runtime infrastructure, including Skillable-sp
 - [`launch-workbench.ps1`](launch-workbench.ps1) starts the separate Insurance
   Workbench App. It does not create cloud resources or submit document analysis
   on launch.
+- [`policy-demo-cache.ps1`](policy-demo-cache.ps1) restores the included synthetic
+  policy reviews, CU claim fields and public resource configuration. It uses
+  the existing workbench dependencies and makes no Azure calls. Run it explicitly
+  after dependency provisioning and before launching the app; different local
+  configuration or cache files aren't overwritten.
 
 Run these scripts from the repository root as described in
 [step 5 of the attendee guide](../instructions/lab.html#step5).
@@ -25,6 +30,8 @@ Core and provider packages have independent version numbers: this lab pins
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\infra\setup.ps1
+powershell -ExecutionPolicy Bypass -File .\infra\policy-demo-cache.ps1
+# Sign in only when running live Azure work, not to load saved results.
 az login
 powershell -ExecutionPolicy Bypass -File .\infra\launch-workbench.ps1
 ```
@@ -65,6 +72,23 @@ index, a reachable model deployment and Azure permissions. Follow
 missing permissions rather than granting roles. The
 [policy walkthrough](../docs/policy-checks.md#compare-packets-01-and-02)
 then starts with the app, not Azure provisioning.
+
+The **FoundryIQ** UI label is the lab's umbrella name; the initial five-check
+review uses scoped evidence prefetched from Azure AI Search, not a Foundry IQ
+knowledge base. Each uncached packet gets five parallel Agent Framework calls.
+Matched execution caches skip those calls. Follow-up chat can use the Search tool.
+
+To refresh the synthetic demo bundle, complete all ten policy reviews using
+the current prompts, then run:
+
+```powershell
+.\infra\policy-demo-cache.ps1 -Action export -RunId "YOUR-COMPLETED-CU-RUN-ID"
+```
+
+Export verifies all ten reviews against the current prompts, claim facts and
+policy sources. It includes only those reviews, their claim fields and the
+public runtime configuration under `data\policy-demo`; credentials and request
+logs aren't exported. Review that synthetic bundle with the source changes.
 
 Provision `.tools\policy-deployment.json` with the machine's Search, Storage
 and Foundry resource IDs plus its model/analyzer names. Both policy deployment

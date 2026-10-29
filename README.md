@@ -70,18 +70,28 @@ prepared index configuration.
 
 #### Try the policy-check comparison
 
-On a prepared lab machine, load the included **10/10** cached run, select
-**Policy checks**, and select **Azure Search retrieval**. Select **Run policy
-checks** and confirm. New runs require Search; **No policy retrieval** only
-displays saved baseline results. Compare
-packet **01**'s expected **Satisfied** Amount check ($54/day against its $85
-contractual cap and Texas's $75 routine authority) versus packet **02**'s
-**Review required** amount ($61/day against Washington's $60 routine authority).
-The first three boxes are **Amount**, **Timing**, and **Effective terms**.
-For packet **01**, open the revised declarations, rental diagram and issued
-amendment alongside the cited SOP to inspect the supporting evidence.
-These are expected evidence-based results, not payment approval. Missing CU
-facts or controlling policy evidence correctly keep the affected check in review.
+On a prepared lab machine, restore the included synthetic policy-demo bundle
+with `.\infra\policy-demo-cache.ps1`, then launch the app. In **Parse and extract**,
+select **Load cached results** to load the **10/10** CU run. In **Check policies**,
+select **FoundryIQ** and **Load cached results**. Loading makes no Azure calls.
+FoundryIQ is the lab's umbrella label; this implementation retrieves evidence
+directly from Azure AI Search, not a Foundry IQ knowledge base.
+
+The five columns are **Daily cost**, **Rental dates**, **Active policy**,
+**Covered charges**, and **Payment approval**. Compare the claim and policy
+values in the right panel, then follow a value's source link to its PDF.
+A check mark means **Satisfied**, an open circle means **Review required**,
+and a circular-arrow icon means **Waiting for info**, not an agent still running.
+**N/A** identifies checks that don't apply to a non-rental claim.
+Packet **01** illustrates a daily rate within its contractual limit while
+repair dates and insurer approval can still be missing. Packet **02** illustrates
+why charge classification and payment authority are separate from daily price.
+These are evidence-based reviews, not coverage or payment approval.
+
+Select **Run live** and confirm only to request policy work. Matching current
+reviews are reused; uncached packets use five parallel Agent Framework calls,
+one per check, plus any missing CU claim-summary extraction. Azure charges apply.
+See [policy checks](docs/policy-checks.md) for the walkthrough and cache details.
 
 For guided and self-paced sessions, follow
 [step 5: compare policy checks](instructions/lab.html#policy-checks).

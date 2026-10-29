@@ -16,7 +16,7 @@ import { DocumentService } from "./documents.ts";
 import { diagnose, policyDiagnoses } from "./triage.ts";
 import { packetJson } from "./packet-json.ts";
 import { PolicyService, type PolicyJob } from "./policy-service.ts";
-import { modeSchema } from "./policy-core.ts";
+import { checkNames, modeSchema } from "./policy-core.ts";
 import { type PolicyChatState } from "./policy-chat.ts";
 import { PolicyDocuments, representationSchema } from "./policy-documents.ts";
 import {
@@ -305,22 +305,32 @@ export function createApp(
     mode: modeSchema,
     packetId: z.string().regex(/^packet-\d{2}$/),
     runId: z.string().uuid(),
+    check: z.enum(checkNames),
+  });
+  app.get("/api/policy/claim-evidence", async (req, res) => {
+    const s = session(req);
+    const { runId, packetId } = chatSelection.pick({ runId: true, packetId: true }).parse(req.query);
+    const { run, packet } = loadedPacket(s, packetId);
+    if (run.id !== runId)
+      throw new LabError(409, "The selected extraction run changed. Reload this case.");
+    res.json(await policy.claimEvidence(run, packet, await cache.raw(run.id, packet.id)));
   });
   async function chatContext(
     s: Session,
     mode: z.infer<typeof modeSchema>,
     packetId: string,
+    check: typeof checkNames[number],
   ) {
     if (!s.run)
       throw new LabError(409, "Load Content Understanding results first.");
     const run = s.run;
     const context = await policy.chatContext(run, mode, packetId, (id) =>
-      cache.raw(run.id, id),
+      cache.raw(run.id, id), check,
     );
     s.policyChats ??= new Map();
     let state = s.policyChats.get(context.contextId);
     if (!state) {
-      if (s.policyChats.size >= 30)
+      if (s.policyChats.size >= 100)
         throw new LabError(
           409,
           "Chat limit reached for this private session. Reload to start a new session.",
@@ -340,10 +350,10 @@ export function createApp(
   }
   app.get("/api/policy/chat", async (req, res) => {
     const s = session(req);
-    const { mode, packetId, runId } = chatSelection.parse(req.query);
+    const { mode, packetId, runId, check } = chatSelection.parse(req.query);
     if (s.run?.id !== runId)
       throw new LabError(409, "The selected CU run changed. Reload this chat.");
-    const { context, state } = await chatContext(s, mode, packetId);
+    const { context, state } = await chatContext(s, mode, packetId, check);
     res.json({
       ...context,
       messages: state.messages,
@@ -353,7 +363,7 @@ export function createApp(
   });
   app.post("/api/policy/chat", async (req, res) => {
     const s = session(req);
-    const { mode, packetId, runId, contextId, message } = chatSelection
+    const { mode, packetId, runId, check, contextId, message } = chatSelection
       .extend({
         contextId: z.string().regex(/^[a-f0-9]{64}$/),
         message: z.string().trim().min(1).max(6000),
@@ -367,7 +377,7 @@ export function createApp(
       throw new LabError(409, "The selected CU run changed. Reload this chat.");
     s.chatBusy = true;
     try {
-      const { context, state } = await chatContext(s, mode, packetId);
+      const { context, state } = await chatContext(s, mode, packetId, check);
       if (context.contextId !== contextId)
         throw new LabError(
           409,
@@ -436,7 +446,7 @@ export function createApp(
       for (const item of s.policyJob.items) {
         const index = items.findIndex((value) => value.id === item.id);
         if (index < 0) continue;
-        if (item.status === "failed" && items[index].status !== "completed")
+        if (item.status === "failed")
           items[index] = item;
         else if (
           item.inputHash === items[index].inputHash &&

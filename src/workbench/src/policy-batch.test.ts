@@ -5,6 +5,50 @@ import { Cache } from "./batch.ts";
 import { PolicyService, type PolicyItem, type PolicyJob } from "./policy-service.ts";
 import { createApp } from "./server.ts";
 
+test("a failed fresh review remains visible even when an older saved result exists", async (t) => {
+  const cache = new Cache();
+  const saved = (await cache.list()).find((run) => run.status === "completed");
+  assert.ok(saved);
+  const job: PolicyJob = {
+    id: "failed-live-job", runId: saved.id, mode: "search", status: "completed",
+    startedAt: new Date().toISOString(),
+    items: [{ id: saved.items[0]!.id, status: "failed", error: "Uncited comparison rule" }],
+  };
+  class FailedPolicy extends PolicyService {
+    override async status() {
+      return { configured: true, message: "Test configuration", modes: {}, batchRunning: false };
+    }
+    override async snapshot() {
+      return saved!.items.map(({ id }): PolicyItem => ({ id, status: "completed", cached: true, historical: true }));
+    }
+    override async start() { return { job, task: Promise.resolve() }; }
+  }
+  const server = createApp(undefined, { cache, policy: new FailedPolicy() }).listen(0, "127.0.0.1");
+  await once(server, "listening");
+  t.after(() => new Promise<void>((resolve) => server.close(() => resolve())));
+  const address = server.address();
+  assert.ok(address && typeof address !== "string");
+  const base = `http://127.0.0.1:${address.port}/api/`;
+  const session = await (await fetch(base + "session", {
+    method: "POST", headers: { "Content-Type": "application/json" }, body: "{}",
+  })).json();
+  async function request(route: string, body?: unknown) {
+    return fetch(base + route, {
+      method: body === undefined ? "GET" : "POST",
+      headers: { "Content-Type": "application/json", "x-labmachine-session": session.sessionId },
+      ...(body === undefined ? {} : { body: JSON.stringify(body) }),
+    });
+  }
+  assert.equal((await request("cache/load", { runId: saved.id })).status, 200);
+  assert.equal((await request("policy/batch", { mode: "search", live: true })).status, 202);
+  const live = await (await request("policy/results?mode=search")).json();
+  assert.equal(live.items[0].status, "failed");
+  assert.equal(live.items[0].error, "Uncited comparison rule");
+  const cached = await (await request("policy/cache/load", { runId: saved.id, mode: "search" })).json();
+  assert.equal(cached.items[0].status, "completed");
+  assert.equal(cached.items[0].historical, true);
+});
+
 test("refresh resumes the owning session's policy job and duplicate starts don't submit again", async (t) => {
   const cache = new Cache();
   const saved = (await cache.list()).find((run) => run.status === "completed");

@@ -3,6 +3,19 @@ import { readFile } from "node:fs/promises";
 import { test } from "node:test";
 import vm from "node:vm";
 import { fieldRegions } from "../web/result-model.js";
+import { claimFieldSources, policyRuleSources } from "../web/policy-evidence-links.js";
+
+test("Check consistency navigation stays enabled before loading results and while busy", async () => {
+  const [html, source] = await Promise.all([
+    readFile(new URL("../web/workbench.html", import.meta.url), "utf8"),
+    readFile(new URL("../web/workbench.js", import.meta.url), "utf8"),
+  ]);
+  const button = html.match(/<button\b[^>]*\bid="review-packet"[^>]*>/)?.[0];
+  assert.ok(button);
+  assert.doesNotMatch(button, /\bdisabled\b/);
+  assert.doesNotMatch(source, /get\("review-packet"\)\.disabled\s*=/);
+  assert.match(button, /data-view="policies"/);
+});
 
 test("policy evidence uses plain field/value rows and one highlight action per source PDF", async () => {
   const source = await readFile(
@@ -165,7 +178,39 @@ test("highlighting a policy's values deduplicates native boxes, retains multiple
   assert.match(status.textContent, /No source boxes were returned/);
 });
 
-test("inline policy details show only the selected check with Expected, Actual, reasoning and a source", async () => {
+test("policy selection targets the right panel without expanding a table row", async () => {
+  const source = await readFile(new URL("../web/workbench.js", import.meta.url), "utf8");
+  const html = await readFile(new URL("../web/workbench.html", import.meta.url), "utf8");
+  assert.ok(html.indexOf('id="agent-panel"') > html.indexOf('<aside id="preview"'));
+  assert.ok(html.indexOf('id="agent-panel"') < html.indexOf("</aside>"));
+  const attributes = new Map<string, string>();
+  const button = {
+    dataset: { agentCheck: "1" },
+    setAttribute: (name: string, value: string) => attributes.set(name, value),
+    closest: () => ({ classList: { add: () => {} } }),
+  };
+  const owner = {
+    dataset: { packet: "packet-01" },
+    cells: [{ rowSpan: 1 }],
+    classList: { add: () => {} },
+    querySelectorAll: () => [button],
+  };
+  const context = vm.createContext({
+    expansion: { kind: "agent", packetId: "packet-01", key: "1" },
+    get: () => ({ querySelector: () => ({ children: [owner] }) }),
+    detailPanels: { agent: { id: "agent-panel" } },
+    element: () => { throw new Error("Policy details must not insert an inline row"); },
+    sizeDetails: () => { throw new Error("Right panel must not use inline sizing"); },
+  });
+  const mount = source.slice(source.indexOf("function mountDetails("),
+    source.indexOf("async function showPolicyDetails("));
+  vm.runInContext(`${mount}\nmountDetails(5);`, context);
+  assert.equal(owner.cells[0].rowSpan, 1);
+  assert.equal(attributes.get("aria-controls"), "agent-panel");
+  assert.equal(attributes.get("aria-expanded"), "true");
+});
+
+test("policy details lead with a short finding, field comparisons and verified sources", async () => {
   const source = await readFile(
     new URL("../web/workbench.js", import.meta.url),
     "utf8",
@@ -198,6 +243,11 @@ test("inline policy details show only the selected check with Expected, Actual, 
     ActualValue: "$61/day",
     Reason:
       "<b>Not HTML</b>: WA routine threshold exceeded; obtain exception approval.",
+    Headline: "Daily price needs supervisor approval",
+    Comparisons: [{
+      ClaimField: "RentalDailyBaseRate", ClaimLabel: "Daily rental price", ClaimValue: "$61/day",
+      PolicyField: "WA-R2", PolicyLabel: "Routine approval limit", PolicyValue: "$60/day",
+    }],
   };
   const citation = {
     href: "/data/policies/rental/wa-rental-review-sop.pdf#page=2",
@@ -218,6 +268,7 @@ test("inline policy details show only the selected check with Expected, Actual, 
     selectedPacket: "packet-02",
     policyMode: "search",
     policyCheckNames: ["Daily rate", "Rental period"],
+    policyShortNames: ["Daily cost", "Rental dates"],
     focusedPolicyCheck: 0,
     policyResults: new Map([
       [
@@ -238,6 +289,8 @@ test("inline policy details show only the selected check with Expected, Actual, 
     showPolicyPanel: () => {},
     customerName: () => "Sample customer",
     policyModeLabel: () => "Azure Search retrieval",
+    addClaimComparisonSources: () => {},
+    addPolicyComparisonSources: () => {},
     openPolicySource: async (value: unknown) => {
       opened = value;
     },
@@ -247,18 +300,26 @@ test("inline policy details show only the selected check with Expected, Actual, 
   });
   const renderer = source.slice(
     source.indexOf("function renderPolicyOutput("),
-    source.indexOf("async function openPolicySource("),
+    source.indexOf("function comparisonLink("),
   );
   vm.runInContext(`${renderer}\nrenderPolicyOutput();`, context);
   const section = panel.children.find((node) => node.tag === "section")!;
-  assert.equal(title.textContent, "Daily rate");
+  assert.equal(title.textContent, "Daily cost");
   assert.equal(
     panel.children.filter((node) => node.tag === "section").length,
     1,
   );
   assert.equal(section.children[0].textContent, "Review required");
   assert.match(section.children[0].className, /policy-review/);
-  const values = section.children[1];
+  assert.equal(section.children[1].textContent, check.Headline);
+  assert.equal(section.children[2].tag, "table");
+  const rows = section.children[2].children.find((node) => node.tag === "tbody")!.children;
+  assert.equal(rows[0].children[1].children[1].textContent, "RentalDailyBaseRate");
+  assert.equal(rows[0].children[2].children[0].textContent, "$61/day");
+  assert.equal(rows[1].children[1].children[1].textContent, "WA-R2");
+  assert.equal(rows[1].children[2].children[0].textContent, "$60/day");
+  const explanation = section.children.find((node) => node.tag === "details")!;
+  const values = explanation.children[1];
   assert.equal(values.tag, "dl");
   assert.deepEqual(
     values.children.map((node) => node.tag),
@@ -268,26 +329,21 @@ test("inline policy details show only the selected check with Expected, Actual, 
     values.children
       .filter((node) => node.tag === "dt")
       .map((node) => node.textContent),
-    ["Expected:", "Actual:"],
+    ["Claim evidence", "Policy requirement"],
   );
   assert.deepEqual(
     values.children
       .filter((node) => node.tag === "dd")
       .map((node) => [node.children[0].tag, node.children[0].textContent]),
     [
-      ["strong", check.ExpectedValue],
       ["strong", check.ActualValue],
+      ["strong", check.ExpectedValue],
     ],
   );
-  assert.equal(section.children[2].children[0].tag, "em");
-  assert.equal(
-    section.children[2].children[0].textContent,
-    `Reasoning: ${check.Reason}`,
-  );
-  assert.equal(section.children[3].textContent, "Source:");
-  const link = section.children[4];
+  assert.equal(section.children[3].textContent, check.Reason);
+  const link = section.children.find((node) => node.tag === "a")!;
   assert.equal(link.href, citation.href);
-  assert.match(link.textContent, /WA-RENTAL-001 v1\.0 ·/);
+  assert.equal(link.textContent, "State processing rules · page 2 · WA-R2");
   link.onclick!({
     preventDefault: () => {
       prevented = true;
@@ -299,18 +355,44 @@ test("inline policy details show only the selected check with Expected, Actual, 
   check.ReviewRequired = false;
   vm.runInContext("renderPolicyOutput();", context);
   const notApplicable = panel.children.find((node) => node.tag === "section")!;
-  assert.equal(notApplicable.children[0].textContent, "Not applicable");
+  assert.equal(notApplicable.children[0].textContent, "N/A · Not applicable");
   assert.match(notApplicable.children[0].className, /policy-na/);
   assert.ok(!notApplicable.children[0].className.includes("policy-satisfied"));
+  check.Outcome = "InProgress";
+  vm.runInContext("renderPolicyOutput();", context);
+  const waiting = panel.children.find((node) => node.tag === "section")!;
+  assert.equal(waiting.children[0].textContent, "Waiting for info");
+  assert.match(waiting.children[0].className, /policy-waiting/);
+  assert.match(waiting.children[1].textContent, /Review complete\. Waiting for claim information or approval/);
+  assert.ok(!waiting.children[0].className.includes("policy-satisfied"));
   vm.runInContext("renderPolicyOutput(1);", context);
-  assert.equal(title.textContent, "Rental period");
+  assert.equal(title.textContent, "Rental dates");
   assert.equal(
     panel.children.filter((node) => node.tag === "section").length,
     1,
   );
+  vm.runInContext(
+    "for (const check of policyResults.get(policyMode).items[0].result.Checks) { delete check.Headline; delete check.Comparisons; }",
+    context,
+  );
+  vm.runInContext("renderPolicyOutput();", context);
+  const legacy = panel.children.find((node) => node.tag === "section")!;
+  assert.match(legacy.children[1].textContent, /Saved review uses the earlier format/);
+  assert.ok(legacy.children.some((node) => node.tag === "details"));
+  assert.ok(!legacy.children.some((node) => node.tag === "table"));
 });
 
-test("policy citations keep inline details visible and Back restores the claim document and focus", async () => {
+test("policy status icons distinguish completion, review and missing information without implying live work", async () => {
+  const css = await readFile(new URL("../web/workbench.css", import.meta.url), "utf8");
+  assert.match(css, /\.policy-satisfied::before\s*\{\s*content: "\\2713" \/ "";/);
+  assert.match(css, /\.policy-review::before\s*\{\s*content: "\\25cb" \/ "";/);
+  assert.match(css, /\.policy-waiting::before\s*\{\s*content: "\\21bb" \/ "";/);
+  assert.doesNotMatch(css, /\.policy-waiting(?:::before)?\s*\{[^}]*animation:/);
+  assert.match(css, /#packet-table\.policy-grid > tbody > tr > td:not\(:first-child\)\s*\{\s*padding: 0;/);
+  assert.match(css, /\.cell-content\[data-agent-check\] > \.policy-state\s*\{[^}]*width: 100%;[^}]*height: 100%;[^}]*border-radius: 0;/);
+});
+
+test("policy citations replace right-panel details and Back restores the check and focus", async () => {
   const source = await readFile(
     new URL("../web/workbench.js", import.meta.url),
     "utf8",
@@ -322,6 +404,8 @@ test("policy citations keep inline details visible and Back restores the claim d
       scrollTop: number;
       textContent: string;
       focus: () => void;
+      dataset: { ready: string };
+      setAttribute: () => void;
       onclick?: () => void;
     }
   >();
@@ -340,11 +424,19 @@ test("policy citations keep inline details visible and Back restores the claim d
     "policy-chat",
     "policy-pane-modes",
     "close-agent",
+    "policy-review-pane",
+    "policy-review-empty",
+    "agent-panel",
+    "preview",
+    "pane-splitter",
+    "pdf-stage",
   ])
     nodes.set(id, {
       hidden: false,
-      scrollTop: id === "packets" ? 120 : 0,
+      scrollTop: id === "policy-review-pane" ? 120 : 0,
       textContent: "",
+      dataset: { ready: "true" },
+      setAttribute: () => {},
       focus: () => {
         focused = id;
       },
@@ -373,8 +465,9 @@ test("policy citations keep inline details visible and Back restores the claim d
       },
     },
     collapseDetails: () => {},
+    expansion: { kind: "agent", view: "policy" },
+    view: "policy",
     selectedPacket: "packet-02",
-    showAgentClaim: async () => {},
     fail: (error: unknown) => {
       throw error;
     },
@@ -384,7 +477,7 @@ test("policy citations keep inline details visible and Back restores the claim d
     source.indexOf("function policyMessage("),
   );
   const navigation = source.slice(
-    source.indexOf("async function openPolicySource("),
+    source.indexOf("function beginPolicySource("),
     source.indexOf('for (const mode of ["result", "chat"])'),
   );
   vm.runInContext(
@@ -397,12 +490,15 @@ test("policy citations keep inline details visible and Back restores the claim d
     JSON.stringify(["/data/policies/rental/tx-rental-review-sop.pdf", 2]),
   );
   assert.equal(nodes.get("policy-output")!.hidden, false);
+  assert.equal(nodes.get("policy-review-pane")!.hidden, true);
   assert.equal(nodes.get("policy-source-toolbar")!.hidden, false);
   assert.equal(focused, "policy-source-back");
-  nodes.get("packets")!.scrollTop = 0;
+  nodes.get("policy-review-pane")!.scrollTop = 0;
   nodes.get("policy-source-back")!.onclick!();
   assert.equal(nodes.get("policy-output")!.hidden, false);
-  assert.equal(nodes.get("packets")!.scrollTop, 120);
+  assert.equal(nodes.get("policy-review-pane")!.scrollTop, 120);
+  assert.equal(nodes.get("policy-review-pane")!.hidden, false);
+  assert.equal(nodes.get("pdf-scroll")!.hidden, true);
   assert.equal(nodes.get("policy-source-toolbar")!.hidden, true);
   assert.equal(focused, "citation");
   await assert.rejects(
@@ -413,18 +509,58 @@ test("policy citations keep inline details visible and Back restores the claim d
     /verified local PDF/,
   );
   vm.runInContext('policyPaneMode = "chat"; showPolicyPanel(true);', context);
-  nodes.get("packets")!.scrollTop = 80;
+  nodes.get("policy-review-pane")!.scrollTop = 80;
   await vm.runInContext("openPolicySource(citation, link)", context);
   assert.equal(nodes.get("policy-chat")!.hidden, false);
   assert.equal(
     nodes.get("policy-source-back")!.textContent,
-    "Back to claim document",
+    "Back to policy check",
   );
-  nodes.get("packets")!.scrollTop = 0;
+  nodes.get("policy-review-pane")!.scrollTop = 0;
   nodes.get("policy-source-back")!.onclick!();
   assert.equal(nodes.get("policy-chat")!.hidden, false);
   assert.equal(nodes.get("policy-output")!.hidden, true);
-  assert.equal(nodes.get("packets")!.scrollTop, 80);
+  assert.equal(nodes.get("policy-review-pane")!.scrollTop, 80);
+  const region = { page: 5, polygon: [0.1, 0.1, 0.2, 0.1, 0.2, 0.2, 0.1, 0.2] };
+  await vm.runInContext(
+    `openClaimSource({href:"/data/packets/packet-02.pdf",page:5,regions:[${JSON.stringify(region)}]}, "LossDate", link)`,
+    context,
+  );
+  assert.equal(JSON.stringify(preview),
+    JSON.stringify(["/data/packets/packet-02.pdf", 5, [region]]));
+  assert.equal(nodes.get("policy-review-pane")!.hidden, true);
+  assert.match(nodes.get("policy-source-title")!.textContent, /LossDate.*page 5/);
+  nodes.get("policy-source-back")!.onclick!();
+  assert.equal(nodes.get("policy-review-pane")!.hidden, false);
+  assert.equal(focused, "citation");
+  await assert.rejects(vm.runInContext(
+    'openClaimSource({href:"/data/packets/packet-01.pdf",page:5}, "LossDate", link)', context,
+  ), /selected packet/);
+});
+
+test("comparison source matching uses CU paths and exact cited rules, not labels or guesses", () => {
+  const region = { page: 4, polygon: [0, 0, 1, 0, 1, 1, 0, 1] };
+  const fields = [
+    { field: "LossDate", value: "06/12/2026", status: "present", category: "claim_summary", regions: [region] },
+    { field: "RentalUsed", value: false, status: "present", category: "claim_summary", regions: [region] },
+    { field: "RentalTaxes", value: 0, status: "present", category: "claim_summary", regions: [region] },
+    { field: "ActualRepairCompletion", value: null, status: "missing", category: "claim_summary", regions: [region] },
+    { field: "Rental.Total", value: 200, status: "present", category: "claim_summary", regions: [] },
+    { field: "Rental.DailyRates[0].BaseRate", value: 50, status: "present", category: "claim_summary", regions: [region] },
+    { field: "LossDateTime", value: "unrelated", status: "present", category: "statement", regions: [region] },
+  ];
+  assert.equal(claimFieldSources(fields, "LossDate").length, 1);
+  assert.equal(claimFieldSources(fields, "claim_summary.LossDate").length, 1);
+  assert.equal(claimFieldSources(fields, "Accident date").length, 0);
+  assert.equal(claimFieldSources(fields, "RentalUsed")[0].value, false);
+  assert.equal(claimFieldSources(fields, "RentalTaxes")[0].value, 0);
+  assert.equal(claimFieldSources(fields, "ActualRepairCompletion").length, 0);
+  assert.equal(claimFieldSources(fields, "Rental.Total").length, 0);
+  assert.equal(claimFieldSources(fields, "Rental.DailyRates").length, 1);
+  const citation = { RuleId: "POLICY-TERM", href: "/data/policies/rental/ocr-comparison-v2/effective-date-co-packet-04.pdf#page=1" };
+  assert.deepEqual(policyRuleSources([citation], "POLICY-TERM"), [citation]);
+  assert.equal(policyRuleSources([citation], "Not retrieved").length, 0);
+  assert.equal(policyRuleSources([{ ...citation, href: "https://example.com/claim.pdf" }], "POLICY-TERM").length, 0);
 });
 
 test("Result remains the default and switching to Chat preserves the result scroll position", async () => {
@@ -454,12 +590,13 @@ test("Result remains the default and switching to Chat preserves the result scro
   >();
   for (const id of [
     "packets",
+    "policy-review-pane",
     "policy-result-mode",
     "policy-chat-mode",
     "policy-output",
   ]) {
     const node = {
-      scrollTop: id === "packets" ? 180 : 0,
+      scrollTop: id === "policy-review-pane" ? 180 : 0,
       pressed: "",
       setAttribute(_name: string, value: string) {
         this.pressed = value;
@@ -477,7 +614,7 @@ test("Result remains the default and switching to Chat preserves the result scro
     policyResultScroll: new Map(),
     showPolicyPanel: () => {},
     renderPolicyOutput: () => {
-      nodes.get("packets")!.scrollTop = 0;
+      nodes.get("policy-review-pane")!.scrollTop = 0;
     },
   });
   const handlers = source.slice(
@@ -489,7 +626,7 @@ test("Result remains the default and switching to Chat preserves the result scro
   assert.equal(vm.runInContext("policyPaneMode", context), "chat");
   assert.equal(nodes.get("policy-chat-mode")!.pressed, "true");
   nodes.get("policy-result-mode")!.onclick!();
-  assert.equal(nodes.get("packets")!.scrollTop, 180);
+  assert.equal(nodes.get("policy-review-pane")!.scrollTop, 180);
   assert.equal(nodes.get("policy-result-mode")!.pressed, "true");
 });
 
@@ -728,6 +865,7 @@ test("policy progress watcher is callable outside refreshPolicy after a page rel
   const context = vm.createContext({
     policyCaches: async () => {},
     policyBusy: false,
+    policyMode: "search",
     run: { id: "saved-run", items: [] },
     policyResults: new Map([["search", { status: "completed", items: [] }]]),
     controls: () => {},
@@ -746,6 +884,66 @@ test("policy progress watcher is callable outside refreshPolicy after a page rel
   );
   assert.equal(restoredAvailability, 1);
   assert.equal(vm.runInContext("policyBusy", context), false);
+});
+
+test("policy run banner shows the active packet independently of selection and clears when finished", async () => {
+  const [source, html] = await Promise.all([
+    readFile(new URL("../web/workbench.js", import.meta.url), "utf8"),
+    readFile(new URL("../web/workbench.html", import.meta.url), "utf8"),
+  ]);
+  const spinner = { hidden: false };
+  const nodes = new Map<string, {
+    hidden: boolean; textContent: string; querySelector: () => typeof spinner;
+  }>();
+  const get = (id: string) => {
+    if (!nodes.has(id)) nodes.set(id, {
+      hidden: false, textContent: "", querySelector: () => spinner,
+    });
+    return nodes.get(id)!;
+  };
+  const job = {
+    status: "running",
+    startedAt: new Date(Date.now() - 125_000).toISOString(),
+    items: [
+      { id: "packet-01", status: "completed" },
+      { id: "packet-02", status: "reviewing" },
+      { id: "packet-03", status: "pending" },
+    ],
+  };
+  const errors = new Map<string, string>();
+  const context = vm.createContext({
+    get, policyMode: "search", selectedPacket: "packet-01",
+    policyResults: new Map([["search", job]]),
+    policyProgressErrors: errors,
+    results: new Map([["packet-02", { name: "Victor Bennett" }]]),
+    customerName: (result?: { name: string }) => result?.name ?? "",
+    policyModeLabel: () => "FoundryIQ",
+  });
+  vm.runInContext(source.slice(
+    source.indexOf("function renderPolicyRunStatus("),
+    source.indexOf("function updatePolicyActivity("),
+  ), context);
+  const render = () => vm.runInContext("renderPolicyRunStatus()", context);
+  render();
+  assert.equal(get("policy-run-status").hidden, false);
+  assert.equal(get("policy-status").hidden, true);
+  assert.equal(get("policy-run-label").textContent, "Agent running");
+  assert.equal(get("policy-run-packet").textContent, "packet-02 · Victor Bennett");
+  assert.match(get("policy-run-detail").textContent, /1\/3 packets finished/);
+  assert.equal(get("policy-run-elapsed").textContent, "2:05");
+  job.items[1].status = "extracting";
+  render();
+  assert.equal(get("policy-run-label").textContent, "Preparing claim evidence");
+  errors.set("search", "Disconnected");
+  render();
+  assert.equal(get("policy-run-label").textContent, "Progress connection interrupted");
+  assert.equal(spinner.hidden, true);
+  job.status = "completed";
+  render();
+  assert.equal(get("policy-run-status").hidden, true);
+  assert.equal(get("policy-status").hidden, false);
+  assert.doesNotMatch(html, />Synthetic data<\/span>|>Combined preview<\/span>/);
+  assert.match(html, /class="policy-run-clock" role="timer" aria-live="off"/);
 });
 
 test("policy Run requires Search and only this session's busy work disables the retrieval dropdown", async () => {

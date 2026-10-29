@@ -1,0 +1,462 @@
+[
+  {
+    "packetId": "packet-01",
+    "claimId": "CMM-26-467202",
+    "state": "TX",
+    "vehicle": "2022 Honda CR-V EX",
+    "vin": "7FARW1H55NA510781",
+    "policyId": "CMM-A4911741",
+    "questions": [
+      {
+        "source": "sparse_table",
+        "question": "What is the 2022 Honda CR-V EX's daily rental limit?",
+        "answer": "$85 per day.",
+        "citation": {
+          "File": "01-revised-declarations.pdf",
+          "DocumentId": "DEC-TX-01",
+          "Version": "2026-02-01",
+          "RuleId": "DEC-TX-01",
+          "Section": "VEHICLE SCHEDULE"
+        }
+      },
+      {
+        "source": "diagram",
+        "question": "If the covered 2022 Honda CR-V EX is safely drivable, when does rental eligibility begin?",
+        "answer": "When it is actually delivered for covered repairs.",
+        "citation": {
+          "File": "02-rental-terms-and-diagram.pdf",
+          "DocumentId": "RNT-TX-01",
+          "Version": "2025-09",
+          "RuleId": "Figure R-1",
+          "Section": "RENTAL ELIGIBILITY AT A GLANCE"
+        }
+      },
+      {
+        "source": "scanned_document",
+        "question": "When does endorsement END-02 take effect?",
+        "answer": "February 1, 2026, at 12:01 a.m. Central Time",
+        "citation": {
+          "File": "03-scanned-midterm-endorsement.pdf",
+          "DocumentId": "END-02",
+          "Version": "2026-02-01",
+          "RuleId": "END-02",
+          "Section": "CHANGE EFFECTIVE"
+        }
+      }
+    ]
+  },
+  {
+    "packetId": "packet-02",
+    "claimId": "ASA-25-615743",
+    "state": "WA",
+    "vehicle": "2020 Subaru Outback Premium",
+    "vin": "4S4BTACC1LA511562",
+    "policyId": "ASA-A6815200",
+    "questions": [
+      {
+        "source": "sparse_table",
+        "question": "What is the 2020 Subaru Outback Premium's daily rental limit?",
+        "answer": "$85 per day.",
+        "citation": {
+          "File": "declarations-wa-packet-02.pdf",
+          "DocumentId": "DEC-WA-P02",
+          "Version": "2024-11-09",
+          "RuleId": "DEC-WA-P02",
+          "Section": "VEHICLE SCHEDULE"
+        }
+      },
+      {
+        "source": "diagram",
+        "question": "If the covered 2020 Subaru Outback Premium is safely drivable, when does rental eligibility begin?",
+        "answer": "When it is actually delivered for covered repairs.",
+        "citation": {
+          "File": "rental-terms-wa-packet-02.pdf",
+          "DocumentId": "RNT-WA-P02",
+          "Version": "2024-11-09",
+          "RuleId": "Figure R-1",
+          "Section": "RENTAL ELIGIBILITY AT A GLANCE"
+        }
+      },
+      {
+        "source": "scanned_document",
+        "question": "When does policy ASA-A6815200 take effect?",
+        "answer": "2024-11-09",
+        "citation": {
+          "File": "effective-date-wa-packet-02.pdf",
+          "DocumentId": "EFF-WA-P02",
+          "Version": "2024-11-09",
+          "RuleId": "POLICY-TERM",
+          "Section": "RENTAL COVERAGE EFFECTIVE DATE"
+        }
+      }
+    ]
+  },
+  {
+    "packetId": "packet-03",
+    "claimId": "SCI-25-526383",
+    "state": "AZ",
+    "vehicle": "2023 Kia Sportage LX",
+    "vin": "KNDPMCAC0PA512343",
+    "policyId": "SCI-A1132557",
+    "questions": [
+      {
+        "source": "sparse_table",
+        "question": "What is the 2023 Kia Sportage LX's daily rental limit?",
+        "answer": "$85 per day.",
+        "citation": {
+          "File": "declarations-az-packet-03.pdf",
+          "DocumentId": "DEC-AZ-P03",
+          "Version": "2025-02-19",
+          "RuleId": "DEC-AZ-P03",
+          "Section": "VEHICLE SCHEDULE"
+        }
+      },
+      {
+        "source": "diagram",
+        "question": "If the covered 2023 Kia Sportage LX is safely drivable, when does rental eligibility begin?",
+        "answer": "When it is actually delivered for covered repairs.",
+        "citation": {
+          "File": "rental-terms-az-packet-03.pdf",
+          "DocumentId": "RNT-AZ-P03",
+          "Version": "2025-02-19",
+          "RuleId": "Figure R-1",
+          "Section": "RENTAL ELIGIBILITY AT A GLANCE"
+        }
+      },
+      {
+        "source": "scanned_document",
+        "question": "When does policy SCI-A1132557 take effect?",
+        "answer": "2025-02-19",
+        "citation": {
+          "File": "effective-date-az-packet-03.pdf",
+          "DocumentId": "EFF-AZ-P03",
+          "Version": "2025-02-19",
+          "RuleId": "POLICY-TERM",
+          "Section": "RENTAL COVERAGE EFFECTIVE DATE"
+        }
+      }
+    ]
+  },
+  {
+    "packetId": "packet-04",
+    "claimId": "ARC-26-739979",
+    "state": "CO",
+    "vehicle": "2024 Mazda CX-5 2.5 S Preferred",
+    "vin": "JM3KFBCM6RA513124",
+    "policyId": "ARC-A8669481",
+    "questions": [
+      {
+        "source": "sparse_table",
+        "question": "What is the 2024 Mazda CX-5 2.5 S Preferred's daily rental limit?",
+        "answer": "$85 per day.",
+        "citation": {
+          "File": "declarations-co-packet-04.pdf",
+          "DocumentId": "DEC-CO-P04",
+          "Version": "2026-01-13",
+          "RuleId": "DEC-CO-P04",
+          "Section": "VEHICLE SCHEDULE"
+        }
+      },
+      {
+        "source": "diagram",
+        "question": "If the covered 2024 Mazda CX-5 2.5 S Preferred is safely drivable, when does rental eligibility begin?",
+        "answer": "When it is actually delivered for covered repairs.",
+        "citation": {
+          "File": "rental-terms-co-packet-04.pdf",
+          "DocumentId": "RNT-CO-P04",
+          "Version": "2026-01-13",
+          "RuleId": "Figure R-1",
+          "Section": "RENTAL ELIGIBILITY AT A GLANCE"
+        }
+      },
+      {
+        "source": "scanned_document",
+        "question": "When does policy ARC-A8669481 take effect?",
+        "answer": "2026-01-13",
+        "citation": {
+          "File": "effective-date-co-packet-04.pdf",
+          "DocumentId": "EFF-CO-P04",
+          "Version": "2026-01-13",
+          "RuleId": "POLICY-TERM",
+          "Section": "RENTAL COVERAGE EFFECTIVE DATE"
+        }
+      }
+    ]
+  },
+  {
+    "packetId": "packet-05",
+    "claimId": "PRC-25-862846",
+    "state": "FL",
+    "vehicle": "2019 Toyota Corolla LE",
+    "vin": "5YFEPMAE3KA513905",
+    "policyId": "PRC-A3933393",
+    "questions": [
+      {
+        "source": "sparse_table",
+        "question": "What is the 2019 Toyota Corolla LE's daily rental limit?",
+        "answer": "$85 per day.",
+        "citation": {
+          "File": "declarations-fl-packet-05.pdf",
+          "DocumentId": "DEC-FL-P05",
+          "Version": "2025-04-26",
+          "RuleId": "DEC-FL-P05",
+          "Section": "VEHICLE SCHEDULE"
+        }
+      },
+      {
+        "source": "diagram",
+        "question": "If the covered 2019 Toyota Corolla LE is safely drivable, when does rental eligibility begin?",
+        "answer": "When it is actually delivered for covered repairs.",
+        "citation": {
+          "File": "rental-terms-fl-packet-05.pdf",
+          "DocumentId": "RNT-FL-P05",
+          "Version": "2025-04-26",
+          "RuleId": "Figure R-1",
+          "Section": "RENTAL ELIGIBILITY AT A GLANCE"
+        }
+      },
+      {
+        "source": "scanned_document",
+        "question": "When does policy PRC-A3933393 take effect?",
+        "answer": "2025-04-26",
+        "citation": {
+          "File": "effective-date-fl-packet-05.pdf",
+          "DocumentId": "EFF-FL-P05",
+          "Version": "2025-04-26",
+          "RuleId": "POLICY-TERM",
+          "Section": "RENTAL COVERAGE EFFECTIVE DATE"
+        }
+      }
+    ]
+  },
+  {
+    "packetId": "packet-06",
+    "claimId": "PMM-26-321506",
+    "state": "IL",
+    "vehicle": "2021 Ford Escape SE",
+    "vin": "1FMCU0G63MA514686",
+    "policyId": "PMM-A4329240",
+    "questions": [
+      {
+        "source": "sparse_table",
+        "question": "What is the 2021 Ford Escape SE's daily rental limit?",
+        "answer": "$85 per day.",
+        "citation": {
+          "File": "declarations-il-packet-06.pdf",
+          "DocumentId": "DEC-IL-P06",
+          "Version": "2025-10-06",
+          "RuleId": "DEC-IL-P06",
+          "Section": "VEHICLE SCHEDULE"
+        }
+      },
+      {
+        "source": "diagram",
+        "question": "If the covered 2021 Ford Escape SE is safely drivable, when does rental eligibility begin?",
+        "answer": "When it is actually delivered for covered repairs.",
+        "citation": {
+          "File": "rental-terms-il-packet-06.pdf",
+          "DocumentId": "RNT-IL-P06",
+          "Version": "2025-10-06",
+          "RuleId": "Figure R-1",
+          "Section": "RENTAL ELIGIBILITY AT A GLANCE"
+        }
+      },
+      {
+        "source": "scanned_document",
+        "question": "When does policy PMM-A4329240 take effect?",
+        "answer": "2025-10-06",
+        "citation": {
+          "File": "effective-date-il-packet-06.pdf",
+          "DocumentId": "EFF-IL-P06",
+          "Version": "2025-10-06",
+          "RuleId": "POLICY-TERM",
+          "Section": "RENTAL COVERAGE EFFECTIVE DATE"
+        }
+      }
+    ]
+  },
+  {
+    "packetId": "packet-07",
+    "claimId": "CDA-25-239878",
+    "state": "LA",
+    "vehicle": "2020 Volkswagen Jetta S",
+    "vin": "3VWC57BU3LA515467",
+    "policyId": "CDA-A9636901",
+    "questions": [
+      {
+        "source": "sparse_table",
+        "question": "What is the 2020 Volkswagen Jetta S's daily rental limit?",
+        "answer": "$85 per day.",
+        "citation": {
+          "File": "declarations-la-packet-07.pdf",
+          "DocumentId": "DEC-LA-P07",
+          "Version": "2025-06-09",
+          "RuleId": "DEC-LA-P07",
+          "Section": "VEHICLE SCHEDULE"
+        }
+      },
+      {
+        "source": "diagram",
+        "question": "If the covered 2020 Volkswagen Jetta S is safely drivable, when does rental eligibility begin?",
+        "answer": "When it is actually delivered for covered repairs.",
+        "citation": {
+          "File": "rental-terms-la-packet-07.pdf",
+          "DocumentId": "RNT-LA-P07",
+          "Version": "2025-06-09",
+          "RuleId": "Figure R-1",
+          "Section": "RENTAL ELIGIBILITY AT A GLANCE"
+        }
+      },
+      {
+        "source": "scanned_document",
+        "question": "When does policy CDA-A9636901 take effect?",
+        "answer": "2025-06-09",
+        "citation": {
+          "File": "effective-date-la-packet-07.pdf",
+          "DocumentId": "EFF-LA-P07",
+          "Version": "2025-06-09",
+          "RuleId": "POLICY-TERM",
+          "Section": "RENTAL COVERAGE EFFECTIVE DATE"
+        }
+      }
+    ]
+  },
+  {
+    "packetId": "packet-08",
+    "claimId": "SLI-26-394117",
+    "state": "CA",
+    "vehicle": "2022 Hyundai IONIQ 5 SE",
+    "vin": "KM8KNDAF4NA516248",
+    "policyId": "SLI-A1508902",
+    "questions": [
+      {
+        "source": "sparse_table",
+        "question": "What is the 2022 Hyundai IONIQ 5 SE's daily rental limit?",
+        "answer": "$85 per day.",
+        "citation": {
+          "File": "declarations-ca-packet-08.pdf",
+          "DocumentId": "DEC-CA-P08",
+          "Version": "2025-12-15",
+          "RuleId": "DEC-CA-P08",
+          "Section": "VEHICLE SCHEDULE"
+        }
+      },
+      {
+        "source": "diagram",
+        "question": "If the covered 2022 Hyundai IONIQ 5 SE is safely drivable, when does rental eligibility begin?",
+        "answer": "When it is actually delivered for covered repairs.",
+        "citation": {
+          "File": "rental-terms-ca-packet-08.pdf",
+          "DocumentId": "RNT-CA-P08",
+          "Version": "2025-12-15",
+          "RuleId": "Figure R-1",
+          "Section": "RENTAL ELIGIBILITY AT A GLANCE"
+        }
+      },
+      {
+        "source": "scanned_document",
+        "question": "When does policy SLI-A1508902 take effect?",
+        "answer": "2025-12-15",
+        "citation": {
+          "File": "effective-date-ca-packet-08.pdf",
+          "DocumentId": "EFF-CA-P08",
+          "Version": "2025-12-15",
+          "RuleId": "POLICY-TERM",
+          "Section": "RENTAL COVERAGE EFFECTIVE DATE"
+        }
+      }
+    ]
+  },
+  {
+    "packetId": "packet-09",
+    "claimId": "MCM-25-998392",
+    "state": "NY",
+    "vehicle": "2023 Chevrolet Equinox LT",
+    "vin": "3GNAXUEG3PA517029",
+    "policyId": "MCM-A4370409",
+    "questions": [
+      {
+        "source": "sparse_table",
+        "question": "What is the 2023 Chevrolet Equinox LT's daily rental limit?",
+        "answer": "$85 per day.",
+        "citation": {
+          "File": "declarations-ny-packet-09.pdf",
+          "DocumentId": "DEC-NY-P09",
+          "Version": "2025-07-18",
+          "RuleId": "DEC-NY-P09",
+          "Section": "VEHICLE SCHEDULE"
+        }
+      },
+      {
+        "source": "diagram",
+        "question": "If the covered 2023 Chevrolet Equinox LT is safely drivable, when does rental eligibility begin?",
+        "answer": "When it is actually delivered for covered repairs.",
+        "citation": {
+          "File": "rental-terms-ny-packet-09.pdf",
+          "DocumentId": "RNT-NY-P09",
+          "Version": "2025-07-18",
+          "RuleId": "Figure R-1",
+          "Section": "RENTAL ELIGIBILITY AT A GLANCE"
+        }
+      },
+      {
+        "source": "scanned_document",
+        "question": "When does policy MCM-A4370409 take effect?",
+        "answer": "2025-07-18",
+        "citation": {
+          "File": "effective-date-ny-packet-09.pdf",
+          "DocumentId": "EFF-NY-P09",
+          "Version": "2025-07-18",
+          "RuleId": "POLICY-TERM",
+          "Section": "RENTAL COVERAGE EFFECTIVE DATE"
+        }
+      }
+    ]
+  },
+  {
+    "packetId": "packet-10",
+    "claimId": "BTU-26-717497",
+    "state": "OH",
+    "vehicle": "2021 Ram ProMaster City",
+    "vin": "ZFBERFAB8MA517810",
+    "policyId": "BTU-A6414610",
+    "questions": [
+      {
+        "source": "sparse_table",
+        "question": "What is the 2021 Ram ProMaster City's daily rental limit?",
+        "answer": "$85 per day.",
+        "citation": {
+          "File": "declarations-oh-packet-10.pdf",
+          "DocumentId": "DEC-OH-P10",
+          "Version": "2026-03-07",
+          "RuleId": "DEC-OH-P10",
+          "Section": "VEHICLE SCHEDULE"
+        }
+      },
+      {
+        "source": "diagram",
+        "question": "If the covered 2021 Ram ProMaster City is safely drivable, when does rental eligibility begin?",
+        "answer": "When it is actually delivered for covered repairs.",
+        "citation": {
+          "File": "rental-terms-oh-packet-10.pdf",
+          "DocumentId": "RNT-OH-P10",
+          "Version": "2026-03-07",
+          "RuleId": "Figure R-1",
+          "Section": "RENTAL ELIGIBILITY AT A GLANCE"
+        }
+      },
+      {
+        "source": "scanned_document",
+        "question": "When does policy BTU-A6414610 take effect?",
+        "answer": "2026-03-07",
+        "citation": {
+          "File": "effective-date-oh-packet-10.pdf",
+          "DocumentId": "EFF-OH-P10",
+          "Version": "2026-03-07",
+          "RuleId": "POLICY-TERM",
+          "Section": "RENTAL COVERAGE EFFECTIVE DATE"
+        }
+      }
+    ]
+  }
+]

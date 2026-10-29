@@ -13,6 +13,137 @@ The workflow has three parts:
 3. **Review:** A Python Microsoft Agent Framework agent evaluates five checks
    and answers follow-up questions using the selected retrieval mode.
 
+Reviews use the existing typed CU fields, including the prepared claim-summary
+fields. The CU Python SDK's public `to_llm_input` helper formats them as YAML
+frontmatter with `include_fields=True` and `include_markdown=False` (there is
+no separate public `to_llm_frontmatter` helper). Each check receives only its
+relevant field paths and document categories. Packet OCR, page images, bounding
+boxes, confidence and duplicate prose are not sent. False and zero remain
+values; fields without a value appear in explicit `missingFields` metadata.
+Missing claim facts wait for data; conflicting facts require review. The agent
+does not reread the PDF to repair extraction.
+The full packet export remains available in Parse and extract for human inspection.
+For explicit OCR diagnostics only, start the server with
+`POLICY_INCLUDE_PACKET_TEXT=1`; leave it unset for normal reviews. This diagnostic
+mode uses a single review call. Changing input mode invalidates matching review
+caches.
+
+For the initial five-check review, the application fetches all indexed chunks
+within the registered state, policy, vehicle and corpus scope in one Search
+request and verifies their source identities. It then runs **five concurrent
+model requests per packet**, one for each check, without a Search tool-planning
+loop. Each gets its own question, relevant CU fields and complete relevant
+policy pages. The timing check retains the governing diagrams; the effective
+terms check omits rental-timing clauses. All five share one model connection
+pool and cached Azure CLI token provider. Citation validation is scoped to the
+evidence supplied to each call. Results are combined in the original five-column
+order; one failed call cancels its siblings rather than saving a partial review.
+A scope exceeding 200 chunks is an explicit error, not truncated evidence.
+Follow-up questions retain tool-based retrieval and only the selected check's
+SDK-formatted claim context; their sources are verified afresh.
+
+The `gpt-5` deployment defaults to low reasoning effort. Other deployment names
+keep their model default unless explicitly configured. Set
+`POLICY_REVIEW_STRATEGY=single` to compare with the single-call version, or
+`POLICY_REASONING_EFFORT=minimal|low|medium|high` to choose an effort supported by
+your deployment. Restart the server after changing these settings. Strategy,
+reasoning effort, prompt and formatter changes invalidate matching review caches.
+Five concurrent calls can reduce wall-clock time but repeat some shared context,
+consume more request quota and encounter token-rate limits. They are not a
+guaranteed speedup.
+
+For a different model in follow-up chat only, set
+`POLICY_CHAT_MODEL_DEPLOYMENT` to an existing deployment name on the same
+Azure OpenAI resource. Optionally set
+`POLICY_CHAT_REASONING_EFFORT=minimal|low|medium|high` to an effort that model
+supports, then restart the server. These settings don't change the model used
+for the five initial checks or invalidate their saved results. Chat shows its
+deployment name and starts a separate context when model settings change.
+For example, an existing `gpt-4.1-mini` deployment is a smaller-model candidate
+for short follow-ups; don't set a reasoning effort for this non-reasoning model.
+Benchmark answer quality and end-to-end latency before making it the default.
+
+Global Standard can offer broader capacity, but doesn't guarantee a faster
+individual response. Global deployments can process prompts outside the
+resource's region; choose Data Zone when processing must stay within its zone.
+See [deployment types](https://learn.microsoft.com/azure/foundry/foundry-models/concepts/deployment-types)
+and [latency guidance](https://learn.microsoft.com/azure/foundry/openai/how-to/latency).
+
+**Load cached results** restores both the saved CU extraction and completed
+policy checks without calling Azure. Each successful packet review is saved
+atomically as it completes, so completed packets survive a later failure or
+interrupted batch. A separate saved-review snapshot survives prompt, runtime
+and reasoning-setting changes; earlier-prompt results are labeled as such
+instead of becoming "Not run." Claim facts, CU run/analyzer and policy
+configuration must still match. Changed claim data, Search scope or corpus
+does not reuse an incompatible snapshot. An explicit new review uses the
+current prompt and updates the saved snapshot only after validation succeeds.
+
+Local review-cache envelopes record per-check input/evidence character counts,
+usage, model time, shared retrieval/authentication time and total time. Timings
+exclude preceding CU extraction. They distinguish actual model latency from
+Search/authentication overhead; compare live timings before claiming a speedup.
+
+The **Rental car policy check** heading sits directly above the comparison table.
+Its five columns are **Daily cost**, **Rental dates**, **Active policy**,
+**Covered charges**, and **Payment approval**, with a short question under each.
+These are readable labels for the same five agent checks, not new rules.
+Select a result to replace the right-hand panel with a short agent-written finding and the decisive claim
+fields compared with the policy rule values. Exact CU field names and policy
+rule IDs remain visible; links open the supporting policy documents.
+Missing information is shown explicitly rather than filled in.
+Checks waiting only for claim information show **Waiting for info** in blue.
+The detail panel explains that claim information or approval is missing and names the missing fact,
+document or pending insurer approval. This is not a running agent: add the
+information and rerun the policy checks. Conflicting facts, known rule
+violations and missing or ambiguous policy evidence stay **Review required**.
+The agent returns a distinct `InProgress` outcome with `ReviewRequired=false`;
+the interface does not guess the status from finding text. Existing saved
+reviews need a fresh evaluation to use this status.
+In the comparison table, select a linked **Claim** value to open the original
+packet at the CU source page, with the extracted field highlighted. Select a
+linked **Policy** value to open the exact cited rule page. When multiple pages
+support a field or rule, each page is offered separately. **Back to policy
+check** restores the selected finding and focus. Missing fields or fields with
+no CU source coordinates are explicitly unlinked; page locations are never
+guessed from an agent-written label or value.
+**Review details** and **Structured output and provenance** retain the fuller
+explanation and original output. Earlier saved reviews remain readable but need
+a new live run to receive the new headline and structured field comparisons;
+the interface does not invent a summary or extract values from old prose.
+The policy workflow does not automatically open claim packets. Its right panel
+contains the selected check's **Result** and **Ask agent** views and identifies
+the customer and packet. The left table stays in place without an expanded row.
+Select a policy source to inspect it in the right panel, then **Back to policy
+check** to return to the finding or chat. Parse and extract and Check consistency
+retain their packet viewer and inline details.
+
+### Non-rental claims
+
+The five rental checks show **N/A**, not a review warning, when affirmative
+extracted evidence confirms that no rental was requested or used and no rental
+request, agreement, use or bill conflicts. Applicability is evaluated before
+dates, limits, charges or payment approval: missing rental facts do not require
+review for a confirmed non-rental claim. A pending rental request still applies
+even if the rental has not been used yet.
+
+The claim-summary schema extracts `RentalRequested`, `RentalUsed` and
+`RequestTypeEvidence` from explicit answers or statements, including selected
+Yes/No checkboxes. Blank boxes, no rental invoice, and repair/towing/glass
+charges alone do not prove no rental. Incomplete or conflicting evidence stays
+**Waiting for info** for missing claim evidence or **Review required** for conflicting
+evidence. Existing saved extracts without these fields are not
+silently reclassified; prepare updated claim extraction and rerun the policy
+checks to use newly captured evidence. A labeled extracted checkbox answer can
+establish no rental request even if CU leaves its boolean field unknown; an
+unlabeled "No" cannot. Rental amounts are extracted only from rental records,
+not unrelated repair, towing or glass bills.
+An answer to a towing or other service question is not a rental request answer.
+When rental applicability is unknown because claim data is missing, all five
+checks show **Waiting for info**, including the policy-date check. Contradictory
+applicability remains **Review required**; an otherwise valid policy term cannot
+establish that a rental was requested.
+
 Use the [setup guide](policy-setup.md) and
 [setup notebook](../infra/policy-agent-framework-setup.ipynb) to prepare
 the policy index on your existing Search service.
@@ -27,15 +158,17 @@ appear only under **Check policies**. Switching pivots preserves the loaded run
 and reuses the same table, document viewer and debugger. Returning to **Parse
 and extract** restores the previously selected document type.
 
-The workbench now enables **Run policy checks** only when **Azure Search
-retrieval** is selected. **No policy retrieval** remains available to inspect
+The workbench enables policy **Run live** only when **FoundryIQ**
+is selected. **No policy retrieval** remains available to inspect
 previously saved baseline results, but a new baseline run can't be started from
 the app.
 
 The dropdown loads from the policy configuration independently of the packet
 classifier. A missing live classifier does not prevent using cached claim
 results with the configured policy index. The choices are **No policy retrieval**
-and **Azure Search retrieval**, not Foundry IQ. If the policy configuration cannot
+and **FoundryIQ**. FoundryIQ is the lab's umbrella label for grounded policy
+retrieval; this implementation queries an ordinary Azure AI Search index directly,
+not a Foundry IQ knowledge base. If the policy configuration cannot
 be loaded, the dropdown shows an unavailable message and the status below it
 explains why.
 
@@ -60,34 +193,47 @@ UTC timestamps when escalating a service error.
 Start here on a prepared lab machine. You don't need to inspect or redeploy
 Azure resources before trying the agent.
 
-1. In the workbench's **Cache Results**, load the included completed **10/10**
-   run. Select **Check policies**.
-2. In **Policy retrieval**, select **Azure Search retrieval**. Select **Run policy
-   checks** and confirm. This runs the Agent Framework agent against saved CU
+1. In **Parse and extract**, select **Load cached results** to load the
+   included completed **10/10** CU run. Select **Check policies**.
+2. In **Policy retrieval**, select **FoundryIQ**. Select **Run live**
+   and confirm. This runs the Agent Framework agent against saved CU
    claim facts, not just a local rules engine. Azure charges apply, including
    any missing claim-summary extraction; the confirmation covers all loaded
    cases, not only the selected row.
-3. Wait for the batch to finish. The status line shows the active case and
-   whether CU is extracting claim fields or the agent is checking policy rules.
+3. Wait for the batch to finish. While a run is active, a prominent status banner
+   shows the packet being processed, its customer name when available, the
+   number of finished packets, and a total elapsed timer updated every second.
+   The banner distinguishes CU claim extraction from agent policy review and
+   follows the active packet even when another customer is selected.
+   Packets run sequentially; an uncached packet can require CU extraction
+   before one Search prefetch and five parallel Agent Framework calls, one per
+   check. Matching current reviews skip the model calls.
    Open a check's **Result** tab for an activity indicator, elapsed stage time
    and the age of the last successful workbench response. This confirms the
    progress connection, not individual Search/model-call completion. If updates
    stop, reconnect rather than starting another batch.
 4. Optionally select **No policy retrieval** to inspect a previously saved
    baseline. Without an SOP, the agent must not invent a rate threshold.
-   Return to **Azure Search retrieval** to inspect this run. Changing the
+   Return to **FoundryIQ** to inspect this run. Changing the
    dropdown doesn't submit another batch.
-5. Compare **Amount** for packets **01** and **02**, using the expected
-   evidence below. Select each check to inspect **Expected**, **Actual** and
-   **Reasoning** in the expandable row below that customer. The PDF viewer remains available alongside it.
+5. Compare **Daily cost** for packets **01** and **02**, using the expected
+   evidence below. Select each check to inspect its headline, claim and policy
+   values, and sources in the right panel.
+   Open **Review details** for the fuller explanation.
+   Claim PDFs remain available in Parse and extract.
 6. For packet **01**, select the Texas **Source** link. In the **Document** tab,
    inspect rule **TX-R2** on page 2 and **Schedule A** on page 3 of
-   `tx-rental-review-sop-v2.pdf`. The inline review stays open; select **Back to claim document** to restore the packet preview.
+   `tx-rental-review-sop-v2.pdf`. Select **Back to policy check** to restore the finding.
 
-| Case | Extracted daily base | Contractual daily cap | Retrieved routine authority | Expected amount result |
+| Case | Extracted daily base | Contractual daily cap | Retrieved routine authority | Included saved daily-cost result |
 |---|---:|---:|---:|---|
-| Packet 01 / Texas | $54 | $85 | $75, inclusive | **Satisfied**: numerical fit, conditional on timing |
-| Packet 02 / Washington | $61 | $85 | $60, inclusive | **Review required**: above routine authority; supervisor exception evidence is missing |
+| Packet 01 / Texas | $54 | $85 | $75, inclusive | **Satisfied**: $54/day and four billed days fit the contractual limits |
+| Packet 02 / Washington | $61 | $85 | $60, inclusive | **Satisfied**: $61/day and five billed days fit the contractual limits; payment authority is a separate check |
+
+In the refreshed saved reviews, both packets wait for actual repair dates and
+insurer approval. Packet 02's **Covered charges** requires review because the
+local rental levy needs supporting evidence. Its daily-cost result isn't a
+failure merely because the rate exceeds the SOP's routine handling authority.
 
 These are source-based expectations, not hardcoded agent answers. If returned
 facts, routing or citations differ, inspect the evidence and errors rather than
@@ -171,9 +317,9 @@ the attendee walkthrough.
 ### Inspect the agent
 
 Open [`infra/policy-framework-agent.py`](../infra/policy-framework-agent.py).
-Find `Agent`, `OpenAIChatClient` and `search_policy_rules`. The Search tool is
-attached only in retrieval mode; both modes use the same claim fields and
-review question. The
+Find `Agent`, `OpenAIChatClient` and `search_policy_rules`. Initial reviews
+prefetch Search evidence and pass each check only its relevant CU fields and
+rules. Follow-up chat can use the Search tool. The
 [workbench policy service](../src/workbench/src/policy-service.ts) starts this
 Python agent and validates results and citations. This isn't an npm Agent
 Framework implementation or a hosted Foundry agent.
@@ -182,9 +328,11 @@ Framework implementation or a hosted Foundry agent.
 
 1. Launch the workbench with `.\infra\launch-workbench.ps1`.
 2. Load saved CU results, or explicitly run your connected analyzer.
-3. In **Check policies**, select **Azure Search retrieval**.
-4. Select **Run policy checks** and confirm the Azure operation.
-5. Select a check in the grid to expand its review directly below the customer.
+3. In **Check policies**, select **FoundryIQ**.
+4. Select **Run live** and confirm the Azure operation.
+5. Select a check in the grid to inspect its review in the right panel.
+6. Optionally switch to **No policy retrieval** to inspect saved baseline
+   results. The app doesn't start new runs in this mode.
 
 ### Load saved policy results
 
@@ -199,15 +347,22 @@ that mode and loaded CU run. Availability updates when entering **Check
 policies**, changing retrieval mode, or completing a policy batch.
 Listing or loading saved policy results makes no Azure calls.
 
-The saved checks must match the loaded CU run, exact claim input, review
-question, runtime and active policy configuration, including the corpus/index
-generation and claim analyzer. Results from another run or an older
-configuration are not offered as current results. Source citations are verified
+Exact execution caches match the CU run, claim input, prompt, runtime and policy
+configuration. Persistent snapshots also allow earlier-prompt results when the
+CU run, claim input and policy configuration still match; the app labels them
+as historical. Results from another run or configuration aren't substituted.
+Source citations are verified
 again when loading. A partially completed set loads only saved completed cases;
 remaining cases stay **Not run**. Live runs still save successful cases
 automatically. Loading is disabled while this session is processing a batch.
-6. Optionally switch to **No policy retrieval** to inspect saved baseline
-   results. The app doesn't start new runs in this mode.
+
+For a fresh prepared machine, restore the included synthetic bundle before
+launching: `.\infra\policy-demo-cache.ps1`. It restores ten policy reviews,
+their CU claim fields and public resource configuration without Azure calls.
+It refuses different existing configuration or cache files rather than
+overwriting them. The original CU run is already included under `data\results`.
+Credentials aren't included. Live work still requires the approved lab identity
+and access to those Azure resources.
 
 Both modes use the same model, field-only claim Markdown and
 [review question](rental-review-agent-question-v2.md). Selecting a mode, case,
@@ -216,12 +371,13 @@ tab or source link doesn't submit an agent request or start ingestion.
 | Mode | What the agent receives |
 |---|---|
 | No policy retrieval | Claim facts only. Internal SOP thresholds aren't available; all five checks require review, with no invented citations. |
-| Azure Search retrieval | The same claim facts, plus a tool that retrieves the applicable state SOP, shared evidence standard and matching policy/vehicle contract evidence. |
+| FoundryIQ | Relevant CU fields and prefetched Azure AI Search evidence for each check; follow-up chat can use the Search tool. |
 
 The application fixes the loss state, policy ID, insured VIN and source
 generation in the Search filter. Policy-specific documents require both
 identifiers to match; state/shared SOPs remain available without them.
-The model chooses keywords, not a different state's rules. Missing
+Initial reviews use one scoped prefetch; follow-up chat can choose search
+keywords, not a different state's rules. Missing
 routing or evidence remains explicit; a similar state's SOP isn't substituted.
 
 Claim preparation runs only when explicitly requested by a policy batch and
@@ -254,11 +410,11 @@ The checks appear in this order:
 
 | Check | Question |
 |---|---|
-| Amount | How much of the bill fits the effective policy's numerical limits, conditional on an eligible period? |
-| Timing | When can rental begin/end, and do actual repair evidence and remaining days support the billed interval? |
-| Effective terms | Does the original limit or an effective carrier-issued amendment govern this vehicle and loss? |
-| Charges and reimbursement calculation | Does the invoice reconcile, with supported taxes/fees, exclusions and credits counted once? |
-| Authorization and payment readiness | Are the required insurer authority and payment documents established? |
+| Daily cost | Does the rental price fit the effective policy's numerical limits, conditional on an eligible period? |
+| Rental dates | Do actual repair dates and remaining rental days support the billed interval? |
+| Active policy | Which issued terms govern this vehicle at the time of the accident? |
+| Covered charges | Does the bill add up, with supported taxes, fees and credits counted once? |
+| Payment approval | Are insurer approval and required payment documents available? |
 
 For Packet #1, inspect the revised declarations, rental terms/diagram and
 scanned amendment in the source viewer. The Honda row's blank optional-code
@@ -277,14 +433,15 @@ For a bounded owner evaluation, `POST /api/policy/batch` accepts
 private workbench session after loading CU results. The normal UI confirmation
 still runs all loaded cases; selecting a row alone does not restrict a batch.
 Without `packetIds`, the existing all-loaded-cases behavior is unchanged.
-Each shows a status, bold **Expected** and **Actual** values, italic
-**Reasoning**, and verified **Source** links.
+Each shows a short finding, claim-versus-policy values with source links,
+and optional **Review details**.
 
 | Status | Meaning |
 |---|---|
-| Satisfied | Retrieved evidence supports this processing check. It isn't payment approval. |
+| Satisfied | A check mark identifies a supported check. It isn't payment approval. |
 | Not applicable | The rule and claim evidence establish that the check doesn't apply. It isn't a passed rental claim. |
-| Review required | Evidence is missing, ambiguous, inconsistent or outside routine authority. It isn't a denial. |
+| Review required | An open circle identifies a decision needing human review: conflicting facts, unclear policy evidence or a known exception. It isn't a denial or a checkbox that changes the agent result. |
+| Waiting for info | A circular-arrow icon identifies missing claim information or pending insurer approval. The review has finished; add the missing evidence, then rerun. The icon doesn't spin or imply active processing. The internal outcome remains `InProgress`. |
 | Run error | Extraction, retrieval, execution or validation failed. No business outcome is assumed. |
 
 Keep contractual benefit limits separate from the SOP's internal handling
@@ -293,22 +450,26 @@ SOP threshold and require exception approval.
 
 ## Ask follow-up questions
 
-The inline panel opens in **Result**. Select **Ask agent** to ask about the same case and
-retrieval mode without replacing or changing its saved checks.
+The right panel opens in **Result**. Select **Ask agent** to ask about the selected
+check for the same case and retrieval mode without changing its saved results.
+Daily cost, Rental dates, Active policy, Covered charges and Payment approval
+each have their own conversation. Switching checks doesn't mix their history.
 
 Chat uses the locally served, MIT-licensed [Deep Chat](https://deepchat.dev/)
-component. It starts with the exact review prompt, field-only claim Markdown
-and saved response. Expand **Exact original prompt and claim fields** to
-inspect the input.
+component. It starts with that check's question, relevant CU fields in SDK
+frontmatter and its single saved answer. Expand the question-and-fields section
+to inspect the input. New parallel reviews preserve the actual per-check
+prompts in the review cache. Older snapshots without those prompts use the
+current per-check question and selected CU fields, explicitly labeled as current.
 
 Each explicit question runs the same Python agent. Search-backed questions
 retrieve fresh evidence; no-retrieval questions must disclose that SOP evidence
 is unavailable. Questions don't change claim facts or authorize payment.
 
 Chat history stays in server memory, isolated by private session, CU run, case,
-mode and result/configuration identity. It isn't written into shared review
+check, mode and result/model/configuration identity. It isn't written into shared review
 caches. It expires on server restart or private-session expiry. Each context
-allows 20 follow-ups, with at most 30 contexts per private session.
+allows 20 follow-ups, with at most 100 contexts per private session.
 
 Azure usage may be billed. Failed submissions aren't committed as successful
 turns or automatically retried. The model receives `store: false`; no separate
@@ -316,8 +477,14 @@ hosted agent or hosted conversation is created.
 
 ## Open cited documents
 
-Sources open the verified PDF in the right-hand viewer at the cited page without
-closing the inline result or chat. **Back to claim document** restores the packet PDF.
+Sources replace the right-panel finding with the verified PDF at the cited page.
+**Back to policy check** restores the finding and its selected value.
+
+The PDF preview loads its renderer and worker from the local workbench, not a
+CDN. If a server restart interrupts the worker load, the viewer makes one attempt
+with a fresh renderer to clear the failed module import. If it still can't load,
+check that the workbench is running and reload the page. PDF.js calls its
+main-thread fallback a "fake worker"; this isn't a separate service or model.
 The citation must match the source filename, document ID, version, rule,
 section and unchanged PDF hash. Search-backed citations must also come from
 evidence retrieved during that turn.

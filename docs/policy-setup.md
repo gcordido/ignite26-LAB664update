@@ -38,8 +38,22 @@ change networking, use account keys or weaken access controls.
 For a lab machine, first run `.\infra\setup.ps1`. This restores Deep Chat and
 the other npm packages and installs the Python agent requirements into
 `.tools\policy-venv`. Agent Framework is a Python dependency, not an npm package.
+The pinned Python requirements also include
+`azure-ai-contentunderstanding==1.2.0b3` for native fields-only `to_llm_input`
+formatting. Provision this version through the same approved Python package
+source on lab machines; it does not add an npm dependency or require attendees
+to access the npm registry.
 The launcher automatically uses this environment. Stop the app and rerun setup
 after pulling dependency updates.
+
+The current claim-summary definition includes explicit rental-request/use
+answers and their wording (`RentalRequested`, `RentalUsed`,
+`RequestTypeEvidence`). An older registered analyzer is not overwritten
+automatically. To adopt a schema update, provision the definition under a new
+analyzer ID using the documented `--create-claim-analyzer` setup option, activate
+that configuration and prepare fresh claim summaries. Their definition hash
+isolates earlier extraction/review caches. The Search policy index does not
+need different source PDFs for this extraction-only change.
 
 Open the [Python setup notebook](../infra/policy-agent-framework-setup.ipynb)
 for a step-by-step walkthrough. The notebook calls the same Python functions
@@ -112,10 +126,19 @@ then rerun setup. Existing Azure agents, knowledge bases and other indexes
 aren't deleted.
 
 On a fresh clone, `.tools\policy-agent-framework.json` is absent because it is
-machine-local and git-ignored. Installing packages alone won't enable **Run
-policy checks**. The lab owner must prepare a verified index and configuration
-before attendees arrive. An existing Layout configuration on another machine
-isn't automatically available on a newly deployed lab VM.
+machine-local and git-ignored. After dependencies are provisioned, run
+`.\infra\policy-demo-cache.ps1` to restore the included synthetic demo's public
+configuration, claim fields and ten saved reviews. No credentials or Azure calls
+are involved. Different existing configuration or cache files aren't overwritten.
+Then load the included CU run and the policy cache in the app.
+
+Live reviews still require access to the configured resources. For a different
+lab resource or index, the lab owner must prepare a verified configuration with
+the setup workflow before attendees arrive. Installing packages alone doesn't
+provision Azure resources. After intentionally refreshing all ten reviews,
+export a new bundle with `.\infra\policy-demo-cache.ps1 -Action export -RunId RUN-ID`.
+Export rejects missing or earlier-prompt results and includes only the selected
+run's claim fields, review files and public configuration, not logs or credentials.
 
 Missing **Storage Blob Data Reader** on Storage or **Cognitive Services User**
 on Foundry for the Search identity are administrator prerequisites, not attendee
@@ -185,6 +208,11 @@ registered source page, uploads and reads back the new chunks, and updates the
 machine-local configuration only after verification. It never changes or
 deletes the source index. New extracted content is labeled CU Layout, not
 Standard; diagram text remains OCR evidence, not a guaranteed interpretation.
+
+For Texas and Washington, the matching rental-terms PDF explicitly makes Figure
+R-1 controlling for eligibility timing; the prompt applies this only to the
+exact policy and VIN. Other state diagrams remain illustrative. Limits, charges
+and other written terms remain governed by their own clauses.
 
 The Layout extraction cache under `.tools/policy-layout-cache/` is keyed by
 source bytes, endpoint, API version and analyzer. A changed PDF cannot reuse an

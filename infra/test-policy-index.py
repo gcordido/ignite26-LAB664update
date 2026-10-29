@@ -69,7 +69,7 @@ class FakeAzure:
         self.sources, self.roles_ok, self.run_status, self.failed = sources, roles_ok, run_status, failed
         self.objects, self.blobs, self.calls, self.runs = {}, {}, [], 0
         self.chunks = []
-        self.analyzer = {"status": "ready", **setup.claim_analyzer_definition()}
+        self.analyzer = {"status": "ready", **setup.claim_evidence_analyzer_definition()}
         self.search_principal = "search-mi"
         self.caller = "caller-oid"
 
@@ -510,10 +510,17 @@ class PolicyIndexTests(unittest.TestCase):
             setup.resolve_analyzer(self.fake(), {**self.settings, "claimAnalyzerId": "bad-id"})
 
     def test_claim_analyzer_definition_is_extraction_only_and_stable(self):
-        definition = setup.claim_analyzer_definition()
+        definition = setup.claim_evidence_analyzer_definition()
         self.assertEqual(definition["baseAnalyzerId"], "prebuilt-document")
-        self.assertIn("Routing", definition["fieldSchema"]["fields"])
-        self.assertEqual(setup.analyzer_hash(definition), setup.analyzer_hash(setup.claim_analyzer_definition()))
+        fields = definition["fieldSchema"]["fields"]
+        self.assertIn("LossState", fields)
+        self.assertIn("RentalRequested", fields)
+        self.assertIn("RequestTypeEvidence", fields)
+        self.assertEqual(fields["RentalRequested"]["type"], "boolean")
+        self.assertIn("Ignore TOWING REQUESTED", fields["RentalRequested"]["description"])
+        self.assertIn("Never copy a repair estimate", fields["RentalTotal"]["description"])
+        self.assertTrue(all(field["method"] == "extract" for field in fields.values()))
+        self.assertEqual(setup.analyzer_hash(definition), setup.analyzer_hash(setup.claim_evidence_analyzer_definition()))
 
 
 if __name__ == "__main__":
