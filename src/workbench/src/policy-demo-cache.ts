@@ -8,20 +8,11 @@ import { canonical, digest } from "./policy-core.ts";
 import {
   frameworkConfigSchema, loadPolicyCache, PolicyService, savePolicyCache,
 } from "./policy-service.ts";
+import { policyDemoManifestSchema as manifestSchema } from "./policy-demo.ts";
 
 const bundle = path.join(repositoryRoot, "data", "policy-demo");
 const cacheFolder = path.join(repositoryRoot, ".tools", "policy-cache");
 const configFile = path.join(repositoryRoot, ".tools", "policy-agent-framework.json");
-const manifestSchema = z.object({
-  schemaVersion: z.literal(1),
-  runId: z.string().uuid(),
-  mode: z.literal("search"),
-  packetCount: z.literal(10),
-  files: z.array(z.object({
-    name: z.string().regex(/^(policy-agent-framework|claim-[a-f0-9]{64}|framework-(saved|review)-[a-f0-9]{64})\.json$/),
-    sha256: z.string().regex(/^[a-f0-9]{64}$/),
-  }).strict()).length(31),
-}).strict();
 const action = process.argv[2];
 if (action !== "export" && action !== "restore")
   throw new Error("Specify export or restore. Neither operation calls Azure.");

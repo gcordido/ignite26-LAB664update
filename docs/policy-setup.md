@@ -133,11 +133,18 @@ then rerun setup. Existing Azure agents, knowledge bases and other indexes
 aren't deleted.
 
 On a fresh clone, `.tools\policy-agent-framework.json` is absent because it is
-machine-local and git-ignored. After dependencies are provisioned, run
-`.\infra\policy-demo-cache.ps1` to restore the included synthetic demo's public
-configuration, claim fields and ten saved reviews. No credentials or Azure calls
-are involved. Different existing configuration or cache files aren't overwritten.
-Then load the included CU run and the policy cache in the app.
+machine-local and git-ignored. After dependencies are provisioned, launch the app
+and load the included CU run, then select **Check policies** > **Load cached
+results**. The app reads all ten synthetic reviews and their claim fields directly
+from `data\policy-demo` when compatible local reviews aren't available. No restore,
+Azure configuration, credentials or Azure calls are involved. The **Bundled demo**
+label preserves the original index provenance. Existing configuration and caches
+aren't overwritten, and live-compatible cached results take precedence.
+Bundled results are read-only; follow-up chat isn't available.
+
+The optional `.\infra\policy-demo-cache.ps1` command still restores a local copy
+for cache-maintenance workflows. It refuses to overwrite different existing
+configuration or cache files. It isn't required to view the bundled results.
 
 Live reviews still require access to the configured resources. For a different
 lab resource or index, the lab owner must prepare a verified configuration with

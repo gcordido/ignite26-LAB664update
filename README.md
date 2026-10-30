@@ -51,7 +51,6 @@ at the repository root, run:
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\infra\setup.ps1
-az login
 powershell -ExecutionPolicy Bypass -File .\infra\launch-workbench.ps1
 ```
 
@@ -64,16 +63,22 @@ For managed package mirrors or a specific Python path, see
 [`infra/README.md`](infra/README.md#lab-machines-with-package-mirrors).
 
 Open [http://127.0.0.1:8791/](http://127.0.0.1:8791/). Keep the launch terminal
-open. Without a CU endpoint, use the included completed results; this doesn't
-make policy checks offline or free. Policy runs use Azure credentials and a
-prepared index configuration.
+open. The included extraction and policy results work without Azure setup,
+credentials or network access to Azure. Sign in with `az login` and prepare
+the index configuration only to run live analysis or policy checks.
 
 #### Try the policy-check comparison
 
-On a prepared lab machine, restore the included synthetic policy-demo bundle
-with `.\infra\policy-demo-cache.ps1`, then launch the app. In **Parse and extract**,
+After provisioning the existing app dependencies, launch the app. In **Parse and extract**,
 select **Load cached results** to load the **10/10** CU run. In **Check policies**,
-select **FoundryIQ** and **Load cached results**. Loading makes no Azure calls.
+select **FoundryIQ** and **Load cached results**. Without compatible local reviews,
+the app reads all ten synthetic reviews directly from the checked-in demo bundle.
+No restore command, Azure configuration or credentials are needed. **Bundled demo**
+identifies these read-only results and their original Search index; they aren't
+presented as results from a newly configured index. Existing local configuration
+and caches aren't overwritten. Live-compatible cached results take precedence.
+Loading makes no Azure calls. Follow-up chat requires live Azure configuration
+and a live policy review.
 FoundryIQ is the lab's umbrella label; this implementation retrieves evidence
 directly from Azure AI Search, not a Foundry IQ knowledge base.
 
@@ -100,8 +105,8 @@ Blob ingestion and the Agent Framework implementation. This PR uses an ordinary
 Search index directly, not a Foundry IQ knowledge base.
 
 **Lab owners:** a fresh clone doesn't include the machine-local policy
-configuration. Complete [policy index setup](docs/policy-setup.md) before the
-session. The existing CU Layout index remains valid while optional managed
+configuration. Complete [policy index setup](docs/policy-setup.md) before running
+live work in the session; the bundled demo doesn't need it. The existing CU Layout index remains valid while optional managed
 Standard ingestion prerequisites are unresolved; don't label it Standard.
 Use [`infra/deploy.ps1`](infra/README.md#deploy-infrastructure-and-the-policy-index)
 to include verified CU Layout index provisioning in the infrastructure workflow.

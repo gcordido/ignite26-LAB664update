@@ -194,7 +194,12 @@ function controls() {
       ? "Wait for the current operation to finish before retrying."
       : "Retry this case only. Azure charges may apply.";
   }
-  get("policy-mode").disabled = busy || policyBusy || !policyStatus?.configured;
+  get("policy-mode").disabled = busy || policyBusy ||
+    (!policyStatus?.configured && !policyStatus?.bundledDemo);
+  get("policy-chat-mode").disabled = policyResults.get(policyMode)?.source === "bundled";
+  get("policy-chat-mode").title = get("policy-chat-mode").disabled
+    ? "Bundled demo results are read-only. Configure Azure and run live checks to ask follow-up questions."
+    : "";
   get("load-policy-cache").disabled = busy || policyBusy || policyCacheBusy ||
     policyStatus?.batchRunning || !savedPolicyEntries.some((entry) => entry.mode === policyMode);
 }
@@ -212,8 +217,9 @@ async function policyCaches() {
     const entry = savedPolicyEntries.find((entry) => entry.mode === policyMode);
     get("policy-cache-status").textContent = saved.message ??
       (entry
-        ? `${entry.count}/${entry.total} saved cases available. Loading makes no Azure calls.`
+        ? `${entry.count}/${entry.total} ${entry.source === "bundled" ? "bundled demo" : "saved"} cases available. Loading makes no Azure calls.`
         : "No saved checks match this CU run and current policy configuration. Run policy checks to save results.");
+    policyMessage();
   } catch (error) {
     if (version === policyCacheVersion && run?.id === runId) {
       savedPolicyEntries = [];
@@ -1186,20 +1192,27 @@ function showPolicyPanel(show) {
   get("pdf-status").hidden = show;
 }
 function policyMessage() {
-  const mode = policyStatus?.modes?.[policyMode];
+  const cached = policyResults.get(policyMode);
+  const bundled = cached?.source === "bundled";
+  const mode = bundled ? cached : policyStatus?.modes?.[policyMode];
   get("policy-status").title = policyStatus?.message ?? "";
   get("policy-status").textContent =
-    policyStatus?.batchRunning && !policyBusy
+    bundled
+      ? `Bundled demo · ${mode.indexName} · ${mode.extractionMode === "standard" ? "Search-managed CU extraction" : "CU Layout"} · Read-only; no Azure calls`
+    : policyStatus?.batchRunning && !policyBusy
       ? "A policy batch is already running. Waiting for it to finish; no duplicate will be submitted. Reload this tab to reconnect to its progress."
       : mode
         ? `${mode.indexName ?? "No policy retrieval"} · ${mode.extractionMode === "standard" ? "Search-managed CU extraction" : "CU Layout"}`
-        : (policyStatus?.message ?? "Policy configuration is loading.");
+        : policyStatus?.bundledDemo
+          ? "Bundled demo available. Load cached results; no Azure setup needed. Live runs require Azure configuration."
+          : (policyStatus?.message ?? "Policy configuration is loading.");
 }
 function policyModeLabel(mode = policyMode) {
   return mode === "search" ? "FoundryIQ" : "No policy retrieval";
 }
 function renderPolicyModes() {
   const modes = policyStatus?.configured ? Object.keys(policyStatus.modes) : [];
+  if (policyStatus?.bundledDemo && !modes.includes("search")) modes.push("search");
   const options = modes.map((mode) => {
     const option = element("option", policyModeLabel(mode));
     option.value = mode;
@@ -1259,7 +1272,7 @@ async function refreshPolicy(mode = policyMode) {
   const value = await api(`policy/results?mode=${mode}`);
   if (run?.id !== id || value.runId !== id) return;
   if (value.configurationMessage) {
-    policyStatus = { configured: false, message: value.configurationMessage };
+    policyStatus = { ...policyStatus, configured: false, message: value.configurationMessage };
     renderPolicyModes();
     policyMessage();
     controls();
@@ -1806,22 +1819,23 @@ get("close-agent").onclick = () => {
   showPolicyPanel(true);
   get("packet-table").querySelector(`tr.selected [data-agent-check="${focusedPolicyCheck}"]`)?.focus();
 };
+function selectPolicyPane(mode) {
+  const key = `${run?.id}:${policyMode}:${selectedPacket}`;
+  if (policyPaneMode === "result")
+    policyResultScroll.set(key, get("policy-review-pane").scrollTop);
+  policyPaneMode = mode;
+  for (const value of ["result", "chat"]) {
+    const button = get(`policy-${value}-mode`);
+    button.setAttribute("aria-pressed", String(value === mode));
+    button.classList.toggle("secondary", value !== mode);
+  }
+  showPolicyPanel(true);
+  renderPolicyOutput();
+  if (mode === "result")
+    get("policy-review-pane").scrollTop = policyResultScroll.get(key) ?? 0;
+}
 for (const mode of ["result", "chat"])
-  get(`policy-${mode}-mode`).onclick = () => {
-    const key = `${run?.id}:${policyMode}:${selectedPacket}`;
-    if (policyPaneMode === "result")
-      policyResultScroll.set(key, get("policy-review-pane").scrollTop);
-    policyPaneMode = mode;
-    for (const value of ["result", "chat"]) {
-      const button = get(`policy-${value}-mode`);
-      button.setAttribute("aria-pressed", String(value === mode));
-      button.classList.toggle("secondary", value !== mode);
-    }
-    showPolicyPanel(true);
-    renderPolicyOutput();
-    if (mode === "result")
-      get("policy-review-pane").scrollTop = policyResultScroll.get(key) ?? 0;
-  };
+  get(`policy-${mode}-mode`).onclick = () => selectPolicyPane(mode);
 get("policy-mode").onchange = async () => {
   policyMode = get("policy-mode").value;
   controls();
@@ -1845,16 +1859,22 @@ get("load-policy-cache").onclick = async () => {
   get("policy-cache-status").textContent = "Loading saved policy checks and verifying their sources…";
   controls();
   try {
-    const value = await api("policy/cache/load", { runId, mode });
+    const entry = savedPolicyEntries.find((entry) => entry.mode === mode);
+    const value = await api("policy/cache/load", { runId, mode,
+      ...(entry?.source ? { source: entry.source } : {}) });
     if (run?.id !== runId || value.runId !== runId) return;
     policyMode = mode;
     get("policy-mode").value = mode;
     policyResults.set(mode, value);
     policyChat.reset();
+    if (value.source === "bundled") {
+      await renderRun(await api("cache/current"), "cached");
+      selectPolicyPane("result");
+    }
     renderTable();
     renderPolicyOutput();
     const count = value.items.filter((item) => item.status === "completed").length;
-    get("policy-cache-status").textContent = `Loaded ${count}/${value.items.length} saved cases. No Azure calls were made.`;
+    get("policy-cache-status").textContent = `Loaded ${count}/${value.items.length} ${value.source === "bundled" ? "bundled demo" : "saved"} cases. No Azure calls were made.`;
     policyMessage();
   } catch (error) {
     get("policy-cache-status").textContent = `Could not load saved policy results: ${error.message}. Return to Check policies to reload the list.`;

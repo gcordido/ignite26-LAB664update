@@ -636,7 +636,7 @@ test("Result remains the default and switching to Chat preserves the result scro
     },
   });
   const handlers = source.slice(
-    source.indexOf('for (const mode of ["result", "chat"])'),
+    source.indexOf("function selectPolicyPane("),
     source.indexOf('get("policy-mode").onchange'),
   );
   vm.runInContext(handlers, context);
@@ -716,6 +716,7 @@ test("policy status helper is callable from module scope during startup and mode
     policyMode: "ungrounded",
     policyBusy: false,
     policyStatus: { configured: false, message: "Setup required." },
+    policyResults: new Map(),
   });
   vm.runInContext(`${helpers}\npolicyMessage();`, context);
   assert.equal(status.textContent, "Setup required.");
@@ -730,6 +731,15 @@ test("policy status helper is callable from module scope during startup and mode
     status.textContent,
     "policy-index · Search-managed CU extraction",
   );
+  vm.runInContext(`policyStatus.bundledDemo = { indexName: "original-demo-index" };
+    policyResults.set("search", { source: "bundled", indexName: "original-demo-index" });
+    policyMessage();`, context);
+  assert.equal(status.textContent,
+    "Bundled demo · original-demo-index · CU Layout · Read-only; no Azure calls");
+  vm.runInContext(`policyStatus = { configured: false, message: "Status request failed." };
+    policyMessage();`, context);
+  assert.equal(status.textContent,
+    "Bundled demo · original-demo-index · CU Layout · Read-only; no Azure calls");
   assert.equal(
     vm.runInContext('policyModeLabel("search")', context),
     "FoundryIQ",
@@ -797,6 +807,7 @@ test("policy choices survive unrelated startup failures and missing classifiers 
       clearTimeout: () => {},
       policyAvailabilityTimer: undefined,
       policyStatus: undefined,
+      policyResults: new Map(),
       policyBusy: false,
       policyMode: "search",
       savedExtractionRun: undefined,
@@ -840,6 +851,7 @@ test("policy availability refresh restores choices and explains configuration fa
     clearTimeout: () => {},
     policyAvailabilityTimer: undefined,
     policyStatus: undefined,
+    policyResults: new Map(),
     policyBusy: false,
     policyMode: "ungrounded",
   });
@@ -860,6 +872,10 @@ test("policy availability refresh restores choices and explains configuration fa
   assert.equal(select.options.length, 1);
   assert.match(select.options[0].textContent, /unavailable/);
   assert.equal(status.textContent, "Run policy setup.");
+  response = { configured: false, bundledDemo: { indexName: "original-demo-index" } };
+  await vm.runInContext("updatePolicyAvailability()", context);
+  assert.deepEqual(select.options.map((option) => option.value), ["search"]);
+  assert.match(status.textContent, /Bundled demo available/);
   response = new Error("Status request failed");
   await assert.rejects(vm.runInContext("updatePolicyAvailability()", context), /Status request failed/);
   assert.equal(vm.runInContext("policyStatus.configured", context), false);
@@ -867,7 +883,7 @@ test("policy availability refresh restores choices and explains configuration fa
   response = configured;
   await vm.runInContext("updatePolicyAvailability()", context);
   assert.deepEqual(select.options.map((option) => option.value), ["ungrounded", "search"]);
-  assert.equal(select.value, "ungrounded");
+  assert.equal(select.value, "search");
 });
 
 test("policy progress watcher is callable outside refreshPolicy after a page reload", async () => {
@@ -991,6 +1007,7 @@ test("policy Run requires Search and only this session's busy work disables the 
     policyMode: "ungrounded",
     policyBusy: false,
     policyStatus: { configured: true, batchRunning: false },
+    policyResults: new Map(),
     savedExtractionRun: undefined,
     savedPolicyEntries: [],
     policyCacheBusy: false,
@@ -1019,6 +1036,14 @@ test("policy Run requires Search and only this session's busy work disables the 
   vm.runInContext("policyStatus = { configured: false }; controls()", context);
   assert.equal(nodes.get("policy-run")!.disabled, true);
   assert.equal(nodes.get("policy-mode")!.disabled, true);
+  vm.runInContext(`policyStatus.bundledDemo = { indexName: "original-demo-index" };
+    savedPolicyEntries = [{ mode: "search", source: "bundled" }]; controls()`, context);
+  assert.equal(nodes.get("policy-mode")!.disabled, false);
+  assert.equal(nodes.get("load-policy-cache")!.disabled, false);
+  assert.equal(nodes.get("policy-run")!.disabled, true);
+  vm.runInContext(`policyResults.set("search", { source: "bundled" }); controls()`, context);
+  assert.equal(nodes.get("policy-chat-mode")!.disabled, true);
+  assert.match(nodes.get("policy-chat-mode")!.title!, /read-only/);
 });
 
 test("changing retrieval mode restores the claim PDF instead of retaining a previous mode's SOP", async () => {

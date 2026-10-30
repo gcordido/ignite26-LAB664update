@@ -14,11 +14,12 @@ Use this folder for deployment or runtime infrastructure, including Skillable-sp
 - [`launch-workbench.ps1`](launch-workbench.ps1) starts the separate Insurance
   Workbench App. It does not create cloud resources or submit document analysis
   on launch.
-- [`policy-demo-cache.ps1`](policy-demo-cache.ps1) restores the included synthetic
+- [`policy-demo-cache.ps1`](policy-demo-cache.ps1) optionally restores the included synthetic
   policy reviews, CU claim fields and public resource configuration. It uses
-  the existing workbench dependencies and makes no Azure calls. Run it explicitly
-  after dependency provisioning and before launching the app; different local
-  configuration or cache files aren't overwritten.
+  the existing workbench dependencies and makes no Azure calls. The app reads
+  the bundled results directly without this command or Azure setup; use it only
+  when a local cache copy is needed for maintenance. Different local configuration
+  or cache files aren't overwritten.
 
 Run these scripts from the repository root as described in
 [step 5 of the attendee guide](../instructions/lab.html#step5).
@@ -30,14 +31,18 @@ Core and provider packages have independent version numbers: this lab pins
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\infra\setup.ps1
-powershell -ExecutionPolicy Bypass -File .\infra\policy-demo-cache.ps1
 # Sign in only when running live Azure work, not to load saved results.
-az login
+# az login
 powershell -ExecutionPolicy Bypass -File .\infra\launch-workbench.ps1
 ```
 
 The launcher selects the local Python environment automatically. For a
 separately managed environment, set `POLICY_PYTHON` to its `python.exe`.
+Cache-only viewing needs the existing Node dependencies, not Python or Azure
+credentials. In **Parse and extract**, load the included CU results, then in
+**Check policies**, load the cached results. The **Bundled demo** label identifies
+the ten included read-only reviews and their original index. Live-compatible
+local caches take precedence; no configuration or cache files are overwritten.
 Rerun setup after pulling updates to restore both npm and Python dependencies.
 Stop the app first, and restart it afterward. No manual `npm install deep-chat`
 or global Python package installation is required.

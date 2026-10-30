@@ -350,19 +350,23 @@ Listing or loading saved policy results makes no Azure calls.
 Exact execution caches match the CU run, claim input, prompt, runtime and policy
 configuration. Persistent snapshots also allow earlier-prompt results when the
 CU run, claim input and policy configuration still match; the app labels them
-as historical. Results from another run or configuration aren't substituted.
+as historical. Local results from another run or configuration aren't substituted.
 Source citations are verified
 again when loading. A partially completed set loads only saved completed cases;
 remaining cases stay **Not run**. Live runs still save successful cases
 automatically. Loading is disabled while this session is processing a batch.
 
-For a fresh prepared machine, restore the included synthetic bundle before
-launching: `.\infra\policy-demo-cache.ps1`. It restores ten policy reviews,
-their CU claim fields and public resource configuration without Azure calls.
-It refuses different existing configuration or cache files rather than
-overwriting them. The original CU run is already included under `data\results`.
-Credentials aren't included. Live work still requires the approved lab identity
-and access to those Azure resources.
+On a fresh prepared machine, load the included CU run, then select **Check
+policies** > **Load cached results**. Without compatible local reviews, the app
+reads ten policy reviews and their claim fields directly from `data\policy-demo`.
+No Azure configuration, credentials or manual restore command is required.
+The **Bundled demo** label identifies these read-only results and their original
+Search index, even if a different live index is configured. Local configuration
+and caches aren't changed. Compatible local reviews take precedence.
+The original CU run is already included under `data\results`.
+The bundle covers **FoundryIQ**, not **No policy retrieval**; follow-up chat and
+live work require the approved lab identity, configured Azure resources and a
+live review. `.\infra\policy-demo-cache.ps1` remains an optional maintenance command.
 
 Both modes use the same model, field-only claim Markdown and
 [review question](rental-review-agent-question-v2.md). Selecting a mode, case,
