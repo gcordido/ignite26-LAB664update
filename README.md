@@ -103,7 +103,10 @@ Search index directly, not a Foundry IQ knowledge base.
 configuration. Complete [policy index setup](docs/policy-setup.md) before the
 session. The existing CU Layout index remains valid while optional managed
 Standard ingestion prerequisites are unresolved; don't label it Standard.
-The setup notebook walks through ingestion on the existing Search service.
+Use [`infra/deploy.ps1`](infra/README.md#deploy-infrastructure-and-the-policy-index)
+to include verified CU Layout index provisioning in the infrastructure workflow.
+It supports existing services or ARM deployment followed by index ingestion.
+The setup notebook also walks through managed ingestion on the existing Search service.
 
 ### 🎯 Learning outcomes
 

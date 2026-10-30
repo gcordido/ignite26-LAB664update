@@ -393,6 +393,18 @@
     }
   ],
   "outputs": {
+    "policyModelDeployment": {
+      "type": "string",
+      "value": "[variables('gpt52DeploymentName')]"
+    },
+    "policyCuModelName": {
+      "type": "string",
+      "value": "gpt-5.2"
+    },
+    "policyClaimAnalyzerId": {
+      "type": "string",
+      "value": "lab664_policy_checks_claim_summary"
+    },
     "accountResourceId": {
       "type": "string",
       "value": "[resourceId('Microsoft.CognitiveServices/accounts', variables('accountName'))]"
