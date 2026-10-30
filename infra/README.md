@@ -14,11 +14,12 @@ Use this folder for deployment or runtime infrastructure, including Skillable-sp
 - [`launch-workbench.ps1`](launch-workbench.ps1) starts the separate Insurance
   Workbench App. It does not create cloud resources or submit document analysis
   on launch.
-- [`policy-demo-cache.ps1`](policy-demo-cache.ps1) restores the included synthetic
+- [`policy-demo-cache.ps1`](policy-demo-cache.ps1) optionally restores the included synthetic
   policy reviews, CU claim fields and public resource configuration. It uses
-  the existing workbench dependencies and makes no Azure calls. Run it explicitly
-  after dependency provisioning and before launching the app; different local
-  configuration or cache files aren't overwritten.
+  the existing workbench dependencies and makes no Azure calls. The app reads
+  the bundled results directly without this command or Azure setup; use it only
+  when a local cache copy is needed for maintenance. Different local configuration
+  or cache files aren't overwritten.
 
 Run these scripts from the repository root as described in
 [step 5 of the attendee guide](../instructions/lab.html#step5).
@@ -30,14 +31,18 @@ Core and provider packages have independent version numbers: this lab pins
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\infra\setup.ps1
-powershell -ExecutionPolicy Bypass -File .\infra\policy-demo-cache.ps1
 # Sign in only when running live Azure work, not to load saved results.
-az login
+# az login
 powershell -ExecutionPolicy Bypass -File .\infra\launch-workbench.ps1
 ```
 
 The launcher selects the local Python environment automatically. For a
 separately managed environment, set `POLICY_PYTHON` to its `python.exe`.
+Cache-only viewing needs the existing Node dependencies, not Python or Azure
+credentials. In **Parse and extract**, load the included CU results, then in
+**Check policies**, load the cached results. The **Bundled demo** label identifies
+the ten included read-only reviews and their original index. Live-compatible
+local caches take precedence; no configuration or cache files are overwritten.
 Rerun setup after pulling updates to restore both npm and Python dependencies.
 Stop the app first, and restart it afterward. No manual `npm install deep-chat`
 or global Python package installation is required.
@@ -65,13 +70,59 @@ An existing Node installation without npm triggers the portable Node setup.
 
 ## Prepare policy retrieval
 
-Installing dependencies doesn't deploy or connect a policy index. A prepared
+Installing dependencies alone doesn't deploy or connect a policy index. A prepared
 lab machine also needs `.tools\policy-agent-framework.json` for its verified
 index, a reachable model deployment and Azure permissions. Follow
 [policy index setup](../docs/policy-setup.md) before the session. Setup reports
 missing permissions rather than granting roles. The
 [policy walkthrough](../docs/policy-checks.md#compare-packets-01-and-02)
 then starts with the app, not Azure provisioning.
+
+### Deploy infrastructure and the policy index
+
+Use [`deploy.ps1`](deploy.ps1) as the infrastructure entrypoint. With an existing
+`.tools\policy-deployment.json`, preview the CU Layout policy deployment first,
+then apply it:
+
+```powershell
+.\infra\deploy.ps1
+.\infra\deploy.ps1 -Apply
+```
+
+For a separate named index, supply `-IndexName YOUR-NEW-INDEX`. Optionally add
+`-SourceIndex YOUR-VERIFIED-LAYOUT-INDEX` to reuse verified source chunks without
+changing that source index. Without a source, setup extracts every registered
+policy PDF with CU Layout. Explicit names are saved after verification so later
+reruns use the same target. Choose a new target name when source content changes.
+Matching existing chunks aren't uploaded again; conflicting definitions or
+changed chunks stop deployment. The runtime configuration changes only after
+all sources and indexed content pass verification.
+
+To provision a new lab's Azure resources and then populate its policy index:
+
+```powershell
+.\infra\deploy.ps1 -ResourceGroup YOUR-EXISTING-RESOURCE-GROUP
+.\infra\deploy.ps1 -ResourceGroup YOUR-EXISTING-RESOURCE-GROUP -Apply
+```
+
+The first command previews the ARM deployment only. The apply command deploys
+[`Lab664-arm-template.json`](Lab664-arm-template.json), propagates its resource
+IDs and model settings, creates the claim analyzer only if absent, and runs
+Layout ingestion. Use `-Subscription` and `-ParametersFile` for a specific
+subscription and ARM parameters file. Resource groups must already exist.
+This provisions the template's billable services and model deployments; use the
+existing-resource path to reuse shared services without redeploying them.
+For an existing prepared Python environment, pass `-PythonExecutable`.
+No roles, network rules, or existing analyzers are changed by policy setup.
+
+Lab provisioning can combine dependency restoration and index deployment with
+`.\infra\setup.ps1 -DeployPolicyIndex` after Azure CLI sign-in and deployment
+settings are prepared. The switch is opt-in: ordinary setup and app launch
+still make no cloud changes. Layout ingestion queries an ordinary Search index,
+not a Foundry IQ knowledge base, and doesn't require Blob ingestion.
+The deployment settings retain the existing Storage resource for the optional
+managed Standard pipeline. CU extraction and live policy/model calls incur
+Azure charges.
 
 The **FoundryIQ** UI label is the lab's umbrella name; the initial five-check
 review uses scoped evidence prefetched from Azure AI Search, not a Foundry IQ

@@ -1,7 +1,7 @@
-"""Extend a verified CU Layout index on the existing Search service.
+"""Provision a verified CU Layout index on the existing Search service.
 
-Without --apply, validate sources and read the source index/analyzer only.
-With --apply, reuse verified unchanged chunks, extract new PDFs with CU Layout,
+Without --apply, validate sources and read the optional source index/analyzer.
+With --apply, reuse verified unchanged chunks or extract the registered PDFs,
 and activate a separate verified generation. No source index is modified.
 """
 
@@ -34,7 +34,7 @@ def request(http, method, url, scope=setup.SEARCH_SCOPE, body=None, raw=None, he
 
 def index_url(name, settings):
     if not re.fullmatch(r"[a-z0-9][a-z0-9-]{1,126}", name):
-        raise setup.SetupError("Invalid source index name.")
+        raise setup.SetupError("Invalid Search index name.")
     return f"{settings['searchEndpoint']}/indexes/{name}"
 
 
@@ -141,24 +141,52 @@ def layout(http, doc, settings, root):
         for section in [next(k for k, v in doc["sections"].items() if v == page)]]
 
 
-def run(args):
-    http, root = setup.Http(), setup.ROOT
+def layout_fields():
+    return [
+        {"name": name, "type": ("Edm.Int32" if name == "page" else
+                               "Collection(Edm.String)" if name in ("stateCodes", "ruleIds") else
+                               "Edm.String"),
+         **({"key": True, "filterable": True} if name == "id" else
+            {"searchable": True} if name == "content" else {"filterable": True})}
+        for name in FIELDS
+    ]
+
+
+def run(args, http=None, root=None):
+    http, root = http or setup.Http(), root or setup.ROOT
     sources = setup.load_sources(root)
-    settings = setup.resolve_analyzer(http, setup.runtime_settings(root, {
+    settings = setup.runtime_settings(root, {
         **setup.resource_seed(args),
         "modelDeployment": args.model_deployment, "claimAnalyzerId": args.claim_analyzer_id,
         "cuApiVersion": args.cu_api_version,
-    }))
-    definition, _ = request(http, "GET", f"{index_url(args.source_index, settings)}?api-version={API}")
-    if {f["name"] for f in definition["fields"]} != set(FIELDS):
-        raise setup.SetupError("The source index is not a supported CU Layout index.")
-    rows = read_rows(http, args.source_index, settings)
-    verify_rows(rows, sources, require_all=False)
+    })
+    deployment = root / setup.DEPLOYMENT_PATH
+    saved = setup.read_json(deployment) if deployment.exists() else {}
+    source_index = args.source_index or saved.get("layoutSourceIndex")
+    target_index = args.index_name or saved.get("layoutIndexName")
+    for name in (source_index, target_index):
+        if name:
+            index_url(name, settings)
+    if source_index and source_index == target_index:
+        raise setup.SetupError("The source index cannot be overwritten.")
+    if args.create_claim_analyzer:
+        analyzer = setup.prepare_claim_analyzer(http, settings, apply_changes=args.apply)
+        if args.apply or analyzer.get("status") != "planned":
+            settings = analyzer
+    else:
+        settings = setup.resolve_analyzer(http, settings)
+    definition, rows = {"fields": layout_fields()}, []
+    if source_index:
+        definition, _ = request(http, "GET", f"{index_url(source_index, settings)}?api-version={API}")
+        if {f["name"] for f in definition["fields"]} != set(FIELDS):
+            raise setup.SetupError("The source index is not a supported CU Layout index.")
+        rows = read_rows(http, source_index, settings)
+        verify_rows(rows, sources, require_all=False)
     present = {r["documentId"] for r in rows}
     missing = [d for d in sources["documents"] if d["documentId"] not in present]
-    if any(d.get("documentType") != "policy_contract" for d in missing):
+    if source_index and any(d.get("documentType") != "policy_contract" for d in missing):
         raise setup.SetupError("Source index is missing existing SOP evidence; refusing partial migration.")
-    report = {"sourceIndex": args.source_index, "extractionMode": "layout",
+    report = {"sourceIndex": source_index, "targetIndex": target_index, "extractionMode": "layout",
               "reusedChunks": len(rows), "newDocuments": [d["file"] for d in missing],
               "ready": True, "status": "preflight"}
     if not args.apply:
@@ -171,8 +199,8 @@ def run(args):
                                "chunks": [{k: v for k, v in r.items()
                                            if k not in ("corpusHash", "indexFingerprint")} for r in
                                           sorted(rows, key=lambda r: r["id"])]})
-    name = f"lab664-rental-v2-layout-{generation[:12]}"
-    if name == args.source_index:
+    name = target_index or f"lab664-rental-v2-layout-{generation[:12]}"
+    if name == source_index:
         raise setup.SetupError("The source index cannot be overwritten.")
     for row in rows:
         row.update(corpusHash=sources["corpusHash"], indexFingerprint=generation)
@@ -182,15 +210,22 @@ def run(args):
     status, actual, _ = http.request("GET", f"{index_url(name, settings)}?api-version={API}", setup.SEARCH_SCOPE)
     if status == 200:
         setup.assert_owned("index", target, actual)
+        existing = read_rows(http, name, settings)
+        expected = {row["id"]: row for row in rows}
+        if any(row != expected.get(row.get("id")) for row in existing):
+            raise setup.ConflictError("Existing Layout chunks differ; choose a new index name.")
+        present_ids = {row["id"] for row in existing}
     elif status == 404:
         request(http, "PUT", f"{index_url(name, settings)}?api-version={API}", body=target,
                 headers={"If-None-Match": "*"}, allowed=(200, 201))
+        present_ids = set()
     else:
         raise setup.SetupError(setup._err(status, actual))
-    for offset in range(0, len(rows), 100):
+    pending = [row for row in rows if row["id"] not in present_ids]
+    for offset in range(0, len(pending), 100):
         value, _ = request(http, "POST", f"{index_url(name, settings)}/docs/index?api-version={API}",
-                           body={"value": [{"@search.action": "upload", **r} for r in rows[offset:offset + 100]]})
-        if len(value["value"]) != len(rows[offset:offset + 100]) or any(not r["status"] for r in value["value"]):
+                           body={"value": [{"@search.action": "upload", **r} for r in pending[offset:offset + 100]]})
+        if len(value["value"]) != len(pending[offset:offset + 100]) or any(not r["status"] for r in value["value"]):
             raise setup.SetupError(f"Search rejected Layout chunks: {value}")
     for _ in range(30):
         actual = read_rows(http, name, settings)
@@ -221,21 +256,37 @@ def run(args):
         "cuEndpoint": settings["cuEndpoint"], "cuApiVersion": settings["cuApiVersion"],
         "claimAnalyzerId": settings["claimAnalyzerId"], "claimAnalyzerHash": settings["claimAnalyzerHash"],
     }
+    if args.source_index or args.index_name:
+        saved.update({key: settings[key] for key in setup.RESOURCE_TYPES})
+        saved.update(modelDeployment=settings["modelDeployment"], cuModelName=settings["modelName"],
+                     claimAnalyzerId=settings["claimAnalyzerId"], cuApiVersion=settings["cuApiVersion"])
+        if args.source_index:
+            saved["layoutSourceIndex"] = args.source_index
+        if args.index_name:
+            saved["layoutIndexName"] = args.index_name
+        setup.atomic_json(deployment, saved)
     setup.atomic_json(config_path, config)
     return {**report, "status": "verified", "indexName": name, "chunks": len(actual),
             "documents": len(sources["documents"])}
 
 
-def main():
+def parser():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--source-index", required=True)
+    parser.add_argument("--source-index", help="optional verified CU Layout index to read, never modify")
+    parser.add_argument("--index-name", help="isolated target name; reruns verify and reuse matching chunks")
     parser.add_argument("--model-deployment")
     parser.add_argument("--claim-analyzer-id")
     parser.add_argument("--cu-api-version")
     parser.add_argument("--apply", action="store_true")
+    parser.add_argument("--create-claim-analyzer", action="store_true",
+                        help="explicitly create the claim extractor if absent; never overwrite")
     setup.add_resource_arguments(parser)
+    return parser
+
+
+def main():
     try:
-        print(json.dumps(run(parser.parse_args()), indent=2))
+        print(json.dumps(run(parser().parse_args()), indent=2))
     except (setup.SetupError, KeyError, ValueError) as error:
         print(f"Layout setup stopped: {error}", file=sys.stderr)
         sys.exit(1)

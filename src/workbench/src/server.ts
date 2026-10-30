@@ -16,6 +16,7 @@ import { DocumentService } from "./documents.ts";
 import { diagnose, policyDiagnoses } from "./triage.ts";
 import { packetJson } from "./packet-json.ts";
 import { PolicyService, type PolicyJob } from "./policy-service.ts";
+import { policyDemo } from "./policy-demo.ts";
 import { checkNames, modeSchema } from "./policy-core.ts";
 import { type PolicyChatState } from "./policy-chat.ts";
 import { PolicyDocuments, representationSchema } from "./policy-documents.ts";
@@ -114,6 +115,7 @@ export function createApp(
     busy: boolean;
     error?: string;
     policyJob?: PolicyJob;
+    bundledPolicy?: boolean;
     policyChats?: Map<string, PolicyChatState>;
     chatBusy?: boolean;
   };
@@ -124,7 +126,7 @@ export function createApp(
   const policyDocuments = options.documents ?? new PolicyDocuments();
   let batchActive = false;
   let triageActive = false;
-  async function packetResult(run: Run, packet: Packet) {
+  async function packetResult(run: Run, packet: Packet, selectedPolicy = policy) {
     const response = await cache.raw(run.id, packet.id);
     try {
       const review = summarize(response, packet, run.analyzer.mode);
@@ -139,8 +141,8 @@ export function createApp(
       let claimSummaryPrepared = false;
       try {
         exportValue = packetJson(response, packet, run, review);
-        markdown = await policy.markdown(run, packet, response);
-        claimSummaryPrepared = await policy.summaryPrepared(packet);
+        markdown = await selectedPolicy.markdown(run, packet, response);
+        claimSummaryPrepared = await selectedPolicy.summaryPrepared(packet);
       } catch (error) {
         packetJsonError =
           error instanceof Error ? error.message : String(error);
@@ -281,7 +283,7 @@ export function createApp(
   });
   app.get("/api/policy/status", async (req, res) => {
     session(req);
-    res.json(await policy.status());
+    res.json({ ...await policy.status(), bundledDemo: (await policyDemo()).info });
   });
   const documentSelection = z
     .object({
@@ -313,7 +315,8 @@ export function createApp(
     const { run, packet } = loadedPacket(s, packetId);
     if (run.id !== runId)
       throw new LabError(409, "The selected extraction run changed. Reload this case.");
-    res.json(await policy.claimEvidence(run, packet, await cache.raw(run.id, packet.id)));
+    const selectedPolicy = s.bundledPolicy ? (await policyDemo()).service : policy;
+    res.json(await selectedPolicy.claimEvidence(run, packet, await cache.raw(run.id, packet.id)));
   });
   async function chatContext(
     s: Session,
@@ -323,6 +326,8 @@ export function createApp(
   ) {
     if (!s.run)
       throw new LabError(409, "Load Content Understanding results first.");
+    if (s.bundledPolicy)
+      throw new LabError(409, "Bundled demo results are read-only. Configure Azure and run live checks before starting a chat.");
     const run = s.run;
     const context = await policy.chatContext(run, mode, packetId, (id) =>
       cache.raw(run.id, id), check,
@@ -419,6 +424,10 @@ export function createApp(
     if (!s.run)
       throw new LabError(409, "Load Content Understanding results first.");
     const mode = modeSchema.parse(req.query.mode);
+    if (s.bundledPolicy && mode === "search") {
+      res.json((await policyDemo()).results(s.run));
+      return;
+    }
     const readiness = await policy.status();
     if (!readiness.configured) {
       res.json({
@@ -463,11 +472,7 @@ export function createApp(
       throw new LabError(409, "Load Content Understanding results first.");
     const run = s.run;
     const readiness = await policy.status();
-    if (!readiness.configured) {
-      res.json({ runId: run.id, entries: [], message: readiness.message });
-      return;
-    }
-    const entries = await Promise.all(modeSchema.options.map(async (mode) => {
+    const entries = readiness.configured ? await Promise.all(modeSchema.options.map(async (mode) => {
       const items = await policy.snapshot(run, mode, (id) => cache.raw(run.id, id));
       const completed = items.filter((item) => item.status === "completed");
       return {
@@ -475,20 +480,47 @@ export function createApp(
         completedAt: completed.map((item) => item.completedAt ?? "").sort().at(-1),
         indexName: completed[0]?.indexName ?? null,
       };
-    }));
-    res.json({ runId: run.id, entries: entries.filter((entry) => entry.count > 0) });
+    })) : [];
+    const available: Array<(typeof entries)[number] & { source?: "bundled" }> =
+      entries.filter((entry) => entry.count > 0);
+    if (!available.some((entry) => entry.mode === "search")) {
+      const demo = await policyDemo();
+      if (run.id === demo.info.runId) {
+        const saved = demo.results(run);
+        available.push({
+          mode: "search", count: saved.items.length, total: saved.items.length,
+          completedAt: saved.items.map((item) => item.completedAt ?? "").sort().at(-1),
+          indexName: demo.info.indexName, source: "bundled",
+        });
+      }
+    }
+    res.json({ runId: run.id, entries: available,
+      ...(!readiness.configured && !available.length ? { message: readiness.message } : {}) });
   });
   app.post("/api/policy/cache/load", async (req, res) => {
     const s = session(req);
-    const { runId, mode } = z.object({ runId: z.string().uuid(), mode: modeSchema }).strict().parse(req.body);
+    const { runId, mode, source } = z.object({
+      runId: z.string().uuid(), mode: modeSchema,
+      source: z.literal("bundled").optional(),
+    }).strict().parse(req.body);
     if (!s.run || s.run.id !== runId)
       throw new LabError(409, "The selected CU run changed. Refresh saved policy results.");
     if (s.busy || s.chatBusy || s.policyJob?.status === "running")
       throw new LabError(409, "Wait for the current analysis, policy review or chat.");
     const run = s.run;
+    if (source === "bundled") {
+      if (mode !== "search")
+        throw new LabError(404, "The bundled demo includes Search-backed checks only.");
+      const saved = (await policyDemo()).results(run);
+      s.bundledPolicy = true;
+      s.policyChats = undefined;
+      res.json(saved);
+      return;
+    }
     const items = await policy.snapshot(run, mode, (id) => cache.raw(run.id, id));
     if (!items.some((item) => item.status === "completed"))
       throw new LabError(404, "No compatible saved policy results. Run policy checks first.");
+    s.bundledPolicy = false;
     res.json({ runId: run.id, mode, status: "completed", items, cached: true });
   });
   app.post("/api/policy/batch", async (req, res) => {
@@ -519,6 +551,7 @@ export function createApp(
     try {
       const { job, task } = await policy.start(run, mode, (id) =>
         cache.raw(run.id, id), packetIds);
+      s.bundledPolicy = false;
       s.policyJob = job;
       void task
         .catch((error) => {
@@ -549,14 +582,15 @@ export function createApp(
     const packetResults = await Promise.all(
       run.items
         .filter((item) => item.rawSaved)
-        .map((item) => {
+        .map(async (item) => {
           const packet = run.source.find((packet) => packet.id === item.id);
           if (!packet)
             throw new LabError(
               422,
               "A cached packet is missing its source metadata.",
             );
-          return packetResult(run, packet);
+          return packetResult(run, packet,
+            s.bundledPolicy ? (await policyDemo()).service : policy);
         }),
     );
     const readiness = await policy.status();
@@ -564,7 +598,9 @@ export function createApp(
       await Promise.all(
         modeSchema.options.map(async (mode) => [
           mode,
-          s.policyJob?.runId === run.id &&
+          s.bundledPolicy && mode === "search"
+            ? (await policyDemo()).results(run)
+            : s.policyJob?.runId === run.id &&
           s.policyJob.mode === mode &&
           s.policyJob.status === "running"
             ? s.policyJob
@@ -610,6 +646,7 @@ export function createApp(
       throw new LabError(409, "Wait for the current analysis or chat.");
     const { runId } = z.object({ runId: z.string().uuid() }).parse(req.body);
     const run = await cache.load(runId);
+    if (s.run?.id !== run.id) s.bundledPolicy = false;
     const hydrated = await hydratedRun(s, run);
     s.run = run;
     res.json(hydrated);
@@ -629,7 +666,8 @@ export function createApp(
         404,
         "No saved CU JSON exists for that packet in this run.",
       );
-    res.json(await packetResult(s.run, packet));
+    res.json(await packetResult(s.run, packet,
+      s.bundledPolicy ? (await policyDemo()).service : policy));
   });
   app.get("/api/review/:packetId", async (req, res) => {
     const { run, packet } = loadedPacket(
@@ -764,6 +802,7 @@ export function createApp(
           "Analyzer definition changed; reconnect before starting another billable batch.",
         );
       s.run = await newRun(current);
+      s.bundledPolicy = false;
       await cache.save(s.run);
     } catch (error) {
       batchActive = false;

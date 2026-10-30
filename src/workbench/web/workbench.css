@@ -1216,10 +1216,14 @@ tr:last-child td {
   text-overflow: ellipsis;
 }
 #packet-table.policy-grid > tbody > tr > td:not(:first-child) {
+  position: relative;
   padding: 0;
 }
 #packet-table.policy-grid .cell-content[data-agent-check] {
-  height: 47px;
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  line-height: normal;
   cursor: pointer;
 }
 #packet-table.policy-grid .cell-content[data-agent-check] > .policy-state {

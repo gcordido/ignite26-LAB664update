@@ -190,8 +190,9 @@ logged. These local diagnostics do not enable Azure resource diagnostic logging
 or expose Microsoft's internal service trace. Use the activity/request IDs and
 UTC timestamps when escalating a service error.
 
-Start here on a prepared lab machine. You don't need to inspect or redeploy
-Azure resources before trying the agent.
+For live checks, complete [policy setup](policy-setup.md) and sign in with the
+approved lab identity. For a first-run walkthrough without Azure setup or
+charges, use [Load saved policy results](#load-saved-policy-results) instead.
 
 1. In **Parse and extract**, select **Load cached results** to load the
    included completed **10/10** CU run. Select **Check policies**.
@@ -341,28 +342,35 @@ Both **Parse and extract** and **Check policies** have a single selector with
 or Refresh button. The extraction button loads the saved CU run (preferring a
 completed run); its tooltip identifies the analyzer and saved time.
 
-After loading CU results, select the retrieval mode in **Check policies**, then
+Select the retrieval mode in **Check policies**, then
 select **Load cached results**. The button loads the compatible saved checks for
-that mode and loaded CU run. Availability updates when entering **Check
+that mode and loaded CU run. On first launch, **FoundryIQ** can load the included
+CU run and policy results together; loading extraction results separately isn't
+required. Availability updates when entering **Check
 policies**, changing retrieval mode, or completing a policy batch.
 Listing or loading saved policy results makes no Azure calls.
 
 Exact execution caches match the CU run, claim input, prompt, runtime and policy
 configuration. Persistent snapshots also allow earlier-prompt results when the
 CU run, claim input and policy configuration still match; the app labels them
-as historical. Results from another run or configuration aren't substituted.
+as historical. Local results from another run or configuration aren't substituted.
 Source citations are verified
 again when loading. A partially completed set loads only saved completed cases;
 remaining cases stay **Not run**. Live runs still save successful cases
 automatically. Loading is disabled while this session is processing a batch.
 
-For a fresh prepared machine, restore the included synthetic bundle before
-launching: `.\infra\policy-demo-cache.ps1`. It restores ten policy reviews,
-their CU claim fields and public resource configuration without Azure calls.
-It refuses different existing configuration or cache files rather than
-overwriting them. The original CU run is already included under `data\results`.
-Credentials aren't included. Live work still requires the approved lab identity
-and access to those Azure resources.
+On first launch, select **Check policies** > **FoundryIQ** > **Load cached
+results**. The app loads the included **10/10** CU run automatically.
+Without compatible local reviews, the app
+reads ten policy reviews and their claim fields directly from `data\policy-demo`.
+No Azure configuration, credentials or manual restore command is required.
+The **Bundled demo** label identifies these read-only results and their original
+Search index, even if a different live index is configured. Local configuration
+and caches aren't changed. Compatible local reviews take precedence.
+The original CU run is already included under `data\results`.
+The bundle covers **FoundryIQ**, not **No policy retrieval**; follow-up chat and
+live work require the approved lab identity, configured Azure resources and a
+live review. `.\infra\policy-demo-cache.ps1` remains an optional maintenance command.
 
 Both modes use the same model, field-only claim Markdown and
 [review question](rental-review-agent-question-v2.md). Selecting a mode, case,

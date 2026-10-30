@@ -131,7 +131,8 @@ def atomic_json(path: Path, value: Any) -> None:
 
 # ---------------------------------------------------------------- local sources
 
-SEED_KEYS = {"modelDeployment", "cuModelName", "claimAnalyzerId", "cuApiVersion", *RESOURCE_TYPES}
+SEED_KEYS = {"modelDeployment", "cuModelName", "claimAnalyzerId", "cuApiVersion",
+             "layoutSourceIndex", "layoutIndexName", *RESOURCE_TYPES}
 
 
 def runtime_settings(root: Path = ROOT, seed: dict[str, Any] | None = None) -> dict[str, Any]:

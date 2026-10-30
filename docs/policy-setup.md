@@ -35,6 +35,13 @@ change networking, use account keys or weaken access controls.
 
 ## Run setup
 
+For the main infrastructure workflow, use
+[`infra/deploy.ps1`](../infra/README.md#deploy-infrastructure-and-the-policy-index).
+It supports existing services or ARM deployment followed by verified CU Layout
+ingestion. Layout remains the extraction mode; this path doesn't enable
+Search-managed Standard ingestion. The Standard workflow below remains an
+explicit alternative with its own prerequisites.
+
 For a lab machine, first run `.\infra\setup.ps1`. This restores Deep Chat and
 the other npm packages and installs the Python agent requirements into
 `.tools\policy-venv`. Agent Framework is a Python dependency, not an npm package.
@@ -126,11 +133,18 @@ then rerun setup. Existing Azure agents, knowledge bases and other indexes
 aren't deleted.
 
 On a fresh clone, `.tools\policy-agent-framework.json` is absent because it is
-machine-local and git-ignored. After dependencies are provisioned, run
-`.\infra\policy-demo-cache.ps1` to restore the included synthetic demo's public
-configuration, claim fields and ten saved reviews. No credentials or Azure calls
-are involved. Different existing configuration or cache files aren't overwritten.
-Then load the included CU run and the policy cache in the app.
+machine-local and git-ignored. After dependencies are provisioned, launch the app
+and load the included CU run, then select **Check policies** > **Load cached
+results**. The app reads all ten synthetic reviews and their claim fields directly
+from `data\policy-demo` when compatible local reviews aren't available. No restore,
+Azure configuration, credentials or Azure calls are involved. The **Bundled demo**
+label preserves the original index provenance. Existing configuration and caches
+aren't overwritten, and live-compatible cached results take precedence.
+Bundled results are read-only; follow-up chat isn't available.
+
+The optional `.\infra\policy-demo-cache.ps1` command still restores a local copy
+for cache-maintenance workflows. It refuses to overwrite different existing
+configuration or cache files. It isn't required to view the bundled results.
 
 Live reviews still require access to the configured resources. For a different
 lab resource or index, the lab owner must prepare a verified configuration with
@@ -198,10 +212,10 @@ Use the existing signed-in Azure CLI identity, model deployment and claim
 analyzer. First run the read-only check:
 
 ```powershell
-.\.tools\policy-venv\Scripts\python.exe .\infra\setup-policy-layout.py --source-index YOUR-VERIFIED-LAYOUT-INDEX
+.\infra\deploy.ps1 -SourceIndex YOUR-VERIFIED-LAYOUT-INDEX -IndexName YOUR-NEW-LAYOUT-INDEX
 ```
 
-Repeat with `--apply` to extract new PDFs and activate a separate verified
+Repeat with `-Apply` to extract new PDFs and activate a separate verified
 Layout generation on the same Search service. This can incur CU and Search
 charges. The script reuses the existing hash-verified SOP chunks, checks every
 registered source page, uploads and reads back the new chunks, and updates the

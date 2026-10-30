@@ -76,7 +76,7 @@ test("refresh resumes the owning session's policy job and duplicate starts don't
     await new Promise<void>((resolve) => server.close(() => resolve()));
   });
 
-  test("saved policy picker and load read compatible snapshots without starting an agent", async (t) => {
+  await t.test("saved policy picker and load read compatible snapshots without starting an agent", async (t) => {
     const cache = new Cache();
     const saved = (await cache.list()).find((run) => run.status === "completed");
     assert.ok(saved);

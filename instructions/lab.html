@@ -917,13 +917,15 @@ powershell -ExecutionPolicy Bypass -File .\infra\launch-workbench.ps1</code></pr
         </ol>
         <h3 id="policy-checks">Compare policy checks with and without retrieval</h3>
         <p>
-          Use the prepared lab configuration. The lab owner must complete
-          <a href="../docs/policy-setup.md">policy setup</a> before the session;
-          installing dependencies alone doesn't configure an index.
-          Before launching on a fresh machine, run
-          <code>.\infra\policy-demo-cache.ps1</code> to restore the included synthetic
-          reviews, claim fields and public resource configuration without Azure calls.
-          It includes no credentials and refuses to replace different local files.
+          After provisioning the existing app dependencies, load the included CU run,
+          then select <strong>Check policies</strong> &gt; <strong>Load cached results</strong>.
+          Without compatible local reviews, the app reads all ten synthetic reviews
+          directly from the checked-in bundle. No Azure setup, credentials or restore
+          command is needed. <strong>Bundled demo</strong> identifies the original index
+          and read-only results; local configuration and caches aren't overwritten.
+          Follow-up chat isn't available for bundled results.
+          The lab owner must complete <a href="../docs/policy-setup.md">policy setup</a>
+          for live work; installing dependencies alone doesn't configure an index.
           For live work, sign in with <code>az login</code> using your approved lab identity.
           Uncached policy reviews and missing claim-summary extraction incur Azure charges.
         </p>

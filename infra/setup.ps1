@@ -2,7 +2,8 @@
 param(
     [string]$PythonExecutable = 'python',
     [string]$NpmRegistry,
-    [string]$PythonIndexUrl
+    [string]$PythonIndexUrl,
+    [switch]$DeployPolicyIndex
 )
 
 $ErrorActionPreference = 'Stop'
@@ -103,6 +104,10 @@ try {
     if ($LASTEXITCODE -ne 0) { throw "Workbench dependency verification failed (exit $LASTEXITCODE)." }
 }
 finally { Pop-Location }
+
+if ($DeployPolicyIndex) {
+    & (Join-Path $PSScriptRoot 'deploy.ps1') -Apply -PythonExecutable $policyPython
+}
 
 Write-Host ''
 Write-Host 'Setup complete. Open instructions\lab.html and follow steps 1-5.'
