@@ -201,12 +201,22 @@ function controls() {
     ? "Bundled demo results are read-only. Configure Azure and run live checks to ask follow-up questions."
     : "";
   get("load-policy-cache").disabled = busy || policyBusy || policyCacheBusy ||
-    policyStatus?.batchRunning || !savedPolicyEntries.some((entry) => entry.mode === policyMode);
+    policyStatus?.batchRunning ||
+    (!savedPolicyEntries.some((entry) => entry.mode === policyMode) &&
+      !(!run && policyMode === "search" && policyStatus?.bundledDemo &&
+        savedExtractionRun?.id === policyStatus.bundledDemo.runId));
 }
 async function policyCaches() {
   const version = ++policyCacheVersion;
   const runId = run?.id;
-  if (!runId) return;
+  if (!runId) {
+    get("policy-cache-status").textContent =
+      policyMode === "search"
+        ? "Load cached results to open the included CU run and saved policy checks. Loading makes no Azure calls."
+        : "Select FoundryIQ to load the included policy demo, or load a saved CU run in Parse and extract.";
+    controls();
+    return;
+  }
   policyCacheBusy = true;
   get("policy-cache-status").textContent = "Checking for compatible saved policy results…";
   controls();
@@ -440,7 +450,6 @@ function renderTable() {
     button.hidden = !types.includes(button.dataset.view);
     button.setAttribute("aria-pressed", String(button.dataset.view === view));
   }
-  get("policy-toolbar").hidden = view !== "policy";
   get("checks-description").hidden = view !== "policies";
   get("checks-description").textContent =
     view === "policy"
@@ -1011,6 +1020,8 @@ function renderWorkflowNavigation() {
     button.setAttribute("aria-pressed", String(button.dataset.workflow === workflow));
   get("view-types").hidden = workflow !== "extract";
   get("extraction-toolbar").hidden = workflow !== "extract";
+  get("policy-toolbar").hidden = workflow !== "policy";
+  get("show-confidence").closest("label").hidden = workflow === "policy";
   get("results-heading").hidden = workflow === "policy";
   get("policy-table-intro").hidden = workflow !== "policy";
   get("results-heading").textContent = {
@@ -1025,7 +1036,11 @@ function activateView(next) {
   allFields = false;
   showPolicyPanel(view === "policy");
   renderWorkflowNavigation();
-  if (!run) return;
+  if (!run) {
+    get("batch").hidden = view !== "policy";
+    if (view === "policy") void policyCaches().catch(fail);
+    return;
+  }
   renderTable();
   if (view === "policy") renderPolicyOutput();
   else if (selectedPacket) showCustomer(selectedPacket).catch(fail);
@@ -1841,8 +1856,10 @@ get("policy-mode").onchange = async () => {
   controls();
   showPolicyPanel(true);
   policyMessage();
-  renderTable();
-  renderPolicyOutput();
+  if (run) {
+    renderTable();
+    renderPolicyOutput();
+  }
   try {
     await refreshPolicy();
     await policyCaches();
@@ -1852,13 +1869,18 @@ get("policy-mode").onchange = async () => {
 };
 get("load-policy-cache").onclick = async () => {
   if (get("load-policy-cache").disabled) return;
-  const runId = run.id;
   const mode = policyMode;
   busy = true;
   get("error").hidden = true;
   get("policy-cache-status").textContent = "Loading saved policy checks and verifying their sources…";
   controls();
   try {
+    if (!run) {
+      if (!savedExtractionRun)
+        throw new Error("No saved CU run is available for the included policy demo.");
+      await renderRun(await api("cache/load", { runId: savedExtractionRun.id }), "cached");
+    }
+    const runId = run.id;
     const entry = savedPolicyEntries.find((entry) => entry.mode === mode);
     const value = await api("policy/cache/load", { runId, mode,
       ...(entry?.source ? { source: entry.source } : {}) });

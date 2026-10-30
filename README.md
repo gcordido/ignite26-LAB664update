@@ -69,9 +69,11 @@ the index configuration only to run live analysis or policy checks.
 
 #### Try the policy-check comparison
 
-After provisioning the existing app dependencies, launch the app. In **Parse and extract**,
-select **Load cached results** to load the **10/10** CU run. In **Check policies**,
-select **FoundryIQ** and **Load cached results**. Without compatible local reviews,
+On first launch, open **Check policies**, select **FoundryIQ**, then select
+**Load cached results**. The app loads the included **10/10** CU run and all
+**50** saved policy checks together; no separate extraction step is needed.
+**Parse and extract** > **Load cached results** also loads the included CU run
+independently. Without compatible local reviews,
 the app reads all ten synthetic reviews directly from the checked-in demo bundle.
 No restore command, Azure configuration or credentials are needed. **Bundled demo**
 identifies these read-only results and their original Search index; they aren't

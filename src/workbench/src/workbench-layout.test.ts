@@ -1044,6 +1044,121 @@ test("policy Run requires Search and only this session's busy work disables the 
   vm.runInContext(`policyResults.set("search", { source: "bundled" }); controls()`, context);
   assert.equal(nodes.get("policy-chat-mode")!.disabled, true);
   assert.match(nodes.get("policy-chat-mode")!.title!, /read-only/);
+  vm.runInContext(`run = undefined; savedPolicyEntries = [];
+    policyStatus.bundledDemo.runId = "included-run";
+    savedExtractionRun = { id: "included-run" }; controls()`, context);
+  assert.equal(nodes.get("load-policy-cache")!.disabled, false);
+  assert.equal(nodes.get("policy-run")!.disabled, true);
+  vm.runInContext(`busy = true; controls()`, context);
+  assert.equal(nodes.get("load-policy-cache")!.disabled, true);
+  vm.runInContext(`busy = false; policyMode = "ungrounded"; controls()`, context);
+  assert.equal(nodes.get("load-policy-cache")!.disabled, true);
+  vm.runInContext(`policyMode = "search"; savedExtractionRun.id = "different-run"; controls()`, context);
+  assert.equal(nodes.get("load-policy-cache")!.disabled, true);
+});
+
+test("first-run policy navigation exposes the cache toolbar without loading or running analysis", async () => {
+  const source = await readFile(new URL("../web/workbench.js", import.meta.url), "utf8");
+  const nodes = new Map<string, { hidden: boolean; textContent: string; querySelectorAll: () => never[]; closest: () => unknown }>();
+  const get = (id: string) => {
+    if (!nodes.has(id)) {
+      const node = { hidden: true, textContent: "", querySelectorAll: () => [], closest: (): unknown => node };
+      nodes.set(id, node);
+    }
+    return nodes.get(id)!;
+  };
+  let availabilityReads = 0;
+  const context = vm.createContext({
+    get, clearTimeout, clickTimer: undefined, selectionVersion: 0,
+    view: "classification", lastExtractionView: "classification", allFields: false,
+    run: undefined, showPolicyPanel: () => {},
+    policyCaches: async () => { availabilityReads++; },
+    fail: (error: unknown) => { throw error; },
+  });
+  vm.runInContext(source.slice(
+    source.indexOf("function renderWorkflowNavigation("),
+    source.indexOf('for (const button of document.querySelectorAll("[data-view]"))'),
+  ), context);
+  vm.runInContext('activateView("policy")', context);
+  assert.equal(get("batch").hidden, false);
+  assert.equal(get("policy-toolbar").hidden, false);
+  assert.equal(get("extraction-toolbar").hidden, true);
+  assert.equal(get("show-confidence").hidden, true);
+  assert.equal(availabilityReads, 1);
+  assert.equal(vm.runInContext("run", context), undefined);
+  vm.runInContext('activateView("classification")', context);
+  assert.equal(get("batch").hidden, true);
+  assert.equal(get("policy-toolbar").hidden, true);
+  assert.equal(get("extraction-toolbar").hidden, false);
+});
+
+test("first-run policy cache loading opens CU results before selecting bundled or preferred live reviews", async (t) => {
+  const source = await readFile(new URL("../web/workbench.js", import.meta.url), "utf8");
+  for (const bundled of [true, false]) await t.test(bundled ? "bundled demo" : "compatible live cache", async () => {
+    const nodes = new Map<string, { disabled: boolean; hidden: boolean; value: string; textContent: string }>();
+    const get = (id: string) => {
+      if (!nodes.has(id)) nodes.set(id, { disabled: false, hidden: true, value: "search", textContent: "" });
+      return nodes.get(id)!;
+    };
+    const calls: Array<{ route: string; body?: Record<string, unknown> }> = [];
+    const loaded = {
+      id: "included-run", runId: "included-run",
+      ...(bundled ? { source: "bundled" } : {}),
+      items: Array.from({ length: 10 }, (_, index) => ({ id: `packet-${index}`, status: "completed" })),
+    };
+    let context: vm.Context;
+    context = vm.createContext({
+      get, run: undefined, policyMode: "search", busy: false,
+      savedExtractionRun: { id: "included-run" }, savedPolicyEntries: [],
+      policyResults: new Map(), policyChat: { reset: () => {} },
+      controls: () => {}, renderTable: () => {}, renderPolicyOutput: () => {},
+      policyMessage: () => {}, selectPolicyPane: () => {},
+      fail: (error: unknown) => { throw error; },
+      api: async (route: string, body?: Record<string, unknown>) => {
+        calls.push({ route, body });
+        assert.equal(vm.runInContext("busy", context), true);
+        return route === "policy/cache/load" ? loaded : { id: "included-run" };
+      },
+      renderRun: async (value: { id: string }) => {
+        context.run = value;
+        context.savedPolicyEntries = [{ mode: "search", ...(bundled ? { source: "bundled" } : {}) }];
+      },
+    });
+    vm.runInContext(source.slice(
+      source.indexOf('get("load-policy-cache").onclick'),
+      source.indexOf("function confirmPolicyRun("),
+    ), context);
+    await vm.runInContext('get("load-policy-cache").onclick()', context);
+    assert.deepEqual(calls.map(({ route }) => route),
+      bundled ? ["cache/load", "policy/cache/load", "cache/current"] : ["cache/load", "policy/cache/load"]);
+    assert.equal(calls[0].body?.runId, "included-run");
+    assert.equal(calls[1].body?.runId, "included-run");
+    assert.equal(calls[1].body?.source, bundled ? "bundled" : undefined);
+    assert.match(get("policy-cache-status").textContent, /Loaded 10\/10/);
+    assert.equal(context.busy, false);
+  });
+});
+
+test("first-run retrieval changes do not try to render an unloaded CU run", async () => {
+  const source = await readFile(new URL("../web/workbench.js", import.meta.url), "utf8");
+  const selector = { value: "ungrounded", onchange: async () => {} };
+  let availabilityReads = 0;
+  const context = vm.createContext({
+    get: () => selector, run: undefined, policyMode: "search",
+    controls: () => {}, showPolicyPanel: () => {}, policyMessage: () => {},
+    renderTable: () => { throw new Error("No CU run is loaded."); },
+    renderPolicyOutput: () => { throw new Error("No policy run is loaded."); },
+    refreshPolicy: async () => {},
+    policyCaches: async () => { availabilityReads++; },
+    fail: (error: unknown) => { throw error; },
+  });
+  vm.runInContext(source.slice(
+    source.indexOf('get("policy-mode").onchange'),
+    source.indexOf('get("load-policy-cache").onclick'),
+  ), context);
+  await selector.onchange();
+  assert.equal(vm.runInContext("policyMode", context), "ungrounded");
+  assert.equal(availabilityReads, 1);
 });
 
 test("changing retrieval mode restores the claim PDF instead of retaining a previous mode's SOP", async () => {

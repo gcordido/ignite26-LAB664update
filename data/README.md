@@ -53,11 +53,18 @@ existing state and shared SOP evidence; the source index remains unchanged.
 packets, their per-check questions and relevant CU inputs, CU claim fields,
 and public resource configuration. It contains no
 credentials and isn't policy knowledge or a set of scripted runtime answers.
-After provisioning the existing workbench dependencies, restore it with
-`.\infra\policy-demo-cache.ps1` from the repository root, then load the included
-CU run and policy results in the app. Restoration validates file hashes, claim
-inputs and citations and refuses different local configuration or cache files.
-See [policy setup](../docs/policy-setup.md) for refreshing the bundle.
+The results are available on first launch without Azure configuration,
+credentials or a restore script. In **Check policies**, select **FoundryIQ**,
+then **Load cached results** to load the included **10/10** CU run and all
+**50** saved policy checks. **Parse and extract** > **Load cached results**
+also loads the included extraction results independently.
+
+The app validates bundle hashes, claim inputs and citations before loading.
+**Bundled demo** identifies these read-only results and their original Search
+index. Compatible local live caches take precedence; local configuration and
+caches aren't overwritten. `.\infra\policy-demo-cache.ps1` remains optional
+maintenance tooling, not a viewing prerequisite. See
+[policy setup](../docs/policy-setup.md) for refreshing the bundle.
 
 The SOP corpus includes eleven mixed digital/scanned PDFs, editable DOCX exports
 and pre-scan PDF controls. Its Python generator creates the SOP assets from rule
