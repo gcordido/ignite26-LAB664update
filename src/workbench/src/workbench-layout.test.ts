@@ -388,8 +388,26 @@ test("policy status icons distinguish completion, review and missing information
   assert.match(css, /\.policy-review::before\s*\{\s*content: "\\25cb" \/ "";/);
   assert.match(css, /\.policy-waiting::before\s*\{\s*content: "\\21bb" \/ "";/);
   assert.doesNotMatch(css, /\.policy-waiting(?:::before)?\s*\{[^}]*animation:/);
-  assert.match(css, /#packet-table\.policy-grid > tbody > tr > td:not\(:first-child\)\s*\{\s*padding: 0;/);
+  assert.match(css, /#packet-table\.policy-grid > tbody > tr > td:not\(:first-child\)\s*\{[^}]*padding: 0;/);
   assert.match(css, /\.cell-content\[data-agent-check\] > \.policy-state\s*\{[^}]*width: 100%;[^}]*height: 100%;[^}]*border-radius: 0;/);
+});
+
+test("policy status fill and click target follow the cell height instead of a fixed button height", async () => {
+  const css = await readFile(new URL("../web/workbench.css", import.meta.url), "utf8");
+  const cell = css.match(/#packet-table\.policy-grid > tbody > tr > td:not\(:first-child\)\s*\{([^}]*)\}/)?.[1];
+  const button = css.match(/#packet-table\.policy-grid \.cell-content\[data-agent-check\]\s*\{([^}]*)\}/)?.[1];
+  const state = css.match(/#packet-table\.policy-grid \.cell-content\[data-agent-check\] > \.policy-state\s*\{([^}]*)\}/)?.[1];
+  assert.ok(cell && button && state);
+  assert.match(cell, /position: relative;/);
+  assert.match(cell, /padding: 0;/);
+  assert.match(button, /position: absolute;/);
+  assert.match(button, /inset: 0;/);
+  assert.match(button, /height: 100%;/);
+  assert.match(button, /line-height: normal;/);
+  assert.doesNotMatch(button, /(?:height|line-height): \d+px;/);
+  assert.match(state, /width: 100%;/);
+  assert.match(state, /height: 100%;/);
+  assert.match(css, /\.cell-content\[data-agent-check\]:focus-visible\s*\{\s*outline-offset: -2px;/);
 });
 
 test("policy citations replace right-panel details and Back restores the check and focus", async () => {
