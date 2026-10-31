@@ -35,7 +35,7 @@ Fill in the sections below yourself, then:
 ## 🔥LAB664: Build agentic document workflows with Content Understanding
 ### Session description
 
-Add your session description here. Keep it concise — 2-3 sentences about what attendees will learn and why it matters.
+Enterprise processes start with unstructured content—documents, images, audio, video, emails. Before AI agents can act, they must understand and structure it. In this hands-on lab, use Azure Content Understanding (CLI, SDKs) in an agent loop to build an end-to-end workflow. Process real business content, extract and classify information, and route work through automated decision paths. Learn confidence-based automation and human-in-the-loop review for straight-through processing.
 
 ### 🚀 Getting started
 
