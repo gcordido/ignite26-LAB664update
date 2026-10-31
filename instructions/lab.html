@@ -526,7 +526,7 @@
           >
           (3 pages). Then use
           <a href="../data/step3/packet-01.pdf">packet-01.pdf</a> (Danielle, 13
-          pages) and <a href="../data/step3/packet-03.pdf">packet-03.pdf</a> (12
+          pages) and <a href="../data/step3/packet-03.pdf">packet-03.pdf</a> (13
           pages) for realistic logical-document boundaries.
         </p>
         <ol>
@@ -630,7 +630,9 @@
             <code>data\documents\packet-01</code> and
             <code>data\documents\packet-03</code>. Different adjacent Other
             documents must remain separate; a document's continuation pages
-            should stay together.
+            should stay together. In packet 03, the independent shop estimates
+            on pages 8 and 9 are two Repair Estimate documents, not continuation
+            pages of one quote.
           </li>
           <li>
             For packet 01, the authored groups are: membership card p1; policy
@@ -666,8 +668,8 @@
           >, <a href="../data/step4/packet-01.pdf">packet-01.pdf</a> (rental
           invoice and statement), and
           <a href="../data/step4/packet-03.pdf">packet-03.pdf</a> (towing
-          invoice). This makes the before/after comparison about routing, not a
-          changed source.
+          invoice and two repair estimates). This makes the before/after
+          comparison about routing, not a changed source.
         </p>
         <ol>
           <li>
@@ -877,10 +879,10 @@ powershell -ExecutionPolicy Bypass -File .\infra\launch-workbench.ps1</code></pr
             to load the included completed <strong>10/10</strong> run. The
             Cached badge identifies historical native CU JSON, not a fresh run
             or your new analyzer. Its tooltip preserves the original analyzer,
-            API version, timestamp, and dataset fingerprint. Results, fixed checks,
-            and all matching saved LLM Agent and policy reviews load together before the table
-            appears. Loading the cache or opening either check view
-            makes no paid model calls.
+            API version, timestamp, and dataset fingerprint. Results and fixed
+            extraction checks load before the table appears; saved rental-policy
+            reviews are loaded separately in <strong>Check policies</strong>.
+            Loading either cache makes no paid model calls.
           </li>
           <li>
             Start with <strong>Classification</strong>. Each row is one
@@ -917,13 +919,14 @@ powershell -ExecutionPolicy Bypass -File .\infra\launch-workbench.ps1</code></pr
         </ol>
         <h3 id="policy-checks">Compare policy checks with and without retrieval</h3>
         <p>
-          After provisioning the existing app dependencies, load the included CU run,
-          then select <strong>Check policies</strong> &gt; <strong>Load cached results</strong>.
-          Without compatible local reviews, the app reads all ten synthetic reviews
-          directly from the checked-in bundle. No Azure setup, credentials or restore
-          command is needed. <strong>Bundled demo</strong> identifies the original index
-          and read-only results; local configuration and caches aren't overwritten.
-          Follow-up chat isn't available for bundled results.
+          Load the current CU results first. In <strong>Check policies</strong>,
+          the checked-in bundled reviews can be loaded as a read-only historical
+          demo even though they were created from the original packet dataset.
+          The app labels them <strong>Stale policy results from a different
+          extraction dataset</strong> and does not present them as a fresh review
+          of the customized packets. Loading them makes no Azure calls, does not
+          replace the current Parse and extract results, and does not enable
+          follow-up chat.
           The lab owner must complete <a href="../docs/policy-setup.md">policy setup</a>
           for live work; installing dependencies alone doesn't configure an index.
           For live work, sign in with <code>az login</code> using your approved lab identity.
@@ -938,7 +941,9 @@ powershell -ExecutionPolicy Bypass -File .\infra\launch-workbench.ps1</code></pr
             Select a policy check to open its finding and claim-versus-policy values
             in the right panel. Select a linked value to inspect its source PDF.
             In <strong>Check policies</strong>, select <strong>FoundryIQ</strong>,
-            then <strong>Load cached results</strong> to restore saved reviews without Azure calls.
+            then <strong>Load cached results</strong>. The status identifies the
+            historical bundled results as stale and read-only; no Azure calls are
+            made.
           </li>
           <li>
             In <strong>Policy retrieval</strong>, select
@@ -1137,10 +1142,9 @@ powershell -ExecutionPolicy Bypass -File .\infra\launch-workbench.ps1 `
           <li>
             Watch progress and elapsed time. Each native response is saved under
             <code>data\results\RUN-ID</code> before results are derived.
-            The live batch then runs fixed checks and automatically caches LLM
-            Agent review for failed findings, reusing an existing matching review
-            when available. Both packet analysis and uncached LLM Agent review can
-            incur Azure charges. Completed results become a new cache entry. A failed
+            The live batch then runs the fixed extraction checks.
+            Packet analysis incurs Azure charges.
+            Completed results become a new cache entry. A failed
             run remains visibly failed; inspect its error before explicitly
             starting another billable run.
           </li>
@@ -1157,56 +1161,121 @@ powershell -ExecutionPolicy Bypass -File .\infra\launch-workbench.ps1 `
           compared policy checks with and without retrieval, and traced a
           daily-rate result to its SOP.
         </p>
-        <h3>Extraction checks, LLM Agent review, and targeted reruns</h3>
+        <h3>Investigate consistency checks and agent reviews</h3>
+        <p>
+          <strong>Check consistency</strong> uses fixed extraction and
+          arithmetic rules; it does not call an LLM agent. The separate
+          <strong>Check policies</strong> experience above contains the agent
+          reviews. In this exercise, use the fixed repair error to improve a CU
+          Studio extractor and compare an unsaved rerun with the original result.
+        </p>
         <ol>
           <li>
-            Select the <strong>Check consistency</strong> pivot to
-            compare all customers in the same grid. Two-line check names have
-            full descriptions in tooltips.
-            <strong>Primary checks</strong> keep every warning/error across the
-            packets, plus Amount balance and Claimant match; enable
-            <strong>All checks</strong> to reveal the other clean checks. Each
-            cell shows the worst result across the packet's documents: green
-            <strong>Pass</strong>, yellow <strong>Warn</strong> for not-checkable
-            evidence, or red <strong>Error</strong>. Amount balance compares
-            subtotal + tax with total; optional discount/deductible fields are
-            ignored. The live batch automatically caches LLM Agent reviews for
-            failed findings. Cache Results loads these saved reviews; passing
-            checks have no LLM review.
+            Select <strong>Check consistency</strong>. The matrix uses the same
+            full-cell status design as <strong>Check policies</strong>: green
+            <strong>Pass</strong>, yellow <strong>Warn</strong>, and red
+            <strong>Error</strong>. It contains exactly three fixed extraction
+            checks:
+            <ul>
+              <li><strong>Total Amount, SubTotal, Tax verification</strong> asks
+                whether SubTotal plus tax equals Total Amount. If total tax is
+                absent, it sums the returned tax-detail amounts. Optional discount
+                and deductible fields are not subtracted. Selecting the cell or
+                its evidence highlights SubTotal, the tax operands, and Total
+                Amount together.</li>
+              <li><strong>Repair line items, SubTotal verification</strong> asks
+                whether repair line-item amounts sum to the explicit SubTotal. It
+                applies only to repair estimates. A returned row
+                <code>TotalAmount</code> is used as-is, including zero. Only when
+                that value is missing can the check use both
+                <code>PartsAmount</code> and <code>LaborAmount</code>; it never
+                fills a missing component with zero.</li>
+              <li><strong>Multiple Estimates Warning</strong> warns when
+                repair-estimate totals differ. It shows each shop and quote amount
+                with a source link. This is a review warning, not proof of an
+                extraction error.</li>
+            </ul>
           </li>
           <li>
-            Click a cell for a compact table of source documents, specific
-            problems, and <strong>LLM Agent review</strong> badges:
-            <strong>Extraction issue</strong> or <strong>Document issue</strong>.
-            These are advisory diagnoses, not proven causes. Click a
-            problem or document to highlight its source at full page width;
-            missing values show available context rather than
-            an invented box. Open a review badge for reasoning, suggested action,
-            a field/value table, and model/cache details. <strong>Highlight all values</strong>
-            shows the returned boxes together; use the page controls when evidence spans pages.
-            Inline details expand vertically, so only the results grid scrolls. Click the cell again or the
-            close icon to collapse it. The service prefers deployed
-            <strong>GPT-6.1 Sol</strong> and falls back to existing
-            <strong>GPT-5.5</strong> only if the primary deployment is missing.
-            <strong>Refresh LLM review</strong> under <strong>Review options</strong>
-            forces fresh paid model calls for all failed findings in this packet.
-            Its temporary review is not saved and never changes policy status or
-            cached reviews.
+            Select the red <strong>Error</strong> for packet 8,
+            <strong>Repair line items, SubTotal verification</strong>. The
+            original Repair Estimate result shows
+            <code>USD 980.00 + 124.00 + 0.00 = 1104.00; Subtotal = 1600.00</code>.
+            Review the explanation and formula fields, then select the source or
+            formula to highlight the native values in the PDF. The Workbench does
+            not rewrite native JSON or invent missing amounts.
           </li>
           <li>
-            Both issue types support <strong>Rerun this document</strong>. For an
-            extraction problem, first update and build the affected extractor in
-            CU Studio. Open the check's review badge, expand
-            <strong>Refine extractor / rerun one document</strong>, and enter the
-            existing or updated analyzer ID. Only that already extracted PDF is
-            submitted, with a fresh Azure call every time. Fresh fields and the
-            selected check's preview result appear inside this policy panel;
-            use <strong>Highlight all values</strong> to inspect their source together. Previews are not cached
-            or saved and disappear when the panel is reopened or Cache Results
-            is loaded again. Original extraction grids, native JSON, policy
-            statuses, and cached reviews stay unchanged. If a split or merged
-            segment cannot be matched to one source PDF, review its boundaries
-            in Studio first.
+            In <strong>CU Studio</strong>, reopen the editable custom
+            <strong>Repair Estimate</strong> extraction project from step 2. Do
+            not edit the packet router or classification project: this rerun
+            requires a ready single-document repair extractor. Keep the project
+            on <strong>GPT-5.5</strong> and keep the existing schema,
+            descriptions, source/confidence settings, and
+            <code>TotalAmount.Amount</code> extraction behavior.
+          </li>
+          <li>
+            In the <code>LineItems</code> item object, add these two
+            <strong>number / Extract</strong> fields immediately
+            <strong>before</strong> <code>TotalAmount</code>:
+            <table>
+              <thead><tr><th>Field</th><th>Description</th></tr></thead>
+              <tbody>
+                <tr><td><code>PartsAmount</code></td><td><code>Part amount associated with each line item</code></td></tr>
+                <tr><td><code>LaborAmount</code></td><td><code>Labor amount associated with each line item</code></td></tr>
+              </tbody>
+            </table>
+            Keep the field order <code>PartsAmount</code>,
+            <code>LaborAmount</code>, then <code>TotalAmount</code>. Do not
+            replace <code>TotalAmount</code>; the consistency check continues to
+            prefer a returned row total and uses parts plus labor only when that
+            total is missing.
+          </li>
+          <li>
+            In Studio, upload and test
+            <a href="../data/documents/packet-08/05-estimate.pdf">packet 8's
+            repair estimate</a> before building. Inspect every line item and its
+            source regions. A useful result for this document is:
+            <table>
+              <thead><tr><th>Line item</th><th>PartsAmount</th><th>LaborAmount</th><th>TotalAmount</th></tr></thead>
+              <tbody>
+                <tr><td>0</td><td>980.00</td><td>223.20</td><td>1203.20</td></tr>
+                <tr><td>1</td><td>124.00</td><td>62.00</td><td>186.00</td></tr>
+                <tr><td>2</td><td>0.00</td><td>210.80</td><td>210.80</td></tr>
+              </tbody>
+            </table>
+            The explicit <code>SubtotalAmount</code> is <code>1600.00</code>.
+            These values reconcile, but always verify the native Studio result
+            rather than assuming a model run is deterministic.
+          </li>
+          <li>
+            Save and build the updated project with a new unique analyzer name.
+            Wait until the analyzer is <strong>Ready</strong>, then copy its
+            analyzer name exactly. Return to the packet-8 error in the Workbench,
+            enter it in <strong>Updated repair estimate analyzer name</strong>,
+            and select <strong>Rerun</strong>. This submits only
+            <code>05-estimate.pdf</code> as a fresh, billable CU call; there is
+            no second confirmation dialog.
+          </li>
+          <li>
+            While the spinner is active, wait for the rerun to finish. The
+            updated result appears below the original with its own status and
+            calculation. Its field table shows formula inputs plus returned
+            <code>PartsAmount</code> and <code>LaborAmount</code>, grouped by
+            numeric line-item index in the order total, parts, labor, followed by
+            SubTotal. Select the original and updated results to compare their
+            own source boxes. A successful updated result should show
+            <code>USD 1203.20 + 186.00 + 210.80 = 1600.00 (Subtotal)</code> and
+            change the check to <strong>Pass</strong>.
+          </li>
+          <li>
+            The rerun preview is temporary and browser-only. It is not written
+            to the saved extraction cache or native JSON. Navigating within the
+            current run keeps the original and latest updated result; another
+            rerun replaces the previous preview. Refreshing the page or changing
+            runs clears it. If the source cannot be matched to one individual
+            PDF, return to Studio and correct the router's document boundaries
+            before rerunning.
           </li>
         </ol>
         <details>
