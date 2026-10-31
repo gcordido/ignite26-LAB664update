@@ -220,7 +220,7 @@ powershell -ExecutionPolicy Bypass -File .\infra\launch-workbench.ps1 `
 
 1. [] Select **Check consistency**. The matrix contains exactly three fixed extraction checks:
    - **Total Amount, SubTotal, Tax verification** asks whether SubTotal plus tax equals Total Amount.
-   - **Repair line items, SubTotal verification** asks whether repair line-item amounts sum to the explicit SubTotal. 
+   - **Repair line items, SubTotal verification** asks whether repair line-item amounts sum to the explicit SubTotal.
    - **Multiple Estimates Warning** warns when repair-estimate totals differ. It shows each shop and quote amount with a source link. This is a review warning, not proof of an extraction error.
 2. [] Select the red **Error** for packet 8, **Repair line items, SubTotal verification**. The original Repair Estimate result shows the calculation `USD 980.00 + 124.00 + 0.00 = 1104.00; Subtotal = 1600.00`. Review the explanation and the formula fields, then select the source or formula to highlight the native values in the PDF.
 3. [] In **CU Studio**, reopen the editable custom **Repair Estimate** extraction project from step 2. Do not edit the packet router or classification project: this rerun requires a ready single-document repair extractor. Keep the project on **GPT-5.5** and keep the existing schema, descriptions, source/confidence settings, and `TotalAmount.Amount` extraction behavior.
