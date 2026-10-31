@@ -25,7 +25,7 @@
         data-workflow="policies"
         data-view="policies"
         aria-pressed="false"
-        title="Compare fixed checks across packets using the loaded results and saved LLM Agent reviews."
+        title="Compare extraction checks and rerun an affected source PDF with an updated analyzer."
       >
         Check consistency
       </button>
@@ -360,23 +360,21 @@
           class="inline-panel"
           aria-labelledby="review-title"
         >
-          <p id="policy-summary" class="muted" role="status" hidden></p>
           <p id="review-error" class="error" role="alert" hidden></p>
           <div class="table policy-table">
             <table aria-label="Packet checks">
               <caption id="review-title" class="visually-hidden">
-                Policy issues
+                Extraction check results
               </caption>
               <thead>
                 <tr>
                   <th>Source document</th>
-                  <th id="policy-problem-header">Problem / evidence</th>
-                  <th id="policy-review-header">
-                    LLM Agent review
+                  <th id="policy-problem-header">
+                    Problem / evidence
                     <button
                       id="close-review"
                       class="icon-button policy-close"
-                      aria-label="Collapse policy details"
+                      aria-label="Collapse extraction check details"
                     >
                       &times;
                     </button>
@@ -386,23 +384,6 @@
               <tbody id="policy-checks"></tbody>
             </table>
           </div>
-          <details class="review-options">
-            <summary>Review options</summary>
-            <p class="muted">
-              Saved reviews load with Cache Results. Refresh requests fresh
-              Azure model calls for all failed checks in this packet and may
-              incur charges. These temporary advisory previews are not saved and
-              never change original fields, policy status, or cached reviews.
-            </p>
-            <button
-              id="rerun-checks"
-              class="secondary"
-              data-cloud
-              title="Force fresh LLM Agent reviews for all failed checks in this packet, not only the selected column"
-            >
-              Refresh LLM review
-            </button>
-          </details>
         </section>
       </div>
       <dialog id="policy-confirmation" aria-labelledby="policy-confirm-title" aria-describedby="policy-confirm-summary policy-confirm-cost">

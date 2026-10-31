@@ -13,7 +13,6 @@ import {
 import { CuClient, CuOperationError } from "./cu.ts";
 import { verifyAnalyzer } from "./definitions.ts";
 import { DocumentService } from "./documents.ts";
-import { diagnose, policyDiagnoses } from "./triage.ts";
 import { packetJson } from "./packet-json.ts";
 import { PolicyService, type PolicyJob } from "./policy-service.ts";
 import { policyDemo } from "./policy-demo.ts";
@@ -36,7 +35,6 @@ export function createApp(
     Partial<Pick<CuClient, "list">> = new CuClient(),
   options: {
     cache?: Cache;
-    diagnose?: typeof diagnose;
     policy?: PolicyService;
     documents?: PolicyDocuments;
   } = {},
@@ -125,16 +123,11 @@ export function createApp(
   const policy = options.policy ?? new PolicyService();
   const policyDocuments = options.documents ?? new PolicyDocuments();
   let batchActive = false;
-  let triageActive = false;
   async function packetResult(run: Run, packet: Packet, selectedPolicy = policy) {
     const response = await cache.raw(run.id, packet.id);
     try {
       const review = summarize(response, packet, run.analyzer.mode);
       const report = await documents.review(run, packet, response);
-      const policyReview = {
-        ...report,
-        diagnoses: await policyDiagnoses(report, documents.folder),
-      };
       let exportValue: ReturnType<typeof packetJson> | null = null;
       let packetJsonError: string | undefined;
       let markdown: string | null = null;
@@ -159,7 +152,7 @@ export function createApp(
         response,
         review,
         policies: report.policies,
-        policyReview,
+        policyReview: report,
         packetJson: exportValue,
         packetMarkdown: markdown,
         claimSummaryPrepared,
@@ -283,7 +276,18 @@ export function createApp(
   });
   app.get("/api/policy/status", async (req, res) => {
     session(req);
-    res.json({ ...await policy.status(), bundledDemo: (await policyDemo()).info });
+    const [status, data, demo] = await Promise.all([
+      policy.status(),
+      dataset(),
+      policyDemo(),
+    ]);
+    res.json({
+      ...status,
+      bundledDemo: {
+        ...demo.info,
+        staleDataset: demo.info.datasetHash !== data.datasetHash,
+      },
+    });
   });
   const documentSelection = z
     .object({
@@ -485,14 +489,12 @@ export function createApp(
       entries.filter((entry) => entry.count > 0);
     if (!available.some((entry) => entry.mode === "search")) {
       const demo = await policyDemo();
-      if (run.id === demo.info.runId) {
-        const saved = demo.results(run);
-        available.push({
-          mode: "search", count: saved.items.length, total: saved.items.length,
-          completedAt: saved.items.map((item) => item.completedAt ?? "").sort().at(-1),
-          indexName: demo.info.indexName, source: "bundled",
-        });
-      }
+      const saved = demo.results(run);
+      available.push({
+        mode: "search", count: saved.items.length, total: saved.items.length,
+        completedAt: saved.items.map((item) => item.completedAt ?? "").sort().at(-1),
+        indexName: demo.info.indexName, source: "bundled",
+      });
     }
     res.json({ runId: run.id, entries: available,
       ...(!readiness.configured && !available.length ? { message: readiness.message } : {}) });
@@ -675,10 +677,7 @@ export function createApp(
       String(req.params.packetId),
     );
     const report = await documents.review(run, packet);
-    res.json({
-      ...report,
-      diagnoses: await policyDiagnoses(report, documents.folder),
-    });
+    res.json(report);
   });
   app.post("/api/document/:packetId", async (req, res) => {
     const s = session(req);
@@ -724,41 +723,6 @@ export function createApp(
     } finally {
       s.busy = false;
       batchActive = false;
-    }
-  });
-  app.post("/api/checks/:packetId", async (req, res) => {
-    const s = session(req);
-    const { run, packet } = loadedPacket(s, String(req.params.packetId));
-    const { refresh } = z
-      .object({
-        run: z.literal(true),
-        refresh: z.literal(true),
-      })
-      .strict()
-      .parse(req.body);
-    if (s.busy || s.chatBusy || batchActive || triageActive)
-      throw new LabError(
-        409,
-        "Wait for the current operation before requesting diagnosis.",
-      );
-    s.busy = true;
-    triageActive = true;
-    try {
-      const report = await documents.review(run, packet);
-      res.json({
-        ...report,
-        preview: true,
-        persisted: false,
-        diagnoses: await policyDiagnoses(report, documents.folder, {
-          run: true,
-          refresh,
-          persist: false,
-          diagnose: options.diagnose,
-        }),
-      });
-    } finally {
-      s.busy = false;
-      triageActive = false;
     }
   });
   app.get("/api/raw/:packetId", async (req, res) => {
@@ -840,17 +804,7 @@ export function createApp(
               item.rawSaved = true;
               // Cache native evidence before deriving or displaying any result.
               summarize(response, packet, run.analyzer.mode);
-              const report = await documents.review(run, packet, response);
-              const diagnoses = await policyDiagnoses(
-                report,
-                documents.folder,
-                { run: true, diagnose: options.diagnose },
-              );
-              item.reviewStatus = Object.values(diagnoses).some(
-                (diagnosis) => diagnosis.status === "unavailable",
-              )
-                ? "partial"
-                : "completed";
+              await documents.review(run, packet, response);
               item.status = "completed";
               item.completedAt = new Date().toISOString();
               await save();

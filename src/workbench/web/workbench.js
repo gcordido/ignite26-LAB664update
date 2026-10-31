@@ -174,7 +174,7 @@ function controls() {
     busy || !sessionId || !catalog || !get("analyzer").value.trim();
   get("load-cache").disabled = busy || policyBusy || !savedExtractionRun;
   for (const button of get("packet-table").querySelectorAll(
-    ".packet-policy-summary, .policy-matrix-button",
+    ".policy-matrix-button",
   ))
     button.disabled = busy || policyBusy;
   get("policy-run").disabled =
@@ -266,14 +266,16 @@ async function renderRun(nextRun, nextOrigin) {
     throw new Error(
       "Cached results are incomplete. Reload Cache Results after restarting the Workbench.",
     );
-  const changed = run?.id !== nextRun.id || Array.isArray(preloaded);
+  const changedRun = run?.id !== nextRun.id;
+  const changed = changedRun || Array.isArray(preloaded);
   run = nextRun;
   origin = nextOrigin;
   if (changed) {
     ++selectionVersion;
     selectedPacket = "";
     results.clear();
-    packetReview.reset();
+    if (changedRun) packetReview.reset();
+    else packetReview.hide();
     resetPreview();
     expansion = undefined;
     parkDetails();
@@ -454,7 +456,7 @@ function renderTable() {
   get("checks-description").textContent =
     view === "policy"
       ? "Agent review against rental SOPs. Satisfied does not authorize coverage or payment."
-      : "Fixed field, arithmetic, and consistency checks. LLM issue diagnoses are advisory.";
+      : "Review extraction checks, improve the extractor in CU Studio, and rerun the affected source PDF.";
   get("show-confidence").closest("label").hidden = view === "policy";
   if (view === "policy") {
     get("packet-table").classList.add("policy-grid");
@@ -464,7 +466,7 @@ function renderTable() {
   }
   const classification = view === "classification";
   const policyView = view === "policies";
-  const policyDefinitions = policyView ? policyColumns(values, allFields) : [];
+  const policyDefinitions = policyView ? policyColumns(values) : [];
   const columns = policyView
     ? policyDefinitions.map((column) => column.id)
     : classification
@@ -492,14 +494,10 @@ function renderTable() {
   ];
   if (classification)
     columns.sort((a, b) => classOrder.indexOf(a) - classOrder.indexOf(b));
-  get("field-setting").hidden = classification || !columns.length;
+  get("field-setting").hidden = classification || policyView || !columns.length;
   get("all-fields").checked = allFields;
-  get("field-setting-label").textContent = policyView
-    ? "All checks"
-    : "All fields";
-  get("field-setting").title = policyView
-    ? "Primary checks keep every warning/error, plus Amount balance and Claimant match. Enable All checks to show clean checks too."
-    : "Show all returned fields.";
+  get("field-setting-label").textContent = "All fields";
+  get("field-setting").title = "Show all returned fields.";
   get("confidence-setting").hidden = policyView;
   get("packet-table").classList.toggle("policy-grid", policyView);
   get("packet-table").setAttribute(
@@ -509,17 +507,23 @@ function renderTable() {
   const head = element("tr");
   head.append(element("th", "Customer/Packet"));
   for (const column of columns) {
+    const definition = policyView
+      ? policyDefinitions.find((item) => item.id === column)
+      : undefined;
     const th = element(
       "th",
       policyView
-        ? policyDefinitions.find((item) => item.id === column).label
+        ? undefined
         : classification
           ? className(column)
           : fieldLabel(column),
     );
-    th.title = policyView
-      ? policyDefinitions.find((item) => item.id === column).description
-      : column;
+    if (definition)
+      th.append(
+        element("span", definition.label, "policy-column-title"),
+        element("span", definition.summary, "policy-column-description"),
+      );
+    th.title = definition?.description ?? column;
     th.dataset.column = column;
     head.append(th);
   }
@@ -647,18 +651,6 @@ function renderTable() {
         button.title = `${name} / ${item.id}`;
         button.disabled = !result;
         customer.append(button);
-        if (result?.policies && !policyView) {
-          const count = result.policies.counts.fail;
-          const check = element(
-            "button",
-            count ? `${count} review` : "Checks",
-            `packet-policy-summary${count ? " needs-review" : ""}`,
-          );
-          check.title = `${count} fixed policy checks need attention. A check result is not a claim decision.`;
-          check.disabled = busy;
-          check.onclick = () => showPolicyView(item.id);
-          customer.append(check);
-        }
         if (item.status === "running") {
           const spinner = element("span", undefined, "spinner");
           spinner.setAttribute("role", "img");
@@ -693,15 +685,33 @@ function renderTable() {
                   : summary.status === "fail"
                     ? "Error"
                     : "Warn";
+              const warnings = summary.counts.warn + summary.counts.not_checkable;
+              const count =
+                status === "Warn" ? warnings : summary.counts[summary.status];
               const button = element(
                 "button",
-                `${status}${summary.counts[summary.status] > 1 ? ` (${summary.counts[summary.status]})` : ""}`,
+                undefined,
                 `cell-content policy-matrix-button policy-${summary.status}`,
+              );
+              button.append(
+                element(
+                  "span",
+                  `${status}${count > 1 ? ` (${count})` : ""}`,
+                  `policy-state ${
+                    summary.status === "pass"
+                      ? "policy-satisfied"
+                      : summary.status === "fail"
+                        ? "policy-error"
+                        : summary.status === "not_checkable"
+                          ? "policy-waiting"
+                          : "policy-review"
+                  }`,
+                ),
               );
               button.dataset.policy = column;
               button.setAttribute("aria-expanded", "false");
               button.disabled = busy;
-              button.title = `${definition.description}\nWorst of ${summary.total} document checks: ${summary.counts.fail} errors, ${summary.counts.not_checkable} warnings, ${summary.counts.pass} passed.\n${checks.map((check) => check.message).join("\n")}`;
+              button.title = `${definition.description}\nWorst of ${summary.total} document checks: ${summary.counts.fail} errors, ${warnings} warnings, ${summary.counts.pass} passed.\n${checks.map((check) => check.message).join("\n")}`;
               button.setAttribute(
                 "aria-label",
                 `${name}, ${definition.label}, ${status}, worst of ${summary.total} document checks`,
@@ -808,7 +818,7 @@ function parkDetails() {
   get("inline-panels").append(detailPanels.policy, detailPanels.items);
 }
 function collapseDetails() {
-  packetReview.reset();
+  packetReview.hide();
   expansion = undefined;
   renderTable();
 }
@@ -1213,7 +1223,7 @@ function policyMessage() {
   get("policy-status").title = policyStatus?.message ?? "";
   get("policy-status").textContent =
     bundled
-      ? `Bundled demo · ${mode.indexName} · ${mode.extractionMode === "standard" ? "Search-managed CU extraction" : "CU Layout"} · Read-only; no Azure calls`
+      ? `Bundled demo · ${mode.indexName} · ${mode.extractionMode === "standard" ? "Search-managed CU extraction" : "CU Layout"} · ${mode.staleDataset ? "Stale policy results from a different extraction dataset; " : ""}Read-only; no Azure calls`
     : policyStatus?.batchRunning && !policyBusy
       ? "A policy batch is already running. Waiting for it to finish; no duplicate will be submitted. Reload this tab to reconnect to its progress."
       : mode
@@ -1427,7 +1437,10 @@ function renderPolicyTable() {
     columnWidths.set(keys[index], width);
     sizeDetails();
   });
-  const items = policyResults.get(policyMode)?.items ?? [];
+  const policyResult = policyResults.get(policyMode);
+  const items = policyResult?.items ?? [];
+  const historicalClaims =
+    policyResult?.source === "bundled" && policyResult.staleDataset;
   table.querySelector("tbody").replaceChildren(
     ...run.items.map((packet, index) => {
       const row = element("tr");
@@ -1443,7 +1456,7 @@ function renderPolicyTable() {
       );
       name.onclick = () => openAgentCheck(packet.id, 0);
       label.append(name);
-      if (!results.get(packet.id)?.claimSummaryPrepared)
+      if (!historicalClaims && !results.get(packet.id)?.claimSummaryPrepared)
         label.append(
           element("span", "Claim fields not prepared", "policy-preparation"),
         );
@@ -1739,6 +1752,17 @@ function addPolicyComparisonSources(cell, field, value, citations) {
   } else cell.append(element("span", "No linked rule source", "policy-source-unavailable"));
 }
 function addClaimComparisonSources(cell, field, value, packetId, reviewVersion) {
+  const policyResult = policyResults.get(policyMode);
+  if (policyResult?.source === "bundled" && policyResult.staleDataset) {
+    cell.append(
+      element(
+        "span",
+        "Historical claim value; source highlighting is unavailable for the current dataset.",
+        "policy-source-unavailable",
+      ),
+    );
+    return;
+  }
   const key = `${run.id}:${packetId}:${reviewVersion}`;
   if (!claimEvidenceRequests.has(key)) {
     const request = api(`policy/claim-evidence?runId=${encodeURIComponent(run.id)}&packetId=${encodeURIComponent(packetId)}`);
@@ -1859,6 +1883,7 @@ get("policy-mode").onchange = async () => {
   if (run) {
     renderTable();
     renderPolicyOutput();
+    if (selectedPacket) void showAgentClaim(selectedPacket).catch(fail);
   }
   try {
     await refreshPolicy();

@@ -369,10 +369,9 @@ test("Framework modes share prepared claim inputs but isolate review caches, cha
     await failed.task;
     assert.equal(failed.job.items[0].status, "failed");
     assert.match(failed.job.items[0].error ?? "", /Search 403/);
-    assert.equal(
-      (await changed.snapshot(run, "search", readRaw))[0].status,
-      "not run",
-    );
+    const failedSnapshot = (await changed.snapshot(run, "search", readRaw))[0];
+    assert.equal(failedSnapshot.status, "failed");
+    assert.match(failedSnapshot.error ?? "", /Search 403/);
     const files = await readdir(folder);
     assert.equal(
       files.filter((file) => file.startsWith("framework-review")).length,

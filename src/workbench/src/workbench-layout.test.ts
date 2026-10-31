@@ -17,7 +17,7 @@ test("Check consistency navigation stays enabled before loading results and whil
   assert.match(button, /data-view="policies"/);
 });
 
-test("policy evidence uses plain field/value rows and one highlight action per source PDF", async () => {
+test("formula evidence uses plain field/value rows without a separate highlight button", async () => {
   const source = await readFile(
     new URL("../web/packet-review.js", import.meta.url),
     "utf8",
@@ -42,13 +42,11 @@ test("policy evidence uses plain field/value rows and one highlight action per s
     { doc: first, item: { field: "Tax.CurrencyCode", value: "USD" } },
     { doc: second, item: { field: "Confirmed", value: false } },
   ];
-  const groups: unknown[][] = [];
   const context = vm.createContext({
     node: (tag: string, text?: string, className?: string) =>
       new Node(tag, text, className),
     documentName: (doc: typeof first) => doc.name,
     fieldLabel: (field: string) => field,
-    showAllEvidence: (group: unknown[]) => groups.push(group),
     entries,
   });
   const renderer = source.slice(
@@ -61,7 +59,7 @@ test("policy evidence uses plain field/value rows and one highlight action per s
   ) as Node;
   assert.equal(
     table.children.filter((node) => node.tag === "button").length,
-    1,
+    0,
   );
   const rows = table.children.find((node) => node.tag === "table")!.children[1]
     .children;
@@ -74,16 +72,15 @@ test("policy evidence uses plain field/value rows and one highlight action per s
       row.children.every((cell) => cell.tag === "td" && !cell.children.length),
     ),
   );
-  table.children[0].onclick!();
-  assert.equal(groups[0].length, 3);
-  assert.equal(groups[0][0], entries[0]);
+  assert.equal(table.children.length, 1);
+  assert.deepEqual(
+    table.children[0].children[0].children[0].children.map((cell) => cell.textContent),
+    ["Document", "Field", "Value"],
+  );
   second.url = "/different.pdf";
   const separate = vm.runInContext("evidenceTable(entries);", context) as Node;
   const buttons = separate.children.filter((node) => node.tag === "button");
-  assert.equal(buttons.length, 2);
-  buttons[1].onclick!();
-  assert.equal(groups[1].length, 1);
-  assert.equal(groups[1][0], entries[3]);
+  assert.equal(buttons.length, 0);
 });
 
 test("highlighting a policy's values deduplicates native boxes, retains multiple pages and explains missing evidence", async () => {
@@ -736,10 +733,13 @@ test("policy status helper is callable from module scope during startup and mode
     policyMessage();`, context);
   assert.equal(status.textContent,
     "Bundled demo · original-demo-index · CU Layout · Read-only; no Azure calls");
+  vm.runInContext(`policyResults.set("search", {
+    source: "bundled", indexName: "original-demo-index", staleDataset: true
+  }); policyMessage();`, context);
+  assert.match(status.textContent, /Stale policy results from a different extraction dataset/);
   vm.runInContext(`policyStatus = { configured: false, message: "Status request failed." };
     policyMessage();`, context);
-  assert.equal(status.textContent,
-    "Bundled demo · original-demo-index · CU Layout · Read-only; no Azure calls");
+  assert.match(status.textContent, /Stale policy results from a different extraction dataset/);
   assert.equal(
     vm.runInContext('policyModeLabel("search")', context),
     "FoundryIQ",
@@ -1173,6 +1173,7 @@ test("changing retrieval mode restores the claim PDF instead of retaining a prev
     get: () => selection,
     policyCaches: async () => {},
     policyMode: "search",
+    run: {},
     selectedPacket: "packet-01",
     controls: () => {},
     showPolicyPanel: () => {},
@@ -1200,7 +1201,7 @@ test("changing retrieval mode restores the claim PDF instead of retaining a prev
   assert.equal(reads, 1);
 });
 
-test("pane layout refreshes a narrow grid initially and clears desktop sizing when resized", async () => {
+test("pane layout keeps the split view at tablet width and stacks only on small screens", async () => {
   const source = await readFile(
     new URL("../web/column-resize.js", import.meta.url),
     "utf8",
@@ -1250,10 +1251,16 @@ test("pane layout refreshes a narrow grid initially and clears desktop sizing wh
   assert.equal(refreshes, 2);
   assert.equal(style.height, "736px");
   assert.ok(properties.has("--left-pane"));
-  window.innerWidth = 480;
-  main.clientWidth = 480;
+  window.innerWidth = 900;
+  main.clientWidth = 900;
   listeners.get("resize")!();
   assert.equal(refreshes, 3);
+  assert.equal(style.height, "736px");
+  assert.ok(properties.has("--left-pane"));
+  window.innerWidth = 700;
+  main.clientWidth = 700;
+  listeners.get("resize")!();
+  assert.equal(refreshes, 4);
   assert.equal(style.height, "");
   assert.equal(properties.has("--left-pane"), false);
 });

@@ -49,7 +49,7 @@ function report(): Report {
     ],
     policies: {
       version: "test-v1",
-      counts: { pass: 0, fail: 1, not_checkable: 0 },
+      counts: { pass: 0, warn: 0, fail: 1, not_checkable: 0 },
       checks: [
         {
           id: "total",
@@ -141,10 +141,7 @@ test("Azure review falls back only for a missing deployment and reuses a persist
           "extraction_error",
           "packet_error",
         ]);
-        assert.match(
-          body.instructions,
-          /full member name returned in FirstName with LastName missing is extraction_error/,
-        );
+        assert.doesNotMatch(body.instructions, /FirstName|LastName/);
         calls.push(body.model);
         return calls.length === 1
           ? Response.json(

@@ -12,9 +12,9 @@ test("the evidence scenarios lead the five-check contract and retain eligibility
   ]);
   const prompt = await question();
   assert.match(prompt, /1\. Amount\.\n2\. Timing\.\n3\. Effective terms\./);
-  assert.match(prompt, /policy ID AND\ninsured VIN/);
+  assert.match(prompt, /policy ID AND insured VIN/);
   assert.match(prompt, /blank optional-code cell stays missing\/null/);
-  assert.match(prompt, /actual delivery, not an appointment/);
+  assert.match(prompt, /actual delivery\s+for covered repairs, not an appointment/);
   assert.match(prompt, /Texas RNT-TX-01 and Washington RNT-WA-P02/);
   assert.match(prompt, /the figure controls rental-eligibility branches/);
   assert.match(prompt, /Use the actual CU loss date/);

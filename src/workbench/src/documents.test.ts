@@ -17,9 +17,8 @@ import { CuOperationError } from "./cu.ts";
 import { DocumentService } from "./documents.ts";
 import { statementFields } from "./definitions.ts";
 import { createApp } from "./server.ts";
-import { diagnose, triageInput } from "./triage.ts";
 
-async function fixture(generatedNarratives = false, packetIndex = 0) {
+async function fixture(generatedNarratives = false, packetIndex = 0, sourceId = "06-handwriting") {
   const folder = await mkdtemp(path.join(os.tmpdir(), "lab664-doc-test-"));
   const source = new Cache();
   const run = (await source.list()).find((run) => run.status === "completed")!;
@@ -62,7 +61,7 @@ async function fixture(generatedNarratives = false, packetIndex = 0) {
       assert.deepEqual(
         bytes,
         await readFile(
-          path.join(dataRoot, "documents", packet.id, "06-handwriting.pdf"),
+          path.join(dataRoot, "documents", packet.id, `${sourceId}.pdf`),
         ),
       );
       if (failure)
@@ -72,6 +71,27 @@ async function fixture(generatedNarratives = false, packetIndex = 0) {
       if (empty)
         return {
           result: { contents: [{ path: "input1", markdown: "Layout only" }] },
+        };
+      if (sourceId === "05-estimate")
+        return {
+          result: {
+            contents: [{
+              path: "input1", analyzerId: "test_repair",
+              pages: [{ pageNumber: 1, width: 8, height: 11 }],
+              fields: {
+                SubtotalAmount: { type: "object", valueObject: {
+                  Amount: { type: "number", valueNumber: 1600 },
+                } },
+                LineItems: { type: "array", valueArray: [1203.2, 186, 210.8].map(amount => ({
+                  type: "object", valueObject: {
+                    TotalAmount: { type: "object", valueObject: {
+                      Amount: { type: "number", valueNumber: amount },
+                    } },
+                  },
+                })) },
+              },
+            }],
+          },
         };
       return {
         result: {
@@ -266,8 +286,8 @@ test("failed, empty and stale preview requests do not write successful or failed
   }
 });
 
-test("HTTP source reruns require confirmation, return two fresh previews, and preserve cached results", async () => {
-  const f = await fixture();
+test("HTTP source reruns require an explicit live request, return fresh previews, and preserve cached results", async () => {
+  const f = await fixture(false, 7, "05-estimate");
   const server = createApp(f.client, { cache: f.cache }).listen(0, "127.0.0.1");
   await new Promise<void>((resolve) => server.on("listening", resolve));
   const address = server.address();
@@ -287,30 +307,34 @@ test("HTTP source reruns require confirmation, return two fresh previews, and pr
         headers,
         body: JSON.stringify(body),
       });
-    assert.equal((await fetch(`${root}/api/review/packet-01`)).status, 401);
+    assert.equal((await fetch(`${root}/api/review/${f.packet.id}`)).status, 401);
     const loaded = await (await post("cache/load", { runId: f.run.id })).json();
     assert.equal(loaded.packetResults.length, 1);
     assert.ok(loaded.packetResults[0].policyReview);
     const baseline = await (
-      await fetch(`${root}/api/packet/packet-01`, { headers })
+      await fetch(`${root}/api/packet/${f.packet.id}`, { headers })
     ).json();
     assert.equal(
-      (await post("document/packet-01", { sourceId: "06-handwriting" })).status,
+      (await post(`document/${f.packet.id}`, { sourceId: "05-estimate" })).status,
       400,
     );
     for (let index = 0; index < 2; index++) {
-      const response = await post("document/packet-01", {
+      const response = await post(`document/${f.packet.id}`, {
         live: true,
-        sourceId: "06-handwriting",
+        sourceId: "05-estimate",
+        analyzerId: "test_repair",
       });
       assert.equal(response.status, 200);
       const value = await response.json();
       assert.equal(value.preview.persisted, false);
-      assert.equal(value.preview.sourceId, "06-handwriting");
+      assert.equal(value.preview.sourceId, "05-estimate");
+      assert.equal(value.preview.policies.checks.find(
+        (check: { id: string }) => check.id.startsWith("financial.line_items:"),
+      ).status, "pass");
     }
     assert.equal(f.calls(), 2);
     assert.deepEqual(
-      await (await fetch(`${root}/api/packet/packet-01`, { headers })).json(),
+      await (await fetch(`${root}/api/packet/${f.packet.id}`, { headers })).json(),
       baseline,
     );
     assert.deepEqual(await f.cache.raw(f.run.id, f.packet.id), f.response);
@@ -322,64 +346,13 @@ test("HTTP source reruns require confirmation, return two fresh previews, and pr
   }
 });
 
-test("Cache Results preloads saved LLM reviews; fresh review previews cannot replace them", async () => {
-  const f = await fixture(false, 6);
-  let reviews = 0;
-  let serial = 0;
-  const report = await f.service.review(f.run, f.packet);
-  const check = report.policies.checks.find(
-    (check) => check.status === "fail",
-  )!;
-  const input = triageInput(report, check.id);
-  const baseline = await diagnose(input, f.service.folder, {
-    settings: {
-      endpoint: f.run.endpoint,
-      apiVersion: f.run.apiVersion,
-      port: 8791,
-    },
-    token: async () => "offline-fixture",
-    fetch: async () =>
-      Response.json({
-        id: "fixture",
-        status: "completed",
-        model: "gpt-6.1-sol",
-        output: [
-          {
-            type: "message",
-            content: [
-              {
-                type: "output_text",
-                text: JSON.stringify({
-                  category: "extraction_error",
-                  reason: "Offline fixture",
-                  suggestion: "Inspect source",
-                  documentIds: input.documents.map((doc) => doc.id),
-                }),
-              },
-            ],
-          },
-        ],
-      }),
-  });
-  const server = createApp(f.client, {
-    cache: f.cache,
-    diagnose: async (value, _folder, transport) => {
-      reviews++;
-      assert.equal(transport?.refresh, true);
-      assert.equal(transport?.persist, false);
-      return {
-        id: `preview-${serial++}`,
-        model: "gpt-5.5",
-        deployment: "gpt-5.5",
-        cached: false,
-        advisoryOnly: true,
-        category: "extraction_error",
-        reason: "Offline preview",
-        suggestion: "Inspect source",
-        documentIds: value.documents.map((doc) => doc.id),
-      };
-    },
-  }).listen(0, "127.0.0.1");
+test("cached consistency results ignore legacy LLM reviews without changing saved data", async () => {
+  const f = await fixture();
+  const legacy = path.join(f.service.folder, "diagnostics");
+  await mkdir(legacy, { recursive: true });
+  await writeFile(path.join(legacy, "legacy.json"), "not a current diagnosis");
+  const files = await readdir(f.folder, { recursive: true });
+  const server = createApp(f.client, { cache: f.cache }).listen(0, "127.0.0.1");
   await new Promise<void>((resolve) => server.on("listening", resolve));
   const address = server.address();
   assert.ok(address && typeof address !== "string");
@@ -399,38 +372,25 @@ test("Cache Results preloads saved LLM reviews; fresh review previews cannot rep
         body: JSON.stringify(body),
       });
     const loaded = await (await post("cache/load", { runId: f.run.id })).json();
-    assert.equal(
-      loaded.packetResults[0].policyReview.diagnoses[check.id].result.id,
-      baseline.id,
-    );
-    assert.equal(reviews, 0);
-    const files = await readdir(f.service.folder, { recursive: true });
-    const first = await (
-      await post(`checks/${f.packet.id}`, { run: true, refresh: true })
-    ).json();
-    const second = await (
-      await post(`checks/${f.packet.id}`, { run: true, refresh: true })
-    ).json();
-    assert.notEqual(
-      first.diagnoses[check.id].result.id,
-      second.diagnoses[check.id].result.id,
-    );
-    assert.equal(reviews, 2);
+    assert.equal(Object.hasOwn(loaded.packetResults[0].policyReview, "diagnoses"), false);
+    const response = await fetch(`${root}/api/review/${f.packet.id}`, { headers });
+    assert.equal(response.status, 200);
+    const report = await response.json();
+    assert.equal(Object.hasOwn(report, "diagnoses"), false);
+    assert.deepEqual(report.policies, loaded.packetResults[0].policies);
     const reloaded = await (
       await post("cache/load", { runId: f.run.id })
     ).json();
-    assert.equal(
-      reloaded.packetResults[0].policyReview.diagnoses[check.id].result.id,
-      baseline.id,
-    );
+    assert.equal(Object.hasOwn(reloaded.packetResults[0].policyReview, "diagnoses"), false);
     assert.deepEqual(
       reloaded.packetResults[0].policies,
       loaded.packetResults[0].policies,
     );
     assert.deepEqual(
-      await readdir(f.service.folder, { recursive: true }),
+      await readdir(f.folder, { recursive: true }),
       files,
     );
+    assert.deepEqual(await f.cache.raw(f.run.id, f.packet.id), f.response);
     assert.equal(f.calls(), 0);
   } finally {
     await new Promise<void>((resolve, reject) =>
