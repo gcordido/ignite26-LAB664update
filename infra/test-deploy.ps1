@@ -74,6 +74,7 @@ try {
     try { & $deploy -PythonExecutable Invoke-TestPython -Apply } catch { $failed = $true }
     Assert $failed 'Index errors must fail deployment.'
     Write-Output 'Deployment entrypoint regressions passed.'
+    $global:LASTEXITCODE = 0
 }
 finally {
     Remove-Item -LiteralPath $root -Recurse -Force

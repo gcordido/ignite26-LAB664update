@@ -43,15 +43,21 @@ export async function readPolicyDemo(
     throw new LabError(422, "The bundled policy reviews do not match the included CU results.");
   return {
     service,
-    info: { runId: manifest.runId, mode: manifest.mode, indexName: config.indexName },
+    info: {
+      runId: manifest.runId,
+      mode: manifest.mode,
+      indexName: config.indexName,
+      datasetHash: run.datasetHash,
+    },
     results(selectedRun: Run) {
-      if (selectedRun.id !== manifest.runId ||
-          selectedRun.analyzer.fingerprint !== run.analyzer.fingerprint ||
-          selectedRun.datasetHash !== run.datasetHash)
-        throw new LabError(409, "Load the included CU run before loading bundled policy results.");
       return {
-        runId: run.id, mode: manifest.mode, status: "completed" as const,
+        runId: selectedRun.id, mode: manifest.mode, status: "completed" as const,
         cached: true, source: "bundled" as const,
+        staleDataset: selectedRun.id !== manifest.runId ||
+          selectedRun.analyzer.fingerprint !== run.analyzer.fingerprint ||
+          selectedRun.datasetHash !== run.datasetHash,
+        sourceRunId: run.id,
+        sourceDatasetHash: run.datasetHash,
         indexName: config.indexName, extractionMode: config.extractionMode, items,
       };
     },

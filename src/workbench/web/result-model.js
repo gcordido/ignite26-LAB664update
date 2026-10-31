@@ -14,15 +14,14 @@ export const typeNames = {
   rental_invoice: "Rental Invoice",
 };
 const policyLabels = {
-  "financial.total": "Amount balance",
-  "financial.line_items": "Item sum",
-  "financial.tax_details": "Tax sum",
-  "required.id": "ID completeness",
-  "required.repair": "Repair completeness",
-  "required.statement": "Statement completeness",
-  "cross.claimant_name": "Claimant match",
-  "cross.vin": "VIN match",
-  "cross.vehicle": "Vehicle match",
+  "financial.total": "Total Amount, SubTotal, Tax verification",
+  "financial.line_items": "Repair line items, SubTotal verification",
+  "cross.repair_estimates": "Multiple Estimates Warning",
+};
+const policyDescriptions = {
+  "financial.total": "Does SubTotal plus tax equal Total Amount?",
+  "financial.line_items": "Do repair line items sum to SubTotal?",
+  "cross.repair_estimates": "Are multiple repair estimate totals consistent?",
 };
 /** @param {{category: string, start: number, end: number}} doc */
 export function documentLabel(doc) {
@@ -39,21 +38,75 @@ export function readableReferences(text, documents) {
   }
   return text;
 }
+/** @param {import("../src/policies.ts").PolicyCheck} check */
+function lineItemCalculation(check) {
+  if (
+    policyFamily(check) !== "financial.line_items" ||
+    !["pass", "fail"].includes(check.status)
+  )
+    return undefined;
+  const items = new Map();
+  for (const item of check.evidence) {
+    const match = item.field.match(
+      /^LineItems\[(\d+)\]\.(TotalAmount\.Amount|Parts?Amount|LaborAmount)$/,
+    );
+    if (!match) continue;
+    const index = Number(match[1]);
+    if (!items.has(index)) items.set(index, new Map());
+    items.get(index).set(match[2], item.value);
+  }
+  const subtotal = check.evidence.find(
+    (item) => item.field === "SubtotalAmount.Amount",
+  )?.value;
+  if (
+    !items.size ||
+    typeof subtotal !== "number" ||
+    !Number.isSafeInteger(Math.round(subtotal * 100))
+  )
+    return undefined;
+  const format = (amount) => (amount / 100).toFixed(2);
+  const amount = (value) =>
+    typeof value === "number" && Number.isSafeInteger(Math.round(value * 100))
+      ? Math.round(value * 100)
+      : undefined;
+  const expressions = [];
+  let sum = 0;
+  for (const [, row] of [...items].sort(([a], [b]) => a - b)) {
+    let total;
+    if (row.has("TotalAmount.Amount")) {
+      total = amount(row.get("TotalAmount.Amount"));
+      if (total === undefined) return undefined;
+      expressions.push(format(total));
+    } else {
+      const part = amount(row.has("PartsAmount") ? row.get("PartsAmount") : row.get("PartAmount"));
+      const labor = amount(row.get("LaborAmount"));
+      if (part === undefined || labor === undefined) return undefined;
+      total = part + labor;
+      if (!Number.isSafeInteger(total)) return undefined;
+      expressions.push(`(${format(part)} + ${format(labor)})`);
+    }
+    sum += total;
+    if (!Number.isSafeInteger(sum)) return undefined;
+  }
+  const code = check.evidence.find(
+    (item) =>
+      item.field.endsWith("CurrencyCode") &&
+      typeof item.value === "string" &&
+      /^[A-Za-z]{3}$/.test(item.value.trim()),
+  )?.value;
+  const currency = typeof code === "string" ? `${code.trim().toUpperCase()} ` : "";
+  const total = Math.round(subtotal * 100);
+  return `${currency}${expressions.join(" + ")} = ${format(sum)}${sum === total ? " (Subtotal)" : `; Subtotal = ${format(total)}`}`;
+}
 /** @param {import("../src/policies.ts").PolicyCheck} check @param {{id: string, category: string, start: number, end: number}[]} documents */
 export function policyProblem(check, documents) {
-  const required = check.message.match(
-    /required field\(s\): (.+?)(?:\. This|\.$)/,
-  )?.[1];
-  const missing = new Set(
-    required
-      ? [...required.matchAll(/\(([^()]+)\)/g)].map((match) => match[1])
-      : [],
-  );
+  const missing = new Set();
   if (check.status !== "pass" && !policyFamily(check).startsWith("cross."))
     for (const item of check.evidence)
       if (
-        item.value == null ||
-        (typeof item.value === "string" && !item.value.trim())
+        !/(?:^|\.)CurrencyCode$/.test(item.field) &&
+        (item.value == null ||
+          (typeof item.value === "string" && !item.value.trim()))
       )
         missing.add(item.field);
   let text = check.message;
@@ -66,7 +119,7 @@ export function policyProblem(check, documents) {
     text = text.slice(`Document ${doc.id}`.length).replace(/^:\s*|^\s+/, "");
   return {
     missing: [...missing],
-    text: readableReferences(text, documents),
+    text: lineItemCalculation(check) ?? readableReferences(text, documents),
   };
 }
 /** @param {import("../src/policies.ts").PolicyCheck} check */
@@ -80,16 +133,18 @@ export function policyLabel(family) {
     family.split(".").at(-1).replaceAll("_", " ").slice(0, 12)
   );
 }
-/** @param {PacketResult | undefined} result @param {string} family */
+/** @param {PacketResult | undefined} result @param {string} [family] */
 export function policyChecks(result, family) {
   return (result?.policies?.checks ?? []).filter(
-    (check) => policyFamily(check) === family,
+    (check) =>
+      Object.hasOwn(policyLabels, policyFamily(check)) &&
+      (!family || policyFamily(check) === family),
   );
 }
 /** @param {import("../src/policies.ts").PolicyCheck[]} checks */
 export function policySummary(checks) {
   if (!checks.length) return undefined;
-  const counts = { pass: 0, not_checkable: 0, fail: 0 };
+  const counts = { pass: 0, warn: 0, not_checkable: 0, fail: 0 };
   for (const check of checks) {
     if (!Object.hasOwn(counts, check.status))
       throw new Error(`Unknown policy status: ${check.status}`);
@@ -98,33 +153,25 @@ export function policySummary(checks) {
   return {
     status: counts.fail
       ? "fail"
-      : counts.not_checkable
-        ? "not_checkable"
-        : "pass",
+      : counts.warn
+        ? "warn"
+        : counts.not_checkable
+          ? "not_checkable"
+          : "pass",
     counts,
     total: checks.length,
   };
 }
-/** @param {PacketResult[]} results @param {boolean} all */
-export function policyColumns(results, all = false) {
-  const checks = results.flatMap((result) => result.policies?.checks ?? []);
+/** @param {PacketResult[]} results */
+export function policyColumns(results) {
+  const checks = results.flatMap((result) => policyChecks(result));
   const present = new Set(checks.map(policyFamily));
-  return [
-    ...Object.keys(policyLabels),
-    ...[...present].filter((family) => !Object.hasOwn(policyLabels, family)),
-  ]
+  return Object.keys(policyLabels)
     .filter((family) => present.has(family))
-    .filter(
-      (family) =>
-        all ||
-        ["financial.total", "cross.claimant_name"].includes(family) ||
-        checks.some(
-          (check) => policyFamily(check) === family && check.status !== "pass",
-        ),
-    )
     .map((id) => ({
       id,
       label: policyLabel(id),
+      summary: policyDescriptions[id],
       description: checks.find((check) => policyFamily(check) === id).rule,
     }));
 }

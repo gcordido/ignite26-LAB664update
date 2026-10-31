@@ -72,7 +72,7 @@ export function splitPreview(main, handle) {
     return left;
   };
   const layout = () => {
-    if (window.innerWidth <= 1000) {
+    if (window.innerWidth <= 760) {
       main.style.removeProperty("height");
       main.style.removeProperty("--left-pane");
     } else {

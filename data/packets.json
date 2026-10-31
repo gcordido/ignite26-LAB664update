@@ -1,8 +1,8 @@
 {
   "source": "auto-claims-v3-gptimage2",
   "synthetic": true,
-  "datasetHash": "94f17cd9ac8ecf44c39a92c2244c6546e5a81d297d339689c61b29b0148c9bf2",
-  "labelOrigin": "Source manifest document groups and authored case facts; not model predictions or proof that every service split is semantically wrong when groups differ. The eight claim-document groups per customer use the regenerated gpt-image-2 source. Supplemental 1099-A forms are retained unchanged from the previous lab dataset and appended as the ninth group. The towing invoice groups in packet-03 and packet-05 retain only their first source page; the repair-estimate continuation pages were intentionally omitted.",
+  "datasetHash": "bc965f1e10a708d0d35d0ffa36473aafef340c233c255930023716c200799d52",
+  "labelOrigin": "Source manifest document groups and authored case facts; not model predictions or proof that every service split is semantically wrong when groups differ. The original eight claim-document groups per customer used the regenerated gpt-image-2 source. Supplemental 1099-A forms are retained unchanged from the previous lab dataset and appended as the ninth group. The towing invoice groups in packet-03 and packet-05 retain only their first source page; the repair-estimate continuation pages were intentionally omitted. Packet-08 now uses a revised digital repair estimate on page 1 with separate parts and labor schedules; its duplicate two-page glass document (original pages 8-9) has been removed. The other packet-08 pages retain the original source. Packet-09's follow-up claim assessment sheet (original page 6, second page of the loss-intake source) is omitted; its first intake page and every other retained page are unchanged. Packet-03 includes a separate Sonoran Ridge Auto Repair estimate immediately after the original Desert Gate estimate; it was generated with the supplied OmniGen synth-doc renderer and retains the original USD 250 deductible.",
   "packets": [
     {
       "id": "packet-01",
@@ -174,8 +174,8 @@
       "region": "AZ",
       "scenario": "theft-recovery",
       "file": "packets/packet-03.pdf",
-      "pages": 12,
-      "sha256": "1520565c146195965263ffc9ccdb4e42dcd9f1f48679a39541fdae051a0839b0",
+      "pages": 13,
+      "sha256": "7229eb2559266dd9570b5f1c1798986fcf7a0cbc62ee8248a1e702be7f0ee6cf",
       "expectedDocuments": [
         {
           "sourceId": "01-card",
@@ -213,32 +213,39 @@
           "end": 8
         },
         {
-          "sourceId": "06-handwriting",
-          "title": "Driver or owner statement",
-          "category": "other",
+          "sourceId": "10-estimate-secondary",
+          "title": "Independent repair estimate - Sonoran Ridge Auto Repair",
+          "category": "repair_estimate",
           "start": 9,
           "end": 9
         },
         {
-          "sourceId": "07-invoice",
-          "title": "Recovery towing invoice (page 1 excerpt)",
+          "sourceId": "06-handwriting",
+          "title": "Driver or owner statement",
           "category": "other",
           "start": 10,
           "end": 10
         },
         {
-          "sourceId": "08-inspection",
-          "title": "Workshop damage inspection",
+          "sourceId": "07-invoice",
+          "title": "Recovery towing invoice (page 1 excerpt)",
           "category": "other",
           "start": 11,
           "end": 11
         },
         {
+          "sourceId": "08-inspection",
+          "title": "Workshop damage inspection",
+          "category": "other",
+          "start": 12,
+          "end": 12
+        },
+        {
           "sourceId": "09-form-1099-a",
           "title": "2025 Form 1099-A supplemental tax test",
           "category": "tax_1099a",
-          "start": 12,
-          "end": 12
+          "start": 13,
+          "end": 13
         }
       ],
       "expectedRepair": {
@@ -579,8 +586,8 @@
       "region": "CA",
       "scenario": "windshield-and-calibration",
       "file": "packets/packet-08.pdf",
-      "pages": 11,
-      "sha256": "480f2d980c722c098453c5e29ac36cdc5d61ca4d72f44ef8dc079978eb4a0984",
+      "pages": 9,
+      "sha256": "7c91fa895764c6d40193bf8f8de6612380fced3e2bfb978c752657ae417ae53d",
       "expectedDocuments": [
         {
           "sourceId": "05-estimate",
@@ -625,25 +632,18 @@
           "end": 7
         },
         {
-          "sourceId": "07-invoice",
-          "title": "Mobile glass billing and camera check",
-          "category": "other",
-          "start": 8,
-          "end": 9
-        },
-        {
           "sourceId": "09-form-1099-a",
           "title": "2025 Form 1099-A supplemental tax test",
           "category": "tax_1099a",
-          "start": 10,
-          "end": 10
+          "start": 8,
+          "end": 8
         },
         {
           "sourceId": "08-inspection",
           "title": "Workshop damage inspection",
           "category": "other",
-          "start": 11,
-          "end": 11
+          "start": 9,
+          "end": 9
         }
       ],
       "expectedRepair": {
@@ -660,8 +660,8 @@
       "region": "NY",
       "scenario": "animal-strike",
       "file": "packets/packet-09.pdf",
-      "pages": 12,
-      "sha256": "70c7491429f5a9297bb1a03dbf7b46346863a0108faf5554eb29f035658742db",
+      "pages": 11,
+      "sha256": "3e77ede596abd387dfe9a14a116249c715ce59a8d6c9edec034d2c630d32c5b8",
       "expectedDocuments": [
         {
           "sourceId": "05-estimate",
@@ -686,45 +686,45 @@
         },
         {
           "sourceId": "03-claim_form",
-          "title": "Loss intake and assessment",
+          "title": "Loss intake (follow-up assessment omitted)",
           "category": "other",
           "start": 5,
-          "end": 6
+          "end": 5
         },
         {
           "sourceId": "04-incident_report",
           "title": "Police incident record",
           "category": "other",
-          "start": 7,
-          "end": 7
+          "start": 6,
+          "end": 6
         },
         {
           "sourceId": "06-handwriting",
           "title": "Driver or owner statement",
           "category": "other",
-          "start": 8,
-          "end": 8
+          "start": 7,
+          "end": 7
         },
         {
           "sourceId": "07-invoice",
           "title": "Rental billing and winter condition record",
           "category": "other",
-          "start": 9,
-          "end": 10
+          "start": 8,
+          "end": 9
         },
         {
           "sourceId": "09-form-1099-a",
           "title": "2025 Form 1099-A supplemental tax test",
           "category": "tax_1099a",
-          "start": 11,
-          "end": 11
+          "start": 10,
+          "end": 10
         },
         {
           "sourceId": "08-inspection",
           "title": "Workshop damage inspection",
           "category": "other",
-          "start": 12,
-          "end": 12
+          "start": 11,
+          "end": 11
         }
       ],
       "expectedRepair": {

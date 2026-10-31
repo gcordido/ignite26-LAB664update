@@ -120,7 +120,7 @@ test("parallel duplicate requests share one analysis; unrelated extraction confl
 test("only exact v2 manifest PDF paths are accepted; extraction endpoint requires private session and explicit live consent", async () => {
   const documents = new PolicyDocuments();
   const files = await documents.files();
-  assert.equal(files.length, 14);
+  assert.equal(files.length, 41);
   assert.ok(files.includes("policies/rental/ocr-comparison-v2/az-rental-review-sop-v2.pdf"));
   for (const file of ["../.tools/policy-checks.json", "policies/rental/tx-rental-review-sop.pdf",
     "policies/rental/../rental/ocr-comparison-v2/tx-rental-review-sop-v2.pdf",

@@ -26,7 +26,7 @@ export type PolicyEvidence = {
 export type PolicyCheck = {
   id: string;
   rule: string;
-  status: "pass" | "fail" | "not_checkable";
+  status: "pass" | "warn" | "fail" | "not_checkable";
   message: string;
   evidence: PolicyEvidence[];
 };
@@ -34,20 +34,14 @@ export type PolicyCheck = {
 type EvidenceFact = { document: PolicyDocument; fact: Fact };
 type Money = EvidenceFact & {
   cents: number;
-  currency: string;
-  currencyFact: Fact;
+  currency?: string;
+  currencyFact?: Fact;
 };
 
 const financialCategories = new Set([
   "repair_estimate",
   "towing_invoice",
   "rental_invoice",
-]);
-const comparisonCategories = new Set([
-  "repair_estimate",
-  "towing_invoice",
-  "rental_invoice",
-  "statement",
 ]);
 
 function hasValue(fact: Fact | undefined): fact is Fact {
@@ -96,15 +90,35 @@ function currencyPath(amountPath: string) {
   return amountPath.replace(/\.Amount$/, ".CurrencyCode");
 }
 
+function readCurrency(
+  facts: Fact[],
+  amountPath: string,
+): { fact?: Fact; code?: string; problem?: string } {
+  const field = amountPath.endsWith(".Amount")
+    ? currencyPath(amountPath)
+    : undefined;
+  const fact = field ? facts.find((fact) => fact.field === field) : undefined;
+  if (!hasValue(fact)) return {};
+  if (
+    typeof fact.value !== "string" ||
+    !/^[A-Za-z]{3}$/.test(fact.value.trim())
+  )
+    return { fact, problem: `${field} is invalid` };
+  return { fact, code: fact.value.trim().toUpperCase() };
+}
+
 function readMoney(
   document: PolicyDocument,
   facts: Fact[],
   field: string,
 ): { money?: Money; problem?: string; evidence: EvidenceFact[] } {
   const amount = facts.find((fact) => fact.field === field);
-  const currency = facts.find((fact) => fact.field === currencyPath(field));
-  const available = [amount, currency]
-    .filter((fact): fact is Fact => fact !== undefined)
+  const currency = readCurrency(facts, field);
+  const available = [amount, currency.fact]
+    .filter(
+      (fact): fact is Fact =>
+        fact !== undefined && (fact === amount || hasValue(fact)),
+    )
     .map((fact) => ({ document, fact }));
   if (!hasValue(amount))
     return {
@@ -116,22 +130,15 @@ function readMoney(
       problem: `${field} is not a finite currency amount`,
       evidence: available,
     };
-  if (
-    !hasValue(currency) ||
-    typeof currency.value !== "string" ||
-    !/^[A-Za-z]{3}$/.test(currency.value.trim())
-  )
-    return {
-      problem: `${currencyPath(field)} is missing or unknown`,
-      evidence: available,
-    };
+  if (currency.problem)
+    return { problem: currency.problem, evidence: available };
   return {
     money: {
       document,
       fact: amount,
       cents: cents(amount.value)!,
-      currency: currency.value.trim().toUpperCase(),
-      currencyFact: currency,
+      currency: currency.code,
+      currencyFact: currency.fact,
     },
     evidence: available,
   };
@@ -140,12 +147,20 @@ function readMoney(
 function moneyEvidence(values: Money[]) {
   return values.flatMap((value) => [
     { document: value.document, fact: value.fact },
-    { document: value.document, fact: value.currencyFact },
+    ...(value.currencyFact
+      ? [{ document: value.document, fact: value.currencyFact }]
+      : []),
   ]);
 }
 
-function formatMoney(value: number, currency: string) {
-  return `${currency} ${(value / 100).toFixed(2)}`;
+function moneyCurrencies(values: Money[]) {
+  return new Set(
+    values.flatMap((value) => (value.currency ? [value.currency] : [])),
+  );
+}
+
+function formatMoney(value: number, currency?: string) {
+  return `${currency ? `${currency} ` : ""}${(value / 100).toFixed(2)}`;
 }
 
 function safeSum(values: number[]) {
@@ -162,6 +177,45 @@ function arrayField(document: PolicyDocument, field: string) {
     (item): item is Extract<ResultField, { kind: "array" }> =>
       item.kind === "array" && item.field === field,
   );
+}
+
+function readLineItemMoney(
+  document: PolicyDocument,
+  facts: Fact[],
+  field: string,
+): { values?: Money[]; problem?: string; evidence: EvidenceFact[] } {
+  if (hasValue(facts.find((fact) => fact.field === field))) {
+    const total = readMoney(document, facts, field);
+    return {
+      values: total.money ? [total.money] : undefined,
+      problem: total.problem,
+      evidence: total.evidence,
+    };
+  }
+  const prefix = field.replace(/TotalAmount\.Amount$/, "");
+  const partField = facts.some((fact) => fact.field === `${prefix}PartsAmount`)
+    ? `${prefix}PartsAmount`
+    : `${prefix}PartAmount`;
+  const part = readMoney(document, facts, partField);
+  const labor = readMoney(document, facts, `${prefix}LaborAmount`);
+  const currency = readCurrency(facts, field);
+  const found = [
+    ...part.evidence,
+    ...labor.evidence,
+    ...(currency.fact ? [{ document, fact: currency.fact }] : []),
+  ];
+  if (!part.money || !labor.money || currency.problem)
+    return {
+      problem: [part.problem, labor.problem, currency.problem]
+        .filter(Boolean)
+        .join("; "),
+      evidence: found,
+    };
+  const values = [
+    { ...part.money, currency: currency.code, currencyFact: currency.fact },
+    { ...labor.money, currency: currency.code },
+  ];
+  return { values, evidence: moneyEvidence(values) };
 }
 
 function arrayMoney(
@@ -183,17 +237,26 @@ function arrayMoney(
   const found: EvidenceFact[] = [];
   for (let index = 0; index < source.items.length; index += 1) {
     const field = `${array}[${index}].${suffix}`;
-    const item = readMoney(document, source.items[index], field);
+    let item: ReturnType<typeof readLineItemMoney>;
+    if (array === "LineItems" && suffix === "TotalAmount.Amount")
+      item = readLineItemMoney(document, source.items[index], field);
+    else {
+      const amount = readMoney(document, source.items[index], field);
+      item = {
+        values: amount.money ? [amount.money] : undefined,
+        problem: amount.problem,
+        evidence: amount.evidence,
+      };
+    }
     found.push(...item.evidence);
-    if (!item.money)
+    if (!item.values)
       return {
         problem: `${array} is incomplete: ${item.problem}`,
         evidence: found,
       };
-    values.push(item.money);
+    values.push(...item.values);
   }
-  const currencies = new Set(values.map((value) => value.currency));
-  if (currencies.size !== 1)
+  if (moneyCurrencies(values).size > 1)
     return {
       problem: `${array} contains mixed currencies`,
       evidence: moneyEvidence(values),
@@ -202,7 +265,8 @@ function arrayMoney(
 }
 
 function lineItemCheck(document: PolicyDocument) {
-  const rule = "Line-item totals must sum to the explicit subtotal.";
+  const rule =
+    "Line-item totals, or PartAmount + LaborAmount when a total is missing, must sum to the explicit subtotal.";
   const subtotal = readMoney(
     document,
     document.document.facts,
@@ -222,7 +286,8 @@ function lineItemCheck(document: PolicyDocument) {
         .join("; ")}.`,
       [...subtotal.evidence, ...items.evidence],
     );
-  if (items.values[0].currency !== subtotal.money.currency)
+  const currencies = moneyCurrencies([...items.values, subtotal.money]);
+  if (currencies.size > 1)
     return result(
       `financial.line_items:${document.id}`,
       rule,
@@ -241,11 +306,12 @@ function lineItemCheck(document: PolicyDocument) {
       [...moneyEvidence(items.values), ...moneyEvidence([subtotal.money])],
     );
   const status = Math.abs(expected - observed) <= 1 ? "pass" : "fail";
+  const currency = currencies.values().next().value;
   return result(
     `financial.line_items:${document.id}`,
     rule,
     status,
-    `Document ${document.id}: line items sum to ${formatMoney(expected, subtotal.money.currency)}; subtotal is ${formatMoney(observed, subtotal.money.currency)}.`,
+    `Document ${document.id}: line items sum to ${formatMoney(expected, currency)}; subtotal is ${formatMoney(observed, currency)}.`,
     [...moneyEvidence(items.values), ...moneyEvidence([subtotal.money])],
   );
 }
@@ -266,7 +332,7 @@ function unsupportedAdjustment(document: PolicyDocument) {
 
 function totalCheck(document: PolicyDocument) {
   const rule =
-    "Subtotal plus tax must equal total when no unsupported adjustment is present. Discounts and deductibles are not subtracted.";
+    "Subtotal plus total tax must equal total when no unsupported adjustment is present. If total tax is absent, sum all tax-detail amounts instead. Discounts and deductibles are not subtracted.";
   const adjustment = unsupportedAdjustment(document);
   if (adjustment)
     return result(
@@ -276,15 +342,33 @@ function totalCheck(document: PolicyDocument) {
       `Document ${document.id} has unsupported adjustment ${adjustment.field}; total reconciliation was not assumed.`,
       [{ document, fact: adjustment }],
     );
-  const paths = [
+  const subtotal = readMoney(
+    document,
+    document.document.facts,
     "SubtotalAmount.Amount",
-    "TotalTaxAmount.Amount",
-    "TotalAmount.Amount",
-  ];
-  const reads = paths.map((path) =>
-    readMoney(document, document.document.facts, path),
   );
-  if (reads.some((read) => !read.money))
+  const total = readMoney(
+    document,
+    document.document.facts,
+    "TotalAmount.Amount",
+  );
+  const explicitTax = readMoney(
+    document,
+    document.document.facts,
+    "TotalTaxAmount.Amount",
+  );
+  const taxFromDetails = !hasValue(
+    findFact(document, "TotalTaxAmount.Amount"),
+  );
+  const tax = taxFromDetails
+    ? arrayMoney(document, "TaxDetails", "Amount.Amount")
+    : {
+        values: explicitTax.money ? [explicitTax.money] : undefined,
+        problem: explicitTax.problem,
+        evidence: explicitTax.evidence,
+      };
+  const reads = [subtotal, tax, total];
+  if (!subtotal.money || !tax.values || !total.money)
     return result(
       `financial.total:${document.id}`,
       rule,
@@ -295,18 +379,22 @@ function totalCheck(document: PolicyDocument) {
         .join("; ")}. Missing values were not treated as zero.`,
       reads.flatMap((read) => read.evidence),
     );
-  const values = reads.map((read) => read.money!);
-  if (new Set(values.map((value) => value.currency)).size !== 1)
+  const values = [subtotal.money, ...tax.values, total.money];
+  const currencies = moneyCurrencies(values);
+  if (currencies.size > 1)
     return result(
       `financial.total:${document.id}`,
       rule,
       "not_checkable",
-      `Document ${document.id} cannot be checked because subtotal, tax, and total do not share one currency.`,
+      `Document ${document.id} cannot be checked because subtotal, tax, and total contain conflicting currencies.`,
       moneyEvidence(values),
     );
-  const [subtotal, tax, total] = values;
-  const expected = safeSum([subtotal.cents, tax.cents]);
-  if (expected === undefined)
+  const taxCents = safeSum(tax.values.map((value) => value.cents));
+  const expected =
+    taxCents === undefined
+      ? undefined
+      : safeSum([subtotal.money.cents, taxCents]);
+  if (taxCents === undefined || expected === undefined)
     return result(
       `financial.total:${document.id}`,
       rule,
@@ -314,187 +402,16 @@ function totalCheck(document: PolicyDocument) {
       `Document ${document.id} cannot be checked because the aggregate cents calculation exceeds safe integer precision.`,
       moneyEvidence(values),
     );
-  const status = Math.abs(expected - total.cents) <= 1 ? "pass" : "fail";
+  const status =
+    Math.abs(expected - total.money.cents) <= 1 ? "pass" : "fail";
+  const currency = currencies.values().next().value;
+  const taxLabel = taxFromDetails ? "tax (sum of tax details)" : "tax";
   return result(
     `financial.total:${document.id}`,
     rule,
     status,
-    `Document ${document.id}: ${formatMoney(subtotal.cents, total.currency)} + ${formatMoney(tax.cents, total.currency)} tax = ${formatMoney(expected, total.currency)} expected; total is ${formatMoney(total.cents, total.currency)}.`,
+    `Document ${document.id}: ${formatMoney(subtotal.money.cents, currency)} + ${formatMoney(taxCents, currency)} ${taxLabel} = ${formatMoney(expected, currency)} expected; total is ${formatMoney(total.money.cents, currency)}.`,
     moneyEvidence(values),
-  );
-}
-
-function taxCheck(document: PolicyDocument) {
-  const rule = "Tax-detail amounts must sum to the explicit total tax.";
-  const total = readMoney(
-    document,
-    document.document.facts,
-    "TotalTaxAmount.Amount",
-  );
-  const details = arrayMoney(document, "TaxDetails", "Amount.Amount");
-  if (!total.money || !details.values)
-    return result(
-      `financial.tax_details:${document.id}`,
-      rule,
-      "not_checkable",
-      `Document ${document.id} cannot be checked: ${[
-        total.problem,
-        details.problem,
-      ]
-        .filter(Boolean)
-        .join("; ")}.`,
-      [...total.evidence, ...details.evidence],
-    );
-  if (details.values[0].currency !== total.money.currency)
-    return result(
-      `financial.tax_details:${document.id}`,
-      rule,
-      "not_checkable",
-      `Document ${document.id} cannot be checked because tax details and total tax use different currencies.`,
-      [...moneyEvidence(details.values), ...moneyEvidence([total.money])],
-    );
-  const expected = safeSum(details.values.map((item) => item.cents));
-  if (expected === undefined)
-    return result(
-      `financial.tax_details:${document.id}`,
-      rule,
-      "not_checkable",
-      `Document ${document.id} cannot be checked because the tax-detail cents sum exceeds safe integer precision.`,
-      [...moneyEvidence(details.values), ...moneyEvidence([total.money])],
-    );
-  const status = Math.abs(expected - total.money.cents) <= 1 ? "pass" : "fail";
-  return result(
-    `financial.tax_details:${document.id}`,
-    rule,
-    status,
-    `Document ${document.id}: tax details sum to ${formatMoney(expected, total.money.currency)}; total tax is ${formatMoney(total.money.cents, total.money.currency)}.`,
-    [...moneyEvidence(details.values), ...moneyEvidence([total.money])],
-  );
-}
-
-function requiredCheck(
-  document: PolicyDocument,
-  kind: "id" | "repair" | "statement",
-) {
-  const fields =
-    kind === "id"
-      ? [
-          ["first name", "FirstName"],
-          ["last name", "LastName"],
-          ["document number", "DocumentNumber"],
-        ]
-      : kind === "repair"
-        ? [
-            ["vendor", "VendorName"],
-            ["vehicle", "vehicle"],
-            ["VIN", "vin"],
-            ["total", "TotalAmount.Amount"],
-          ]
-        : [
-            ["claimant name", "claimant_name"],
-            ["incident date", "incident_date"],
-            ["vehicle", "vehicle"],
-          ];
-  const facts = fields
-    .map(([, field]) => findFact(document, field))
-    .filter((fact): fact is Fact => fact !== undefined);
-  const missing = fields
-    .filter(([, field]) => !hasValue(findFact(document, field)))
-    .map(([label, field]) => `${label} (${field})`);
-  const rule =
-    kind === "id"
-      ? "Named-holder ID extraction requires FirstName, LastName, and DocumentNumber (schema assumption; advisory)."
-      : kind === "repair"
-        ? "Repair estimates require vendor, vehicle, VIN, and total."
-        : "Statements require claimant name, incident date, and vehicle.";
-  const missingMessage =
-    kind === "id"
-      ? `Document ${document.id} is missing configured required field(s): ${missing.join(", ")}. This is a schema assumption and advisory, not a person mismatch.`
-      : `Document ${document.id} is missing required field(s): ${missing.join(", ")}.`;
-  return result(
-    `required.${kind}:${document.id}`,
-    rule,
-    missing.length ? "fail" : "pass",
-    missing.length
-      ? missingMessage
-      : `Document ${document.id} contains all configured required fields.`,
-    facts.map((fact) => ({ document, fact })),
-  );
-}
-
-function normalizedText(value: string) {
-  return value
-    .normalize("NFKC")
-    .toLocaleLowerCase("en-US")
-    .replace(/[^\p{L}\p{N}]+/gu, "");
-}
-
-function comparison(
-  id: string,
-  rule: string,
-  label: string,
-  entries: { document: PolicyDocument; value: string; facts: Fact[] }[],
-  normalize: (value: string) => string,
-) {
-  const facts = entries.flatMap((entry) =>
-    entry.facts.map((fact) => ({ document: entry.document, fact })),
-  );
-  if (entries.length < 2)
-    return result(
-      id,
-      rule,
-      "not_checkable",
-      `${label} consistency needs at least two explicit values; found ${entries.length}.`,
-      facts,
-    );
-  const groups = new Set(entries.map((entry) => normalize(entry.value)));
-  const observed = entries
-    .map((entry) => `${entry.document.id}="${entry.value}"`)
-    .join("; ");
-  return result(
-    id,
-    rule,
-    groups.size === 1 ? "pass" : "fail",
-    `${label} values ${groups.size === 1 ? "are consistent" : "conflict"}: ${observed}.`,
-    facts,
-  );
-}
-
-function claimantCheck(documents: PolicyDocument[]) {
-  const entries: {
-    document: PolicyDocument;
-    value: string;
-    facts: Fact[];
-  }[] = [];
-  for (const document of documents) {
-    if (document.category === "id_document") {
-      const first = findFact(document, "FirstName");
-      const last = findFact(document, "LastName");
-      if (
-        hasValue(first) &&
-        hasValue(last) &&
-        typeof first.value === "string" &&
-        typeof last.value === "string"
-      )
-        entries.push({
-          document,
-          value: `${first.value.trim()} ${last.value.trim()}`,
-          facts: [first, last],
-        });
-    } else if (comparisonCategories.has(document.category)) {
-      const field =
-        document.category === "statement" ? "claimant_name" : "CustomerName";
-      const fact = findFact(document, field);
-      if (hasValue(fact) && typeof fact.value === "string")
-        entries.push({ document, value: fact.value.trim(), facts: [fact] });
-    }
-  }
-  return comparison(
-    "cross.claimant_name",
-    "Claimant names must agree across ID, customer, and statement fields only.",
-    "Claimant name",
-    entries,
-    normalizedText,
   );
 }
 
@@ -510,40 +427,72 @@ function explicitField(
   return undefined;
 }
 
-function vehicleChecks(documents: PolicyDocument[]) {
-  const eligible = documents.filter((document) =>
-    comparisonCategories.has(document.category),
+function multipleEstimatesCheck(documents: PolicyDocument[]) {
+  const repairs = documents.filter(
+    (document) => document.category === "repair_estimate",
   );
-  const vins = eligible.flatMap((document) => {
-    const found = explicitField(document, ["vin", "VIN"]);
-    return found ? [{ document, ...found }] : [];
-  });
-  const vehicles = eligible.flatMap((document) => {
-    const found = explicitField(document, ["vehicle", "Vehicle"]);
-    return found ? [{ document, ...found }] : [];
-  });
-  return [
-    comparison(
-      "cross.vin",
-      "Explicit VIN values must match after removing separators and normalizing case.",
-      "VIN",
-      vins,
-      (value) => value.toUpperCase().replace(/[^A-Z0-9]/g, ""),
+  if (!repairs.length) return undefined;
+  const id = "cross.repair_estimates";
+  const rule =
+    "Compare repair-estimate totals within the packet. Different quoted amounts require review, not an extraction-error finding.";
+  const quotes = repairs.map((document) => ({
+    document,
+    shop: explicitField(document, ["VendorName"]),
+    reference: explicitField(document, ["InvoiceId"]),
+    total: readMoney(document, document.document.facts, "TotalAmount.Amount"),
+  }));
+  const facts = quotes.flatMap((quote) => [
+    ...quote.total.evidence,
+    ...[...(quote.shop?.facts ?? []), ...(quote.reference?.facts ?? [])].map(
+      (fact) => ({ document: quote.document, fact }),
     ),
-    comparison(
-      "cross.vehicle",
-      "Explicit vehicle values must match after case, spacing, and punctuation normalization.",
-      "Vehicle",
-      vehicles,
-      normalizedText,
-    ),
-  ];
+  ]);
+  if (quotes.length === 1)
+    return result(
+      id,
+      rule,
+      "pass",
+      "One repair estimate was found; there is no competing quote to compare.",
+      facts,
+    );
+  const observed = quotes
+    .map((quote) => {
+      const shop =
+        quote.shop?.value.replace(/\s+/g, " ") ?? "shop name not extracted";
+      const reference = quote.reference
+        ? `, quote ${quote.reference.value}`
+        : "";
+      const amount = quote.total.money
+        ? formatMoney(quote.total.money.cents, quote.total.money.currency)
+        : `total unavailable (${quote.total.problem})`;
+      return `Document ${quote.document.id} (${shop}${reference}): ${amount}`;
+    })
+    .join("; ");
+  const amounts = quotes.flatMap((quote) =>
+    quote.total.money ? [quote.total.money] : [],
+  );
+  if (amounts.length !== quotes.length || moneyCurrencies(amounts).size > 1)
+    return result(
+      id,
+      rule,
+      "not_checkable",
+      `Repair estimates cannot be fully compared because totals are missing, invalid, or use conflicting currencies: ${observed}.`,
+      facts,
+    );
+  const different = new Set(amounts.map((amount) => amount.cents)).size > 1;
+  return result(
+    id,
+    rule,
+    different ? "warn" : "pass",
+    `${different ? "Different repair estimate totals; compare the quotes before selecting the repair amount" : "Repair estimate totals match"}: ${observed}.`,
+    facts,
+  );
 }
 
 export function evaluatePolicies(documents: PolicyDocument[]): {
   version: string;
   checks: PolicyCheck[];
-  counts: { pass: number; fail: number; not_checkable: number };
+  counts: Record<PolicyCheck["status"], number>;
 } {
   const ordered = [...documents].sort(
     (left, right) =>
@@ -553,21 +502,14 @@ export function evaluatePolicies(documents: PolicyDocument[]): {
   );
   const checks: PolicyCheck[] = [];
   for (const document of ordered) {
-    if (financialCategories.has(document.category))
-      checks.push(
-        lineItemCheck(document),
-        totalCheck(document),
-        taxCheck(document),
-      );
     if (document.category === "repair_estimate")
-      checks.push(requiredCheck(document, "repair"));
-    if (document.category === "id_document")
-      checks.push(requiredCheck(document, "id"));
-    if (document.category === "statement")
-      checks.push(requiredCheck(document, "statement"));
+      checks.push(lineItemCheck(document));
+    if (financialCategories.has(document.category))
+      checks.push(totalCheck(document));
   }
-  checks.push(claimantCheck(ordered), ...vehicleChecks(ordered));
-  const counts = { pass: 0, fail: 0, not_checkable: 0 };
+  const multipleEstimates = multipleEstimatesCheck(ordered);
+  if (multipleEstimates) checks.push(multipleEstimates);
+  const counts = { pass: 0, warn: 0, fail: 0, not_checkable: 0 };
   for (const check of checks) counts[check.status] += 1;
   return { version: "1.1.0", checks, counts };
 }

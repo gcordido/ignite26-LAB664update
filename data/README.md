@@ -11,12 +11,12 @@ claim packets and individual PDFs. All names and claim details are fictional.
 - [Policy declarations and endorsements](documents/packet-01/02-policy.pdf)
 - [Claim forms and assessments](documents/packet-01/03-claim_form.pdf)
 - [Police and incident reports](documents/packet-01/04-incident_report.pdf)
-- [Repair estimates](documents/packet-01/05-estimate.pdf)
+- [Repair estimates](documents/packet-01/05-estimate.pdf) and
+  [independent second-shop estimates](documents/packet-03/10-estimate-secondary.pdf)
 - [Handwritten statements](documents/packet-01/06-handwriting.pdf) and
   [email statements](samples/email-statement.pdf)
-- [Towing invoices](documents/packet-03/07-invoice.pdf),
-  [rental invoices](documents/packet-01/07-invoice.pdf), and
-  [supporting quotes](documents/packet-08/07-invoice.pdf)
+- [Towing invoices](documents/packet-03/07-invoice.pdf) and
+  [rental invoices](documents/packet-01/07-invoice.pdf)
 - [Vehicle inspection reports](documents/packet-01/08-inspection.pdf)
 - [Supplemental Form 1099-A documents](documents/packet-01/09-form-1099-a.pdf)
 

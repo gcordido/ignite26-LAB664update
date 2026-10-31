@@ -255,14 +255,24 @@ export class PolicyService {
     };
   }
   async markdown(run: Run, packet: Packet, raw: unknown) {
-    const config = await this.frameworkConfig();
     let exported = packetJson(raw, packet, run, summarize(raw, packet, run.analyzer.mode));
+    let config: FrameworkConfig | undefined;
+    try {
+      config = await this.frameworkConfig();
+    } catch (error) {
+      if (!(error instanceof LabError) || error.status !== 409) throw error;
+    }
     const saved = config ? (await this.enriched(config, packet)).value : undefined;
     if (saved) exported = withClaimSummary(exported, saved.response);
     return packetMarkdown(exported);
   }
   async summaryPrepared(packet: Packet) {
-    const config = await this.frameworkConfig();
+    let config: FrameworkConfig | undefined;
+    try {
+      config = await this.frameworkConfig();
+    } catch (error) {
+      if (!(error instanceof LabError) || error.status !== 409) throw error;
+    }
     return Boolean(config && (await this.enriched(config, packet)).value);
   }
   async claimEvidence(run: Run, packet: Packet, raw: unknown) {

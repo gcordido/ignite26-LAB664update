@@ -14,7 +14,11 @@ function fact(field: string, value: Fact["value"]): Fact {
   };
 }
 
-function money(field: string, value: number | null, currency = "USD") {
+function money(
+  field: string,
+  value: number | null,
+  currency: string | null = "USD",
+) {
   return [
     fact(field, value),
     fact(field.replace(/\.Amount$/, ".CurrencyCode"), currency),
@@ -63,7 +67,7 @@ function check(documents: PolicyDocument[], id: string) {
   return found;
 }
 
-test("reports missing required fields and incomplete arrays without inventing zero", () => {
+test("reports incomplete line items without inventing zero or requiring repair completeness", () => {
   const lineItems = array("LineItems", [
     [
       fact("LineItems[0].TotalAmount.Amount", null),
@@ -85,9 +89,78 @@ test("reports missing required fields and incomplete arrays without inventing ze
     check([repair], "financial.line_items:repair-1").status,
     "not_checkable",
   );
-  const required = check([repair], "required.repair:repair-1");
-  assert.equal(required.status, "fail");
-  assert.match(required.message, /vehicle \(vehicle\), VIN \(vin\)/);
+  assert.ok(
+    evaluatePolicies([repair]).checks.every(
+      (item) => !item.id.startsWith("required.repair:"),
+    ),
+  );
+});
+
+test("differing repair estimates warn with both shops, quote references and amounts", () => {
+  const first = document("repair-a", "repair_estimate", [
+    fact("VendorName", "Desert Gate Auto Works"),
+    fact("InvoiceId", "Q-AZ-16611"),
+    ...money("TotalAmount.Amount", 1699.04),
+  ]);
+  const second = document("repair-b", "repair_estimate", [
+    fact("VendorName", "Sonoran Ridge\nAuto Repair"),
+    fact("InvoiceId", "SR-250723-0487"),
+    ...money("TotalAmount.Amount", 1827.24),
+  ]);
+  const towing = document("towing", "towing_invoice", [
+    fact("VendorName", "Recovery Tow"),
+    ...money("TotalAmount.Amount", 200),
+  ]);
+  const report = evaluatePolicies([second, towing, first]);
+  const comparison = report.checks.find(
+    (item) => item.id === "cross.repair_estimates",
+  );
+  assert.ok(comparison);
+  assert.equal(comparison.status, "warn");
+  assert.match(comparison.message, /Desert Gate Auto Works.*Q-AZ-16611.*USD 1699\.04/);
+  assert.match(comparison.message, /Sonoran Ridge Auto Repair.*SR-250723-0487.*USD 1827\.24/);
+  assert.deepEqual(
+    [...new Set(comparison.evidence.map((item) => item.documentId))],
+    ["repair-a", "repair-b"],
+  );
+  assert.ok(comparison.evidence.every((item) => item.regions.length === 1));
+  assert.equal(report.counts.warn, 1);
+  assert.equal(report.counts.fail, 0);
+});
+
+test("one repair estimate or matching totals do not produce a multiple-estimate warning", () => {
+  const first = document("first", "repair_estimate", [
+    fact("VendorName", "First Shop"),
+    ...money("TotalAmount.Amount", 100),
+  ]);
+  const second = document("second", "repair_estimate", [
+    fact("VendorName", "Second Shop"),
+    ...money("TotalAmount.Amount", 100),
+  ]);
+  assert.equal(check([first], "cross.repair_estimates").status, "pass");
+  assert.equal(check([first, second], "cross.repair_estimates").status, "pass");
+  assert.ok(
+    evaluatePolicies([document("invoice", "rental_invoice", [])]).checks.every(
+      (item) => item.id !== "cross.repair_estimates",
+    ),
+  );
+});
+
+test("missing or conflicting-currency quote totals are not treated as an equal comparison", () => {
+  const first = document("first", "repair_estimate", [
+    fact("VendorName", "First Shop"),
+    ...money("TotalAmount.Amount", 100, "USD"),
+  ]);
+  for (const [amount, currency] of [[null, "USD"], [100, "EUR"]] as const) {
+    const second = document("second", "repair_estimate", [
+      fact("VendorName", "Second Shop"),
+      ...money("TotalAmount.Amount", amount, currency),
+    ]);
+    const comparison = check([first, second], "cross.repair_estimates");
+    assert.equal(comparison.status, "not_checkable");
+    assert.match(comparison.message, /First Shop/);
+    assert.match(comparison.message, /Second Shop/);
+  }
 });
 
 test("uses integer cents and a one-cent reconciliation tolerance", () => {
@@ -101,19 +174,153 @@ test("uses integer cents and a one-cent reconciliation tolerance", () => {
   ]);
   const near = document(
     "near",
-    "rental_invoice",
+    "repair_estimate",
     [...money("SubtotalAmount.Amount", 0.31)],
     [nearItems],
   );
   const far = document(
     "far",
-    "rental_invoice",
+    "repair_estimate",
     [...money("SubtotalAmount.Amount", 0.32)],
     [farItems],
   );
 
   assert.equal(check([near], "financial.line_items:near").status, "pass");
   assert.equal(check([far], "financial.line_items:far").status, "fail");
+});
+
+test("repair sums fall back to both components only when the row total is missing", () => {
+  const items = array("LineItems", [
+    [
+      ...money("LineItems[0].TotalAmount.Amount", null),
+      fact("LineItems[0].PartAmount", 980),
+      fact("LineItems[0].LaborAmount", 223.2),
+    ],
+    [
+      ...money("LineItems[1].TotalAmount.Amount", 186),
+      fact("LineItems[1].PartAmount", 500),
+      fact("LineItems[1].LaborAmount", 500),
+    ],
+    [
+      ...money("LineItems[2].TotalAmount.Amount", 0),
+      fact("LineItems[2].PartAmount", 9),
+      fact("LineItems[2].LaborAmount", 9),
+    ],
+  ]);
+  const repair = document("components", "repair_estimate", money("SubtotalAmount.Amount", 1389.2), [items]);
+  const value = check([repair], "financial.line_items:components");
+  assert.equal(value.status, "pass");
+  assert.ok(value.evidence.some((item) => item.field === "LineItems[0].PartAmount"));
+  assert.ok(value.evidence.some((item) => item.field === "LineItems[0].LaborAmount"));
+  assert.ok(value.evidence.every((item) => item.field !== "LineItems[0].TotalAmount.Amount"));
+  assert.ok(value.evidence.every((item) => !/^LineItems\[[12]\]\.(PartAmount|LaborAmount)$/.test(item.field)));
+  assert.equal(items.items[0][0].value, null);
+  assert.equal(items.items[2][0].value, 0);
+});
+
+test("explicit invalid or mismatched row totals are not hidden by component fallback", () => {
+  for (const [total, status] of [[50, "fail"], [Infinity, "not_checkable"]] as const) {
+    const repair = document("explicit", "repair_estimate", money("SubtotalAmount.Amount", 100), [
+      array("LineItems", [[
+        ...money("LineItems[0].TotalAmount.Amount", total),
+        fact("LineItems[0].PartAmount", 50),
+        fact("LineItems[0].LaborAmount", 50),
+      ]]),
+    ]);
+    assert.equal(check([repair], "financial.line_items:explicit").status, status);
+  }
+});
+
+test("component fallback accepts PartsAmount and preserves the actual source field name", () => {
+  const repair = document("parts", "repair_estimate", money("SubtotalAmount.Amount", 1203.2), [
+    array("LineItems", [[
+      ...money("LineItems[0].TotalAmount.Amount", null),
+      fact("LineItems[0].PartsAmount", 980),
+      fact("LineItems[0].LaborAmount", 223.2),
+    ]]),
+  ]);
+  const value = check([repair], "financial.line_items:parts");
+  assert.equal(value.status, "pass");
+  assert.ok(value.evidence.some((item) => item.field === "LineItems[0].PartsAmount"));
+  assert.ok(value.evidence.every((item) => item.field !== "LineItems[0].PartAmount"));
+});
+
+test("component fallback requires both finite amounts and a subtotal", () => {
+  for (const [part, labor, subtotal] of [
+    [null, 10, 10], [10, null, 10], [NaN, 10, 10],
+    [10, Infinity, 10], [0, 10, null],
+  ] as const) {
+    const repair = document("missing-component", "repair_estimate", money("SubtotalAmount.Amount", subtotal), [
+      array("LineItems", [[
+        ...money("LineItems[0].TotalAmount.Amount", null),
+        fact("LineItems[0].PartAmount", part),
+        fact("LineItems[0].LaborAmount", labor),
+      ]]),
+    ]);
+    assert.equal(check([repair], "financial.line_items:missing-component").status, "not_checkable");
+  }
+});
+
+test("component fallback preserves currency validation, cent tolerance and safe precision", () => {
+  for (const [currency, part, labor, subtotal, subtotalCurrency, status] of [
+    [null, 0.1, 0.2, 0.31, null, "pass"],
+    [null, 0.1, 0.2, 0.32, null, "fail"],
+    ["EUR", 5, 5, 10, "USD", "not_checkable"],
+    ["invalid", 5, 5, 10, "USD", "not_checkable"],
+    [null, 46_000_000_000_000, 46_000_000_000_000, 0, null, "not_checkable"],
+  ] as const) {
+    const repair = document("component-currency", "repair_estimate", money("SubtotalAmount.Amount", subtotal, subtotalCurrency), [
+      array("LineItems", [[
+        ...money("LineItems[0].TotalAmount.Amount", null, currency),
+        fact("LineItems[0].PartAmount", part),
+        fact("LineItems[0].LaborAmount", labor),
+      ]]),
+    ]);
+    const value = check([repair], "financial.line_items:component-currency");
+    assert.equal(value.status, status);
+    if (currency === null && subtotalCurrency === null)
+      assert.doesNotMatch(value.message, /USD|undefined/);
+  }
+});
+
+test("checks repair-only item sums, retains amount balances, and ignores tax-detail sums", () => {
+  const documents = [
+    "repair_estimate",
+    "towing_invoice",
+    "rental_invoice",
+  ].map((category) =>
+    document(
+      category,
+      category,
+      [
+        ...money("SubtotalAmount.Amount", 10),
+        ...money("TotalTaxAmount.Amount", 1),
+        ...money("TotalAmount.Amount", 11),
+      ],
+      [
+        array("LineItems", [money("LineItems[0].TotalAmount.Amount", 5)]),
+        array("TaxDetails", [money("TaxDetails[0].Amount.Amount", 9)]),
+      ],
+    ),
+  );
+  const checks = evaluatePolicies(documents).checks;
+  const lineItems = checks.filter((check) =>
+    check.id.startsWith("financial.line_items:"),
+  );
+  assert.deepEqual(
+    lineItems.map((check) => check.id),
+    ["financial.line_items:repair_estimate"],
+  );
+  assert.equal(lineItems[0].status, "fail");
+  for (const { id } of documents)
+    assert.equal(
+      checks.find((check) => check.id === `financial.total:${id}`)?.status,
+      "pass",
+    );
+  assert.equal(
+    checks.some((check) => check.id.startsWith("financial.tax_details:")),
+    false,
+  );
 });
 
 test("reconciles subtotal plus tax without subtracting a deductible extracted as discount", () => {
@@ -133,7 +340,7 @@ test("reconciles subtotal plus tax without subtracting a deductible extracted as
   assert.ok(total.evidence.every((item) => !item.field.includes("Discount")));
 });
 
-test("amount balance needs no discount but still requires explicit tax and respects cent tolerance", () => {
+test("amount balance needs no discount, requires tax evidence, and respects cent tolerance", () => {
   const near = document("near-total", "rental_invoice", [
     ...money("SubtotalAmount.Amount", 0.1),
     ...money("TotalTaxAmount.Amount", 0.2),
@@ -156,112 +363,196 @@ test("amount balance needs no discount but still requires explicit tax and respe
   );
 });
 
-test("makes mixed-currency and partial tax detail evidence not checkable", () => {
+test("amount balance sums all tax details when total tax is absent or null", () => {
+  for (const missing of [[], money("TotalTaxAmount.Amount", null)]) {
+    for (const [amount, status] of [
+      [110, "pass"],
+      [111, "fail"],
+    ] as const) {
+      const invoice = document(
+        "tax-fallback",
+        "rental_invoice",
+        [
+          ...money("SubtotalAmount.Amount", 100),
+          ...money("TotalAmount.Amount", amount),
+          ...missing,
+        ],
+        [
+          array("TaxDetails", [
+            money("TaxDetails[0].Amount.Amount", 6),
+            money("TaxDetails[1].Amount.Amount", 4),
+          ]),
+        ],
+      );
+      const total = check([invoice], "financial.total:tax-fallback");
+      assert.equal(total.status, status);
+      assert.match(total.message, /USD 10\.00 tax \(sum of tax details\)/);
+      assert.deepEqual(
+        total.evidence
+          .filter(
+            (item) =>
+              item.field.startsWith("TaxDetails") &&
+              item.field.endsWith(".Amount"),
+          )
+          .map((item) => item.value),
+        [6, 4],
+      );
+      assert.ok(
+        total.evidence.every(
+          (item) => !item.field.startsWith("TotalTaxAmount"),
+        ),
+      );
+    }
+  }
+});
+
+test("amount balance prefers explicit total tax including zero and does not replace invalid tax", () => {
+  const details = array("TaxDetails", [
+    money("TaxDetails[0].Amount.Amount", 9),
+  ]);
+  for (const tax of [0, 2]) {
+    const invoice = document(
+      "explicit-tax",
+      "rental_invoice",
+      [
+        ...money("SubtotalAmount.Amount", 100),
+        ...money("TotalTaxAmount.Amount", tax),
+        ...money("TotalAmount.Amount", 100 + tax),
+      ],
+      [details],
+    );
+    const total = check([invoice], "financial.total:explicit-tax");
+    assert.equal(total.status, "pass");
+    assert.ok(
+      total.evidence.every((item) => !item.field.startsWith("TaxDetails")),
+    );
+  }
+  const invalid = document(
+    "invalid-tax",
+    "rental_invoice",
+    [
+      ...money("SubtotalAmount.Amount", 100),
+      fact("TotalTaxAmount.Amount", "unknown"),
+      ...money("TotalAmount.Amount", 109),
+    ],
+    [details],
+  );
+  assert.equal(
+    check([invalid], "financial.total:invalid-tax").status,
+    "not_checkable",
+  );
+});
+
+test("amount balance rejects empty, incomplete and overflowing fallback tax details", () => {
+  for (const items of [
+    [],
+    [
+      money("TaxDetails[0].Amount.Amount", 1),
+      money("TaxDetails[1].Amount.Amount", null),
+    ],
+    [
+      money("TaxDetails[0].Amount.Amount", 46_000_000_000_000),
+      money("TaxDetails[1].Amount.Amount", 46_000_000_000_000),
+    ],
+  ]) {
+    const invoice = document(
+      "bad-tax-details",
+      "rental_invoice",
+      [
+        ...money("SubtotalAmount.Amount", 100),
+        ...money("TotalAmount.Amount", 101),
+      ],
+      [array("TaxDetails", items)],
+    );
+    assert.equal(
+      check([invoice], "financial.total:bad-tax-details").status,
+      "not_checkable",
+    );
+  }
+});
+
+test("missing currency metadata does not block arithmetic or invent a currency", () => {
+  const repair = document(
+    "no-currency",
+    "repair_estimate",
+    [
+      ...money("SubtotalAmount.Amount", 100, null),
+      ...money("TotalTaxAmount.Amount", 10, null),
+      ...money("TotalAmount.Amount", 110, null),
+    ],
+    [
+      array("LineItems", [
+        money("LineItems[0].TotalAmount.Amount", 100, null),
+      ]),
+    ],
+  );
+  for (const family of ["financial.total", "financial.line_items"]) {
+    const value = check([repair], `${family}:no-currency`);
+    assert.equal(value.status, "pass");
+    assert.doesNotMatch(value.message, /undefined|USD|CurrencyCode/);
+    assert.ok(
+      value.evidence.every((item) => !item.field.endsWith("CurrencyCode")),
+    );
+  }
+});
+
+test("explicit currency conflicts remain not checkable when other codes are missing", () => {
+  const repair = document(
+    "currency-conflict",
+    "repair_estimate",
+    [
+      ...money("SubtotalAmount.Amount", 100, "USD"),
+      ...money("TotalTaxAmount.Amount", 10, null),
+      ...money("TotalAmount.Amount", 110, "EUR"),
+    ],
+    [
+      array("LineItems", [
+        money("LineItems[0].TotalAmount.Amount", 50, null),
+        money("LineItems[1].TotalAmount.Amount", 50, "EUR"),
+      ]),
+    ],
+  );
+  for (const family of ["financial.total", "financial.line_items"])
+    assert.equal(
+      check([repair], `${family}:currency-conflict`).status,
+      "not_checkable",
+    );
+});
+
+test("makes mixed-currency repair line items not checkable", () => {
   const items = array("LineItems", [
     money("LineItems[0].TotalAmount.Amount", 10, "USD"),
     money("LineItems[1].TotalAmount.Amount", 5, "EUR"),
   ]);
-  const taxes = array("TaxDetails", [
-    money("TaxDetails[0].Amount.Amount", 1, "USD"),
-    [
-      fact("TaxDetails[1].Amount.Amount", null),
-      fact("TaxDetails[1].Amount.CurrencyCode", "USD"),
-    ],
-  ]);
-  const invoice = document(
-    "invoice-1",
-    "towing_invoice",
-    [
-      ...money("SubtotalAmount.Amount", 15, "USD"),
-      ...money("TotalTaxAmount.Amount", 1, "USD"),
-    ],
-    [items, taxes],
+  const repair = document(
+    "repair-currency",
+    "repair_estimate",
+    money("SubtotalAmount.Amount", 15, "USD"),
+    [items],
   );
 
   assert.equal(
-    check([invoice], "financial.line_items:invoice-1").status,
-    "not_checkable",
-  );
-  assert.equal(
-    check([invoice], "financial.tax_details:invoice-1").status,
+    check([repair], "financial.line_items:repair-currency").status,
     "not_checkable",
   );
 });
 
-test("normalizes claimant, VIN, and vehicle comparisons conservatively", () => {
-  const id = document("id-1", "id_document", [
-    fact("FirstName", "Jane"),
-    fact("LastName", "Doe"),
-  ]);
-  const repair = document("repair-3", "repair_estimate", [
-    fact("CustomerName", " jane-doe "),
-    fact("VendorName", "Jane's Auto"),
-    fact("vehicle", "2024 Ford F-150 XLT"),
-    fact("vin", "1ab-cd 234"),
+test("consistency evaluation contains only the three financial and estimate rule families", () => {
+  const repair = document("repair", "repair_estimate", [
+    ...money("SubtotalAmount.Amount", 100),
+    ...money("TotalTaxAmount.Amount", 0),
     ...money("TotalAmount.Amount", 100),
+  ], [array("LineItems", [money("LineItems[0].TotalAmount.Amount", 100)])]);
+  const report = evaluatePolicies([
+    document("id", "id_document", [fact("LastName", null)]),
+    document("statement", "statement", [fact("claimant_name", null)]),
+    repair,
   ]);
-  const statement = document("statement-1", "statement", [
-    fact("claimant_name", "JANE DOE"),
-    fact("incident_date", "2026-10-01"),
-    fact("vehicle", "2024 ford f150, xlt"),
-    fact("vin", "1ABCD234"),
+  assert.deepEqual(report.checks.map((item) => item.id.split(":")[0]).sort(), [
+    "cross.repair_estimates", "financial.line_items", "financial.total",
   ]);
-  const documents = [id, repair, statement];
-
-  assert.equal(check(documents, "cross.claimant_name").status, "pass");
-  assert.equal(check(documents, "cross.vin").status, "pass");
-  assert.equal(check(documents, "cross.vehicle").status, "pass");
-  assert.equal(
-    check(documents, "required.statement:statement-1").status,
-    "pass",
-  );
-});
-
-test("excludes tax parties and vendor names from cross-document identity checks", () => {
-  const id = document("id-2", "id_document", [
-    fact("FirstName", "Alex"),
-    fact("LastName", "Kim"),
-  ]);
-  const repair = document("repair-4", "repair_estimate", [
-    fact("CustomerName", "Alex Kim"),
-    fact("VendorName", "Someone Else LLC"),
-    fact("vehicle", "2023 Toyota Camry"),
-    fact("vin", "JT123"),
-    ...money("TotalAmount.Amount", 250),
-  ]);
-  const tax = document("tax-1", "tax_1099a", [
-    fact("Borrower.Name", "Wrong Person"),
-    fact("CustomerName", "Also Wrong"),
-    fact("vehicle", "Wrong Vehicle"),
-    fact("vin", "WRONGVIN"),
-  ]);
-  const documents = [tax, repair, id];
-
-  assert.equal(check(documents, "cross.claimant_name").status, "pass");
-  assert.equal(check(documents, "cross.vin").status, "not_checkable");
-  assert.equal(check(documents, "cross.vehicle").status, "not_checkable");
-});
-
-test("reports missing configured ID schema fields without splitting a full first name", () => {
-  const id = document("id-priya", "id_document", [
-    fact("FirstName", "Priya Raman"),
-    fact("LastName", null),
-    fact("DocumentNumber", "D12345"),
-  ]);
-
-  const required = check([id], "required.id:id-priya");
-  assert.equal(required.status, "fail");
-  assert.match(required.message, /last name \(LastName\)/);
-  assert.match(required.message, /schema assumption and advisory/);
-  assert.match(required.message, /not a person mismatch/);
-  assert.deepEqual(
-    required.evidence.map((item) => [item.field, item.value]),
-    [
-      ["FirstName", "Priya Raman"],
-      ["LastName", null],
-      ["DocumentNumber", "D12345"],
-    ],
-  );
+  assert.deepEqual(report.counts, { pass: 3, warn: 0, fail: 0, not_checkable: 0 });
+  assert.deepEqual(evaluatePolicies([]).checks, []);
 });
 
 test("allows zero unsupported adjustments and rejects unsafe aggregate cents", () => {
@@ -278,7 +569,7 @@ test("allows zero unsupported adjustments and rejects unsafe aggregate cents", (
   ]);
   const huge = document(
     "huge",
-    "towing_invoice",
+    "repair_estimate",
     [...money("SubtotalAmount.Amount", 46_000_000_000_000)],
     [hugeItems],
   );

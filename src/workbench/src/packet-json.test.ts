@@ -2,14 +2,18 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { test } from "node:test";
-import { Cache, summarize } from "./batch.ts";
+import { Cache, dataset, summarize } from "./batch.ts";
 import { dataRoot } from "./config.ts";
 import { packetJson } from "./packet-json.ts";
 import { createApp } from "./server.ts";
 import { packetMarkdown } from "./packet-markdown.ts";
 
 async function includedRunId() {
-  const run = (await new Cache().list()).find((item) => item.status === "completed");
+  const current = await dataset();
+  const run = (await new Cache().list()).find(
+    (item) =>
+      item.status === "completed" && item.datasetHash === current.datasetHash,
+  );
   assert.ok(run, "An included completed CU run is required.");
   return run.id;
 }

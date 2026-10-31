@@ -1,13 +1,16 @@
 import assert from "node:assert/strict";
 import { once } from "node:events";
 import { test } from "node:test";
-import { Cache } from "./batch.ts";
+import { Cache, dataset } from "./batch.ts";
 import { PolicyService, type PolicyItem, type PolicyJob } from "./policy-service.ts";
 import { createApp } from "./server.ts";
 
 test("a failed fresh review remains visible even when an older saved result exists", async (t) => {
   const cache = new Cache();
-  const saved = (await cache.list()).find((run) => run.status === "completed");
+  const current = await dataset();
+  const saved = (await cache.list()).find(
+    (run) => run.status === "completed" && run.datasetHash === current.datasetHash,
+  );
   assert.ok(saved);
   const job: PolicyJob = {
     id: "failed-live-job", runId: saved.id, mode: "search", status: "completed",
@@ -51,7 +54,10 @@ test("a failed fresh review remains visible even when an older saved result exis
 
 test("refresh resumes the owning session's policy job and duplicate starts don't submit again", async (t) => {
   const cache = new Cache();
-  const saved = (await cache.list()).find((run) => run.status === "completed");
+  const current = await dataset();
+  const saved = (await cache.list()).find(
+    (run) => run.status === "completed" && run.datasetHash === current.datasetHash,
+  );
   assert.ok(saved, "An included completed run is required");
   let starts = 0;
   let release!: () => void;
@@ -68,6 +74,11 @@ test("refresh resumes the owning session's policy job and duplicate starts don't
       starts++;
       return { job, task };
     }
+    override async snapshot(
+      run: Parameters<PolicyService["snapshot"]>[0],
+    ) {
+      return run.items.map(({ id }): PolicyItem => ({ id, status: "not run" }));
+    }
   }
   const server = createApp(undefined, { cache, policy: new DeferredPolicy() }).listen(0, "127.0.0.1");
   await once(server, "listening");
@@ -78,7 +89,10 @@ test("refresh resumes the owning session's policy job and duplicate starts don't
 
   await t.test("saved policy picker and load read compatible snapshots without starting an agent", async (t) => {
     const cache = new Cache();
-    const saved = (await cache.list()).find((run) => run.status === "completed");
+    const current = await dataset();
+    const saved = (await cache.list()).find(
+      (run) => run.status === "completed" && run.datasetHash === current.datasetHash,
+    );
     assert.ok(saved);
     const completedAt = new Date().toISOString();
     let snapshots = 0;
@@ -143,7 +157,8 @@ test("refresh resumes the owning session's policy job and duplicate starts don't
   }
   const { sessionId } = await (await request("session", "", {})).json();
   assert.equal((await request("cache/load", sessionId, { runId: saved.id })).status, 200);
-  assert.equal((await request("policy/batch", sessionId, { mode: "ungrounded", live: true })).status, 202);
+  const started = await request("policy/batch", sessionId, { mode: "ungrounded", live: true });
+  assert.equal(started.status, 202, await started.text());
   const resumed = await (await request("session", sessionId, {})).json();
   assert.equal(resumed.sessionId, sessionId);
   assert.equal(resumed.runId, saved.id);
