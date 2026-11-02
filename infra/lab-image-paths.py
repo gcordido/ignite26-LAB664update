@@ -2,6 +2,7 @@
 
 import argparse
 from pathlib import Path
+import re
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -38,9 +39,22 @@ def convert_images(content, mode):
     for vm_name, local_name in IMAGE_MAP.items():
         vm = f"!IMAGE[{vm_name}]({VM_FOLDER}/{vm_name})".encode("ascii")
         local = f"![{vm_name}](../img/{local_name})".encode("ascii")
-        source, target = (vm, local) if mode == "local" else (local, vm)
-        count += content.count(source)
-        content = content.replace(source, target)
+        preview = (
+            b'<br data-lab-image-paths="before">'
+            + local
+            + b'<br data-lab-image-paths="after">'
+        )
+        target = preview if mode == "local" else vm
+
+        def replace_reference(match):
+            nonlocal count
+            if match[0] != target:
+                count += 1
+            return target
+
+        # Match the entire preview first so repeated runs don't nest line breaks.
+        pattern = b"|".join(re.escape(reference) for reference in (preview, vm, local))
+        content = re.sub(pattern, replace_reference, content)
     return content, count
 
 
@@ -60,8 +74,9 @@ def main():
         if args.mode == "local":
             for vm_name, local_name in IMAGE_MAP.items():
                 reference = f"!IMAGE[{vm_name}]({VM_FOLDER}/{vm_name})".encode("ascii")
+                local = f"![{vm_name}](../img/{local_name})".encode("ascii")
                 image = ROOT / "img" / local_name
-                if reference in original and not image.is_file():
+                if (reference in original or local in original) and not image.is_file():
                     raise FileNotFoundError(f"Local image not found: {image}")
         if updated != original:
             lab.write_bytes(updated)

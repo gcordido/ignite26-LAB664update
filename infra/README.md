@@ -10,7 +10,7 @@ Use this folder for deployment or runtime infrastructure, including Skillable-sp
 `instructions\lab.md` to the matching screenshots under `img`. It uses only
 Python's standard library; no packages or setup are required.
 
-From the repository root, switch to standard Markdown images for local editing:
+From the repository root, switch to Markdown images for local editing:
 
 ```powershell
 python .\infra\lab-image-paths.py local
@@ -22,11 +22,18 @@ Before committing, restore the original VM paths and `!IMAGE[...]` syntax:
 python .\infra\lab-image-paths.py vm
 ```
 
-Only the mapped image references change. Other instruction edits, encoding and
-line endings are preserved. Repeating either command is safe. The guide is
-located relative to the script, so the script also works from another directory.
-The filename mapping is recorded in `IMAGE_MAP` in the script; images themselves
-are not modified.
+Local mode adds marked HTML `<br>` tags around each image so it appears below
+the preceding text, including inside numbered lists and tip callouts. VM mode
+removes those exact tags along with restoring the original image references.
+Keep the generated image markup intact while editing the surrounding instructions.
+Local previews must support inline HTML, as GitHub and VS Code previews do.
+
+Only the mapped image markup changes. Other instruction edits, whitespace,
+encoding and line endings are preserved. Repeating either command is safe.
+Running `local` again also upgrades images converted by the earlier, paths-only
+script. The guide is located relative to the script, so the script also works
+from another directory. The filename mapping is recorded in `IMAGE_MAP` in the
+script; images themselves are not modified.
 
 ## Workbench setup and launch
 
