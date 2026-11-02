@@ -4,6 +4,30 @@
 
 Use this folder for deployment or runtime infrastructure, including Skillable-specific files when needed.
 
+## Preview lab images locally
+
+[`lab-image-paths.py`](lab-image-paths.py) maps all 22 VM image references in
+`instructions\lab.md` to the matching screenshots under `img`. It uses only
+Python's standard library; no packages or setup are required.
+
+From the repository root, switch to standard Markdown images for local editing:
+
+```powershell
+python .\infra\lab-image-paths.py local
+```
+
+Before committing, restore the original VM paths and `!IMAGE[...]` syntax:
+
+```powershell
+python .\infra\lab-image-paths.py vm
+```
+
+Only the mapped image references change. Other instruction edits, encoding and
+line endings are preserved. Repeating either command is safe. The guide is
+located relative to the script, so the script also works from another directory.
+The filename mapping is recorded in `IMAGE_MAP` in the script; images themselves
+are not modified.
+
 ## Workbench setup and launch
 
 - [`setup.ps1`](setup.ps1) installs the existing workbench runtime requirements
