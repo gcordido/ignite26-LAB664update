@@ -54,17 +54,16 @@ packets, their per-check questions and relevant CU inputs, CU claim fields,
 and public resource configuration. It contains no
 credentials and isn't policy knowledge or a set of scripted runtime answers.
 The results are available on first launch without Azure configuration,
-credentials or a restore script. In **Check policies**, select **FoundryIQ**,
-then **Load cached results** to load the included **10/10** CU run and all
-**50** saved policy checks. **Parse and extract** > **Load cached results**
-also loads the included extraction results independently.
+credentials or a restore script. The app automatically loads saved CU results
+from `results` and all **50** saved policy checks from `policy-demo`.
 
 The refreshed bundle uses CU run
 `76d80507-e191-4354-81f1-dbfe4fa412f9` and records the Search-managed **Standard**
-index used for these agent reviews. Its extraction manifest and ten native CU
-responses are already tracked under `results/76d80507-e191-4354-81f1-dbfe4fa412f9`.
-Keep that run and the complete `policy-demo` folder together when transferring
-the repository. No machine-local `.tools` configuration, credentials or Azure
+index used for these agent reviews. Its original extraction manifest and ten
+native CU responses are included under
+`policy-demo/source/76d80507-e191-4354-81f1-dbfe4fa412f9` for evidence links and
+follow-up chat. Transfer the complete `policy-demo` folder together. No
+machine-local `.tools` configuration, credentials or Azure
 deployment is required to view them. Follow-up chat still requires live setup.
 
 The app validates bundle hashes, claim inputs and citations before loading.

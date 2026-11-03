@@ -1,0 +1,1993 @@
+{
+  "id": "3c9ecf2e-21d9-458e-83e9-ef45adb976f4",
+  "status": "Succeeded",
+  "result": {
+    "analyzerId": "lab664_cache_20261103_195602_router",
+    "apiVersion": "2026-06-01-preview",
+    "createdAt": "2026-11-03T19:58:00Z",
+    "stringEncoding": "codePoint",
+    "warnings": [],
+    "infos": [
+      {
+        "code": "LLMStats",
+        "message": "completion calls: 6; avg completion latency: 4.53s; total completion latency: 27.16s"
+      }
+    ],
+    "contents": [
+      {
+        "path": "input1",
+        "markdown": "![Delta Road Network ROADSIDE ASSISTANCE MEMBERSHIP](figures/1.1)\n\n\n![](figures/1.2)\n\n\nMEMBER NAME\nPriya Raman\n\nMEMBERSHIP NUMBER\nMR-203323\n\nVALID FROM\n04/10/2025\n\nVALID THROUGH\n04/10/2026\n\n\n![](figures/1.3)\n\n\nEMERGENCY ASSISTANCE\nPriority roadside help for covered\nbreakdowns and emergencies.\n\n\n![](figures/1.4)\n\n\n![+](figures/1.5)\n\n\n![](figures/1.6)\n\n\nMEMBERSHIP BENEFITS\nTowing, battery boost, lockout service,\ntire change, and more.\n\n\n![](figures/1.7)\n\n\n![](figures/1.8)\n\n\nMEMBER REFERENCE\n\n\n![Priya Raman](signatures/1.1)\n\n\n<!-- PageBreak -->\n\n<!-- PageHeader: Cypress Delta Assurance 491 Civic Lane Cypress Parish, LA 70123 (504) 555-0127 -->\n<!-- PageHeader: ![Cypress Delta Assurance](figures/2.1) -->\n\nPOLICY NUMBER\nCDA-A9636901\n\n\n# POLICY DECLARATIONS\n\nNAMED INSURED\n\nPriya Raman\n397 Linden Terrace\nCypress Parish, LA 70123\n(504) 555-0107\npriya.raman@example.com\n\nPOLICY PERIOD\n\nAGENCY\n\nEffective:\n06/09/2025\n\nExpiration:\n06/09/2026\n\nISSUE DATE\n\n05/26/2025\n\nCypress Delta Assurance\n491 Civic Lane\nCypress Parish, LA 70123\n(504) 555-0127\n\n\n## VEHICLE INFORMATION\n\n\n<table>\n<tr>\n<td>YEAR / MAKE / MODEL 2020 Volkswagen Jetta S</td>\n<td>COLOR Black</td>\n<td>VEHICLE IDENTIFICATION NUMBER (VIN) 3VWC57BU3LA515467</td>\n<td>REGISTRATION NUMBER LA32831</td>\n</tr>\n<tr>\n<td>USE Personal / commute</td>\n<td>ANNUAL MILEAGE 19,500</td>\n<td>ASSET REFERENCE LA-78202</td>\n<td>LIENHOLDER None</td>\n</tr>\n</table>\n\n\n<table>\n<tr>\n<th rowspan=\"3\">GRP.</th>\n<th rowspan=\"3\">COVERAGE</th>\n<th rowspan=\"3\">COVERAGE LIMITS / DESCRIPTION</th>\n<th colspan=\"2\">DEDUCTIBLE</th>\n<th colspan=\"2\">PREMIUM</th>\n</tr>\n<tr>\n<th colspan=\"2\">APPLIES TO</th>\n<th rowspan=\"2\">ANNUAL PREMIUM</th>\n<th rowspan=\"2\">TAXES &amp; SURCHARGES (ADDITIONAL)</th>\n</tr>\n<tr>\n<th>SPECIFIED PER OCCURRENCE</th>\n<th>ALL OTHER PER OCCURRENCE</th>\n</tr>\n<tr>\n<td>1</td>\n<td>Liability</td>\n<td>$100,000/person $300,000/accident $100,000 property</td>\n<td>-</td>\n<td>-</td>\n<td>668.00</td>\n<td>Additional</td>\n</tr>\n<tr>\n<td>2</td>\n<td>Collision</td>\n<td>Actual Cash Value</td>\n<td>Refer applicable policy form</td>\n<td>-</td>\n<td>870.00</td>\n<td>Additional</td>\n</tr>\n<tr>\n<td>3</td>\n<td>Comprehensive</td>\n<td>Actual Cash Value Includes glass</td>\n<td>500.00</td>\n<td>-</td>\n<td>450.00</td>\n<td>Additional</td>\n</tr>\n<tr>\n<td>4</td>\n<td>Rental reimbursement</td>\n<td>$85/day base charge, maximum 30 days; mandatory taxes/ surcharges additional</td>\n<td>N/A</td>\n<td>-</td>\n<td>73.00</td>\n<td>Additional</td>\n</tr>\n</table>\n\n\n## ADDITIONAL POLICY INFORMATION\n\nGlass Rule: No special glass waiver.\n\n\n<table>\n<tr>\n<th>POLICY PREMIUM SUMMARY</th>\n<th>AMOUNT</th>\n</tr>\n<tr>\n<td>Total Annual Premium (excluding taxes and surcharges)</td>\n<td>2,061.00</td>\n</tr>\n<tr>\n<td>TOTAL ANNUAL BILLED PREMIUM</td>\n<td>2,061.00</td>\n</tr>\n</table>\n\n\nPremiums are shown in U.S. dollars.\nPlease refer to your policy for terms, conditions, exclusions, and additional coverages.\n\n<!-- PageFooter: CDA-A9636901 -->\n<!-- PageNumber: Page 1 of 2 -->\n<!-- PageBreak -->\n\n<!-- PageHeader: ![CYPRESS DELTA ASSURANCE](figures/3.1) -->\n<!-- PageHeader: AUTO INSURANCE POLICY -->\n<!-- PageHeader: Policy No. CDA-A9636901 -->\n<!-- PageNumber: Page 2 of 2 -->\n\n\n## 4. VEHICLE INFORMATION\n\n\n<table>\n<tr>\n<th>Vehicle Description</th>\n<th>2020 Volkswagen Jetta S</th>\n<th>Color</th>\n<th>Black</th>\n</tr>\n<tr>\n<td>VIN</td>\n<td>3VWC57BU3LA515467</td>\n<td>Registration No.</td>\n<td>LA32831</td>\n</tr>\n<tr>\n<td>Asset Reference</td>\n<td>LA-78202</td>\n<td>Use</td>\n<td>Personal / commute</td>\n</tr>\n<tr>\n<td>Annual Mileage</td>\n<td>19,500</td>\n<td>Lienholder</td>\n<td>None</td>\n</tr>\n</table>\n\n\n## 5. COVERAGES (CONTINUED)\n\n\n<table>\n<tr>\n<th>Coverage</th>\n<th>Limits / Description</th>\n<th>Deductible</th>\n<th>Form Reference</th>\n</tr>\n<tr>\n<td>Liability</td>\n<td>$100,000 per person $300,000 per accident $100,000 property damage</td>\n<td>N/A</td>\n<td>Applicable Policy Form</td>\n</tr>\n<tr>\n<td>Comprehensive</td>\n<td>Actual cash value</td>\n<td>$500</td>\n<td>Applicable Policy Form</td>\n</tr>\n<tr>\n<td>Collision</td>\n<td>Actual cash value</td>\n<td>Refer to Applicable Policy Form</td>\n<td>Applicable Policy Form</td>\n</tr>\n<tr>\n<td>Rental Reimbursement</td>\n<td>$85/day base charge, maximum 30 days; mandatory taxes/surcharges additional</td>\n<td>N/A</td>\n<td>Applicable Policy Form</td>\n</tr>\n<tr>\n<td>Glass Repair</td>\n<td>No special glass waiver</td>\n<td>N/A</td>\n<td>Applicable Policy Form</td>\n</tr>\n</table>\n\n\n## 6. PREMIUM SCHEDULE\n\n\n<table>\n<tr>\n<th>Coverage</th>\n<th>Annual Premium</th>\n</tr>\n<tr>\n<td>Liability</td>\n<td>$668.00</td>\n</tr>\n<tr>\n<td>Collision</td>\n<td>$870.00</td>\n</tr>\n<tr>\n<td>Comprehensive</td>\n<td>$450.00</td>\n</tr>\n<tr>\n<td>Rental Reimbursement</td>\n<td>$73.00</td>\n</tr>\n<tr>\n<td>Total Annual Premium</td>\n<td>$2,061.00</td>\n</tr>\n</table>\n\n\n## 7. POLICY TERM & BILLING\n\n\n<table>\n<tr>\n<td>Policy Issued</td>\n<td>2025-05-26</td>\n</tr>\n<tr>\n<td>Policy Period</td>\n<td>2025-06-09 to 2026-06-09</td>\n</tr>\n<tr>\n<td>Premium</td>\n<td>$2,061.00</td>\n</tr>\n<tr>\n<td>Billing Method</td>\n<td>Annual billed premium</td>\n</tr>\n</table>\n\n\n## 8. CLAIM REPORTING\n\n\n![](figures/3.2)\n\n\nTo report a claim, contact Cypress Delta Assurance:\n(504) 555-0127 | 491 Civic Lane, Cypress Parish, LA 70123\nReport all claims as soon as possible. Have your policy number available when you call.\n\n\n## 9. CONDITIONS\n\n1\\. Promptly report any claim or potential claim to the company.\n\n2\\. This policy is subject to all terms, conditions, and exclusions of the applicable policy forms and endorsements.\n\n3\\. No person shall make any payment, assume any obligation, or incur any expense on behalf of the company without our\nprior written authorization.\n\n<!-- PageFooter: Cypress Delta Assurance 491 Civic Lane, Cypress Parish, LA 70123 | (504) 555-0127 -->\n<!-- PageFooter: Policy No. CDA-A9636901 -->\n<!-- PageBreak -->\n\n]\n\n\n![Cypress Delta Assurance](figures/4.1)\n\n\n# CLAIM INTAKE FORM\n\n\n<table>\n<tr>\n<td>Claim Number:</td>\n<td>CDA-25-239878</td>\n</tr>\n<tr>\n<td>Policy Number:</td>\n<td>CDA-A9636901</td>\n</tr>\n<tr>\n<td>Intake Date:</td>\n<td>11/07/2025</td>\n</tr>\n</table>\n\n\n## INSURED INFORMATION\n\n\n<table>\n<tr>\n<td>Name:</td>\n<td>Priya Raman</td>\n</tr>\n<tr>\n<td>Address:</td>\n<td>397 Linden Terrace Cypress Parish, LA 70123</td>\n</tr>\n<tr>\n<td>Phone:</td>\n<td>(504) 555-0107</td>\n</tr>\n</table>\n\n\nINSURER / CLAIMS CONTACT\nCypress Delta Assurance\n491 Civic Lane\nCypress Parish, LA 70123\n(504) 555-0127\nAdjuster:\nLena Duval\n\n\n## VEHICLE INFORMATION\n\n\n<table>\n<tr>\n<td>Vehicle:</td>\n<td>2020 Volkswagen Jetta S</td>\n</tr>\n<tr>\n<td>Color:</td>\n<td>Black</td>\n</tr>\n<tr>\n<td>VIN:</td>\n<td>3VWC57BU3LA515467</td>\n</tr>\n<tr>\n<td>Registration:</td>\n<td>LA32831</td>\n</tr>\n<tr>\n<td>Use:</td>\n<td>Personal / commute</td>\n</tr>\n<tr>\n<td>Odometer:</td>\n<td>Pending verification</td>\n</tr>\n</table>\n\n\n### INCIDENT DETAILS\n\nDate of Loss:\n11/06/2025\n\nTime of Loss:\n05:40 discovery\n\nLocation:\nCypress Court residential parking,\nCypress Parish, LA 70123\n\n\n## COVERAGE REFERENCE\n\n\n<table>\n<tr>\n<td>Coverage(s):</td>\n<td>Comprehensive</td>\n</tr>\n<tr>\n<td>Applicable Deductible:</td>\n<td>$500.00</td>\n</tr>\n<tr>\n<td>Liability Determination:</td>\n<td>Not determined</td>\n</tr>\n</table>\n\n\n## DESCRIPTION OF INCIDENT AND DAMAGE (INSURED STATEMENT)\n\nPriya found the parked vehicle with floodwater intrusion after overnight inundation. Wet carpeting and\nelectrical faults were recorded. The vehicle was not operated and was transported for assessment.\nRepair economics and a proposed total-loss value remain under review; no payment is authorized.\n\nObserved damage: Water intrusion to floor and lower dash; electrical-module, harness and interior\ncontamination damage.\n\nWas the vehicle drivable\nafter the incident?\n\n☐\nYes\n\n☒\nNo\n\nAny injuries?\n\n☒\nNone reported\n\n☐\nYes (see notes)\n\nOther driver / vehicle\ninvolved?\n\n☒\nNot applicable\n\n☐\nYes (see notes)\n\nPolice attendance?\n\n☐\nYes\n\n☒\nNo\n\n\n### PENDING ASSESSMENT SUMMARY\n\n\n<table>\n<tr>\n<th>Item</th>\n<th>Status</th>\n<th>Notes</th>\n</tr>\n<tr>\n<td>Vehicle Inspection</td>\n<td>Pending</td>\n<td>Awaiting inspection and documentation.</td>\n</tr>\n<tr>\n<td>Repair Cost Estimate</td>\n<td>Pending</td>\n<td>Not available at intake.</td>\n</tr>\n<tr>\n<td>Repair Economics</td>\n<td>Pending</td>\n<td>Under review.</td>\n</tr>\n<tr>\n<td>Total-Loss Review</td>\n<td>Pending</td>\n<td>Proposed value under review.</td>\n</tr>\n<tr>\n<td>Rental / Loss of Use</td>\n<td>Pending</td>\n<td>To be evaluated.</td>\n</tr>\n<tr>\n<td>Salvage / Disposition</td>\n<td>Pending</td>\n<td>Not determined.</td>\n</tr>\n<tr>\n<td>Payment Authorization</td>\n<td>Pending</td>\n<td>No payment authorized.</td>\n</tr>\n</table>\n\n\n### ACKNOWLEDGMENT\n\nI understand that the information above is based on my report of the loss and is subject to verification.\nThis is not a determination of coverage or liability. No payment has been authorized.\n\nInsured Signature\n\nPrinted Name\n\nDate\n\n<!-- PageFooter: CDA-INTAKE 01 (11/2024) -->\n<!-- PageNumber: Page 1 of 2 -->\n<!-- PageBreak -->\n\n<!-- PageHeader: ![CYPRESS DELTA ASSURANCE](figures/5.1) -->\n<!-- PageHeader: Claim: CDA-25-239878 -->\n<!-- PageHeader: Policy: CDA-A9636901 -->\n\n\n## POST-INSPECTION CLAIM ASSESSMENT SUPPLEMENT\n\nInitial intake date\n\n11/07/2025\n\nSupplement / inspection date\n\n11/09/2025\n\nINSURED\nPriya Raman\n397 Linden Terrace\nCypress Parish, LA 70123\n(504) 555-0107\npriya.raman@example.com\n\n\n### VEHICLE\n\n2020 Volkswagen Jetta S\n\nColor: Black\nVIN: 3VWC57BU3LA515467\n\nRegistration: LA32831\nUse: Personal / commute\n\nInspection mileage: 89,725\n\n\n## LOSS SUMMARY\n\nDate of loss: 11/06/2025\n\nTime: 05:40 discovery\n\nLocation: Cypress Court residential parking,\nCypress Parish, LA 70123\n\nNarrative: Priya found the parked vehicle with floodwater\nintrusion after overnight inundation. Wet carpeting and\nelectrical faults were recorded. The vehicle was not operated\nand was transported for assessment. Repair economics and a\nproposed total-loss value remain under review; no payment\nis authorized.\n\nDamage:\nWater intrusion to floor and lower dash;\nelectrical-module, harness and interior contamination damage.\n\nDrivable: No\n\nInjuries: None reported\n\nOther driver: Not applicable\n\nLiability: Not determined\n\n\n## ASSESSMENT DETAILS\n\nCondition notes:\n\nTransported for assessment; water intrusion to floor and\nlower dash; electrical module, harness and interior\ncontamination damage; vehicle not operated after discovery.\n\n\n## ASSESSMENT PROVIDER\n\nRivergate Vehicle Assessment\n209 Works Road\nCypress Parish, LA 70123\n(504) 555-0147\nInspector: Anton Reed\n\nInspection date: 11/09/2025\n\n\n<table>\n<tr>\n<th>SYSTEM</th>\n<th>FINDING</th>\n<th>REVIEW STATUS</th>\n</tr>\n<tr>\n<td>Electrical systems</td>\n<td>Water exposure</td>\n<td>Under review</td>\n</tr>\n<tr>\n<td>Interior</td>\n<td>Contamination</td>\n<td>Under review</td>\n</tr>\n<tr>\n<td>Harness</td>\n<td>Water exposure</td>\n<td>Under review</td>\n</tr>\n<tr>\n<td>Powertrain</td>\n<td>Diagnostic assessment</td>\n<td>Pending</td>\n</tr>\n</table>\n\n\n<table>\n<tr>\n<td colspan=\"2\">PROVISIONAL REPAIR ECONOMICS</td>\n</tr>\n<tr>\n<td>Quote reference:</td>\n<td>Q-LA-97023</td>\n</tr>\n<tr>\n<td>Gross estimate:</td>\n<td>$13,219.35</td>\n</tr>\n<tr>\n<td>Applicable comprehensive deductible:</td>\n<td>$500.00</td>\n</tr>\n<tr>\n<td>Estimate less deductible:</td>\n<td>$12,719.35</td>\n</tr>\n</table>\n\n\n<table>\n<tr>\n<td>TOTAL-LOSS REVIEW</td>\n<td>☒ Pending</td>\n<td>☐ Complete</td>\n</tr>\n<tr>\n<td>REPAIRS AUTHORIZED</td>\n<td>☐ Authorized</td>\n<td>☒ Not authorized</td>\n</tr>\n<tr>\n<td>SETTLEMENT STATUS</td>\n<td>☐ Paid</td>\n<td>☒ Pending</td>\n</tr>\n</table>\n\n\n### BUSINESS NOTE\n\nCoverage and valuation review open; no payment authorized.\n\n<!-- PageFooter: Cypress Delta Assurance -->\n<!-- PageFooter: . 491 Civic Lane, Cypress Parish, LA 70123 . (504) 555-0127 Adjuster: Lena Duval -->\n<!-- PageNumber: Page 2 of 2 -->\n<!-- PageBreak -->\n\n<!-- PageHeader: ![CYPRESS DELTA ASSURANCE](figures/6.1) -->\n\nCypress Delta Assurance\nClaims Desk\n491 Civic Lane\nCypress Parish, LA 70123\nTelephone: (504) 555-0127\n\n\n## CUSTOMER INCIDENT MEMORANDUM\n\n\n### INCIDENT REFERENCE\n\n\n<table>\n<tr>\n<td>Report/Reference No.:</td>\n<td>LA-2025-86874</td>\n</tr>\n<tr>\n<td>Date of Report:</td>\n<td>11/07/2025</td>\n</tr>\n<tr>\n<td>Claim No.:</td>\n<td>CDA-25-239878</td>\n</tr>\n<tr>\n<td>Policy No.:</td>\n<td>CDA-A9636901</td>\n</tr>\n</table>\n\n\n### INSURED\n\n\n<table>\n<tr>\n<td>Name:</td>\n<td>Priya Raman</td>\n</tr>\n<tr>\n<td>Address:</td>\n<td>397 Linden Terrace Cypress Parish, LA 70123</td>\n</tr>\n<tr>\n<td>Phone:</td>\n<td>(504) 555-0107</td>\n</tr>\n<tr>\n<td>Email:</td>\n<td>priya.raman@example.com</td>\n</tr>\n</table>\n\n\n### VEHICLE INFORMATION\n\n\n<table>\n<tr>\n<td>Year / Make / Model:</td>\n<td>2020 Volkswagen Jetta S</td>\n</tr>\n<tr>\n<td>Color:</td>\n<td>Black</td>\n</tr>\n<tr>\n<td>VIN:</td>\n<td>3VWC57BU3LA515467</td>\n</tr>\n<tr>\n<td>Registration No.:</td>\n<td>LA32831</td>\n</tr>\n<tr>\n<td>Primary Use:</td>\n<td>Personal / commute</td>\n</tr>\n</table>\n\n\n### LOSS DETAILS\n\n\n<table>\n<tr>\n<td>Date of Loss:</td>\n<td>11/06/2025</td>\n</tr>\n<tr>\n<td>Time of Loss:</td>\n<td>05:40 discovery</td>\n</tr>\n<tr>\n<td>Location of Loss:</td>\n<td>Cypress Court residential parking, Cypress Parish, LA 70123</td>\n</tr>\n<tr>\n<td>Drivable:</td>\n<td>No</td>\n</tr>\n</table>\n\n\n### CUSTOMER NARRATIVE\n\nPriya found the parked vehicle with floodwater intrusion after overnight inundation. Wet carpeting and electrical\nfaults were recorded. The vehicle was not operated and was transported for assessment. Repair economics and a\nproposed total-loss value remain under review; no payment is authorized.\n\n\n### DAMAGE DESCRIPTION\n\nWater intrusion to floor and lower dash; electrical-module, harness and interior contamination damage.\n\n\n### INCIDENT DETAILS\n\n☐\nPolice Attended\n\n☒\nNo Police Attended\n\n\n<table>\n<tr>\n<td>Agency:</td>\n<td>Cypress Delta Assurance Claims Desk</td>\n</tr>\n<tr>\n<td>Officer:</td>\n<td>Not applicable</td>\n</tr>\n<tr>\n<td>Reference / Report No.:</td>\n<td>LA-2025-86874</td>\n</tr>\n<tr>\n<td>Recovered By:</td>\n<td>Not applicable</td>\n</tr>\n<tr>\n<td>Recovered On:</td>\n<td>Not applicable</td>\n</tr>\n</table>\n\n\n<table>\n<tr>\n<td>Injuries:</td>\n<td>None reported</td>\n</tr>\n<tr>\n<td>Other Driver:</td>\n<td>Not applicable</td>\n</tr>\n<tr>\n<td>Liability:</td>\n<td>Not determined</td>\n</tr>\n<tr>\n<td>Vehicle Transport:</td>\n<td>Transported for assessment</td>\n</tr>\n<tr>\n<td>Transport Date:</td>\n<td>11/06/2025</td>\n</tr>\n<tr>\n<td>Storage Location:</td>\n<td>TBD</td>\n</tr>\n</table>\n\n\n### ADDITIONAL NOTES\n\nCustomer reported overnight neighborhood flooding affecting the parking area.\n\n\n### ACKNOWLEDGMENT\n\nThis memorandum reflects the information provided by the reporting customer and any observations made at the time of\nintake. It does not constitute a coverage determination or acceptance of liability.\n\n\n<table>\n<tr>\n<td>Report taken by:</td>\n<td>Lena Duval, Claims Adjuster</td>\n</tr>\n<tr>\n<td>Department:</td>\n<td>Claims Desk</td>\n</tr>\n<tr>\n<td>Date:</td>\n<td>11/07/2025</td>\n</tr>\n<tr>\n<td>Time:</td>\n<td>10:15</td>\n</tr>\n</table>\n\n\nContact Phone:\n(504) 555-0127\n\n<!-- PageFooter: Cypress Delta Assurance -->\n<!-- PageFooter: LA-2025-86874 / CDA-25-239878 -->\n<!-- PageNumber: Page 1 of 1 -->\n<!-- PageBreak -->\n\n\n![<!-- PageHeader: RIVERGATE VEHICLE ASSESSMENT -->\n](figures/7.1)\n\n\n## PROVISIONAL REPAIR-ECONOMICS ESTIMATE\n\nQuote Reference:\n\nQ-LA-97023\n\n\n<table>\n<tr>\n<td>Claim Reference:</td>\n<td>CDA-25-239878</td>\n</tr>\n<tr>\n<td>Policy Reference:</td>\n<td>CDA-A9636901</td>\n</tr>\n<tr>\n<td>Inspection Date:</td>\n<td>11/09/2025</td>\n</tr>\n<tr>\n<td>Inspected By:</td>\n<td>Anton Reed</td>\n</tr>\n</table>\n\n\nINSURER\n\nCypress Delta Assurance\n491 Civic Lane\nCypress Parish, LA 70123\nPhone: (504) 555-0127\nAdjuster: Lena Duval\n\n\n## CUSTOMER\n\nPriya Raman\n397 Linden Terrace\nCypress Parish, LA 70123\nPhone: (504) 555-0107\nEmail: priya.raman@example.com\n\n\n## VEHICLE\n\n2020 Volkswagen Jetta S\nColor: Black\nVIN: 3VWC57BU3LA515467\nRegistration: LA32831\nUse: Personal / commute\nOdometer: 89,725\n\n\n## REPAIRER\n\nRivergate Vehicle Assessment\n209 Works Road\nCypress Parish, LA 70123\nPhone: (504) 555-0147\nInspector: Anton Reed\n\n\n<table>\n<tr>\n<th rowspan=\"2\">Line</th>\n<th rowspan=\"2\">Description</th>\n<th rowspan=\"2\">Qty</th>\n<th rowspan=\"2\">Hours</th>\n<th colspan=\"3\">Amount</th>\n</tr>\n<tr>\n<th>Parts</th>\n<th>Labor</th>\n<th>Line Total</th>\n</tr>\n<tr>\n<td>1</td>\n<td>Electrical module replacements - provisional</td>\n<td>1</td>\n<td>5.2</td>\n<td>3,780.00</td>\n<td>608.40</td>\n<td>4,388.40</td>\n</tr>\n<tr>\n<td>2</td>\n<td>Harness replacement - provisional</td>\n<td>1</td>\n<td>6.8</td>\n<td>2,240.00</td>\n<td>795.60</td>\n<td>3,035.60</td>\n</tr>\n<tr>\n<td>3</td>\n<td>Interior decontamination and trim</td>\n<td>1</td>\n<td>8.4</td>\n<td>1,560.00</td>\n<td>982.80</td>\n<td>2,542.80</td>\n</tr>\n<tr>\n<td colspan=\"6\">Page-one carry-forward subtotal</td>\n<td>9,966.80</td>\n</tr>\n</table>\n\n\n<table>\n<tr>\n<td colspan=\"2\">ESTIMATE PARAMETERS</td>\n</tr>\n<tr>\n<td>☐ Estimate Type:</td>\n<td>Provisional repair economics</td>\n</tr>\n<tr>\n<td>☐ Labor Rate:</td>\n<td>$117.00 / hour</td>\n</tr>\n<tr>\n<td>☐ Parts Pricing:</td>\n<td>OEM / dealer</td>\n</tr>\n<tr>\n<td>☐ Figures Include:</td>\n<td>Parts, labor, and applicable allowances</td>\n</tr>\n<tr>\n<td>☐ Tax:</td>\n<td>Not included</td>\n</tr>\n<tr>\n<td>☐ Supplements:</td>\n<td>To be issued if additional damage found</td>\n</tr>\n</table>\n\n\n## OPERATIONAL CHECKLIST\n\n☐\nPreliminary photo documentation\n\n☐\nVisual inspection completed\n\n☐\nElectronic systems scan performed\n\n☐\nManuals and service bulletins reviewed\n\n☐\nDamage causal analysis\n\n☐\nSafety and ADAS items noted\n\n☐\nTeardown beyond visual not completed\n\n\n<table>\n<tr>\n<td colspan=\"2\">STATUS SUMMARY</td>\n</tr>\n<tr>\n<td>Repair Authorization</td>\n<td>Not authorized</td>\n</tr>\n<tr>\n<td>Total-Loss Assessment</td>\n<td>Pending</td>\n</tr>\n<tr>\n<td>Scheduling Status</td>\n<td>Pending</td>\n</tr>\n</table>\n\n\n<!-- PageFooter: Continued operations and combined totals on page 2. -->\n<!-- PageNumber: Page 1 of 2 -->\n<!-- PageBreak -->\n\nRivergate Vehicle Assessment\n209 Works Road\nCypress Parish, LA 70123\n(504) 555-0147\n\n\n<table>\n<tr>\n<td>Quote No.:</td>\n<td>Q-LA-97023</td>\n</tr>\n<tr>\n<td>Claim No.:</td>\n<td>CDA-25-239878</td>\n</tr>\n<tr>\n<td>Policy No.:</td>\n<td>CDA-A9636901</td>\n</tr>\n<tr>\n<td>Inspection Date:</td>\n<td>11/09/2025</td>\n</tr>\n<tr>\n<td>Inspector:</td>\n<td>Anton Reed</td>\n</tr>\n</table>\n\n\n## Customer\n\nPriya Raman\n397 Linden Terrace\nCypress Parish, LA 70123\n(504) 555-0107\npriya.raman@example.com\n\n\n## Vehicle\n\n2020 Volkswagen Jetta S\nBlack\nVIN: 3VWC57BU3LA515467\nRegistration: LA32831\nUse: Personal / commute\nOdometer: 89,725\n\n\n## Insurer\n\nCypress Delta Assurance\n491 Civic Lane\nCypress Parish, LA 70123\n(504) 555-0127\nAdjuster: Lena Duval\n\n\n<table>\n<tr>\n<th>Operation</th>\n<th>Qty</th>\n<th>Parts</th>\n<th>Est. Hours</th>\n<th>Labor</th>\n<th>Line Total</th>\n</tr>\n<tr>\n<td>Powertrain flood diagnosis</td>\n<td>1</td>\n<td>850.00</td>\n<td>4.5</td>\n<td>526.50</td>\n<td>1,376.50</td>\n</tr>\n<tr>\n<td>Body cavity clean/dry assessment</td>\n<td>1</td>\n<td>640.00</td>\n<td>3.2</td>\n<td>374.40</td>\n<td>1,014.40</td>\n</tr>\n<tr>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n</tr>\n<tr>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n</tr>\n<tr>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n</tr>\n<tr>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n</tr>\n<tr>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n</tr>\n</table>\n\n\n<table>\n<tr>\n<td>Page-two operations subtotal</td>\n<td>2,390.90</td>\n</tr>\n<tr>\n<td>From page 1 subtotal</td>\n<td>9,966.80</td>\n</tr>\n</table>\n\n\n### Operational Status\n\nNot authorized; total-loss assessment pending.\nScheduling\n\nPending\n\nPayment Authorization\nPending\n\nNote\nFinal repair economics subject to further assessment.\n\n\n<table>\n<tr>\n<td>Estimate Summary</td>\n<td></td>\n</tr>\n<tr>\n<td>Subtotal (pages 1-2)</td>\n<td>12,357.70</td>\n</tr>\n<tr>\n<td>Taxable parts (pages 1-2)</td>\n<td>9,070.00</td>\n</tr>\n<tr>\n<td>Tax on parts<br>9.50%</td>\n<td>861.65</td>\n</tr>\n<tr>\n<td>Gross provisional estimate</td>\n<td>13,219.35</td>\n</tr>\n<tr>\n<td>Deductible</td>\n<td>500.00</td>\n</tr>\n<tr>\n<td>Estimate less deductible</td>\n<td>12,719.35</td>\n</tr>\n</table>\n\n\n## Labor rate: 117.00 / hour\n\n\n<table>\n<tr>\n<td colspan=\"3\">Operational Checklists</td>\n</tr>\n<tr>\n<th>Preliminary</th>\n<th>Assessment</th>\n<th>Post-Assessment</th>\n</tr>\n<tr>\n<td>☑ Customer interview</td>\n<td>☑ Interior moisture mapping</td>\n<td>☐<br>Estimate review</td>\n</tr>\n<tr>\n<td>☑ Records / history</td>\n<td>☑ Electrical system check</td>\n<td>☐<br>Supplement evaluation</td>\n</tr>\n<tr>\n<td>☑ Photos</td>\n<td>☑ Safety systems check</td>\n<td>☐<br>Total-loss analysis</td>\n</tr>\n<tr>\n<td>☑ Scan for codes</td>\n<td>☑ Mechanical function check</td>\n<td>☐<br>Parts sourcing</td>\n</tr>\n<tr>\n<td>☑<br>Initial teardown</td>\n<td>☑ Diagnostic reporting</td>\n<td>☐ Reassessment if needed</td>\n</tr>\n</table>\n\n\n<!-- PageNumber: Page 2 of 2 -->\n<!-- PageBreak -->\n\n11/07/2025\n\nPriya Raman\n397 Linden Terrace\nCypress Parish, LA 70123\n(504) 555-0107\npriya.raman@example.com\n\nI am writing to provide my account of what happened to\nmy vehicle.\n\nOn the morning of 11/06/2025 around 05:40, I went to my\ncar in the Cypress Court residential parking lot, Cypress Parish,\nLA 70123, and discovered that it was sitting in standing\nfloodwater. There had been heavy rain overnight and the\nparking area clearly flooded.\n\nMy vehicle is a 2020 Volkswagen Jetta S, Black\n(VIN: 3VWC57BU3LA515467), LA license LA32831, used for\npersonal commuting. When I opened the driver's door, water\nwas inside up to the front floorboards. The carpeting was\nsoaked on both the driver and passenger sides and there was\nmoisture around the lower dash and center console.\n\nWhen I turned the key to the accessory position, several\nwarning lights came on (battery, ABS, and traction control).\nBecause of the water and the lights, I decided not to start\nor drive the car.\n\nI took photos and called my insurer to start a claim. My\nclaim number is CDA-25-239878 and my policy number is\nCDA-A9636901 with Cypress Delta Assurance. I scheduled\na tow and had the vehicle transported to the assessment\nfacility the same morning. It has not been operated by me\nsince I discovered it.\n\nFrom what I can see, the damage appears to be water\nintrusion to the floor and lower dash area, including possible\nelectrical-module and harness issues, and interior contamination.\nI understand repair economics and a proposed total-loss value\nare still under review.\n\nI have not had any injuries and no other vehicle was\ninvolved.\n\nPlease let me know if you need any more information\nfrom me.\n\nThank you,\nP.R.\n\n<!-- PageBreak -->\n\n\n![CYPRESS DELTA ASSURANCE](figures/10.1)\n\n\n## Comparable Valuation and Proposed Settlement (Proposal Only)\n\nDate: 11/09/2025\nInspection Review\n\nCLAIM REFERENCE\n\nCDA-25-239878\n\nINSURED\nPriya Raman\n397 Linden Terrace\nCypress Parish, LA 70123\n(504) 555-0107\npriya.raman@example.com\n\n\n### VEHICLE REFERENCE\n\n2020 Volkswagen Jetta S\n\nColor: Black\nVIN: 3VWC57BU3LA515467\nRegistration: LA32831\nUse: Personal / commute\n\n\n### LOSS DETAILS\n\nDate: 2025-11-06\nTime: 05:40 discovery\nLocation: Cypress Court\nresidential parking,\nCypress Parish, LA 70123\nDamage: Water intrusion to\nfloor and lower dash;\nelectrical-module, harness\nand interior contamination\ndamage.\n\nDrivable: No\n\nInjuries: None reported\n\nOther Driver: Not applicable\nLiabittiy: Not determined\n\nINSURER\nCypress Delta Assurance\n491 Civic Lane\nCypress Parish, LA 70123\n(504) 555-0127\nAdjuster: Lena Duval\n\nREPAIRER / INSPECTOR\nRivergate Vehicle Assessment\n209 Works Road\nCypress Parish, LA 70123\n(504) 555-0147\nInspector: Anton Reed\n\nPOLICY REFERENCE\nCDA-A9636901\n\n\n### VEHICLE & INSPECTION SUMMARY\n\n\n<table>\n<tr>\n<td>Vehicle:</td>\n<td>2020 Volkswagen Jetta S</td>\n<td>Color: Black</td>\n</tr>\n<tr>\n<td>VIN:</td>\n<td>3VWC57BU3LA515467</td>\n<td>Registration: LA32831</td>\n</tr>\n<tr>\n<td>Use:</td>\n<td>Personal / commute</td>\n<td></td>\n</tr>\n<tr>\n<td>Inspection Date:</td>\n<td>2025-11-09</td>\n<td>Inspection Mileage: 89,725</td>\n</tr>\n<tr>\n<td>Repair Status:</td>\n<td colspan=\"2\">Not authorized; total-loss assessment pending</td>\n</tr>\n</table>\n\n\nPriya found the parked vehicle with floodwater intrusion after overnight inundation. Wet carpeting\nand electrical faults were recorded. The vehicle was not operated and was transported for\nassessment. Repair economics and a proposed total-loss value remain under review; no payment\nis authorized.\n\n\n### COMPARABLE MARKET ANALYSIS\n\n\n<table>\n<tr>\n<th>Stock Reference</th>\n<th>Vehicle Description / Source</th>\n<th>Odometer (mi.)</th>\n<th>Adjustment Notes</th>\n<th>Adjusted Value</th>\n</tr>\n<tr>\n<td>CP-71</td>\n<td>2020 Volkswagen Jetta S Black Regional listing</td>\n<td>86,210</td>\n<td>+ Clean title; -3,515 miles; + equipment match</td>\n<td>$8,649.00</td>\n</tr>\n<tr>\n<td>CP-72</td>\n<td>2020 Volkswagen Jetta S Black Regional listing</td>\n<td>90,152</td>\n<td>-4,427 miles; average condition</td>\n<td>$8,989.00</td>\n</tr>\n<tr>\n<td>CP-73</td>\n<td>2020 Volkswagen Jetta S Black Regional listing</td>\n<td>94,880</td>\n<td>-9,155 miles; average condition</td>\n<td>$9,329.00</td>\n</tr>\n<tr>\n<td colspan=\"4\">Indicated Actual Cash Value (ACV)</td>\n<td>$8,989.00</td>\n</tr>\n</table>\n\n\n#### ESTIMATED REPAIR QUOTE\n\n\n<table>\n<tr>\n<td>Reference:</td>\n<td>Q-LA-97023</td>\n</tr>\n<tr>\n<td>Total:</td>\n<td>$13,219.35</td>\n</tr>\n<tr>\n<td>Less Deductible Estimate:</td>\n<td>$12,719.35</td>\n</tr>\n</table>\n\n\n<table>\n<tr>\n<td colspan=\"2\">VALUATION SUMMARY (PROPOSAL ONLY)</td>\n</tr>\n<tr>\n<td>Actual Cash Value (ACV):</td>\n<td>$8,989.00</td>\n</tr>\n<tr>\n<td>Less Deductible:</td>\n<td>$500.00</td>\n</tr>\n<tr>\n<td>Proposed Net (ACV less Deductible):</td>\n<td>$8,489.00</td>\n</tr>\n</table>\n\n\nProposal only; applicable taxes/fitle fees pending;\nno payment authorized.\n\nREPAIR COST LEDGER (Q-LA-97023)\n\n\n<table>\n<tr>\n<th>Charge Description</th>\n<th>Amount</th>\n</tr>\n<tr>\n<td>Electrical module replacements - provisional</td>\n<td>$4,388.40</td>\n</tr>\n<tr>\n<td>Harness replacement - provisional</td>\n<td>$3,035.60</td>\n</tr>\n<tr>\n<td>Interior decontamination and trim</td>\n<td>$2,542.80</td>\n</tr>\n<tr>\n<td>Powertrain flood diagnosis</td>\n<td>$1,376.50</td>\n</tr>\n<tr>\n<td>Body cavity clean/dry assessment</td>\n<td>$1,014.40</td>\n</tr>\n<tr>\n<td>Subtotal</td>\n<td>$12,357.70</td>\n</tr>\n<tr>\n<td>Tax on parts</td>\n<td>$861.65</td>\n</tr>\n<tr>\n<td>Total</td>\n<td>$13,219.35</td>\n</tr>\n</table>\n\n\n<table>\n<tr>\n<td colspan=\"2\">TAX COMPONENTS (Q-LA-97023)</td>\n</tr>\n<tr>\n<th>Component</th>\n<th>Amount</th>\n</tr>\n<tr>\n<td>Tax on parts</td>\n<td>$861.65</td>\n</tr>\n<tr>\n<td>Total Tax</td>\n<td>$861.65</td>\n</tr>\n</table>\n\n\n## VALUATION COMMENTARY\n\nThe subject vehicle sustained flood-related intrusion\naffecting interior finishes, electrical systems, and\ncomponentry located below the waterline. Based on\nthe inspection findings and the submitted repair\nestimate, the cost to repair the vehicle exceeds its\nactual cash value.\n\nMarket data from comparable vehicles in the region\nsupports an indicated actual cash value of $8,989.00\nas of the inspection review date. This proposal reflects\na valuation for total loss under the policy terms,\nsubject to confirmation of coverage, title status,\nand any additional due diligence.\n\nThis proposal is not an authorization to repair.\nNo payment is authorized. The settlement amount,\nif approved, will be based on the actual cash value\nat the time of total loss determination less the\napplicable deductible.\n\n<!-- PageNumber: Page 1 of 2 -->\n<!-- PageBreak -->\n\n\n![CYPRESS DELTA ASSURANCE](figures/11.1)\n\n\n<!-- PageHeader: VALUATION | SUMMARY & PROPOSED SETTLEMENT -->\n<!-- PageHeader: Claim: CDA-25-239878 -->\n\nPolicy Reference\nCDA-A9636901\n\nInsured\nPriya Raman\n397 Linden Terrace\nCypress Parish, LA 70123\n(504) 555-0107\npriya.raman@example.com\n\nLoss Details\nDate: 2025-11-06\nTime: 05:40 discovery\nLocation: Cypress Court\nresidential parking,\nCypress Parish, LA 70123\n\nLoss Type\nFlood\n\nVehicle\n2020 Volkswagen Jetta S\nBlack\nVIN: 3VWC57BU3LA515467\nReg: LA32831\nUse: Personal / commute\n\nInspection\n\nDate: 2025-11-09\nMileage: 89,725\nInspector: Anton Reed\nRivergate Vehicle Assessment\n(504) 555-0147\n\nRepair Status\nNot authorized;\ntotal-loss assessment\npending\n\nAdjuster\nLena Duval\n(504) 555-0127\n\nInsurer\nCypress Delta Assurance\n491 Civic Lane\nCypress Parish, LA 70123\n(504) 555-0127\n\n\n## PROPOSAL ONLY; APPLICABLE TAXES/TITLE FEES PENDING; NO PAYMENT AUTHORIZED\n\nThis is a proposed settlement based on information available at the time of this review.\nAuthorization and payment are not issued.\nFinal settlement remains subject to verification of ownership, lienholder requirements,\ntitle status, and receipt of all requested documentation.\n\n\n## Comparable Valuation Summary\n\n\n<table>\n<tr>\n<th>Stock Reference</th>\n<th>Adjusted Value</th>\n</tr>\n<tr>\n<td>CP-71</td>\n<td>8,649.00</td>\n</tr>\n<tr>\n<td>CP-72</td>\n<td>8,989.00</td>\n</tr>\n<tr>\n<td>CP-73</td>\n<td>9,329.00</td>\n</tr>\n<tr>\n<td>Selected Actual Cash Value (ACV)</td>\n<td>8,989.00</td>\n</tr>\n</table>\n\n\n### Settlement Calculation\n\n\n<table>\n<tr>\n<td>Actual Cash Value (ACV)</td>\n<td>8,989.00</td>\n</tr>\n<tr>\n<td>Less: Policy Deductible</td>\n<td>500.00</td>\n</tr>\n<tr>\n<td>Proposed Net Settlement</td>\n<td>8,489.00</td>\n</tr>\n</table>\n\n\nApplicable taxes and title fees are pending and will be addressed during\nfinal settlement processing, if approved.\n\n\n## Repair-Economics Ledger (Q-LA-97023)\n\n\n<table>\n<tr>\n<th>Description</th>\n<th>Amount</th>\n</tr>\n<tr>\n<td>Electrical module replacements - provisional</td>\n<td>4,388.40</td>\n</tr>\n<tr>\n<td>Harness replacement - provisional</td>\n<td>3,035.60</td>\n</tr>\n<tr>\n<td>Interior decontamination and trim</td>\n<td>2,542.80</td>\n</tr>\n<tr>\n<td>Powertrain flood diagnosis</td>\n<td>1,376.50</td>\n</tr>\n<tr>\n<td>Body cavity clean/dry assessment</td>\n<td>1,014.40</td>\n</tr>\n<tr>\n<td>Subtotal</td>\n<td>12,357.70</td>\n</tr>\n<tr>\n<td>Tax on parts</td>\n<td>861.65</td>\n</tr>\n<tr>\n<td>Total Repair Estimate</td>\n<td>13,219.35</td>\n</tr>\n<tr>\n<td>Less: Deductible Estimate</td>\n<td>500.00</td>\n</tr>\n<tr>\n<td>Estimated Repair Cost (less deductible)</td>\n<td>12,719.35</td>\n</tr>\n</table>\n\n\n<table>\n<tr>\n<td colspan=\"2\">Tax Components</td>\n</tr>\n<tr>\n<td>Description</td>\n<td>Amount</td>\n</tr>\n<tr>\n<td>Tax on parts</td>\n<td>861.65</td>\n</tr>\n<tr>\n<td>Total Tax</td>\n<td>861.65</td>\n</tr>\n</table>\n\n\n## PARTIES AT A GLANCE\n\nInsured\nPriya Raman\n397 Linden Terrace\nCypress Parish, LA 70123\n(504) 555-0107\npriya.raman@example.com\n\nRepair-Facility / Inspector\nRivergate Vehicle Assessment\n209 Works Road\nCypress Parish, LA 70123\n(504) 555-0147\nInspector: Anton Reed\n\nInsurer\nCypress Delta Assurance\n491 Civic Lane\nCypress Parish, LA 70123\n(504) 555-0127\nAdjuster: Lena Duval\n\nThis valuation is based on market data and information provided by the insured and third parties.\nFurther review may result in adjustments. No payment is authorized at this time.\n\n<!-- PageFooter: Cypress Delta Assurance -->\n<!-- PageFooter: Claim CDA-25-239878 -->\n<!-- PageNumber: Page 2 of 2 -->\n<!-- PageBreak -->\n\n\n![RIVERGATE VEHICLE ASSESSMENT](figures/12.1)\n\n\n## WORKSHOP DAMAGE INSPECTION SHEET\n\n\n<table>\n<tr>\n<td>Inspection Date:</td>\n<td>11/09/2025</td>\n</tr>\n<tr>\n<td>Claim Reference:</td>\n<td>CDA-25-239878</td>\n</tr>\n</table>\n\n\n<table>\n<tr>\n<td>Insured Name:</td>\n<td>Priya Raman</td>\n</tr>\n<tr>\n<td>Inspection Odometer:</td>\n<td>89,725</td>\n</tr>\n<tr>\n<td>Repair Status:</td>\n<td>Not authorized; total-loss assessment pending</td>\n</tr>\n</table>\n\n\n<table>\n<tr>\n<td>Vehicle:</td>\n<td>2020 Volkswagen Jetta S</td>\n</tr>\n<tr>\n<td>Color:</td>\n<td>Black</td>\n</tr>\n<tr>\n<td>VIN:</td>\n<td>3VWC57BU3LA515467</td>\n</tr>\n</table>\n\n\n<table>\n<tr>\n<td>Registration:</td>\n<td>LA32831</td>\n</tr>\n<tr>\n<td>Use:</td>\n<td>Personal / commute</td>\n</tr>\n</table>\n\n\nOverview of front interior showing water intrusion to floor area and moisture staining.\n\n![](figures/12.2)\n\n\n![](figures/12.3)\n\n\nDetail of driver-side floor area; wet carpeting and\nstanding moisture.\n\n\nLower dash area; water exposure to electrical modules\nand harness connections.\n\n![](figures/12.4)\n\n\nDrivable:\nNo\n\nInspection Notes:\nEvidence of flood\nexposure throughout\ninterior.\n\nWater intrusion to\nfloor pan and lower\ndash areas.\n\nInterior contamination\nobserved.\n\nElectrical modules and\nwiring harnesses show\nsigns of moisture\nexposure.\n\nRecommend full\nflood-damage\ndisassembly and\nreplacement of\naffected components.\n\nInspector:\nAnton Reed\n\nRivergate Vehicle Assessment\n209 Works Road, Cypress Parish, LA 70123\n(504) 555-0147\n\nDamage Summary:\nWater intrusion to floor and lower dash;\nelectrical-module, harness and interior\ncontamination damage.\n\n<!-- PageNumber: Page 1 of 1 -->\n<!-- PageBreak -->\n\n☐\nCORRECTED (if checked)\n\nLENDER'S name, street address, city or town, state or province, country, ZIP or\nforeign postal code, and telephone no.\nCypress Parish Asset Services\n940 River Trade Avenue\nMetairie, LA 70001\n(504) 555-0137\n\nOMB No. 1545-0877\nForm\n1099-A\n(Rev. April 2025)\n\nFor calendar year\n2025\n\n\n## Acquisition or Abandonment of Secured Property\n\nLENDER'S TIN\n\\*\\*-\\*\\**9073\n\nBORROWER'S TIN\n984-31-9073\n\n1 Date of lender's acquisition or\nknowledge of abandonment\n06/12/2025\n\n2 Balance of principal\noutstanding\n$\n13,415.00\n\nBORROWER'S name\nPriya Raman\nStreet address (including apt. no.)\n397 Linden Terrace\n\nCity or town, state or province, country, and ZIP or foreign postal code\nCypress Parish, LA 70123\n\nAccount number (see instructions)\nSYN-LA-1099A-07\n\n3\n\n4 Fair market value of property\n$\n7,980.00\n\n5 If checked, the borrower was personally liable for repayment\nof the debt\n☐\n\n6 Description of property\n2019 Hyundai Tucson SE, gray\nTraining asset ref: SYN-LA-1099A-07\n\n\n### Copy B For Borrower\n\nThis is important tax\ninformation and is being\nfurnished to the IRS. If\nyou are required to file a\nreturn, a negligence\npenalty or other\nsanction may be\nimposed on you if\ntaxable income results\nfrom this transaction\nand the IRS determines\nthat it has not been\nreported.\n\n<!-- PageFooter: Form 1099-A (Rev. 4-2025) -->\n<!-- PageFooter: (keep for your records) -->\n<!-- PageFooter: www.irs.gov/Form1099A -->\n<!-- PageFooter: Department of the Treasury - Internal Revenue Service -->\n",
+        "kind": "document",
+        "startPageNumber": 1,
+        "endPageNumber": 13,
+        "unit": "inch",
+        "pages": [
+          {
+            "pageNumber": 1,
+            "angle": -0.2205,
+            "width": 8.5,
+            "height": 11
+          },
+          {
+            "pageNumber": 2,
+            "angle": 0,
+            "width": 8.5,
+            "height": 11
+          },
+          {
+            "pageNumber": 3,
+            "angle": 0,
+            "width": 8.5,
+            "height": 11
+          },
+          {
+            "pageNumber": 4,
+            "angle": 0,
+            "width": 8.5,
+            "height": 11
+          },
+          {
+            "pageNumber": 5,
+            "angle": 0,
+            "width": 8.5,
+            "height": 11
+          },
+          {
+            "pageNumber": 6,
+            "angle": 0,
+            "width": 8.5,
+            "height": 11
+          },
+          {
+            "pageNumber": 7,
+            "angle": 0.185147,
+            "width": 8.5,
+            "height": 11
+          },
+          {
+            "pageNumber": 8,
+            "angle": 0,
+            "width": 8.5,
+            "height": 11
+          },
+          {
+            "pageNumber": 9,
+            "angle": -0.2409,
+            "width": 8.5,
+            "height": 11
+          },
+          {
+            "pageNumber": 10,
+            "angle": 0,
+            "width": 8.5,
+            "height": 11
+          },
+          {
+            "pageNumber": 11,
+            "angle": 0,
+            "width": 8.5,
+            "height": 11
+          },
+          {
+            "pageNumber": 12,
+            "angle": 0.1326195,
+            "width": 11,
+            "height": 8.5
+          },
+          {
+            "pageNumber": 13,
+            "angle": 0,
+            "width": 8.5,
+            "height": 11
+          }
+        ],
+        "segments": [
+          {
+            "span": {
+              "offset": 0,
+              "length": 549
+            },
+            "segmentId": "segment1",
+            "startPageNumber": 1,
+            "endPageNumber": 1,
+            "category": "id_document",
+            "confidence": 0.98
+          },
+          {
+            "span": {
+              "offset": 549,
+              "length": 5292
+            },
+            "segmentId": "segment2",
+            "startPageNumber": 2,
+            "endPageNumber": 3,
+            "category": "other",
+            "confidence": 0.98
+          },
+          {
+            "span": {
+              "offset": 5841,
+              "length": 3124
+            },
+            "segmentId": "segment3",
+            "startPageNumber": 4,
+            "endPageNumber": 4,
+            "category": "other",
+            "confidence": 0.99
+          },
+          {
+            "span": {
+              "offset": 8965,
+              "length": 2820
+            },
+            "segmentId": "segment4",
+            "startPageNumber": 5,
+            "endPageNumber": 5,
+            "category": "other",
+            "confidence": 0.93
+          },
+          {
+            "span": {
+              "offset": 11785,
+              "length": 3324
+            },
+            "segmentId": "segment5",
+            "startPageNumber": 6,
+            "endPageNumber": 6,
+            "category": "other",
+            "confidence": 0.98
+          },
+          {
+            "span": {
+              "offset": 15109,
+              "length": 5745
+            },
+            "segmentId": "segment6",
+            "startPageNumber": 7,
+            "endPageNumber": 8,
+            "category": "repair_estimate",
+            "confidence": 0.99
+          },
+          {
+            "span": {
+              "offset": 20854,
+              "length": 1705
+            },
+            "segmentId": "segment7",
+            "startPageNumber": 9,
+            "endPageNumber": 9,
+            "category": "statement",
+            "confidence": 0.98
+          },
+          {
+            "span": {
+              "offset": 22559,
+              "length": 8372
+            },
+            "segmentId": "segment8",
+            "startPageNumber": 10,
+            "endPageNumber": 11,
+            "category": "other",
+            "confidence": 0.98
+          },
+          {
+            "span": {
+              "offset": 30931,
+              "length": 1648
+            },
+            "segmentId": "segment9",
+            "startPageNumber": 12,
+            "endPageNumber": 12,
+            "category": "other",
+            "confidence": 0.98
+          },
+          {
+            "span": {
+              "offset": 32579,
+              "length": 1492
+            },
+            "segmentId": "segment10",
+            "startPageNumber": 13,
+            "endPageNumber": 13,
+            "category": "tax_1099a"
+          }
+        ],
+        "metadata": {
+          "contentType": "application/pdf",
+          "pageCount": "13"
+        },
+        "analyzerId": "lab664_cache_20261103_195602_router",
+        "mimeType": "application/pdf"
+      },
+      {
+        "path": "input1/segment1",
+        "category": "id_document",
+        "markdown": "Delta Road Network\nROADSIDE ASSISTANCE MEMBERSHIP\n\nMEMBER NAME\nPriya Raman\n\nMEMBERSHIP NUMBER\nMR-203323\n\nVALID FROM\n04/10/2025\n\nVALID THROUGH\n04/10/2026\n\nEMERGENCY ASSISTANCE\nPriority roadside help for covered\nbreakdowns and emergencies.\n\n\\+\n\nMEMBERSHIP BENEFITS\nTowing, battery boost, lockout service,\ntire change, and more.\n\nMEMBER REFERENCE\n\n\n![Priya Raman](signatures/1.1)\n\n",
+        "fields": {
+          "CountryRegion": {
+            "type": "string"
+          },
+          "Region": {
+            "type": "string"
+          },
+          "DocumentNumber": {
+            "type": "string",
+            "valueString": "MR-203323",
+            "spans": [
+              {
+                "offset": 94,
+                "length": 9
+              }
+            ],
+            "confidence": 0.755,
+            "source": "D(1,4.6252,3.7284,6.5618,3.7132,6.5644,4.0379,4.6277,4.0531)"
+          },
+          "DocumentDiscriminator": {
+            "type": "string",
+            "confidence": 0.816
+          },
+          "FirstName": {
+            "type": "string",
+            "valueString": "Priya Raman",
+            "spans": [
+              {
+                "offset": 63,
+                "length": 11
+              }
+            ],
+            "confidence": 0.51,
+            "source": "D(1,4.6194,2.5466,6.5759,2.5559,6.5741,2.9188,4.6177,2.9095)"
+          },
+          "LastName": {
+            "type": "string",
+            "confidence": 0.816
+          },
+          "Address": {
+            "type": "string",
+            "confidence": 0.816
+          },
+          "BirthDate": {
+            "type": "date",
+            "confidence": 0.854
+          },
+          "ExpirationDate": {
+            "type": "date",
+            "valueDate": "2026-04-10",
+            "spans": [
+              {
+                "offset": 142,
+                "length": 10
+              }
+            ],
+            "confidence": 0.869,
+            "source": "D(1,4.6401,6.0269,6.5659,6.0205,6.5659,6.3503,4.6401,6.3579)"
+          },
+          "IssueDate": {
+            "type": "date",
+            "valueDate": "2025-04-10",
+            "spans": [
+              {
+                "offset": 116,
+                "length": 10
+              }
+            ],
+            "confidence": 0.889,
+            "source": "D(1,4.6318,4.8773,6.5286,4.8639,6.5286,5.1880,4.6318,5.1971)"
+          },
+          "EyeColor": {
+            "type": "string",
+            "confidence": 0.816
+          },
+          "HairColor": {
+            "type": "string",
+            "confidence": 0.816
+          },
+          "Height": {
+            "type": "string",
+            "confidence": 0.816
+          },
+          "Weight": {
+            "type": "string",
+            "confidence": 0.816
+          },
+          "Sex": {
+            "type": "string",
+            "confidence": 0.816
+          },
+          "Endorsements": {
+            "type": "string",
+            "confidence": 0.816
+          },
+          "Restrictions": {
+            "type": "string",
+            "confidence": 0.816
+          },
+          "PersonalNumber": {
+            "type": "string",
+            "confidence": 0.816
+          },
+          "PlaceOfBirth": {
+            "type": "string",
+            "confidence": 0.816
+          },
+          "VehicleClass": {
+            "type": "string",
+            "confidence": 0.816
+          },
+          "Category": {
+            "type": "string",
+            "confidence": 0.816
+          }
+        },
+        "kind": "document",
+        "startPageNumber": 1,
+        "endPageNumber": 1,
+        "unit": "inch",
+        "pages": [
+          {
+            "pageNumber": 1,
+            "angle": -0.2205,
+            "width": 8.5,
+            "height": 11
+          }
+        ],
+        "metadata": {
+          "contentType": "application/pdf",
+          "pageCount": "1"
+        },
+        "analyzerId": "prebuilt-idDocument.generic"
+      },
+      {
+        "path": "input1/segment6",
+        "category": "repair_estimate",
+        "markdown": "\n![<!-- PageHeader: RIVERGATE VEHICLE ASSESSMENT -->\n](figures/7.1)\n\n\n## PROVISIONAL REPAIR-ECONOMICS ESTIMATE\n\nQuote Reference:\n\nQ-LA-97023\n\n\n<table>\n<tr>\n<td>Claim Reference:</td>\n<td>CDA-25-239878</td>\n</tr>\n<tr>\n<td>Policy Reference:</td>\n<td>CDA-A9636901</td>\n</tr>\n<tr>\n<td>Inspection Date:</td>\n<td>11/09/2025</td>\n</tr>\n<tr>\n<td>Inspected By:</td>\n<td>Anton Reed</td>\n</tr>\n</table>\n\n\nINSURER\n\nCypress Delta Assurance\n491 Civic Lane\nCypress Parish, LA 70123\nPhone: (504) 555-0127\nAdjuster: Lena Duval\n\n\n## CUSTOMER\n\nPriya Raman\n397 Linden Terrace\nCypress Parish, LA 70123\nPhone: (504) 555-0107\nEmail: priya.raman@example.com\n\n\n## VEHICLE\n\n2020 Volkswagen Jetta S\nColor: Black\nVIN: 3VWC57BU3LA515467\nRegistration: LA32831\nUse: Personal / commute\nOdometer: 89,725\n\n\n## REPAIRER\n\nRivergate Vehicle Assessment\n209 Works Road\nCypress Parish, LA 70123\nPhone: (504) 555-0147\nInspector: Anton Reed\n\n\n<table>\n<tr>\n<th rowspan=\"2\">Line</th>\n<th rowspan=\"2\">Description</th>\n<th rowspan=\"2\">Qty</th>\n<th rowspan=\"2\">Hours</th>\n<th colspan=\"3\">Amount</th>\n</tr>\n<tr>\n<th>Parts</th>\n<th>Labor</th>\n<th>Line Total</th>\n</tr>\n<tr>\n<td>1</td>\n<td>Electrical module replacements - provisional</td>\n<td>1</td>\n<td>5.2</td>\n<td>3,780.00</td>\n<td>608.40</td>\n<td>4,388.40</td>\n</tr>\n<tr>\n<td>2</td>\n<td>Harness replacement - provisional</td>\n<td>1</td>\n<td>6.8</td>\n<td>2,240.00</td>\n<td>795.60</td>\n<td>3,035.60</td>\n</tr>\n<tr>\n<td>3</td>\n<td>Interior decontamination and trim</td>\n<td>1</td>\n<td>8.4</td>\n<td>1,560.00</td>\n<td>982.80</td>\n<td>2,542.80</td>\n</tr>\n<tr>\n<td colspan=\"6\">Page-one carry-forward subtotal</td>\n<td>9,966.80</td>\n</tr>\n</table>\n\n\n<table>\n<tr>\n<td colspan=\"2\">ESTIMATE PARAMETERS</td>\n</tr>\n<tr>\n<td>☐ Estimate Type:</td>\n<td>Provisional repair economics</td>\n</tr>\n<tr>\n<td>☐ Labor Rate:</td>\n<td>$117.00 / hour</td>\n</tr>\n<tr>\n<td>☐ Parts Pricing:</td>\n<td>OEM / dealer</td>\n</tr>\n<tr>\n<td>☐ Figures Include:</td>\n<td>Parts, labor, and applicable allowances</td>\n</tr>\n<tr>\n<td>☐ Tax:</td>\n<td>Not included</td>\n</tr>\n<tr>\n<td>☐ Supplements:</td>\n<td>To be issued if additional damage found</td>\n</tr>\n</table>\n\n\n## OPERATIONAL CHECKLIST\n\n☐\nPreliminary photo documentation\n\n☐\nVisual inspection completed\n\n☐\nElectronic systems scan performed\n\n☐\nManuals and service bulletins reviewed\n\n☐\nDamage causal analysis\n\n☐\nSafety and ADAS items noted\n\n☐\nTeardown beyond visual not completed\n\n\n<table>\n<tr>\n<td colspan=\"2\">STATUS SUMMARY</td>\n</tr>\n<tr>\n<td>Repair Authorization</td>\n<td>Not authorized</td>\n</tr>\n<tr>\n<td>Total-Loss Assessment</td>\n<td>Pending</td>\n</tr>\n<tr>\n<td>Scheduling Status</td>\n<td>Pending</td>\n</tr>\n</table>\n\n\n<!-- PageFooter: Continued operations and combined totals on page 2. -->\n<!-- PageNumber: Page 1 of 2 -->\n<!-- PageBreak -->\n\nRivergate Vehicle Assessment\n209 Works Road\nCypress Parish, LA 70123\n(504) 555-0147\n\n\n<table>\n<tr>\n<td>Quote No.:</td>\n<td>Q-LA-97023</td>\n</tr>\n<tr>\n<td>Claim No.:</td>\n<td>CDA-25-239878</td>\n</tr>\n<tr>\n<td>Policy No.:</td>\n<td>CDA-A9636901</td>\n</tr>\n<tr>\n<td>Inspection Date:</td>\n<td>11/09/2025</td>\n</tr>\n<tr>\n<td>Inspector:</td>\n<td>Anton Reed</td>\n</tr>\n</table>\n\n\n## Customer\n\nPriya Raman\n397 Linden Terrace\nCypress Parish, LA 70123\n(504) 555-0107\npriya.raman@example.com\n\n\n## Vehicle\n\n2020 Volkswagen Jetta S\nBlack\nVIN: 3VWC57BU3LA515467\nRegistration: LA32831\nUse: Personal / commute\nOdometer: 89,725\n\n\n## Insurer\n\nCypress Delta Assurance\n491 Civic Lane\nCypress Parish, LA 70123\n(504) 555-0127\nAdjuster: Lena Duval\n\n\n<table>\n<tr>\n<th>Operation</th>\n<th>Qty</th>\n<th>Parts</th>\n<th>Est. Hours</th>\n<th>Labor</th>\n<th>Line Total</th>\n</tr>\n<tr>\n<td>Powertrain flood diagnosis</td>\n<td>1</td>\n<td>850.00</td>\n<td>4.5</td>\n<td>526.50</td>\n<td>1,376.50</td>\n</tr>\n<tr>\n<td>Body cavity clean/dry assessment</td>\n<td>1</td>\n<td>640.00</td>\n<td>3.2</td>\n<td>374.40</td>\n<td>1,014.40</td>\n</tr>\n<tr>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n</tr>\n<tr>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n</tr>\n<tr>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n</tr>\n<tr>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n</tr>\n<tr>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n</tr>\n</table>\n\n\n<table>\n<tr>\n<td>Page-two operations subtotal</td>\n<td>2,390.90</td>\n</tr>\n<tr>\n<td>From page 1 subtotal</td>\n<td>9,966.80</td>\n</tr>\n</table>\n\n\n### Operational Status\n\nNot authorized; total-loss assessment pending.\nScheduling\n\nPending\n\nPayment Authorization\nPending\n\nNote\nFinal repair economics subject to further assessment.\n\n\n<table>\n<tr>\n<td>Estimate Summary</td>\n<td></td>\n</tr>\n<tr>\n<td>Subtotal (pages 1-2)</td>\n<td>12,357.70</td>\n</tr>\n<tr>\n<td>Taxable parts (pages 1-2)</td>\n<td>9,070.00</td>\n</tr>\n<tr>\n<td>Tax on parts<br>9.50%</td>\n<td>861.65</td>\n</tr>\n<tr>\n<td>Gross provisional estimate</td>\n<td>13,219.35</td>\n</tr>\n<tr>\n<td>Deductible</td>\n<td>500.00</td>\n</tr>\n<tr>\n<td>Estimate less deductible</td>\n<td>12,719.35</td>\n</tr>\n</table>\n\n\n## Labor rate: 117.00 / hour\n\n\n<table>\n<tr>\n<td colspan=\"3\">Operational Checklists</td>\n</tr>\n<tr>\n<th>Preliminary</th>\n<th>Assessment</th>\n<th>Post-Assessment</th>\n</tr>\n<tr>\n<td>☑ Customer interview</td>\n<td>☑ Interior moisture mapping</td>\n<td>☐<br>Estimate review</td>\n</tr>\n<tr>\n<td>☑ Records / history</td>\n<td>☑ Electrical system check</td>\n<td>☐<br>Supplement evaluation</td>\n</tr>\n<tr>\n<td>☑ Photos</td>\n<td>☑ Safety systems check</td>\n<td>☐<br>Total-loss analysis</td>\n</tr>\n<tr>\n<td>☑ Scan for codes</td>\n<td>☑ Mechanical function check</td>\n<td>☐<br>Parts sourcing</td>\n</tr>\n<tr>\n<td>☑<br>Initial teardown</td>\n<td>☑ Diagnostic reporting</td>\n<td>☐ Reassessment if needed</td>\n</tr>\n</table>\n\n\n<!-- PageNumber: Page 2 of 2 -->\n<!-- PageBreak -->\n\n",
+        "fields": {
+          "AmountDue": {
+            "type": "object",
+            "valueObject": {
+              "Amount": {
+                "type": "number",
+                "valueNumber": 12719.35,
+                "spans": [
+                  {
+                    "offset": 4953,
+                    "length": 9
+                  }
+                ],
+                "confidence": 0.793,
+                "source": "D(8,6.8855,7.9702,7.4583,7.9721,7.4583,8.1480,6.8855,8.1480)"
+              },
+              "CurrencyCode": {
+                "type": "string",
+                "valueString": "USD",
+                "spans": [
+                  {
+                    "offset": 1813,
+                    "length": 14
+                  },
+                  {
+                    "offset": 441,
+                    "length": 24
+                  }
+                ],
+                "confidence": 0.59,
+                "source": "D(7,1.9611,7.8076,2.5602,7.8150,2.5586,7.9448,1.9595,7.9373);D(7,5.1827,2.5686,6.2837,2.5590,6.2848,2.6842,5.1838,2.6938)"
+              }
+            }
+          },
+          "BalanceForward": {
+            "type": "object",
+            "valueObject": {
+              "Amount": {
+                "type": "number",
+                "confidence": 0.929
+              },
+              "CurrencyCode": {
+                "type": "string",
+                "confidence": 0.849
+              }
+            }
+          },
+          "BillingAddress": {
+            "type": "string",
+            "confidence": 0.8
+          },
+          "BillingAddressRecipient": {
+            "type": "string",
+            "confidence": 0.8
+          },
+          "CountryRegion": {
+            "type": "string",
+            "valueString": "US",
+            "spans": [
+              {
+                "offset": 441,
+                "length": 24
+              },
+              {
+                "offset": 555,
+                "length": 24
+              },
+              {
+                "offset": 829,
+                "length": 24
+              }
+            ],
+            "confidence": 0.553,
+            "source": "D(7,5.1827,2.5686,6.2837,2.5590,6.2848,2.6842,5.1838,2.6938);D(7,1.1040,3.7683,2.2495,3.7683,2.2495,3.9058,1.1040,3.9058);D(7,5.4072,3.8000,6.5078,3.7939,6.5086,3.9358,5.4080,3.9420)"
+          },
+          "CustomerAddress": {
+            "type": "string",
+            "valueString": "397 Linden Terrace\nCypress Parish, LA 70123",
+            "spans": [
+              {
+                "offset": 536,
+                "length": 18
+              },
+              {
+                "offset": 555,
+                "length": 24
+              }
+            ],
+            "confidence": 0.763,
+            "source": "D(7,1.1113,3.5964,1.9652,3.6025,1.9643,3.7288,1.1104,3.7227);D(7,1.1040,3.7683,2.2495,3.7683,2.2495,3.9058,1.1040,3.9058)"
+          },
+          "CustomerAddressRecipient": {
+            "type": "string",
+            "valueString": "Priya Raman",
+            "spans": [
+              {
+                "offset": 524,
+                "length": 11
+              }
+            ],
+            "confidence": 0.769,
+            "source": "D(7,1.1154,3.4141,1.7036,3.4225,1.7017,3.5567,1.1135,3.5483)"
+          },
+          "CustomerId": {
+            "type": "string",
+            "confidence": 0.8
+          },
+          "CustomerName": {
+            "type": "string",
+            "valueString": "Priya Raman",
+            "spans": [
+              {
+                "offset": 524,
+                "length": 11
+              }
+            ],
+            "confidence": 0.769,
+            "source": "D(7,1.1154,3.4141,1.7036,3.4225,1.7017,3.5567,1.1135,3.5483)"
+          },
+          "CustomerTaxId": {
+            "type": "string",
+            "confidence": 0.8
+          },
+          "DueDate": {
+            "type": "date",
+            "confidence": 0.829
+          },
+          "InvoiceDate": {
+            "type": "date",
+            "valueDate": "2025-11-09",
+            "spans": [
+              {
+                "offset": 306,
+                "length": 10
+              }
+            ],
+            "confidence": 0.85,
+            "source": "D(7,2.3304,2.5012,2.8140,2.5031,2.8140,2.6118,2.3304,2.6096)"
+          },
+          "InvoiceId": {
+            "type": "string",
+            "valueString": "Q-LA-97023",
+            "spans": [
+              {
+                "offset": 130,
+                "length": 10
+              }
+            ],
+            "confidence": 0.829,
+            "source": "D(7,6.5651,1.5903,7.2175,1.5860,7.2183,1.7116,6.5659,1.7159)"
+          },
+          "LineItems": {
+            "type": "array",
+            "valueArray": [
+              {
+                "type": "object",
+                "valueObject": {
+                  "Date": {
+                    "type": "date",
+                    "confidence": 0.972
+                  },
+                  "Description": {
+                    "type": "string",
+                    "valueString": "Electrical module replacements - provisional",
+                    "spans": [
+                      {
+                        "offset": 1139,
+                        "length": 32
+                      },
+                      {
+                        "offset": 1172,
+                        "length": 11
+                      }
+                    ],
+                    "confidence": 0.711,
+                    "source": "D(7,1.4122,5.1294,2.9310,5.1379,2.9302,5.2746,1.4114,5.2660);D(7,1.4091,5.2968,1.9247,5.2892,1.9258,5.4230,1.4111,5.4280)"
+                  },
+                  "ProductCode": {
+                    "type": "string",
+                    "confidence": 0.972
+                  },
+                  "Quantity": {
+                    "type": "number",
+                    "valueNumber": 1,
+                    "spans": [
+                      {
+                        "offset": 1193,
+                        "length": 1
+                      }
+                    ],
+                    "confidence": 0.769,
+                    "source": "D(7,3.8204,5.1563,3.8661,5.1572,3.8661,5.2646,3.8204,5.2637)"
+                  },
+                  "QuantityUnit": {
+                    "type": "string",
+                    "confidence": 0.972
+                  },
+                  "TaxAmount": {
+                    "type": "object",
+                    "valueObject": {
+                      "Amount": {
+                        "type": "number",
+                        "confidence": 0.92
+                      },
+                      "CurrencyCode": {
+                        "type": "string",
+                        "confidence": 0.972
+                      }
+                    }
+                  },
+                  "TaxRate": {
+                    "type": "number",
+                    "confidence": 0.92
+                  },
+                  "TotalAmount": {
+                    "type": "object",
+                    "valueObject": {
+                      "Amount": {
+                        "type": "number",
+                        "valueNumber": 4388.4,
+                        "spans": [
+                          {
+                            "offset": 1251,
+                            "length": 8
+                          }
+                        ],
+                        "confidence": 0.825,
+                        "source": "D(7,6.9685,5.1778,7.3835,5.1772,7.3835,5.3063,6.9685,5.3062)"
+                      },
+                      "CurrencyCode": {
+                        "type": "string",
+                        "valueString": "USD",
+                        "spans": [
+                          {
+                            "offset": 1813,
+                            "length": 14
+                          },
+                          {
+                            "offset": 441,
+                            "length": 24
+                          }
+                        ],
+                        "confidence": 0.609,
+                        "source": "D(7,1.9611,7.8076,2.5602,7.8150,2.5586,7.9448,1.9595,7.9373);D(7,5.1827,2.5686,6.2837,2.5590,6.2848,2.6842,5.1838,2.6938)"
+                      }
+                    }
+                  },
+                  "UnitPrice": {
+                    "type": "object",
+                    "valueObject": {
+                      "Amount": {
+                        "type": "number",
+                        "confidence": 0.92
+                      },
+                      "CurrencyCode": {
+                        "type": "string",
+                        "confidence": 0.972
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "valueObject": {
+                  "Date": {
+                    "type": "date",
+                    "confidence": 0.972
+                  },
+                  "Description": {
+                    "type": "string",
+                    "valueString": "Harness replacement - provisional",
+                    "spans": [
+                      {
+                        "offset": 1291,
+                        "length": 33
+                      }
+                    ],
+                    "confidence": 0.683,
+                    "source": "D(7,1.4091,5.6062,2.9909,5.6124,2.9904,5.7528,1.4086,5.7466)"
+                  },
+                  "ProductCode": {
+                    "type": "string",
+                    "confidence": 0.972
+                  },
+                  "Quantity": {
+                    "type": "number",
+                    "valueNumber": 1,
+                    "spans": [
+                      {
+                        "offset": 1334,
+                        "length": 1
+                      }
+                    ],
+                    "confidence": 0.772,
+                    "source": "D(7,3.8121,5.6190,3.8661,5.6227,3.8661,5.7301,3.8121,5.7264)"
+                  },
+                  "QuantityUnit": {
+                    "type": "string",
+                    "confidence": 0.972
+                  },
+                  "TaxAmount": {
+                    "type": "object",
+                    "valueObject": {
+                      "Amount": {
+                        "type": "number",
+                        "confidence": 0.92
+                      },
+                      "CurrencyCode": {
+                        "type": "string",
+                        "confidence": 0.972
+                      }
+                    }
+                  },
+                  "TaxRate": {
+                    "type": "number",
+                    "confidence": 0.92
+                  },
+                  "TotalAmount": {
+                    "type": "object",
+                    "valueObject": {
+                      "Amount": {
+                        "type": "number",
+                        "valueNumber": 3035.6,
+                        "spans": [
+                          {
+                            "offset": 1392,
+                            "length": 8
+                          }
+                        ],
+                        "confidence": 0.828,
+                        "source": "D(7,6.9685,5.6448,7.3835,5.6461,7.3835,5.7756,6.9685,5.7762)"
+                      },
+                      "CurrencyCode": {
+                        "type": "string",
+                        "valueString": "USD",
+                        "spans": [
+                          {
+                            "offset": 1813,
+                            "length": 14
+                          },
+                          {
+                            "offset": 441,
+                            "length": 24
+                          }
+                        ],
+                        "confidence": 0.609,
+                        "source": "D(7,1.9611,7.8076,2.5602,7.8150,2.5586,7.9448,1.9595,7.9373);D(7,5.1827,2.5686,6.2837,2.5590,6.2848,2.6842,5.1838,2.6938)"
+                      }
+                    }
+                  },
+                  "UnitPrice": {
+                    "type": "object",
+                    "valueObject": {
+                      "Amount": {
+                        "type": "number",
+                        "confidence": 0.92
+                      },
+                      "CurrencyCode": {
+                        "type": "string",
+                        "confidence": 0.972
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "valueObject": {
+                  "Date": {
+                    "type": "date",
+                    "confidence": 0.972
+                  },
+                  "Description": {
+                    "type": "string",
+                    "valueString": "Interior decontamination and trim",
+                    "spans": [
+                      {
+                        "offset": 1432,
+                        "length": 33
+                      }
+                    ],
+                    "confidence": 0.693,
+                    "source": "D(7,1.4008,5.9958,2.9497,6.0057,2.9489,6.1379,1.4000,6.1280)"
+                  },
+                  "ProductCode": {
+                    "type": "string",
+                    "confidence": 0.972
+                  },
+                  "Quantity": {
+                    "type": "number",
+                    "valueNumber": 1,
+                    "spans": [
+                      {
+                        "offset": 1475,
+                        "length": 1
+                      }
+                    ],
+                    "confidence": 0.772,
+                    "source": "D(7,3.8121,6.0205,3.8661,6.0236,3.8661,6.1310,3.8121,6.1279)"
+                  },
+                  "QuantityUnit": {
+                    "type": "string",
+                    "confidence": 0.972
+                  },
+                  "TaxAmount": {
+                    "type": "object",
+                    "valueObject": {
+                      "Amount": {
+                        "type": "number",
+                        "confidence": 0.92
+                      },
+                      "CurrencyCode": {
+                        "type": "string",
+                        "confidence": 0.972
+                      }
+                    }
+                  },
+                  "TaxRate": {
+                    "type": "number",
+                    "confidence": 0.92
+                  },
+                  "TotalAmount": {
+                    "type": "object",
+                    "valueObject": {
+                      "Amount": {
+                        "type": "number",
+                        "valueNumber": 2542.8,
+                        "spans": [
+                          {
+                            "offset": 1533,
+                            "length": 8
+                          }
+                        ],
+                        "confidence": 0.828,
+                        "source": "D(7,6.9644,6.0421,7.3877,6.0437,7.3877,6.1732,6.9644,6.1734)"
+                      },
+                      "CurrencyCode": {
+                        "type": "string",
+                        "valueString": "USD",
+                        "spans": [
+                          {
+                            "offset": 1813,
+                            "length": 14
+                          },
+                          {
+                            "offset": 441,
+                            "length": 24
+                          }
+                        ],
+                        "confidence": 0.609,
+                        "source": "D(7,1.9611,7.8076,2.5602,7.8150,2.5586,7.9448,1.9595,7.9373);D(7,5.1827,2.5686,6.2837,2.5590,6.2848,2.6842,5.1838,2.6938)"
+                      }
+                    }
+                  },
+                  "UnitPrice": {
+                    "type": "object",
+                    "valueObject": {
+                      "Amount": {
+                        "type": "number",
+                        "confidence": 0.92
+                      },
+                      "CurrencyCode": {
+                        "type": "string",
+                        "confidence": 0.972
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "valueObject": {
+                  "Date": {
+                    "type": "date",
+                    "confidence": 0.972
+                  },
+                  "Description": {
+                    "type": "string",
+                    "valueString": "Powertrain flood diagnosis",
+                    "spans": [
+                      {
+                        "offset": 3626,
+                        "length": 26
+                      }
+                    ],
+                    "confidence": 0.816,
+                    "source": "D(8,1.1486,3.6414,2.3191,3.6487,2.3180,3.8195,1.1476,3.8122)"
+                  },
+                  "ProductCode": {
+                    "type": "string",
+                    "confidence": 0.972
+                  },
+                  "Quantity": {
+                    "type": "number",
+                    "valueNumber": 1,
+                    "spans": [
+                      {
+                        "offset": 3662,
+                        "length": 1
+                      }
+                    ],
+                    "confidence": 0.636,
+                    "source": "D(8,3.9512,3.6685,4.0010,3.6685,4.0010,3.7866,3.9512,3.7866)"
+                  },
+                  "QuantityUnit": {
+                    "type": "string",
+                    "confidence": 0.972
+                  },
+                  "TaxAmount": {
+                    "type": "object",
+                    "valueObject": {
+                      "Amount": {
+                        "type": "number",
+                        "confidence": 0.92
+                      },
+                      "CurrencyCode": {
+                        "type": "string",
+                        "confidence": 0.972
+                      }
+                    }
+                  },
+                  "TaxRate": {
+                    "type": "number",
+                    "confidence": 0.92
+                  },
+                  "TotalAmount": {
+                    "type": "object",
+                    "valueObject": {
+                      "Amount": {
+                        "type": "number",
+                        "valueNumber": 1376.5,
+                        "spans": [
+                          {
+                            "offset": 3718,
+                            "length": 8
+                          }
+                        ],
+                        "confidence": 0.803,
+                        "source": "D(8,6.9146,3.6448,7.3171,3.6396,7.3171,3.7888,6.9146,3.7949)"
+                      },
+                      "CurrencyCode": {
+                        "type": "string",
+                        "valueString": "USD",
+                        "spans": [
+                          {
+                            "offset": 1813,
+                            "length": 14
+                          },
+                          {
+                            "offset": 441,
+                            "length": 24
+                          }
+                        ],
+                        "confidence": 0.609,
+                        "source": "D(7,1.9611,7.8076,2.5602,7.8150,2.5586,7.9448,1.9595,7.9373);D(7,5.1827,2.5686,6.2837,2.5590,6.2848,2.6842,5.1838,2.6938)"
+                      }
+                    }
+                  },
+                  "UnitPrice": {
+                    "type": "object",
+                    "valueObject": {
+                      "Amount": {
+                        "type": "number",
+                        "confidence": 0.92
+                      },
+                      "CurrencyCode": {
+                        "type": "string",
+                        "confidence": 0.972
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "valueObject": {
+                  "Date": {
+                    "type": "date",
+                    "confidence": 0.972
+                  },
+                  "Description": {
+                    "type": "string",
+                    "valueString": "Body cavity clean/dry assessment",
+                    "spans": [
+                      {
+                        "offset": 3747,
+                        "length": 32
+                      }
+                    ],
+                    "confidence": 0.689,
+                    "source": "D(8,1.1467,3.9327,2.6334,3.9252,2.6343,4.1107,1.1476,4.1182)"
+                  },
+                  "ProductCode": {
+                    "type": "string",
+                    "confidence": 0.972
+                  },
+                  "Quantity": {
+                    "type": "number",
+                    "valueNumber": 1,
+                    "spans": [
+                      {
+                        "offset": 3789,
+                        "length": 1
+                      }
+                    ],
+                    "confidence": 0.422,
+                    "source": "D(8,3.9512,3.9513,4.0010,3.9457,4.0010,4.0693,3.9512,4.0810)"
+                  },
+                  "QuantityUnit": {
+                    "type": "string",
+                    "confidence": 0.972
+                  },
+                  "TaxAmount": {
+                    "type": "object",
+                    "valueObject": {
+                      "Amount": {
+                        "type": "number",
+                        "confidence": 0.92
+                      },
+                      "CurrencyCode": {
+                        "type": "string",
+                        "confidence": 0.972
+                      }
+                    }
+                  },
+                  "TaxRate": {
+                    "type": "number",
+                    "confidence": 0.92
+                  },
+                  "TotalAmount": {
+                    "type": "object",
+                    "valueObject": {
+                      "Amount": {
+                        "type": "number",
+                        "valueNumber": 1014.4,
+                        "spans": [
+                          {
+                            "offset": 3845,
+                            "length": 8
+                          }
+                        ],
+                        "confidence": 0.815,
+                        "source": "D(8,6.9146,3.9287,7.3171,3.9278,7.3171,4.0840,6.9146,4.0863)"
+                      },
+                      "CurrencyCode": {
+                        "type": "string",
+                        "valueString": "USD",
+                        "spans": [
+                          {
+                            "offset": 1813,
+                            "length": 14
+                          },
+                          {
+                            "offset": 441,
+                            "length": 24
+                          }
+                        ],
+                        "confidence": 0.609,
+                        "source": "D(7,1.9611,7.8076,2.5602,7.8150,2.5586,7.9448,1.9595,7.9373);D(7,5.1827,2.5686,6.2837,2.5590,6.2848,2.6842,5.1838,2.6938)"
+                      }
+                    }
+                  },
+                  "UnitPrice": {
+                    "type": "object",
+                    "valueObject": {
+                      "Amount": {
+                        "type": "number",
+                        "confidence": 0.92
+                      },
+                      "CurrencyCode": {
+                        "type": "string",
+                        "confidence": 0.972
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          "PaymentTerm": {
+            "type": "string",
+            "confidence": 0.8
+          },
+          "PONumber": {
+            "type": "string",
+            "confidence": 0.8
+          },
+          "RemittanceAddress": {
+            "type": "string",
+            "confidence": 0.8
+          },
+          "RemittanceAddressRecipient": {
+            "type": "string",
+            "confidence": 0.8
+          },
+          "ServiceAddress": {
+            "type": "string",
+            "confidence": 0.8
+          },
+          "ServiceAddressRecipient": {
+            "type": "string",
+            "confidence": 0.8
+          },
+          "ShippingAddress": {
+            "type": "string",
+            "confidence": 0.8
+          },
+          "ShippingAddressRecipient": {
+            "type": "string",
+            "confidence": 0.8
+          },
+          "SubtotalAmount": {
+            "type": "object",
+            "valueObject": {
+              "Amount": {
+                "type": "number",
+                "valueNumber": 12357.7,
+                "spans": [
+                  {
+                    "offset": 4654,
+                    "length": 9
+                  }
+                ],
+                "confidence": 0.725,
+                "source": "D(8,6.9727,6.6269,7.4250,6.6234,7.4250,6.7738,6.9727,6.7773)"
+              },
+              "CurrencyCode": {
+                "type": "string",
+                "valueString": "USD",
+                "spans": [
+                  {
+                    "offset": 1813,
+                    "length": 14
+                  },
+                  {
+                    "offset": 441,
+                    "length": 24
+                  }
+                ],
+                "confidence": 0.59,
+                "source": "D(7,1.9611,7.8076,2.5602,7.8150,2.5586,7.9448,1.9595,7.9373);D(7,5.1827,2.5686,6.2837,2.5590,6.2848,2.6842,5.1838,2.6938)"
+              }
+            }
+          },
+          "TaxDetails": {
+            "type": "array",
+            "valueArray": [
+              {
+                "type": "object",
+                "valueObject": {
+                  "Amount": {
+                    "type": "object",
+                    "valueObject": {
+                      "Amount": {
+                        "type": "number",
+                        "valueNumber": 861.65,
+                        "spans": [
+                          {
+                            "offset": 4779,
+                            "length": 6
+                          }
+                        ],
+                        "confidence": 0.89,
+                        "source": "D(8,7.1138,7.0791,7.4333,7.0791,7.4333,7.2188,7.1138,7.2188)"
+                      },
+                      "CurrencyCode": {
+                        "type": "string",
+                        "valueString": "USD",
+                        "spans": [
+                          {
+                            "offset": 1813,
+                            "length": 14
+                          },
+                          {
+                            "offset": 441,
+                            "length": 24
+                          }
+                        ],
+                        "confidence": 0.609,
+                        "source": "D(7,1.9611,7.8076,2.5602,7.8150,2.5586,7.9448,1.9595,7.9373);D(7,5.1827,2.5686,6.2837,2.5590,6.2848,2.6842,5.1838,2.6938)"
+                      }
+                    }
+                  },
+                  "Description": {
+                    "type": "string",
+                    "valueString": "Tax on parts",
+                    "spans": [
+                      {
+                        "offset": 4748,
+                        "length": 12
+                      }
+                    ],
+                    "confidence": 0.757,
+                    "source": "D(8,4.4160,7.0970,4.9641,7.0978,4.9639,7.2527,4.4158,7.2519)"
+                  },
+                  "NetAmount": {
+                    "type": "object",
+                    "valueObject": {
+                      "Amount": {
+                        "type": "number",
+                        "valueNumber": 9070,
+                        "spans": [
+                          {
+                            "offset": 4719,
+                            "length": 8
+                          }
+                        ],
+                        "confidence": 0.793,
+                        "source": "D(8,7.0225,6.8536,7.4292,6.8485,7.4292,6.9989,7.0225,7.0040)"
+                      },
+                      "CurrencyCode": {
+                        "type": "string",
+                        "valueString": "USD",
+                        "spans": [
+                          {
+                            "offset": 1813,
+                            "length": 14
+                          },
+                          {
+                            "offset": 441,
+                            "length": 24
+                          }
+                        ],
+                        "confidence": 0.609,
+                        "source": "D(7,1.9611,7.8076,2.5602,7.8150,2.5586,7.9448,1.9595,7.9373);D(7,5.1827,2.5686,6.2837,2.5590,6.2848,2.6842,5.1838,2.6938)"
+                      }
+                    }
+                  },
+                  "Rate": {
+                    "type": "number",
+                    "valueNumber": 0.095,
+                    "spans": [
+                      {
+                        "offset": 4764,
+                        "length": 5
+                      }
+                    ],
+                    "confidence": 0.526,
+                    "source": "D(8,6.2717,7.0786,6.5598,7.0917,6.5530,7.2424,6.2649,7.2293)"
+                  }
+                }
+              }
+            ]
+          },
+          "TotalAmount": {
+            "type": "object",
+            "valueObject": {
+              "Amount": {
+                "type": "number",
+                "valueNumber": 13219.35,
+                "spans": [
+                  {
+                    "offset": 4842,
+                    "length": 9
+                  }
+                ],
+                "confidence": 0.786,
+                "source": "D(8,6.8896,7.3678,7.4375,7.3571,7.4375,7.5290,6.8896,7.5397)"
+              },
+              "CurrencyCode": {
+                "type": "string",
+                "valueString": "USD",
+                "spans": [
+                  {
+                    "offset": 1813,
+                    "length": 14
+                  },
+                  {
+                    "offset": 441,
+                    "length": 24
+                  }
+                ],
+                "confidence": 0.59,
+                "source": "D(7,1.9611,7.8076,2.5602,7.8150,2.5586,7.9448,1.9595,7.9373);D(7,5.1827,2.5686,6.2837,2.5590,6.2848,2.6842,5.1838,2.6938)"
+              }
+            }
+          },
+          "TotalDiscountAmount": {
+            "type": "object",
+            "valueObject": {
+              "Amount": {
+                "type": "number",
+                "valueNumber": 500,
+                "spans": [
+                  {
+                    "offset": 4892,
+                    "length": 6
+                  }
+                ],
+                "confidence": 0.512,
+                "source": "D(8,7.1055,7.6538,7.4458,7.6538,7.4458,7.8042,7.1055,7.8042)"
+              },
+              "CurrencyCode": {
+                "type": "string",
+                "valueString": "USD",
+                "spans": [
+                  {
+                    "offset": 1813,
+                    "length": 14
+                  },
+                  {
+                    "offset": 441,
+                    "length": 24
+                  }
+                ],
+                "confidence": 0.59,
+                "source": "D(7,1.9611,7.8076,2.5602,7.8150,2.5586,7.9448,1.9595,7.9373);D(7,5.1827,2.5686,6.2837,2.5590,6.2848,2.6842,5.1838,2.6938)"
+              }
+            }
+          },
+          "TotalTaxAmount": {
+            "type": "object",
+            "valueObject": {
+              "Amount": {
+                "type": "number",
+                "valueNumber": 861.65,
+                "spans": [
+                  {
+                    "offset": 4779,
+                    "length": 6
+                  }
+                ],
+                "confidence": 0.862,
+                "source": "D(8,7.1138,7.0791,7.4333,7.0791,7.4333,7.2188,7.1138,7.2188)"
+              },
+              "CurrencyCode": {
+                "type": "string",
+                "valueString": "USD",
+                "spans": [
+                  {
+                    "offset": 1813,
+                    "length": 14
+                  },
+                  {
+                    "offset": 441,
+                    "length": 24
+                  }
+                ],
+                "confidence": 0.59,
+                "source": "D(7,1.9611,7.8076,2.5602,7.8150,2.5586,7.9448,1.9595,7.9373);D(7,5.1827,2.5686,6.2837,2.5590,6.2848,2.6842,5.1838,2.6938)"
+              }
+            }
+          },
+          "VendorAddress": {
+            "type": "string",
+            "valueString": "209 Works Road\nCypress Parish, LA 70123",
+            "spans": [
+              {
+                "offset": 814,
+                "length": 14
+              },
+              {
+                "offset": 829,
+                "length": 24
+              }
+            ],
+            "confidence": 0.755,
+            "source": "D(7,5.4038,3.6329,6.1427,3.6335,6.1426,3.7580,5.4037,3.7574);D(7,5.4072,3.8000,6.5078,3.7939,6.5086,3.9358,5.4080,3.9420)"
+          },
+          "VendorAddressRecipient": {
+            "type": "string",
+            "valueString": "Rivergate Vehicle Assessment",
+            "spans": [
+              {
+                "offset": 785,
+                "length": 28
+              }
+            ],
+            "confidence": 0.812,
+            "source": "D(7,5.3997,3.4453,6.7611,3.4459,6.7610,3.5806,5.3996,3.5800)"
+          },
+          "VendorName": {
+            "type": "string",
+            "valueString": "Rivergate Vehicle Assessment",
+            "spans": [
+              {
+                "offset": 785,
+                "length": 28
+              }
+            ],
+            "confidence": 0.812,
+            "source": "D(7,5.3997,3.4453,6.7611,3.4459,6.7610,3.5806,5.3996,3.5800)"
+          },
+          "VendorTaxId": {
+            "type": "string",
+            "confidence": 0.8
+          },
+          "vehicle": {
+            "type": "string",
+            "valueString": "2020 Volkswagen Jetta S",
+            "spans": [
+              {
+                "offset": 647,
+                "length": 23
+              }
+            ],
+            "confidence": 0.725,
+            "source": "D(7,3.1108,3.4179,4.2421,3.4395,4.2395,3.5753,3.1082,3.5537)"
+          },
+          "vin": {
+            "type": "string",
+            "valueString": "3VWC57BU3LA515467",
+            "spans": [
+              {
+                "offset": 689,
+                "length": 17
+              }
+            ],
+            "confidence": 0.909,
+            "source": "D(7,3.3497,3.7603,4.3621,3.7672,4.3621,3.8881,3.3497,3.8819)"
+          },
+          "odometer": {
+            "type": "number",
+            "valueNumber": 89725,
+            "spans": [
+              {
+                "offset": 763,
+                "length": 6
+              }
+            ],
+            "confidence": 0.854,
+            "source": "D(7,3.6199,4.2737,3.9366,4.2762,3.9366,4.4032,3.6199,4.4004)"
+          }
+        },
+        "kind": "document",
+        "startPageNumber": 7,
+        "endPageNumber": 8,
+        "unit": "inch",
+        "pages": [
+          {
+            "pageNumber": 7,
+            "angle": 0.185147,
+            "width": 8.5,
+            "height": 11
+          },
+          {
+            "pageNumber": 8,
+            "angle": 0,
+            "width": 8.5,
+            "height": 11
+          }
+        ],
+        "segments": [
+          {
+            "span": {
+              "offset": 0,
+              "length": 5745
+            },
+            "segmentId": "segment6",
+            "startPageNumber": 7,
+            "endPageNumber": 8,
+            "category": "repair_estimate",
+            "confidence": 0.99
+          }
+        ],
+        "metadata": {
+          "contentType": "application/pdf",
+          "pageCount": "13"
+        },
+        "analyzerId": "lab664_cache_20261103_195602_repair"
+      },
+      {
+        "path": "input1/segment7",
+        "category": "statement",
+        "markdown": "11/07/2025\n\nPriya Raman\n397 Linden Terrace\nCypress Parish, LA 70123\n(504) 555-0107\npriya.raman@example.com\n\nI am writing to provide my account of what happened to\nmy vehicle.\n\nOn the morning of 11/06/2025 around 05:40, I went to my\ncar in the Cypress Court residential parking lot, Cypress Parish,\nLA 70123, and discovered that it was sitting in standing\nfloodwater. There had been heavy rain overnight and the\nparking area clearly flooded.\n\nMy vehicle is a 2020 Volkswagen Jetta S, Black\n(VIN: 3VWC57BU3LA515467), LA license LA32831, used for\npersonal commuting. When I opened the driver's door, water\nwas inside up to the front floorboards. The carpeting was\nsoaked on both the driver and passenger sides and there was\nmoisture around the lower dash and center console.\n\nWhen I turned the key to the accessory position, several\nwarning lights came on (battery, ABS, and traction control).\nBecause of the water and the lights, I decided not to start\nor drive the car.\n\nI took photos and called my insurer to start a claim. My\nclaim number is CDA-25-239878 and my policy number is\nCDA-A9636901 with Cypress Delta Assurance. I scheduled\na tow and had the vehicle transported to the assessment\nfacility the same morning. It has not been operated by me\nsince I discovered it.\n\nFrom what I can see, the damage appears to be water\nintrusion to the floor and lower dash area, including possible\nelectrical-module and harness issues, and interior contamination.\nI understand repair economics and a proposed total-loss value\nare still under review.\n\nI have not had any injuries and no other vehicle was\ninvolved.\n\nPlease let me know if you need any more information\nfrom me.\n\nThank you,\nP.R.\n\n<!-- PageBreak -->\n\n",
+        "fields": {
+          "claimant_name": {
+            "type": "string",
+            "valueString": "Priya Raman",
+            "spans": [
+              {
+                "offset": 12,
+                "length": 11
+              }
+            ],
+            "confidence": 0.937,
+            "source": "D(9,1.6198,0.3830,2.8961,0.4248,2.8882,0.6664,1.6119,0.6245)"
+          },
+          "incident_date": {
+            "type": "date",
+            "valueDate": "2025-11-06",
+            "spans": [
+              {
+                "offset": 194,
+                "length": 10
+              }
+            ],
+            "confidence": 0.989,
+            "source": "D(9,3.4458,2.5639,4.4002,2.5782,4.3990,2.7726,3.4444,2.7584)"
+          },
+          "incident_location": {
+            "type": "string",
+            "valueString": "Cypress Court residential parking lot, Cypress Parish, LA 70123",
+            "spans": [
+              {
+                "offset": 243,
+                "length": 54
+              },
+              {
+                "offset": 298,
+                "length": 8
+              }
+            ],
+            "confidence": 0.863,
+            "source": "D(9,2.5753,2.8375,7.1331,2.8984,7.1303,3.1071,2.5725,3.0462);D(9,1.4900,3.1107,2.3992,3.1217,2.3969,3.3136,1.4877,3.3026)"
+          },
+          "vehicle": {
+            "type": "string",
+            "valueString": "2020 Volkswagen Jetta S",
+            "spans": [
+              {
+                "offset": 458,
+                "length": 23
+              }
+            ],
+            "confidence": 0.925,
+            "source": "D(9,3.3796,3.9882,5.8618,4.0067,5.8603,4.2102,3.3781,4.1918)"
+          },
+          "vin": {
+            "type": "string",
+            "valueString": "3VWC57BU3LA515467",
+            "spans": [
+              {
+                "offset": 495,
+                "length": 17
+              }
+            ],
+            "confidence": 0.989,
+            "source": "D(9,2.0922,4.2537,4.1353,4.2623,4.1353,4.4740,2.0922,4.4646)"
+          },
+          "reported_damage": {
+            "type": "string",
+            "valueString": "Water intrusion to the floor and lower dash area, including possible electrical-module and harness issues, interior contamination, soaked carpeting on both driver and passenger sides, moisture around the lower dash and center console, and warning lights for battery, ABS, and traction control.",
+            "spans": [
+              {
+                "offset": 442,
+                "length": 46
+              },
+              {
+                "offset": 489,
+                "length": 54
+              },
+              {
+                "offset": 544,
+                "length": 58
+              },
+              {
+                "offset": 603,
+                "length": 57
+              },
+              {
+                "offset": 661,
+                "length": 59
+              },
+              {
+                "offset": 721,
+                "length": 50
+              },
+              {
+                "offset": 773,
+                "length": 56
+              },
+              {
+                "offset": 830,
+                "length": 60
+              },
+              {
+                "offset": 891,
+                "length": 59
+              },
+              {
+                "offset": 951,
+                "length": 17
+              },
+              {
+                "offset": 1274,
+                "length": 51
+              },
+              {
+                "offset": 1326,
+                "length": 62
+              },
+              {
+                "offset": 1389,
+                "length": 65
+              },
+              {
+                "offset": 1455,
+                "length": 61
+              },
+              {
+                "offset": 1517,
+                "length": 23
+              }
+            ],
+            "confidence": 0.53,
+            "source": "D(9,1.6270,3.9750,6.5425,4.0119,6.5410,4.2155,1.6255,4.1787);D(9,1.4391,4.2466,7.1399,4.2798,7.1387,4.4951,1.4379,4.4619);D(9,1.4205,4.5658,7.0061,4.5715,7.0059,4.7884,1.4203,4.7827);D(9,1.4205,4.8558,6.8565,4.8594,6.8564,5.0697,1.4204,5.0661);D(9,1.4101,5.1543,7.0889,5.1552,7.0889,5.3495,1.4101,5.3486);D(9,1.3914,5.4540,6.1965,5.4320,6.1973,5.6256,1.3922,5.6476);D(9,1.5471,5.7331,6.8564,5.7261,6.8567,5.9308,1.5474,5.9378);D(9,1.3924,6.0300,6.8688,5.9930,6.8703,6.2150,1.3939,6.2520);D(9,1.3790,6.3204,6.8730,6.2893,6.8742,6.5016,1.3802,6.5327);D(9,1.3759,6.6429,2.9327,6.6279,2.9343,6.8022,1.3776,6.8171);D(9,1.4960,8.5287,6.3457,8.4526,6.3488,8.6483,1.4990,8.7243);D(9,1.3098,8.7596,6.6691,8.6711,6.6728,8.8986,1.3135,8.9872);D(9,1.3109,8.9948,6.6565,8.9062,6.6601,9.1202,1.3144,9.2088);D(9,1.3004,9.2302,6.6233,9.1207,6.6278,9.3376,1.3048,9.4471);D(9,1.2863,9.4996,3.2037,9.3935,3.2132,9.5641,1.2958,9.6703)"
+          },
+          "summary": {
+            "type": "string",
+            "valueString": "Priya Raman reported that on the morning of 11/06/2025 around 05:40, she found her 2020 Volkswagen Jetta S in standing floodwater in the Cypress Court residential parking lot after heavy overnight rain. She reported water inside up to the front floorboards, soaked carpeting, moisture around the lower dash and center console, warning lights when the key was turned to accessory, and possible electrical and interior contamination issues. She did not start or drive the car, took photos, contacted her insurer, scheduled a tow, and stated there were no injuries and no other vehicle involved.",
+            "spans": [
+              {
+                "offset": 176,
+                "length": 55
+              },
+              {
+                "offset": 232,
+                "length": 65
+              },
+              {
+                "offset": 298,
+                "length": 56
+              },
+              {
+                "offset": 355,
+                "length": 55
+              },
+              {
+                "offset": 411,
+                "length": 29
+              },
+              {
+                "offset": 442,
+                "length": 46
+              },
+              {
+                "offset": 489,
+                "length": 54
+              },
+              {
+                "offset": 544,
+                "length": 58
+              },
+              {
+                "offset": 603,
+                "length": 57
+              },
+              {
+                "offset": 661,
+                "length": 59
+              },
+              {
+                "offset": 721,
+                "length": 50
+              },
+              {
+                "offset": 773,
+                "length": 56
+              },
+              {
+                "offset": 830,
+                "length": 60
+              },
+              {
+                "offset": 891,
+                "length": 59
+              },
+              {
+                "offset": 951,
+                "length": 17
+              },
+              {
+                "offset": 970,
+                "length": 56
+              },
+              {
+                "offset": 1027,
+                "length": 53
+              },
+              {
+                "offset": 1081,
+                "length": 54
+              },
+              {
+                "offset": 1136,
+                "length": 55
+              },
+              {
+                "offset": 1192,
+                "length": 57
+              },
+              {
+                "offset": 1250,
+                "length": 22
+              },
+              {
+                "offset": 1274,
+                "length": 51
+              },
+              {
+                "offset": 1326,
+                "length": 62
+              },
+              {
+                "offset": 1389,
+                "length": 65
+              },
+              {
+                "offset": 1455,
+                "length": 61
+              },
+              {
+                "offset": 1517,
+                "length": 23
+              },
+              {
+                "offset": 1542,
+                "length": 52
+              },
+              {
+                "offset": 1595,
+                "length": 9
+              }
+            ],
+            "confidence": 0.524,
+            "source": "D(9,1.5184,2.5224,7.0509,2.6244,7.0470,2.8340,1.5146,2.7320);D(9,1.4995,2.8298,7.1328,2.8956,7.1304,3.1016,1.4971,3.0358);D(9,1.4901,3.1052,6.8550,3.1762,6.8523,3.3765,1.4874,3.3054);D(9,1.4714,3.3795,6.8631,3.4459,6.8605,3.6549,1.4688,3.5885);D(9,1.4641,3.6922,4.2064,3.6805,4.2073,3.8930,1.4650,3.9048);D(9,1.6270,3.9750,6.5425,4.0119,6.5410,4.2155,1.6255,4.1787);D(9,1.4391,4.2466,7.1399,4.2798,7.1387,4.4951,1.4379,4.4619);D(9,1.4205,4.5658,7.0061,4.5715,7.0059,4.7884,1.4203,4.7827);D(9,1.4205,4.8558,6.8565,4.8594,6.8564,5.0697,1.4204,5.0661);D(9,1.4101,5.1543,7.0889,5.1552,7.0889,5.3495,1.4101,5.3486);D(9,1.3914,5.4540,6.1965,5.4320,6.1973,5.6256,1.3922,5.6476);D(9,1.5471,5.7331,6.8564,5.7261,6.8567,5.9308,1.5474,5.9378);D(9,1.3924,6.0300,6.8688,5.9930,6.8703,6.2150,1.3939,6.2520);D(9,1.3790,6.3204,6.8730,6.2893,6.8742,6.5016,1.3802,6.5327);D(9,1.3759,6.6429,2.9327,6.6279,2.9343,6.8022,1.3776,6.8171);D(9,1.3882,6.9088,6.8937,6.8583,6.8956,7.0663,1.3901,7.1168);D(9,1.3331,7.1879,6.8894,7.1384,6.8913,7.3560,1.3350,7.4055);D(9,1.3361,7.4796,6.8189,7.4176,6.8214,7.6411,1.3387,7.7031);D(9,1.3373,7.7615,6.7648,7.6890,6.7675,7.8928,1.3400,7.9652);D(9,1.3278,8.0178,6.8355,7.9519,6.8381,8.1750,1.3305,8.2409);D(9,1.3302,8.3058,3.3119,8.2364,3.3184,8.4196,1.3366,8.4891);D(9,1.4960,8.5287,6.3457,8.4526,6.3488,8.6483,1.4990,8.7243);D(9,1.3098,8.7596,6.6691,8.6711,6.6728,8.8986,1.3135,8.9872);D(9,1.3109,8.9948,6.6565,8.9062,6.6601,9.1202,1.3144,9.2088);D(9,1.3004,9.2302,6.6233,9.1207,6.6278,9.3376,1.3048,9.4471);D(9,1.2863,9.4996,3.2037,9.3935,3.2132,9.5641,1.2958,9.6703);D(9,1.4072,9.6649,6.4405,9.5545,6.4453,9.7740,1.4120,9.8843);D(9,1.2915,9.9538,1.9619,9.8972,1.9759,10.0620,1.3055,10.1187)"
+          }
+        },
+        "kind": "document",
+        "startPageNumber": 9,
+        "endPageNumber": 9,
+        "unit": "inch",
+        "pages": [
+          {
+            "pageNumber": 9,
+            "angle": -0.2409,
+            "width": 8.5,
+            "height": 11
+          }
+        ],
+        "segments": [
+          {
+            "span": {
+              "offset": 0,
+              "length": 1705
+            },
+            "segmentId": "segment7",
+            "startPageNumber": 9,
+            "endPageNumber": 9,
+            "category": "statement",
+            "confidence": 0.98
+          }
+        ],
+        "metadata": {
+          "contentType": "application/pdf",
+          "pageCount": "13"
+        },
+        "analyzerId": "lab664_cache_20261103_195602_statement"
+      },
+      {
+        "path": "input1/segment10/segment1",
+        "category": "tax.us.1099A.2025",
+        "markdown": "☐\nCORRECTED (if checked)\n\nLENDER'S name, street address, city or town, state or province, country, ZIP or\nforeign postal code, and telephone no.\nCypress Parish Asset Services\n940 River Trade Avenue\nMetairie, LA 70001\n(504) 555-0137\n\nOMB No. 1545-0877\nForm\n1099-A\n(Rev. April 2025)\n\nFor calendar year\n2025\n\n\n# Acquisition or Abandonment of Secured Property\n\nLENDER'S TIN\n\\*\\*-\\*\\**9073\n\nBORROWER'S TIN\n984-31-9073\n\n1 Date of lender's acquisition or\nknowledge of abandonment\n06/12/2025\n\n2 Balance of principal\noutstanding\n$\n13,415.00\n\nBORROWER'S name\nPriya Raman\nStreet address (including apt. no.)\n397 Linden Terrace\n\nCity or town, state or province, country, and ZIP or foreign postal code\nCypress Parish, LA 70123\n\nAccount number (see instructions)\nSYN-LA-1099A-07\n\n3\n\n4 Fair market value of property\n$\n7,980.00\n\n5 If checked, the borrower was personally liable for repayment\nof the debt\n☐\n\n6 Description of property\n2019 Hyundai Tucson SE, gray\nTraining asset ref: SYN-LA-1099A-07\n\n\n## Copy B For Borrower\n\nThis is important tax\ninformation and is being\nfurnished to the IRS. If\nyou are required to file a\nreturn, a negligence\npenalty or other\nsanction may be\nimposed on you if\ntaxable income results\nfrom this transaction\nand the IRS determines\nthat it has not been\nreported.\n\n<!-- PageFooter: Form 1099-A (Rev. 4-2025) -->\n<!-- PageFooter: (keep for your records) -->\n<!-- PageFooter: www.irs.gov/Form1099A -->\n<!-- PageFooter: Department of the Treasury - Internal Revenue Service -->\n",
+        "fields": {
+          "Form1099ACopies": {
+            "type": "array",
+            "valueArray": [
+              {
+                "type": "object",
+                "valueObject": {
+                  "TaxYear": {
+                    "type": "string",
+                    "valueString": "2025",
+                    "spans": [
+                      {
+                        "offset": 300,
+                        "length": 4
+                      }
+                    ],
+                    "confidence": 0.867,
+                    "source": "D(13,5.7981,1.1619,6.0969,1.1632,6.0969,1.2761,5.7981,1.2762)"
+                  },
+                  "CopyLabel": {
+                    "type": "string",
+                    "valueString": "Copy B For Borrower",
+                    "spans": [
+                      {
+                        "offset": 988,
+                        "length": 6
+                      },
+                      {
+                        "offset": 995,
+                        "length": 12
+                      }
+                    ],
+                    "confidence": 0.892,
+                    "source": "D(13,7.5164,1.3422,8.0061,1.3421,8.0061,1.4901,7.5164,1.4902);D(13,7.2010,1.5186,8.0119,1.5294,8.0102,1.6525,7.1993,1.6417)"
+                  },
+                  "Lender": {
+                    "type": "object",
+                    "valueObject": {
+                      "TIN": {
+                        "type": "string",
+                        "valueString": "\\*\\*-\\*\\**9073",
+                        "spans": [
+                          {
+                            "offset": 370,
+                            "length": 14
+                          }
+                        ],
+                        "confidence": 0.892,
+                        "source": "D(13,1.2672,1.6498,1.8382,1.6672,1.8344,1.7934,1.2633,1.7760)"
+                      },
+                      "Name": {
+                        "type": "string",
+                        "valueString": "Cypress Parish Asset Services",
+                        "spans": [
+                          {
+                            "offset": 145,
+                            "length": 29
+                          }
+                        ],
+                        "confidence": 0.782,
+                        "source": "D(13,0.7495,0.8880,2.2246,0.8859,2.2248,1.0057,0.7497,1.0078)"
+                      },
+                      "Address": {
+                        "type": "string",
+                        "valueString": "940 River Trade Avenue Metairie, LA 70001",
+                        "spans": [
+                          {
+                            "offset": 175,
+                            "length": 22
+                          },
+                          {
+                            "offset": 198,
+                            "length": 18
+                          }
+                        ],
+                        "confidence": 0.862,
+                        "source": "D(13,0.7497,1.0070,1.9258,1.0106,1.9255,1.1208,0.7494,1.1172);D(13,0.7523,1.1312,1.6487,1.1308,1.6487,1.2402,0.7523,1.2406)"
+                      },
+                      "PhoneNumber": {
+                        "type": "string",
+                        "valueString": "(504) 555-0137",
+                        "spans": [
+                          {
+                            "offset": 217,
+                            "length": 14
+                          }
+                        ],
+                        "confidence": 0.859,
+                        "source": "D(13,0.7501,1.2532,1.4910,1.2463,1.4920,1.3603,0.7512,1.3672)"
+                      }
+                    }
+                  },
+                  "Borrower": {
+                    "type": "object",
+                    "valueObject": {
+                      "TIN": {
+                        "type": "string",
+                        "valueString": "984-31-9073",
+                        "spans": [
+                          {
+                            "offset": 401,
+                            "length": 11
+                          }
+                        ],
+                        "confidence": 0.928,
+                        "source": "D(13,2.8887,1.6657,3.6108,1.6660,3.6108,1.7873,2.8887,1.7832)"
+                      },
+                      "Name": {
+                        "type": "string",
+                        "valueString": "Priya Raman",
+                        "spans": [
+                          {
+                            "offset": 549,
+                            "length": 11
+                          }
+                        ],
+                        "confidence": 0.853,
+                        "source": "D(13,0.7489,2.0823,1.4879,2.0840,1.4876,2.2197,0.7486,2.2180)"
+                      },
+                      "Address": {
+                        "type": "string",
+                        "valueString": "397 Linden Terrace Cypress Parish, LA 70123",
+                        "spans": [
+                          {
+                            "offset": 597,
+                            "length": 18
+                          },
+                          {
+                            "offset": 690,
+                            "length": 24
+                          }
+                        ],
+                        "confidence": 0.876,
+                        "source": "D(13,0.7471,2.4996,1.8461,2.5016,1.8459,2.6261,0.7469,2.6241);D(13,0.7506,2.8304,2.2163,2.8245,2.2169,2.9743,0.7512,2.9802)"
+                      },
+                      "AccountNumber": {
+                        "type": "string",
+                        "valueString": "SYN-LA-1099A-07",
+                        "spans": [
+                          {
+                            "offset": 750,
+                            "length": 15
+                          }
+                        ],
+                        "confidence": 0.846,
+                        "source": "D(13,1.8768,3.1588,2.9240,3.1574,2.9242,3.2870,1.8770,3.2884)"
+                      }
+                    }
+                  },
+                  "Box1": {
+                    "type": "date",
+                    "valueDate": "2025-06-12",
+                    "spans": [
+                      {
+                        "offset": 473,
+                        "length": 10
+                      }
+                    ],
+                    "confidence": 0.927,
+                    "source": "D(13,4.4783,1.6810,5.1174,1.6807,5.1174,1.8046,4.4783,1.8058)"
+                  },
+                  "Box2": {
+                    "type": "number",
+                    "valueNumber": 13415,
+                    "spans": [
+                      {
+                        "offset": 522,
+                        "length": 9
+                      }
+                    ],
+                    "confidence": 0.924,
+                    "source": "D(13,6.3044,1.6837,6.8606,1.6832,6.8606,1.8022,6.3044,1.8026)"
+                  },
+                  "Box4": {
+                    "type": "number",
+                    "valueNumber": 7980,
+                    "spans": [
+                      {
+                        "offset": 804,
+                        "length": 8
+                      }
+                    ],
+                    "confidence": 0.924,
+                    "source": "D(13,6.3625,2.1809,6.8606,2.1813,6.8606,2.3042,6.3625,2.3043)"
+                  },
+                  "Box5": {
+                    "type": "boolean",
+                    "valueBoolean": false,
+                    "spans": [
+                      {
+                        "offset": 889,
+                        "length": 1
+                      }
+                    ],
+                    "confidence": 0.733,
+                    "source": "D(13,6.7153,2.5231,6.8398,2.5204,6.8398,2.6439,6.7153,2.6466)"
+                  },
+                  "Box6": {
+                    "type": "string",
+                    "valueString": "2019 Hyundai Tucson SE, gray Training asset ref: SYN-LA-1099A-07",
+                    "spans": [
+                      {
+                        "offset": 918,
+                        "length": 28
+                      },
+                      {
+                        "offset": 947,
+                        "length": 35
+                      }
+                    ],
+                    "confidence": 0.884,
+                    "source": "D(13,4.1443,2.8525,5.6996,2.8660,5.6984,2.9997,4.1431,2.9862);D(13,4.1501,2.9879,6.0015,2.9837,6.0018,3.1115,4.1504,3.1157)"
+                  },
+                  "IsCorrected": {
+                    "type": "boolean",
+                    "valueBoolean": false,
+                    "spans": [
+                      {
+                        "offset": 0,
+                        "length": 1
+                      }
+                    ],
+                    "confidence": 0.846,
+                    "source": "D(13,3.3929,0.3389,3.5424,0.3394,3.5424,0.4894,3.3929,0.4894)"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "kind": "document",
+        "startPageNumber": 13,
+        "endPageNumber": 13,
+        "unit": "inch",
+        "pages": [
+          {
+            "pageNumber": 13,
+            "angle": 0,
+            "width": 8.5,
+            "height": 11
+          }
+        ],
+        "segments": [
+          {
+            "span": {
+              "offset": 0,
+              "length": 1490
+            },
+            "segmentId": "segment1",
+            "startPageNumber": 13,
+            "endPageNumber": 13,
+            "category": "tax.us.1099A.2025"
+          }
+        ],
+        "metadata": {
+          "contentType": "application/pdf",
+          "pageCount": "1"
+        },
+        "analyzerId": "prebuilt-tax.us.1099A.2025"
+      }
+    ]
+  },
+  "usage": {
+    "documentPagesStandard": 13,
+    "contextualizationTokens": 13000,
+    "tokens": {
+      "gpt-5.5-input": 19477,
+      "gpt-5.5-output": 2312,
+      "gpt-5.2-input": 6912,
+      "gpt-5.2-cached-input": 3456,
+      "gpt-5.2-output": 542,
+      "gpt-5.5-cached-input": 7680
+    }
+  }
+}

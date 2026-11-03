@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdir, readFile, unlink } from "node:fs/promises";
+import { cp, mkdir, readFile, unlink } from "node:fs/promises";
 import path from "node:path";
 import { z } from "zod";
 import { Cache } from "./batch.ts";
@@ -8,7 +8,7 @@ import { canonical, digest } from "./policy-core.ts";
 import {
   frameworkConfigSchema, loadPolicyCache, PolicyService, savePolicyCache,
 } from "./policy-service.ts";
-import { policyDemoManifestSchema as manifestSchema } from "./policy-demo.ts";
+import { policyDemoManifestSchema as manifestSchema, readPolicyDemo } from "./policy-demo.ts";
 
 const bundle = path.join(repositoryRoot, "data", "policy-demo");
 const cacheFolder = path.join(repositoryRoot, ".tools", "policy-cache");
@@ -55,6 +55,7 @@ if (action === "export") {
   const previous = await loadPolicyCache(path.join(bundle, "manifest.json"));
   const previousFiles = previous === undefined ? [] : manifestSchema.parse(previous).files;
   await mkdir(bundle, { recursive: true });
+  await cp(path.join(cache.folder, run.id), path.join(bundle, "source", run.id), { recursive: true });
   for (const [name, value] of files) await savePolicyCache(path.join(bundle, name), value);
   await savePolicyCache(path.join(bundle, "manifest.json"), manifest);
   for (const { name } of previousFiles)
@@ -74,7 +75,6 @@ if (action === "export") {
   if (local)
     assert.equal(canonical(frameworkConfigSchema.parse(local)), canonical(config),
       "A different local policy configuration exists. Keep it; use a separately provisioned demo machine.");
-  const run = await cache.load(manifest.runId);
   const pending = payloads.map(({ name, value }) => ({
     file: name === "policy-agent-framework.json" ? configFile : path.join(cacheFolder, name), value,
   }));
@@ -84,9 +84,9 @@ if (action === "export") {
       assert.equal(canonical(file === configFile ? frameworkConfigSchema.parse(existing) : existing),
         canonical(value), `A different local cache already exists: ${path.basename(file)}. Nothing was restored.`);
   }
-  // Validate sources, CU facts, output schemas and citations before touching the local cache.
-  const service = new PolicyService({ config: async () => config, cacheFolder: bundle });
-  const items = await service.snapshot(run, "search", (id) => cache.raw(run.id, id));
+  // Validate the bundle's own sources before touching the local cache.
+  const demo = await readPolicyDemo(bundle);
+  const items = demo.results(demo.sourceRun).items;
   assert.equal(items.length, manifest.packetCount);
   assert.ok(items.every((item) => item.status === "completed"), "The bundled reviews do not match the included CU run.");
   for (const { file, value } of pending) {

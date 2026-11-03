@@ -740,10 +740,10 @@ test("policy status helper is callable from module scope during startup and mode
   vm.runInContext(`policyResults.set("search", {
     source: "bundled", indexName: "original-demo-index", staleDataset: true
   }); policyMessage();`, context);
-  assert.match(status.textContent, /Stale policy results from a different extraction dataset/);
+  assert.equal(status.textContent, "Saved policy results · original-demo-index · CU Layout");
   vm.runInContext(`policyStatus = { configured: false, message: "Status request failed." };
     policyMessage();`, context);
-  assert.match(status.textContent, /Stale policy results from a different extraction dataset/);
+  assert.equal(status.textContent, "Saved policy results · original-demo-index · CU Layout");
   assert.equal(
     vm.runInContext('policyModeLabel("search")', context),
     "FoundryIQ",
@@ -1169,8 +1169,8 @@ test("policy Run requires Search and only this session's busy work disables the 
   assert.equal(nodes.get("policy-run")!.hidden, true);
   assert.equal(nodes.get("analyze")!.hidden, true);
   vm.runInContext('policyResults.get("search").staleDataset = true; controls()', context);
-  assert.equal(nodes.get("policy-chat-mode")!.disabled, true);
-  assert.match(nodes.get("policy-chat-mode")!.title!, /match this extraction run/);
+  assert.equal(nodes.get("policy-chat-mode")!.disabled, false);
+  assert.equal(nodes.get("policy-chat-mode")!.title!, "");
   vm.runInContext(`run = undefined; savedPolicyEntries = [];
     policyStatus.bundledDemo.runId = "included-run";
     savedExtractionRun = { id: "included-run" }; controls()`, context);
@@ -1181,7 +1181,27 @@ test("policy Run requires Search and only this session's busy work disables the 
   vm.runInContext(`busy = false; policyMode = "ungrounded"; controls()`, context);
   assert.equal(nodes.get("load-policy-cache")!.disabled, true);
   vm.runInContext(`policyMode = "search"; savedExtractionRun.id = "different-run"; controls()`, context);
-  assert.equal(nodes.get("load-policy-cache")!.disabled, true);
+  assert.equal(nodes.get("load-policy-cache")!.disabled, false);
+});
+
+test("startup selects the latest completed CU run independently of the policy bundle", async () => {
+  const source = await readFile(new URL("../web/workbench.js", import.meta.url), "utf8");
+  const latest = { id: "latest-cu", status: "completed", datasetHash: "current",
+    analyzer: { id: "current-router" }, startedAt: "2026-11-03T19:57:56Z" };
+  const original = { ...latest, id: "policy-source", startedAt: "2026-10-30T18:37:59Z" };
+  const context = vm.createContext({
+    api: async () => [latest, original],
+    savedExtractionRun: undefined,
+    policyStatus: { bundledDemo: { runId: original.id } },
+    catalog: { datasetHash: "current" },
+    get: () => ({}),
+    controls: () => {},
+  });
+  vm.runInContext(source.slice(
+    source.indexOf("async function caches("), source.indexOf("async function renderRun("),
+  ), context);
+  await vm.runInContext("caches()", context);
+  assert.equal(vm.runInContext("savedExtractionRun.id", context), latest.id);
 });
 
 test("first-run policy navigation exposes the cache toolbar without loading or running analysis", async () => {
