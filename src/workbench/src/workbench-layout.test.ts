@@ -201,7 +201,7 @@ test("policy selection targets the right panel without expanding a table row", a
   });
   const mount = source.slice(source.indexOf("function mountDetails("),
     source.indexOf("async function showPolicyDetails("));
-  vm.runInContext(`${mount}\nmountDetails(5);`, context);
+  vm.runInContext(`${mount}\nmountDetails(3);`, context);
   assert.equal(owner.cells[0].rowSpan, 1);
   assert.equal(attributes.get("aria-controls"), "agent-panel");
   assert.equal(attributes.get("aria-expanded"), "true");
@@ -236,14 +236,14 @@ test("policy details lead with a short finding, field comparisons and verified s
     Check: "Daily rate",
     Outcome: "ReviewRequired",
     ReviewRequired: true,
-    ExpectedValue: "Policy <= $85/day; WA routine <= $60/day",
-    ActualValue: "$61/day",
+    ExpectedValue: "Effective insured-vehicle cap: $85/day",
+    ActualValue: "$91/day",
     Reason:
-      "<b>Not HTML</b>: WA routine threshold exceeded; obtain exception approval.",
-    Headline: "Daily price needs supervisor approval",
+      "<b>Not HTML</b>: Claimed daily base rate exceeds the matched effective cap.",
+    Headline: "Daily base rate exceeds the effective cap",
     Comparisons: [{
-      ClaimField: "RentalDailyBaseRate", ClaimLabel: "Daily rental price", ClaimValue: "$61/day",
-      PolicyField: "WA-R2", PolicyLabel: "Routine approval limit", PolicyValue: "$60/day",
+      ClaimField: "RentalDailyBaseRate", ClaimLabel: "Daily rental base rate", ClaimValue: "$91/day",
+      PolicyField: "WA-R2", PolicyLabel: "Effective contractual cap", PolicyValue: "$85/day",
     }],
   };
   const citation = {
@@ -264,8 +264,8 @@ test("policy details lead with a short finding, field comparisons and verified s
     policyPaneMode: "result",
     selectedPacket: "packet-02",
     policyMode: "search",
-    policyCheckNames: ["Daily rate", "Rental period"],
-    policyShortNames: ["Daily cost", "Rental dates"],
+    policyCheckNames: ["Daily rate", "Rental start", "Effective terms"],
+    policyShortNames: ["Daily rate", "Rental start", "Effective terms"],
     focusedPolicyCheck: 0,
     policyResults: new Map([
       [
@@ -275,7 +275,7 @@ test("policy details lead with a short finding, field comparisons and verified s
             {
               id: "packet-02",
               completedAt: "2026-01-01",
-              result: { Checks: [check, { ...check, Check: "Rental period" }] },
+              result: { Checks: [check, { ...check, Check: "Rental start" }, { ...check, Check: "Effective terms" }] },
               citations: [[citation]],
             },
           ],
@@ -301,7 +301,7 @@ test("policy details lead with a short finding, field comparisons and verified s
   );
   vm.runInContext(`${renderer}\nrenderPolicyOutput();`, context);
   const section = panel.children.find((node) => node.tag === "section")!;
-  assert.equal(title.textContent, "Daily cost");
+  assert.equal(title.textContent, "Daily rate");
   assert.equal(
     panel.children.filter((node) => node.tag === "section").length,
     1,
@@ -312,9 +312,9 @@ test("policy details lead with a short finding, field comparisons and verified s
   assert.equal(section.children[2].tag, "table");
   const rows = section.children[2].children.find((node) => node.tag === "tbody")!.children;
   assert.equal(rows[0].children[1].children[1].textContent, "RentalDailyBaseRate");
-  assert.equal(rows[0].children[2].children[0].textContent, "$61/day");
+  assert.equal(rows[0].children[2].children[0].textContent, "$91/day");
   assert.equal(rows[1].children[1].children[1].textContent, "WA-R2");
-  assert.equal(rows[1].children[2].children[0].textContent, "$60/day");
+  assert.equal(rows[1].children[2].children[0].textContent, "$85/day");
   const explanation = section.children.find((node) => node.tag === "details")!;
   const values = explanation.children[1];
   assert.equal(values.tag, "dl");
@@ -360,10 +360,11 @@ test("policy details lead with a short finding, field comparisons and verified s
   const waiting = panel.children.find((node) => node.tag === "section")!;
   assert.equal(waiting.children[0].textContent, "Waiting for info");
   assert.match(waiting.children[0].className, /policy-waiting/);
-  assert.match(waiting.children[1].textContent, /Review complete\. Waiting for claim information or approval/);
+  assert.match(waiting.children[1].textContent, /Review complete\. Waiting for claim evidence needed by this comparison/);
+  assert.match(waiting.children[1].textContent, /Unrelated repair completion or payment approval isn't required/);
   assert.ok(!waiting.children[0].className.includes("policy-satisfied"));
   vm.runInContext("renderPolicyOutput(1);", context);
-  assert.equal(title.textContent, "Rental dates");
+  assert.equal(title.textContent, "Rental start");
   assert.equal(
     panel.children.filter((node) => node.tag === "section").length,
     1,
@@ -548,6 +549,14 @@ test("policy citations replace right-panel details and Back restores the check a
   nodes.get("policy-source-back")!.onclick!();
   assert.equal(nodes.get("policy-review-pane")!.hidden, false);
   assert.equal(focused, "citation");
+  await vm.runInContext(
+    'openClaimSource({href:"/data/packets/packet-02.pdf",page:5,pages:{start:5,end:7},regions:[]}, "parse.contents[0]", link)',
+    context,
+  );
+  assert.equal(JSON.stringify(preview),
+    JSON.stringify(["/data/packets/packet-02.pdf", 5, []]));
+  assert.match(nodes.get("policy-source-title")!.textContent, /First-pass parsed page text.*pages 5–7.*not a typed CU fact/);
+  nodes.get("policy-source-back")!.onclick!();
   await assert.rejects(vm.runInContext(
     'openClaimSource({href:"/data/packets/packet-01.pdf",page:5}, "LossDate", link)', context,
   ), /selected packet/);
@@ -572,6 +581,16 @@ test("comparison source matching uses CU paths and exact cited rules, not labels
   assert.equal(claimFieldSources(fields, "ActualRepairCompletion").length, 0);
   assert.equal(claimFieldSources(fields, "Rental.Total").length, 0);
   assert.equal(claimFieldSources(fields, "Rental.DailyRates").length, 1);
+  const parsed = {
+    field: "parse.contents[0]", contentPath: "contents[0]", value: "Rental requested: No",
+    status: "present", category: "statement", pages: { start: 4, end: 6 },
+    href: "/data/packets/packet-02.pdf", regions: [],
+  };
+  assert.deepEqual(claimFieldSources([...fields, parsed], parsed.field), [parsed]);
+  for (const guessed of ["contents[0]", "parse.contents", "statement.parse.contents[0]", "Rental request", "parse.contents[0].text"])
+    assert.deepEqual(claimFieldSources([parsed], guessed), []);
+  for (const pages of [{ start: 0, end: 6 }, { start: 6, end: 4 }, { start: 4.5, end: 6 }])
+    assert.deepEqual(claimFieldSources([{ ...parsed, pages }], parsed.field), []);
   const citation = { RuleId: "POLICY-TERM", href: "/data/policies/rental/ocr-comparison-v2/effective-date-co-packet-04.pdf#page=1" };
   assert.deepEqual(policyRuleSources([citation], "POLICY-TERM"), [citation]);
   assert.equal(policyRuleSources([citation], "Not retrieved").length, 0);
@@ -1074,13 +1093,15 @@ test("policy run banner shows the active packet independently of selection and c
   render();
   assert.equal(get("policy-run-status").hidden, false);
   assert.equal(get("policy-status").hidden, true);
-  assert.equal(get("policy-run-label").textContent, "Agent running");
+  assert.equal(get("policy-run-label").textContent, "Agent checking three comparisons");
   assert.equal(get("policy-run-packet").textContent, "packet-02 · Victor Bennett");
   assert.match(get("policy-run-detail").textContent, /1\/3 packets finished/);
   assert.equal(get("policy-run-elapsed").textContent, "2:05");
-  job.items[1].status = "extracting";
+  assert.match(get("policy-run-detail").textContent, /Checking three comparisons and citations/);
+  job.items[1].status = "pending";
   render();
-  assert.equal(get("policy-run-label").textContent, "Preparing claim evidence");
+  assert.equal(get("policy-run-label").textContent, "Agent checking three comparisons");
+  assert.match(get("policy-run-detail").textContent, /Preparing next case from saved Parse evidence/);
   errors.set("search", "Disconnected");
   render();
   assert.equal(get("policy-run-label").textContent, "Progress connection interrupted");

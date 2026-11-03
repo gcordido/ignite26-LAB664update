@@ -1,15 +1,15 @@
 {
   "schemaVersion": 1,
   "provider": "agent-framework",
-  "azureOpenAIEndpoint": "https://aifoundry-66907391.services.ai.azure.com",
-  "modelDeployment": "gpt-5-2-66907391",
-  "searchEndpoint": "https://search-66907391.search.windows.net",
-  "indexName": "lab664-rental-v2-managed-6664918a7c14",
+  "azureOpenAIEndpoint": "https://mmi-usw3-eft-foundry.services.ai.azure.com",
+  "modelDeployment": "gpt-5",
+  "searchEndpoint": "https://mmi-sample-ai-search.search.windows.net",
+  "indexName": "lab664-rental-v2-layout-1728bee05009",
   "corpusHash": "b9e216162214b2b8f7957c8142f71497513fc98555b6dd8e5aad983cc42f8155",
-  "indexFingerprint": "6664918a7c14d67ce39f52e423c0e78bbf026d18f6c23e43db94e42fe00e3648",
-  "extractionMode": "standard",
-  "cuEndpoint": "https://aifoundry-66907391.services.ai.azure.com",
+  "indexFingerprint": "31ae23c3937535589ec13d2a418c1ebf4531d06868d6532404f1c54854509e6c",
+  "extractionMode": "layout",
+  "cuEndpoint": "https://mmi-usw3-eft-foundry.services.ai.azure.com",
   "cuApiVersion": "2026-06-01-preview",
-  "claimAnalyzerId": "lab664_policy_checks_claim_summary",
-  "claimAnalyzerHash": "7c5eec1408015b6a74d67afa6fb6abfcd350eec3fe38ce4ecc1ee7c7ab9be70e"
+  "claimAnalyzerId": "lab664_rental_request_414186fd50e4",
+  "claimAnalyzerHash": "fbdd5e69358edfa88723425716f60bf8e9e6449a93adfc0553dee0e8bf28c4f0"
 }

@@ -10,6 +10,7 @@ import {
   policyFamily,
   policyProblem,
 } from "../web/result-model.js";
+import { claimFieldSources } from "../web/policy-evidence-links.js";
 
 const source = await readFile(new URL("../web/workbench.js", import.meta.url), "utf8");
 const reviewSource = await readFile(new URL("../web/packet-review.js", import.meta.url), "utf8");
@@ -503,4 +504,64 @@ test("activity reports actual stage elapsed time and last poll, including interr
   vm.runInContext("updatePolicyActivity()", context);
   assert.match(connection.textContent, /Progress updates stopped: Network unavailable/);
   assert.match(connection.textContent, /do not start a duplicate review/);
+});
+
+test("policy review and confirmation use saved Parse evidence with no summary preparation stage", async () => {
+  const html = await readFile(new URL("../web/workbench.html", import.meta.url), "utf8");
+  assert.doesNotMatch(source, /claimSummaryPrepared|Claim fields not prepared|extracting:|status === "extracting"|all five checks/);
+  assert.match(source, /Retries the three checks for this case only, using saved Parse fields and selected first-pass page text/);
+  assert.match(source, /No claim CU reanalysis is run/);
+  const confirmation = html.slice(html.indexOf('<dialog id="policy-confirmation"'));
+  assert.match(confirmation, /saved Parse fields and selected first-pass page text; no claim CU reanalysis/);
+  assert.match(confirmation, /three comparisons for each remaining case/);
+  assert.doesNotMatch(confirmation, /Prepare any missing claim fields|new extraction and agent calls/);
+});
+
+test("claim comparisons link preserved text page ranges without guessing fields or adding polygons", async () => {
+  class Node {
+    children = [];
+    isConnected = true;
+    classList = { add() {} };
+    constructor(tag, textContent = "", className = "") {
+      Object.assign(this, { tag, textContent, className });
+    }
+    get firstChild() { return this.children[0]; }
+    append(...nodes) { this.children.push(...nodes); }
+    replaceChildren(...nodes) { this.children = nodes; }
+    remove() { this.isConnected = false; }
+  }
+  const fact = {
+    field: "parse.contents[2]", contentPath: "contents[2]", category: "statement",
+    status: "present", value: "Vehicle not drivable. Rental starts at loss.",
+    pages: { start: 5, end: 7 }, href: "/data/packets/packet-02.pdf", regions: [],
+  };
+  const calls = [], opened = [], requests = new Map();
+  const context = vm.createContext({
+    run: { id: "saved-parse" }, policyMode: "search", claimEvidenceRequests: requests,
+    claimFieldSources, element: (tag, text, className) => new Node(tag, text, className),
+    api: async (route) => { calls.push(route); return { fields: [fact] }; },
+    comparisonLink: (text, href, title, open) => Object.assign(new Node("a", text), { href, title, open }),
+    openClaimSource: async (...args) => { opened.push(args); },
+  });
+  vm.runInContext(source.slice(source.indexOf("function addClaimComparisonSources("),
+    source.indexOf("function beginPolicySource(")), context);
+  const cell = new Node("td");
+  context.cell = cell;
+  vm.runInContext('addClaimComparisonSources(cell, "parse.contents[2]", "At loss", "packet-02", "review-1")', context);
+  await Promise.all(requests.values());
+  const link = cell.firstChild.children[0];
+  assert.equal(link.href, "/data/packets/packet-02.pdf#page=5");
+  assert.match(link.title, /First-pass parsed page text · pages 5–7 · derived interpretation, not a typed CU fact/);
+  assert.ok(cell.children.some((node) => /First-pass parsed page text/.test(node.textContent)));
+  await link.open(link);
+  assert.equal(opened[0][0].pages, fact.pages);
+  assert.equal(opened[0][0].page, 5);
+  assert.deepEqual(opened[0][0].regions, []);
+  const unknown = new Node("td");
+  context.cell = unknown;
+  vm.runInContext('addClaimComparisonSources(cell, "Drivability", "Not drivable", "packet-02", "review-1")', context);
+  await Promise.all(requests.values());
+  assert.ok(unknown.children.some((node) => node.textContent === "No supplied source location"));
+  assert.ok(!unknown.children.some((node) => node.tag === "a"));
+  assert.equal(calls.length, 1);
 });

@@ -69,9 +69,9 @@ the index configuration only to run live analysis or policy checks.
 
 #### Try the policy-check comparison
 
-On first launch, open **Check policies**, select **FoundryIQ**, then select
-**Load cached results**. The app loads the included **10/10** CU run and all
-**50** saved policy checks together; no separate extraction step is needed.
+On first launch, the app automatically loads the included **10/10** CU run and
+all **30** saved policy checks. Open **Check policies** with **FoundryIQ**
+selected. **Load cached results** reloads them; no separate extraction step is needed.
 **Parse and extract** > **Load cached results** also loads the included CU run
 independently. Without compatible local reviews,
 the app reads all ten synthetic reviews directly from the checked-in demo bundle.
@@ -79,25 +79,35 @@ No restore command, Azure configuration or credentials are needed. **Bundled dem
 identifies these read-only results and their original Search index; they aren't
 presented as results from a newly configured index. Existing local configuration
 and caches aren't overwritten. Live-compatible cached results take precedence.
-Loading makes no Azure calls. Follow-up chat requires live Azure configuration
-and a live policy review.
+Loading makes no Azure calls. Follow-up chat requires live Azure configuration, but viewing the saved checks doesn't.
 FoundryIQ is the lab's umbrella label; this implementation retrieves evidence
 directly from Azure AI Search, not a Foundry IQ knowledge base.
 
-The five columns are **Daily cost**, **Rental dates**, **Active policy**,
-**Covered charges**, and **Payment approval**. Compare the claim and policy
+The three columns are **Daily rate**, **Rental start**, and **Effective terms**.
+Compare the claimed daily rental base rate with the effective cap for the matched
+insured vehicle, the stated rental start basis with the documented drivability rule,
+and the applicable policy and genuine amendment with the actual loss date.
+Match the policy ID and insured VIN, not just a similar vehicle.
+Compare the claim and policy
 values in the right panel, then follow a value's source link to its PDF.
 A check mark means **Satisfied**, an open circle means **Review required**,
 and a circular-arrow icon means **Waiting for info**, not an agent still running.
-**N/A** identifies checks that don't apply to a non-rental claim.
-Packet **01** illustrates a daily rate within its contractual limit while
-repair dates and insurer approval can still be missing. Packet **02** illustrates
-why charge classification and payment authority are separate from daily price.
+**N/A** can apply to **Daily rate** and **Rental start** for a confirmed non-rental
+claim; **Effective terms** still compares the matched terms with the loss date.
+Packet **01** illustrates why a numerical rate fit is conditional on rental
+eligibility, not payment approval. Packet **02** separates the contractual cap
+from the SOP's routine handling authority. Missing unrelated repair completion
+or insurer payment authorization doesn't create a wait for these narrow checks.
+Linked page text is labeled as first-pass parsed evidence: its interpretation
+isn't a typed CU fact, and no source boxes are invented.
 These are evidence-based reviews, not coverage or payment approval.
 
 Select **Run live** and confirm only to request policy work. Matching current
-reviews are reused; uncached packets use five parallel Agent Framework calls,
-one per check, plus any missing CU claim-summary extraction. Azure charges apply.
+reviews are reused; uncached packets use saved Parse fields and selected first-pass
+page text, without claim-summary preparation or claim CU reanalysis. The agent
+interprets rental applicability before three parallel comparison calls. Azure charges apply.
+The previous five-check bundle remains legacy history; the new bundle replaces
+the active results without editing extracted facts or inventing outcomes.
 See [policy checks](docs/policy-checks.md) for the walkthrough and cache details.
 
 For guided and self-paced sessions, follow

@@ -252,6 +252,9 @@
 body:has(#review-packet[aria-pressed="true"]) #packet-table {
   min-width: 560px;
 }
+body:has(#workflow-pivots [data-workflow="policy"][aria-pressed="true"]) #packet-table {
+  min-width: 640px;
+}
 .policy-column-title,
 .policy-column-description {
   display: block;

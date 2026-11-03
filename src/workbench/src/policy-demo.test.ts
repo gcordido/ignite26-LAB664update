@@ -9,6 +9,38 @@ import { cacheFolders, dataRoot, repositoryRoot } from "./config.ts";
 import { policyDemo, readPolicyDemo } from "./policy-demo.ts";
 import { frameworkConfigSchema, PolicyService, type PolicyItem } from "./policy-service.ts";
 import { createApp } from "./server.ts";
+import { parseSourceDigest } from "./policy-core.ts";
+
+test("Parse source integrity survives Git LF/CRLF checkout conversion without accepting content changes", () => {
+  const source = '{\n  "lossDate": "2026-02-12"\n}\n';
+  assert.equal(parseSourceDigest(source), parseSourceDigest(source.replace(/\n/g, "\r\n")));
+  assert.notEqual(parseSourceDigest(source), parseSourceDigest(source.replace("2026-02-12", "2026-02-13")));
+});
+
+test("five-check bundles are rejected explicitly rather than reinterpreted", async () => {
+  const root = await mkdtemp(path.join(os.tmpdir(), "policy-five-check-history-"));
+  try {
+    await writeFile(path.join(root, "manifest.json"), JSON.stringify({ schemaVersion: 1 }));
+    await assert.rejects(readPolicyDemo(root), /five-check.*history-only/);
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
+test("three-check bundle uses hash-verified first-pass Parse without a summary cache", async () => {
+  const folder = path.join(repositoryRoot, "data", "policy-demo");
+  const demo = await readPolicyDemo(folder);
+  const manifest = JSON.parse(await readFile(path.join(folder, "manifest.json"), "utf8"));
+  assert.equal(manifest.schemaVersion, 2);
+  assert.equal(manifest.checkContractVersion, 3);
+  assert.deepEqual(manifest.checks, ["Daily rate", "Rental start", "Effective terms"]);
+  assert.equal(manifest.files.length, 21);
+  assert.equal(manifest.sourceFiles.length, 11);
+  assert.equal(manifest.sourceHashFormat, "utf8-lf");
+  assert.ok(manifest.files.every(({ name }: { name: string }) => !name.startsWith("claim-")));
+  assert.equal(demo.sourceCache.folder, path.join(repositoryRoot, "data", "results"));
+  assert.equal(demo.results(demo.sourceRun).items.length, 10);
+});
 
 async function extractionRun() {
   const data = await dataset();
@@ -76,12 +108,12 @@ test("a fresh machine loads the current bundled policy reviews without Azure or 
   assert.equal(payload.source, "bundled");
   assert.equal(payload.sourceRunId, demo.info.runId);
   assert.equal(payload.staleDataset, undefined);
-  assert.equal(payload.extractionMode, "standard");
+  assert.equal(payload.extractionMode, "layout");
   assert.equal(payload.items.length, 10);
   assert.ok(payload.items.every((item: PolicyItem) =>
-    item.status === "completed" && item.result?.Checks.length === 5));
+    item.status === "completed" && item.result?.Checks.length === 3));
   const chat = await request(`policy/chat?${new URLSearchParams({
-    runId: selected.id, packetId: "packet-01", mode: "search", check: "Amount",
+    runId: selected.id, packetId: "packet-01", mode: "search", check: "Daily rate",
   })}`);
   assert.equal(chat.status, 409);
   assert.match((await chat.json()).error, /configure Agent Framework/);
@@ -96,7 +128,7 @@ test("the policy bundle preserves its own inputs independently of the selected C
   assert.equal(bundled.items.length, 10);
   assert.ok(bundled.items.every((item: PolicyItem) =>
     item.status === "completed" &&
-    item.result?.Checks.length === 5 &&
+    item.result?.Checks.length === 3 &&
     item.indexName === demo.info.indexName &&
     item.citations?.flat().every((citation) => citation.href)));
   const current = await extractionRun();
@@ -204,7 +236,7 @@ test("bundled reviews seed chat using the current lab agent without a live polic
   assert.equal((await request("policy/cache/load", {
     runId: selected.id, mode: "search", source: "bundled",
   })).status, 200);
-  const selection = { runId: selected.id, packetId: "packet-01", mode: "search", check: "Amount" };
+  const selection = { runId: selected.id, packetId: "packet-01", mode: "search", check: "Daily rate" };
   const response = await request(`policy/chat?${new URLSearchParams(selection)}`);
   assert.equal(response.status, 200, await response.clone().text());
   const context = await response.json();

@@ -1,10 +1,10 @@
 import assert from "node:assert/strict";
-import { cp, mkdir, readFile, unlink } from "node:fs/promises";
+import { mkdir, readFile, rename } from "node:fs/promises";
 import path from "node:path";
 import { z } from "zod";
 import { Cache } from "./batch.ts";
 import { repositoryRoot } from "./config.ts";
-import { canonical, digest } from "./policy-core.ts";
+import { canonical, checkContractVersion, checkNames, digest, parseSourceDigest } from "./policy-core.ts";
 import {
   frameworkConfigSchema, loadPolicyCache, PolicyService, savePolicyCache,
 } from "./policy-service.ts";
@@ -29,38 +29,48 @@ if (action === "export") {
     "Refresh all ten reviews with the current prompts before exporting.");
   const files = new Map<string, unknown>([["policy-agent-framework.json", config]]);
   for (const packet of run.source) {
-    const claimKey = digest(JSON.stringify({
-      pdf: packet.sha256, endpoint: config.cuEndpoint, apiVersion: config.cuApiVersion,
-      analyzer: config.claimAnalyzerId, definition: config.claimAnalyzerHash, schema: 1,
-    }));
     const savedKey = digest(canonical({
-      config, runId: run.id, analyzer: run.analyzer.fingerprint, mode: "search", packetId: packet.id,
+      checkContractVersion, config, runId: run.id, analyzer: run.analyzer.fingerprint, mode: "search", packetId: packet.id,
     }));
-    const claimName = `claim-${claimKey}.json`;
     const savedName = `framework-saved-${savedKey}.json`;
-    const claim = await loadPolicyCache(path.join(cacheFolder, claimName));
     const saved = z.object({ reviewKey: z.string().regex(/^[a-f0-9]{64}$/) }).passthrough()
       .parse(await loadPolicyCache(path.join(cacheFolder, savedName)));
     const reviewName = `framework-review-${saved.reviewKey}.json`;
     const review = await loadPolicyCache(path.join(cacheFolder, reviewName));
-    assert.ok(claim && review, `Missing validated cache files for ${packet.id}.`);
-    files.set(claimName, claim);
+    assert.ok(review, `Missing validated three-check review for ${packet.id}.`);
     files.set(savedName, saved);
     files.set(reviewName, review);
   }
+  const sourceNames = ["manifest.json", ...run.source.map((packet) => `${packet.id}.cu.json`)];
+  const sourceFiles = await Promise.all(sourceNames.map(async (name) => ({
+    name, sha256: parseSourceDigest(await readFile(path.join(cache.folder, run.id, name))),
+  })));
   const manifest = manifestSchema.parse({
-    schemaVersion: 1, runId: run.id, mode: "search", packetCount: 10,
+    schemaVersion: 2, checkContractVersion, checks: checkNames,
+    runId: run.id, mode: "search", packetCount: 10,
+    sourceCache: "../results", sourceHashFormat: "utf8-lf", sourceFiles,
     files: [...files].map(([name, value]) => ({ name, sha256: digest(JSON.stringify(value, null, 2)) })),
   });
   const previous = await loadPolicyCache(path.join(bundle, "manifest.json"));
-  const previousFiles = previous === undefined ? [] : manifestSchema.parse(previous).files;
   await mkdir(bundle, { recursive: true });
-  await cp(path.join(cache.folder, run.id), path.join(bundle, "source", run.id), { recursive: true });
+  const legacy = z.object({
+    schemaVersion: z.literal(1), runId: z.string().uuid(),
+    files: z.array(z.object({ name: z.string().regex(/^(policy-agent-framework|claim-[a-f0-9]{64}|framework-(saved|review)-[a-f0-9]{64})\.json$/) })),
+  }).safeParse(previous);
+  if (legacy.success) {
+    const history = path.join(bundle, "history", "five-checks");
+    await mkdir(path.join(history, "source"), { recursive: true });
+    for (const { name } of legacy.data.files)
+      await rename(path.join(bundle, name), path.join(history, name));
+    await rename(path.join(bundle, "source", legacy.data.runId), path.join(history, "source", legacy.data.runId));
+    await rename(path.join(bundle, "manifest.json"), path.join(history, "manifest.json"));
+  } else if (previous !== undefined) {
+    manifestSchema.parse(previous);
+  }
   for (const [name, value] of files) await savePolicyCache(path.join(bundle, name), value);
   await savePolicyCache(path.join(bundle, "manifest.json"), manifest);
-  for (const { name } of previousFiles)
-    if (!files.has(name)) await unlink(path.join(bundle, name));
-  console.log("Exported ten current synthetic policy reviews and claim fields. No Azure calls were made.");
+  await readPolicyDemo(bundle);
+  console.log("Exported ten current three-comparison reviews reusing the committed Parse results. No claim summaries, restore step or Azure calls are needed to view them. Earlier five-check results remain in history.");
 } else {
   const manifest = manifestSchema.parse(await loadPolicyCache(path.join(bundle, "manifest.json")));
   assert.equal(new Set(manifest.files.map((file) => file.name)).size, manifest.files.length,

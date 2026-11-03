@@ -3,37 +3,54 @@ import path from "node:path";
 import { z } from "zod";
 import { Cache, type Run } from "./batch.ts";
 import { cacheFolders, LabError } from "./config.ts";
-import { digest } from "./policy-core.ts";
+import { checkContractVersion, checkNames, digest, parseSourceDigest } from "./policy-core.ts";
 import { frameworkConfigSchema, loadPolicyCache, PolicyService } from "./policy-service.ts";
 
 export const policyDemoManifestSchema = z.object({
-  schemaVersion: z.literal(1),
+  schemaVersion: z.literal(2),
+  checkContractVersion: z.literal(checkContractVersion),
+  checks: z.tuple([z.literal("Daily rate"), z.literal("Rental start"), z.literal("Effective terms")]),
   runId: z.string().uuid(),
   mode: z.literal("search"),
   packetCount: z.literal(10),
   files: z.array(z.object({
-    name: z.string().regex(/^(policy-agent-framework|claim-[a-f0-9]{64}|framework-(saved|review)-[a-f0-9]{64})\.json$/),
+    name: z.string().regex(/^(policy-agent-framework|framework-(saved|review)-[a-f0-9]{64})\.json$/),
     sha256: z.string().regex(/^[a-f0-9]{64}$/),
-  }).strict()).length(31),
+  }).strict()).length(21),
+  sourceCache: z.literal("../results"),
+  sourceHashFormat: z.literal("utf8-lf"),
+  sourceFiles: z.array(z.object({
+    name: z.string().regex(/^(manifest|packet-\d{2}\.cu)\.json$/),
+    sha256: z.string().regex(/^[a-f0-9]{64}$/),
+  }).strict()).length(11),
 }).strict();
 
 export async function readPolicyDemo(
   folder = cacheFolders().policy,
-  cache = new Cache(path.join(folder, "source")),
+  cache = new Cache(path.resolve(folder, "..", "results")),
 ) {
   const savedManifest = await loadPolicyCache(path.join(folder, "manifest.json"));
   if (!savedManifest)
     throw new LabError(404, `No saved policy manifest was found in ${folder}.`);
+  if (typeof savedManifest === "object" && savedManifest !== null &&
+      "schemaVersion" in savedManifest && savedManifest.schemaVersion === 1)
+    throw new LabError(422, "Earlier five-check policy results are history-only. Load a version-2 three-comparison bundle.");
   const manifest = policyDemoManifestSchema.parse(savedManifest);
   if (new Set(manifest.files.map(({ name }) => name)).size !== manifest.files.length)
     throw new LabError(422, "The bundled policy demo contains duplicate files.");
   if (!manifest.files.some(({ name }) => name === "policy-agent-framework.json") ||
-      ["claim-", "framework-review-", "framework-saved-"].some((prefix) =>
+      ["framework-review-", "framework-saved-"].some((prefix) =>
         manifest.files.filter(({ name }) => name.startsWith(prefix)).length !== manifest.packetCount))
-    throw new LabError(422, "The bundled policy demo must include configuration and all ten claim and review caches.");
+    throw new LabError(422, "The bundled policy demo must include configuration and ten three-check review caches; claim summaries aren't required.");
   for (const { name, sha256 } of manifest.files)
     if (digest(await readFile(path.join(folder, name))) !== sha256)
       throw new LabError(422, `Bundled policy demo checksum mismatch: ${name}`);
+  if (new Set(manifest.sourceFiles.map(({ name }) => name)).size !== manifest.sourceFiles.length ||
+      !manifest.sourceFiles.some(({ name }) => name === "manifest.json"))
+    throw new LabError(422, "The bundled Parse source list contains duplicates or lacks its manifest.");
+  for (const { name, sha256 } of manifest.sourceFiles)
+    if (parseSourceDigest(await readFile(path.join(cache.folder, manifest.runId, name))) !== sha256)
+      throw new LabError(422, `Bundled Parse source checksum mismatch: ${name}`);
   const config = frameworkConfigSchema.parse(
     await loadPolicyCache(path.join(folder, "policy-agent-framework.json")),
   );
@@ -50,6 +67,7 @@ export async function readPolicyDemo(
       runId: manifest.runId,
       mode: manifest.mode,
       indexName: config.indexName,
+      checks: checkNames,
       datasetHash: run.datasetHash,
     },
     results(selectedRun: Run) {

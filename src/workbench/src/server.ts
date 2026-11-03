@@ -132,11 +132,9 @@ export function createApp(
       let exportValue: ReturnType<typeof packetJson> | null = null;
       let packetJsonError: string | undefined;
       let markdown: string | null = null;
-      let claimSummaryPrepared = false;
       try {
         exportValue = packetJson(response, packet, run, review);
         markdown = await selectedPolicy.markdown(run, packet, response);
-        claimSummaryPrepared = await selectedPolicy.summaryPrepared(packet);
       } catch (error) {
         packetJsonError =
           error instanceof Error ? error.message : String(error);
@@ -156,7 +154,6 @@ export function createApp(
         policyReview: report,
         packetJson: exportValue,
         packetMarkdown: markdown,
-        claimSummaryPrepared,
         packetJsonError,
       };
     } catch (error) {

@@ -2,11 +2,9 @@ const escapeHtml = (value) => String(value).replace(/[&<>"']/g, (character) =>
   ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[character]);
 
 const checkLabels = {
-  Amount: "Daily cost",
-  Timing: "Rental dates",
-  "Effective terms": "Active policy",
-  "Charges and reimbursement calculation": "Covered charges",
-  "Authorization and payment readiness": "Payment approval",
+  "Daily rate": "Daily rate",
+  "Rental start": "Rental start",
+  "Effective terms": "Effective terms",
 };
 
 export function chatMessageHtml(text, citations = []) {
@@ -21,7 +19,7 @@ export function chatMessageHtml(text, citations = []) {
 
 export function resultChatText(result) {
   return result.Checks.map((check) =>
-    `${checkLabels[check.Check] ?? check.Check}\n${check.Outcome === "NotApplicable" ? "Not applicable" : check.Outcome === "InProgress" ? "Waiting for info - missing claim information or approval" : check.ReviewRequired ? "Review required" : "Satisfied"}\n` +
+    `${checkLabels[check.Check] ?? check.Check}\n${check.Outcome === "NotApplicable" ? "Not applicable" : check.Outcome === "InProgress" ? "Waiting for info - missing claim evidence for this comparison" : check.ReviewRequired ? "Review required" : "Satisfied"}\n` +
     `Expected: ${check.ExpectedValue}\nActual: ${check.ActualValue}\nReason: ${check.Reason}`).join("\n\n");
 }
 
@@ -69,8 +67,8 @@ export function createPolicyChat({ container, api, onSource, onError }) {
       const original = document.createElement("details");
       const summary = document.createElement("summary");
       const promptLabel = context.promptSource === "saved"
-        ? `${label}: original question and claim fields`
-        : `${label}: current question and claim fields`;
+        ? `${label}: original question and saved Parse evidence`
+        : `${label}: current question and saved Parse evidence`;
       summary.textContent = promptLabel;
       const prompt = document.createElement("pre");
       prompt.textContent = context.prompt;

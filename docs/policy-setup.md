@@ -150,12 +150,14 @@ aren't deleted.
 On a fresh clone, `.tools\policy-agent-framework.json` is absent because it is
 machine-local and git-ignored. After dependencies are provisioned, launch the app
 and load the included CU run, then select **Check policies** > **Load cached
-results**. The app reads all ten synthetic reviews and their claim fields directly
-from `data\policy-demo` when compatible local reviews aren't available. No restore,
+results**. The app reads all ten synthetic reviews (30 comparisons) from
+`data\policy-demo`, reusing the committed Parse evidence in `data\results`,
+when compatible local reviews aren't available. No claim summary, restore,
 Azure configuration, credentials or Azure calls are involved. The **Bundled demo**
 label preserves the original index provenance. Existing configuration and caches
 aren't overwritten, and live-compatible cached results take precedence.
-Bundled results are read-only; follow-up chat isn't available.
+Bundled results are read-only. Follow-up chat requires a compatible live
+model/Search configuration and retains the bundled review's source provenance.
 
 The optional `.\infra\policy-demo-cache.ps1` command still restores a local copy
 for cache-maintenance workflows. It refuses to overwrite different existing
@@ -167,7 +169,9 @@ the setup workflow before attendees arrive. Installing packages alone doesn't
 provision Azure resources. After intentionally refreshing all ten reviews,
 export a new bundle with `.\infra\policy-demo-cache.ps1 -Action export -RunId RUN-ID`.
 Export rejects missing or earlier-prompt results and includes only the selected
-run's claim fields, review files and public configuration, not logs or credentials.
+run's review files, public configuration and hashes of the existing Parse files,
+not logs, credentials or duplicate claim extractions. Earlier five-check results
+remain history-only; they aren't reinterpreted as the three new comparisons.
 
 ## Prepare live policy checks on a lab machine
 

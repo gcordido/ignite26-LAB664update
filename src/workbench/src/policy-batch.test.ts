@@ -64,7 +64,7 @@ test("refresh resumes the owning session's policy job and duplicate starts don't
   const task = new Promise<void>((resolve) => { release = resolve; });
   const job: PolicyJob = {
     id: "test-job", runId: saved.id, mode: "ungrounded", status: "running",
-    startedAt: new Date().toISOString(), items: saved.items.map(({ id }) => ({ id, status: "extracting" })),
+    startedAt: new Date().toISOString(), items: saved.items.map(({ id }) => ({ id, status: "reviewing" })),
   };
   class DeferredPolicy extends PolicyService {
     override async status() {
@@ -165,7 +165,7 @@ test("refresh resumes the owning session's policy job and duplicate starts don't
   assert.equal(resumed.policyMode, "ungrounded");
   const progress = await (await request("policy/results?mode=ungrounded", sessionId)).json();
   assert.equal(progress.id, job.id);
-  assert.equal(progress.items[0].status, "extracting");
+  assert.equal(progress.items[0].status, "reviewing");
   assert.equal((await request("policy/batch", sessionId, { mode: "ungrounded", live: true })).status, 202);
   assert.equal(starts, 1);
   assert.equal((await request("policy/batch", sessionId, { mode: "search", live: true })).status, 409);

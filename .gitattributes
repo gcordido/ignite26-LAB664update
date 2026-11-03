@@ -1,2 +1,3 @@
 *.pdf binary
 data/policy-demo/*.json text eol=lf
+data/policy-demo/history/five-checks/*.json text eol=lf

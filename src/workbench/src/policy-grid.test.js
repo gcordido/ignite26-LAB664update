@@ -1,5 +1,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
+import vm from "node:vm";
+import { resultChatText } from "../web/policy-chat.js";
 import {
   availableTypes,
   fieldColumns,
@@ -300,4 +303,77 @@ test("policy columns coexist with the existing native extraction views and empty
     fieldColumns([native], "statement", false),
   );
   assert.deepEqual(policyColumns([]), []);
+});
+
+test("rental grid keeps all ten packets and exactly three named full-cell check buttons", async () => {
+  const source = await readFile(new URL("../web/workbench.js", import.meta.url), "utf8");
+  class Node {
+    children = [];
+    dataset = {};
+    style = {};
+    attributes = {};
+    classList = { toggle() {} };
+    constructor(tag, textContent = "", className = "") {
+      Object.assign(this, { tag, textContent, className });
+    }
+    append(...nodes) { this.children.push(...nodes); }
+    replaceChildren(...nodes) { this.children = nodes; }
+    setAttribute(name, value) { this.attributes[name] = value; }
+  }
+  const sections = Object.fromEntries(["colgroup", "thead", "tbody"].map((tag) => [tag, new Node(tag)]));
+  const table = new Node("table");
+  table.querySelector = (selector) => sections[selector];
+  const names = ["Daily rate", "Rental start", "Effective terms"];
+  const packets = Array.from({ length: 10 }, (_, index) => ({ id: `packet-${String(index + 1).padStart(2, "0")}` }));
+  const items = packets.map(({ id }, index) => ({
+    id, status: "completed",
+    result: { Checks: [
+      { Check: "Effective terms", Outcome: "Satisfied", ReviewRequired: false },
+      { Check: "Daily rate", Outcome: index === 9 ? "NotApplicable" : "Satisfied", ReviewRequired: false },
+      { Check: "Rental start", Outcome: index === 9 ? "NotApplicable" : "InProgress", ReviewRequired: false },
+    ] },
+  }));
+  let mounted;
+  const context = vm.createContext({
+    get: (id) => id === "packet-table" ? table : {},
+    element: (tag, text, className) => new Node(tag, text, className),
+    columnWidths: new Map(), policyMode: "search",
+    policyResults: new Map([["search", { items, source: "bundled" }]]),
+    run: { items: packets }, selectedPacket: "packet-01",
+    results: new Map(), customerName: () => "", resizeColumns() {},
+    mountDetails: (count) => { mounted = count; },
+  });
+  vm.runInContext(source.slice(source.indexOf("const policyCheckNames ="),
+    source.indexOf("let focusedPolicyCheck =")), context);
+  vm.runInContext(source.slice(source.indexOf("function renderPolicyTable()"),
+    source.indexOf("function openAgentCheck(")), context);
+  vm.runInContext("renderPolicyTable()", context);
+  assert.deepEqual(JSON.parse(vm.runInContext("JSON.stringify(policyCheckNames)", context)), names);
+  assert.deepEqual(JSON.parse(vm.runInContext("JSON.stringify(policyShortNames)", context)), names);
+  assert.equal(mounted, 3);
+  assert.equal(sections.colgroup.children.length, 4);
+  assert.deepEqual(sections.thead.children[0].children.slice(1).map((cell) => cell.children[0].textContent), names);
+  assert.equal(sections.tbody.children.length, 10);
+  const buttons = sections.tbody.children.flatMap((row) => row.children.slice(1).map((cell) => cell.children[0]));
+  assert.equal(buttons.length, 30);
+  assert.ok(buttons.every((button) => button.className === "cell-content"));
+  assert.deepEqual(buttons.slice(0, 3).map((button) => button.dataset.agentCheck), ["0", "1", "2"]);
+  assert.deepEqual(buttons.slice(0, 3).map((button) => button.children[0].textContent),
+    ["Satisfied", "Waiting for info", "Satisfied"]);
+  assert.deepEqual(buttons.slice(-3).map((button) => button.children[0].textContent),
+    ["N/A", "N/A", "Satisfied"]);
+  assert.ok(sections.tbody.children.every((row) => row.children[0].children.length === 1));
+});
+
+test("chat uses the three runtime check IDs without obsolete payment or timing labels", () => {
+  const checks = ["Daily rate", "Rental start", "Effective terms"].map((Check) => ({
+    Check, Outcome: "Satisfied", ReviewRequired: false,
+    ExpectedValue: "Effective matched policy evidence", ActualValue: "Saved Parse evidence",
+    Reason: "Supported comparison, conditional on eligibility; not payment approval.",
+  }));
+  const text = resultChatText({ Checks: checks });
+  for (const { Check } of checks) assert.ok(text.includes(`${Check}\nSatisfied\n`));
+  assert.doesNotMatch(text, /Daily cost|Rental dates|Active policy|Covered charges|Payment approval/);
+  checks[1].Outcome = "InProgress";
+  assert.match(resultChatText({ Checks: checks }), /Rental start\nWaiting for info - missing claim evidence for this comparison/);
 });

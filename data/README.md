@@ -50,23 +50,26 @@ existing state and shared SOP evidence; the source index remains unchanged.
 ## Saved policy demo
 
 `policy-demo` contains ten real Agent Framework policy reviews of these synthetic
-packets, their per-check questions and relevant CU inputs, CU claim fields,
+packets, their per-check questions and relevant saved Parse evidence,
 and public resource configuration. It contains no
 credentials and isn't policy knowledge or a set of scripted runtime answers.
 The results are available on first launch without Azure configuration,
 credentials or a restore script. The app automatically loads saved CU results
-from `results` and all **50** saved policy checks from `policy-demo`.
+from `results` and all **30** saved policy comparisons from `policy-demo`.
 
 The refreshed bundle uses CU run
-`76d80507-e191-4354-81f1-dbfe4fa412f9` and records the Search-managed **Standard**
-index used for these agent reviews. Its original extraction manifest and ten
-native CU responses are included under
-`policy-demo/source/76d80507-e191-4354-81f1-dbfe4fa412f9` for evidence links and
-follow-up chat. Transfer the complete `policy-demo` folder together. No
+`c12569eb-cf4b-479a-9f57-d6bf57fb5732` and records the verified **CU Layout**
+index used for these agent reviews. It reuses the committed extraction manifest
+and ten native CU responses in `results` without another claim extraction or
+mandatory claim-summary cache. Transfer `results` and `policy-demo` together.
+Earlier five-check results and their original Standard-index provenance are
+preserved under `policy-demo/history/five-checks`. No
 machine-local `.tools` configuration, credentials or Azure
 deployment is required to view them. Follow-up chat still requires live setup.
 
 The app validates bundle hashes, claim inputs and citations before loading.
+Parse JSON hashes normalize only Git's LF/CRLF line endings so the same committed
+evidence loads on Windows and Linux; original extraction files aren't rewritten.
 **Bundled demo** identifies these read-only results and their original Search
 index. Compatible local live caches take precedence; local configuration and
 caches aren't overwritten. `.\infra\policy-demo-cache.ps1` remains optional

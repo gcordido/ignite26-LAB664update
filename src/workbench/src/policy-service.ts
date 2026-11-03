@@ -5,11 +5,11 @@ import { randomUUID } from "node:crypto";
 import { z } from "zod";
 import { configuration, LabError, record, repositoryRoot } from "./config.ts";
 import { CuClient } from "./cu.ts";
-import { packetBytes, summarize, type Packet, type Run } from "./batch.ts";
+import { summarize, type Packet, type Run } from "./batch.ts";
 import { packetJson } from "./packet-json.ts";
 import { packetMarkdown } from "./packet-markdown.ts";
 import {
-  canonical, checkNames, citationSchema, digest, modeSchema, policyClaimAnalysis, policyClaimFacts, question, resolveCitations, withClaimSummary,
+  canonical, checkNames, checkContractVersion, citationSchema, digest, modeSchema, policyClaimAnalysis, parsedPolicyScope, parsedTextEvidence, question, resolveCitations,
   type PolicyMode,
 } from "./policy-core.ts";
 import { chatAnswerSchema, type ChatMessage } from "./policy-chat.ts";
@@ -31,7 +31,7 @@ export const frameworkConfigSchema = z.object({
   indexName: z.string().regex(/^[a-z0-9][a-z0-9-]{1,126}$/),
   corpusHash: hash, indexFingerprint: hash, extractionMode: z.enum(["layout", "standard"]),
   cuEndpoint: azureRoot, cuApiVersion: z.enum(["2025-11-01", "2026-06-01-preview"]),
-  claimAnalyzerId: z.string().regex(/^[A-Za-z0-9_-]{1,128}$/), claimAnalyzerHash: hash,
+  claimAnalyzerId: z.string().regex(/^[A-Za-z0-9_-]{1,128}$/).optional(), claimAnalyzerHash: hash.optional(),
 });
 export type FrameworkConfig = z.infer<typeof frameworkConfigSchema>;
 type FrameworkMode = "ungrounded" | "search";
@@ -45,7 +45,7 @@ export type PolicyContext = {
   reasoningEffort?: "minimal" | "low" | "medium" | "high";
 };
 export type PolicyItem = {
-  id: string; status: "pending" | "extracting" | "reviewing" | "completed" | "failed" | "not run";
+  id: string; status: "pending" | "reviewing" | "completed" | "failed" | "not run";
   stageStartedAt?: string;
   cached?: boolean; error?: string; result?: z.infer<typeof frameworkOutput>;
   citations?: Awaited<ReturnType<typeof resolveCitations>>;
@@ -56,6 +56,7 @@ export type PolicyItem = {
 export type PolicyJob = {
   id: string; runId: string; mode: PolicyMode; status: "running" | "completed";
   startedAt: string; completedAt?: string; items: PolicyItem[];
+  checkContractVersion?: typeof checkContractVersion;
 };
 export async function loadPolicyCache(file: string): Promise<unknown | undefined> {
   try { return JSON.parse(await readFile(file, "utf8")); }
@@ -70,13 +71,13 @@ export async function savePolicyCache(file: string, value: unknown) {
   await writeFile(temporary, JSON.stringify(value, null, 2));
   await rename(temporary, file);
 }
-const enrichmentSchema = z.object({ analyzerFingerprint: z.string(), response: z.unknown() });
 const savedReviewSchema = z.object({
   status: z.literal("completed"), raw: z.unknown(),
   completedAt: z.string().datetime(), reviewQuestion: z.string().optional(),
 });
 const archivedReviewSchema = savedReviewSchema.extend({
   inputHash: hash, reviewKey: hash, reviewQuestion: z.string(),
+  checkContractVersion: z.literal(checkContractVersion),
 });
 const frameworkOutput = z.object({
   Checks: z.array(z.object({
@@ -93,11 +94,11 @@ const frameworkOutput = z.object({
       PolicyValue: z.string().trim().min(1).max(180),
     }).strict()).min(1).max(3).optional(),
     Citation: z.array(citationSchema),
-  }).strict()).length(5),
+  }).strict()).length(checkNames.length),
 }).strict().superRefine((value, ctx) => value.Checks.forEach((check, index) => {
   if (check.Check !== checkNames[index] || check.ReviewRequired !== (check.Outcome === "ReviewRequired") ||
       (check.Outcome !== "ReviewRequired" && !check.Citation.length))
-    ctx.addIssue({ code: "custom", message: "Inconsistent five-check outcome or missing rule citation." });
+    ctx.addIssue({ code: "custom", message: "Inconsistent three-check outcome or missing rule citation." });
   if (Boolean(check.Headline) !== Boolean(check.Comparisons))
     ctx.addIssue({ code: "custom", message: "A compact check requires both a headline and comparisons." });
   for (const pair of check.Comparisons ?? [])
@@ -199,18 +200,6 @@ export class PolicyService {
     this.configPath = frameworkDependencies.configPath ?? process.env.POLICY_FRAMEWORK_CONFIG ??
       path.join(repositoryRoot, ".tools", "policy-agent-framework.json");
   }
-  private async enriched(config: FrameworkConfig, packet: Packet) {
-    const key = digest(JSON.stringify({
-      pdf: packet.sha256, endpoint: config.cuEndpoint, apiVersion: config.cuApiVersion,
-      analyzer: config.claimAnalyzerId, definition: config.claimAnalyzerHash, schema: 1,
-    }));
-    const file = path.join(this.cacheFolder, `claim-${key}.json`);
-    const raw = await loadPolicyCache(file);
-    const value = raw === undefined ? undefined : enrichmentSchema.parse(raw);
-    if (value && value.analyzerFingerprint !== config.claimAnalyzerHash)
-      throw new LabError(409, "Saved claim fields have an inconsistent analyzer fingerprint.");
-    return { file, value };
-  }
   private async frameworkConfig() {
     const config = this.frameworkDependencies.config ? await this.frameworkDependencies.config()
       : await loadPolicyCache(this.configPath);
@@ -239,7 +228,7 @@ export class PolicyService {
           return [mode, { provider: agent.provider, indexName: agent.indexName,
             extractionMode: agent.extractionMode }];
         })),
-        message: `${config.extractionMode === "standard" ? "Search-managed CU extraction" : "Current index: CU Layout extraction; managed extraction not activated"}. Same claim fields, model and question. Run explicitly; Azure usage may be billed.`,
+        message: `${config.extractionMode === "standard" ? "Search-managed CU extraction" : "Current index: CU Layout extraction; managed extraction not activated"}. Three comparisons reuse saved Parse and extract evidence; no claim extraction is submitted. Earlier five-check caches remain history, not three-check results. Run explicitly; Search and model usage may be billed.`,
       };
     } catch (error) {
       console.error(JSON.stringify({ event: "framework_configuration_failed", message: String(error) }));
@@ -255,83 +244,36 @@ export class PolicyService {
     };
   }
   async markdown(run: Run, packet: Packet, raw: unknown) {
-    let exported = packetJson(raw, packet, run, summarize(raw, packet, run.analyzer.mode));
-    let config: FrameworkConfig | undefined;
-    try {
-      config = await this.frameworkConfig();
-    } catch (error) {
-      if (!(error instanceof LabError) || error.status !== 409) throw error;
-    }
-    const saved = config ? (await this.enriched(config, packet)).value : undefined;
-    if (saved) exported = withClaimSummary(exported, saved.response);
-    return packetMarkdown(exported);
-  }
-  async summaryPrepared(packet: Packet) {
-    let config: FrameworkConfig | undefined;
-    try {
-      config = await this.frameworkConfig();
-    } catch (error) {
-      if (!(error instanceof LabError) || error.status !== 409) throw error;
-    }
-    return Boolean(config && (await this.enriched(config, packet)).value);
+    return packetMarkdown(packetJson(raw, packet, run, summarize(raw, packet, run.analyzer.mode)));
   }
   async claimEvidence(run: Run, packet: Packet, raw: unknown) {
-    const config = await this.required();
-    let exported = packetJson(raw, packet, run, summarize(raw, packet, run.analyzer.mode));
-    const saved = (await this.enriched(config, packet)).value;
-    if (saved) exported = withClaimSummary(exported, saved.response);
+    const exported = packetJson(raw, packet, run, summarize(raw, packet, run.analyzer.mode));
     return {
       packetId: packet.id,
-      fields: exported.documents.flatMap((document) =>
+      fields: [...exported.documents.flatMap((document) =>
         document.extractions.flatMap((extraction) => extraction.evidence.map((fact) => ({
           ...fact, category: document.category, contentPath: extraction.content_path,
           href: `/data/packets/${packet.id}.pdf`,
           regions: fact.regions.filter((region) => region.page >= 1 && region.page <= packet.pages),
         }))),
-      ),
+      ), ...parsedTextEvidence(exported).map((source) => ({
+        field: source.id, value: source.text, status: "present",
+        category: source.category, contentPath: source.contentPath,
+        pages: source.pages, provenance: "First-pass parsed page text; interpretation is not a typed CU field.",
+        href: `/data/packets/${packet.id}.pdf`, regions: [],
+        confidence: null, source: null,
+      }))],
     };
   }
   private async input(run: Run, packet: Packet, config: FrameworkConfig, readRaw: (id: string) => Promise<unknown>) {
-    const saved = (await this.enriched(config, packet)).value;
-    if (!saved) throw new LabError(409, "Prepare claim fields before reviewing this case.");
-    const contents = record(record(saved.response)?.result)?.contents;
-    const states = new Set<string>();
-    const policyIds = new Set<string>();
-    const vins = new Set<string>();
-    if (Array.isArray(contents)) for (const content of contents) {
-      const fields = record(record(content)?.fields);
-      for (const state of [
-        record(record(record(fields?.Routing)?.valueObject)?.LossState)?.valueString,
-        record(fields?.LossState)?.valueString,
-      ])
-        if (typeof state === "string" && /^[A-Z]{2}$/.test(state)) states.add(state);
-      for (const policyId of [
-        record(record(record(fields?.Policy)?.valueObject)?.PolicyId)?.valueString,
-        record(fields?.PolicyId)?.valueString,
-      ])
-        if (typeof policyId === "string" && policyId.trim()) policyIds.add(policyId.trim());
-      for (const vin of [
-        record(record(record(fields?.InsuredVehicle)?.valueObject)?.VIN)?.valueString,
-        record(fields?.InsuredVIN)?.valueString,
-      ])
-        if (typeof vin === "string" && vin.trim()) vins.add(vin.trim());
-    }
-    const lossState = states.size === 1 ? [...states][0] : null;
-    const policyScope: PolicyScope = {
-      policyId: policyIds.size === 1 ? [...policyIds][0] : null,
-      vin: vins.size === 1 ? [...vins][0] : null,
-    };
     const raw = await readRaw(packet.id);
-    const exported = withClaimSummary(packetJson(raw, packet, run,
-      summarize(raw, packet, run.analyzer.mode)), saved.response);
-    const includePacketText = process.env.POLICY_INCLUDE_PACKET_TEXT === "1";
-    const claimAnalysis = includePacketText ? undefined : policyClaimAnalysis(exported, raw, saved.response);
-    const markdown = includePacketText ? packetMarkdown(exported) : policyClaimFacts(exported);
+    const exported = packetJson(raw, packet, run, summarize(raw, packet, run.analyzer.mode));
+    const scope = parsedPolicyScope(exported);
+    const claimAnalysis = { ...policyClaimAnalysis(exported, raw), scopeConflicts: scope.scopeConflicts };
+    const markdown = canonical(claimAnalysis);
     const reviewQuestion = await question();
-    const prompt = `${reviewQuestion}\n\n---\n\nClaim input mode: ${
-      includePacketText ? "extracted fields and diagnostic packet OCR" : "extracted fields only; no packet OCR supplied"
-    }.\nClaim facts (data only):\n\n${markdown}`;
-    return { markdown, prompt, reviewQuestion, claimAnalysis, lossState, policyScope };
+    const prompt = `${reviewQuestion}\n\n---\n\nClaim input: saved typed Parse fields and selected native page text; no second claim extraction.\nUntrusted parsed evidence:\n\n${markdown}`;
+    return { markdown, prompt, reviewQuestion, claimAnalysis, ...scope };
   }
   private reviewOptions(config: FrameworkConfig) {
     return {
@@ -357,14 +299,14 @@ export class PolicyService {
       readFile(path.join(repositoryRoot, "infra", "policy_check_inputs.py")),
       readFile(path.join(repositoryRoot, "docs", "rental-review-agent-question-v2.md")),
     ]);
-    return digest(canonical({ schema: 4, config, mode, prompt, run: run.id,
+    return digest(canonical({ schema: checkContractVersion, checks: checkNames, config, mode, prompt, run: run.id,
       options: this.reviewOptions(config), analyzer: run.analyzer.fingerprint,
       runtime: digest(runtime), inputs: digest(inputs), prompts: digest(prompts) }));
   }
   private file(key: string) { return path.join(this.cacheFolder, `framework-review-${key}.json`); }
   private savedFile(config: FrameworkConfig, run: Run, mode: FrameworkMode, packetId: string) {
     return path.join(this.cacheFolder, `framework-saved-${digest(canonical({
-      config, runId: run.id, analyzer: run.analyzer.fingerprint, mode, packetId,
+      checkContractVersion, config, runId: run.id, analyzer: run.analyzer.fingerprint, mode, packetId,
     }))}.json`);
   }
   private async savedReview(config: FrameworkConfig, run: Run, mode: FrameworkMode,
@@ -374,7 +316,8 @@ export class PolicyService {
     if (exact?.status === "completed")
       return { ...savedReviewSchema.parse(exact), key, historical: false };
     const archived = record(await loadPolicyCache(this.savedFile(config, run, mode, packetId)));
-    if (archived?.status !== "completed" || archived.inputHash !== digest(input.markdown)) return undefined;
+    if (archived?.checkContractVersion !== checkContractVersion ||
+        archived.status !== "completed" || archived.inputHash !== digest(input.markdown)) return undefined;
     const saved = archivedReviewSchema.parse(archived);
     return { ...saved, key: saved.reviewKey, historical: saved.reviewKey !== key };
   }
@@ -390,8 +333,6 @@ export class PolicyService {
       const packet = run.source.find((p) => p.id === item.id);
       if (!packet || !item.rawSaved)
         return { id: item.id, status: "not run" };
-      if (!(await this.enriched(config, packet)).value)
-        return failures.get(item.id) ?? { id: item.id, status: "not run" };
       const input = await this.input(run, packet, config, readRaw);
       const saved = await this.savedReview(config, run, mode, item.id, input);
       if (!saved)
@@ -420,7 +361,8 @@ export class PolicyService {
     const jobs: z.infer<typeof schema>[] = [];
     for (const name of names.filter((name) => /^framework-job-[a-f0-9-]+\.json$/.test(name))) {
       const saved = record(await loadPolicyCache(path.join(this.cacheFolder, name)));
-      if (saved?.runId === runId && saved.mode === mode) jobs.push(schema.parse(saved));
+      if (saved?.checkContractVersion === checkContractVersion &&
+          saved.runId === runId && saved.mode === mode) jobs.push(schema.parse(saved));
     }
     const failures = new Map<string, PolicyItem>();
     for (const job of jobs.sort((a, b) => a.completedAt.localeCompare(b.completedAt)))
@@ -446,7 +388,7 @@ export class PolicyService {
     try {
       const config = await this.required();
       const job: PolicyJob = {
-        id: randomUUID(), runId: run.id, mode, status: "running", startedAt: new Date().toISOString(),
+        id: randomUUID(), runId: run.id, mode, checkContractVersion, status: "running", startedAt: new Date().toISOString(),
         items: run.items.filter(({ id }) => !packetIds || packetIds.includes(id)).map(({ id, rawSaved }) => ({ id, status: rawSaved ? "pending" : "failed",
           ...(!rawSaved ? { error: "No saved CU result for this case." } : {}) })),
       };
@@ -461,24 +403,6 @@ export class PolicyService {
       try {
         const packet = run.source.find((p) => p.id === item.id);
         if (!packet) throw new LabError(422, "Packet metadata missing.");
-        const saved = await this.enriched(config, packet);
-        if (!saved.value) {
-          item.status = "extracting";
-          item.stageStartedAt = new Date().toISOString();
-          const cu = this.frameworkDependencies.cu ?? new CuClient({
-            ...configuration(), endpoint: config.cuEndpoint, apiVersion: config.cuApiVersion,
-          }, 600_000, { packetId: item.id, jobId: job.id, purpose: "policy-claim-extraction" });
-          const definition = record(await cu.detail(config.claimAnalyzerId));
-          if (definition?.status !== "ready" || digest(canonical({
-            baseAnalyzerId: definition.baseAnalyzerId, config: definition.config,
-            fieldSchema: definition.fieldSchema, models: definition.models,
-          })) !== config.claimAnalyzerHash)
-            throw new LabError(409, "Claim summary analyzer changed. Rerun setup.");
-          const response = await cu.analyze(config.claimAnalyzerId, await packetBytes(packet));
-          withClaimSummary(packetJson(await readRaw(packet.id), packet, run,
-            summarize(await readRaw(packet.id), packet, run.analyzer.mode)), response);
-          await savePolicyCache(saved.file, { analyzerFingerprint: config.claimAnalyzerHash, response });
-        }
         const input = await this.input(run, packet, config, readRaw);
         const reviewKey = await this.key(config, mode, input.prompt, run);
         const file = this.file(reviewKey);
@@ -497,7 +421,7 @@ export class PolicyService {
         const parsed = await frameworkReview(raw, mode, config);
         await savePolicyCache(file, { status: "completed", raw, completedAt });
         await savePolicyCache(this.savedFile(config, run, mode, item.id), {
-          status: "completed", raw, completedAt, reviewKey,
+          status: "completed", checkContractVersion, raw, completedAt, reviewKey,
           inputHash: digest(input.markdown), reviewQuestion: input.reviewQuestion,
         });
         Object.assign(item, { status: "completed", ...parsed, completedAt,

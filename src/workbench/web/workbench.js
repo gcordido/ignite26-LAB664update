@@ -65,25 +65,15 @@ let policyCacheBusy = false;
 let policyCacheVersion = 0;
 const policyResultScroll = new Map();
 const policyCheckNames = [
-  "Amount",
-  "Timing",
+  "Daily rate",
+  "Rental start",
   "Effective terms",
-  "Charges and reimbursement calculation",
-  "Authorization and payment readiness",
 ];
-const policyShortNames = [
-  "Daily cost",
-  "Rental dates",
-  "Active policy",
-  "Covered charges",
-  "Payment approval",
-];
+const policyShortNames = [...policyCheckNames];
 const policyCheckDescriptions = [
-  "Is the daily price within the rental limit?",
-  "Do rental dates match the covered repair period?",
-  "Which terms applied on the accident date?",
-  "Which fees and taxes can be reimbursed?",
-  "Is the required insurer approval documented?",
+  "Is the claimed daily base rate within the effective insured-vehicle cap?",
+  "Does the stated rental start basis match the documented drivability rule?",
+  "Were the matched policy and genuine amendment in force on the actual loss date?",
 ];
 let focusedPolicyCheck = 0;
 const columnWidths = new Map();
@@ -1407,7 +1397,7 @@ function renderPolicyRunStatus() {
     if (node.textContent !== value) node.textContent = value;
   };
   const active = job.items.find((item) =>
-    ["extracting", "reviewing"].includes(item.status),
+    item.status === "reviewing",
   );
   const completed = job.items.filter((item) =>
     ["completed", "failed"].includes(item.status),
@@ -1415,7 +1405,7 @@ function renderPolicyRunStatus() {
   const interrupted = policyProgressErrors.has(policyMode);
   setText("policy-run-label", interrupted
     ? "Progress connection interrupted"
-    : active?.status === "extracting" ? "Preparing claim evidence" : "Agent running");
+    : "Agent checking three comparisons");
   get("policy-run-status").querySelector(".spinner").hidden = interrupted;
   const customer = active ? customerName(results.get(active.id)) : "";
   setText("policy-run-packet", active
@@ -1424,8 +1414,7 @@ function renderPolicyRunStatus() {
   setText("policy-run-detail", interrupted
     ? "The server may still be running. Reload to reconnect; do not start a duplicate review."
     : `${completed}/${job.items.length} packets finished · ${policyModeLabel()} · ${
-      active?.status === "extracting" ? "CU extracting claim fields"
-        : active ? "Checking policy rules and citations" : "Preparing next case"
+      active ? "Checking three comparisons and citations" : "Preparing next case from saved Parse evidence"
     }`);
   const elapsed = Math.max(0, Math.floor((Date.now() - Date.parse(job.startedAt)) / 1000));
   get("policy-run-elapsed").textContent = Number.isFinite(elapsed)
@@ -1460,7 +1449,7 @@ function renderPolicyTable() {
     ...policyCheckNames.map((check) => `policy:${check}`),
   ];
   const widths = keys.map(
-    (key, index) => columnWidths.get(key) ?? (index ? 185 : 190),
+    (key, index) => columnWidths.get(key) ?? (index ? 160 : 190),
   );
   table.style.width = `${widths.reduce((sum, width) => sum + width, 0)}px`;
   table.querySelector("colgroup").replaceChildren(
@@ -1503,14 +1492,10 @@ function renderPolicyTable() {
       );
       name.onclick = () => openAgentCheck(packet.id, 0);
       label.append(name);
-      if (policyResult?.source !== "bundled" && !results.get(packet.id)?.claimSummaryPrepared)
-        label.append(
-          element("span", "Claim fields not prepared", "policy-preparation"),
-        );
       row.append(label);
       for (let column = 0; column < policyCheckNames.length; column++) {
         const cell = element("td");
-        const check = item?.result?.Checks[column];
+        const check = item?.result?.Checks.find((check) => check.Check === policyCheckNames[column]);
         const text = check
           ? check.Outcome === "NotApplicable"
             ? "N/A"
@@ -1523,8 +1508,7 @@ function renderPolicyTable() {
             ? "Run error"
             : ({
                 pending: "Queued",
-                extracting: "Extracting claim",
-                reviewing: "Checking rules",
+                reviewing: "Checking three comparisons",
               }[item?.status] ?? "Not run");
         const button = element("button", text, "cell-content");
         const state = element(
@@ -1600,7 +1584,7 @@ function renderPolicyOutput(focused) {
     .get(policyMode)
     ?.items.find((item) => item.id === selectedPacket);
   if (!item?.result) {
-    if (item && ["pending", "extracting", "reviewing"].includes(item.status)) {
+    if (item && ["pending", "reviewing"].includes(item.status)) {
       const activity = element("div", undefined, "policy-activity");
       const heading = element("p", undefined, "policy-activity-heading");
       const paused = policyProgressErrors.has(policyMode);
@@ -1609,17 +1593,14 @@ function renderPolicyOutput(focused) {
       heading.querySelector(".spinner")?.setAttribute("aria-hidden", "true");
       const title = element("span", paused ? "Progress connection interrupted" : ({
         pending: "Queued for policy review",
-        extracting: "Extracting claim evidence",
-        reviewing: "Agent checking policy rules",
+        reviewing: "Agent checking three comparisons",
       }[item.status]));
       title.setAttribute("role", "status");
       heading.append(title);
       activity.append(heading,
         element("p", item.status === "pending"
           ? "Cases run sequentially. This case will start after the cases ahead of it."
-          : item.status === "extracting"
-            ? "Content Understanding is preparing the claim facts used by all five checks."
-            : "The agent is evaluating all five checks. Search and model calls can take several minutes; results appear after the response and source citations are verified."),
+          : "The agent is evaluating three comparisons using saved Parse fields and selected first-pass page text. No claim CU reanalysis is run. Search and model calls can take several minutes; results appear after the response and source citations are verified."),
         element("p", "", "policy-activity-time"),
         element("p", "", "policy-activity-connection muted"));
       panel.append(activity);
@@ -1641,7 +1622,7 @@ function renderPolicyOutput(focused) {
       const retry = element("button", "Retry this case", "policy-retry secondary");
       retry.dataset.liveControl = "";
       retry.onclick = () => confirmPolicyRun([packetId]);
-      const notice = element("p", "Retries all five checks for this case only. Matching saved claim fields and results are reused; Azure charges may apply.", "muted");
+      const notice = element("p", "Retries the three checks for this case only, using saved Parse fields and selected first-pass page text. No claim CU reanalysis is run; Azure charges may apply.", "muted");
       notice.dataset.liveControl = "";
       panel.append(retry, notice);
       controls();
@@ -1649,7 +1630,7 @@ function renderPolicyOutput(focused) {
     return;
   }
   for (const [index, check] of item.result.Checks.entries()) {
-    if (index !== focusedPolicyCheck) continue;
+    if (check.Check !== policyCheckNames[focusedPolicyCheck]) continue;
     const section = element("section", undefined, "policy-check");
     section.id = `policy-check-${index}`;
     section.append(
@@ -1666,7 +1647,7 @@ function renderPolicyOutput(focused) {
       ),
     );
     if (check.Outcome === "InProgress")
-      section.append(element("p", "Review complete. Waiting for claim information or approval; add it, then rerun.", "policy-waiting-note"));
+      section.append(element("p", "Review complete. Waiting for claim evidence needed by this comparison; add it, then rerun. Unrelated repair completion or payment approval isn't required.", "policy-waiting-note"));
     if (check.Headline) section.append(element("h4", check.Headline, "policy-finding"));
     else section.append(element("p",
       "Saved review uses the earlier format. Run again for a short headline and field comparison.",
@@ -1814,26 +1795,41 @@ function addClaimComparisonSources(cell, field, value, packetId, reviewVersion) 
     notice.remove();
     const matches = claimFieldSources(evidence.fields, field);
     const pages = new Map();
-    for (const fact of matches)
+    for (const fact of matches) {
+      if (!fact.regions.length && fact.pages) {
+        const key = `${fact.href}:${fact.pages.start}-${fact.pages.end}`;
+        if (!pages.has(key)) pages.set(key, { ...fact, page: fact.pages.start });
+        continue;
+      }
       for (const region of fact.regions) {
         const key = `${fact.href}:${region.page}`;
         if (!pages.has(key)) pages.set(key, { ...fact, page: region.page, regions: [] });
         pages.get(key).regions.push(region);
       }
+    }
     const sources = [...pages.values()];
+    const pageLabel = (source) => source.pages && !source.regions.length
+      ? source.pages.start === source.pages.end
+        ? `page ${source.pages.start}` : `pages ${source.pages.start}–${source.pages.end}`
+      : `page ${source.page}`;
+    const sourceTitle = (source) => source.pages && !source.regions.length
+      ? `First-pass parsed page text · ${pageLabel(source)} · derived interpretation, not a typed CU fact`
+      : `View extracted ${field} · claim ${pageLabel(source)}`;
     if (sources.length === 1) {
       const source = sources[0];
       cell.replaceChildren(element("strong"));
       cell.firstChild.append(comparisonLink(value, `${source.href}#page=${source.page}`,
-        `View extracted ${field} · claim page ${source.page}`, (link) => openClaimSource(source, field, link)));
+        sourceTitle(source), (link) => openClaimSource(source, field, link)));
     } else if (sources.length > 1) {
       for (const source of sources) {
-        const link = comparisonLink(`Claim · page ${source.page}`, `${source.href}#page=${source.page}`,
-          `View extracted ${field}`, (link) => openClaimSource(source, field, link));
+        const link = comparisonLink(`Claim · ${pageLabel(source)}`, `${source.href}#page=${source.page}`,
+          sourceTitle(source), (link) => openClaimSource(source, field, link));
         link.classList.add("policy-value-source");
         cell.append(link);
       }
-    } else cell.append(element("span", "No extracted source location", "policy-source-unavailable"));
+    } else cell.append(element("span", "No supplied source location", "policy-source-unavailable"));
+    if (sources.some((source) => source.pages && !source.regions.length))
+      cell.append(element("span", "First-pass parsed page text · derived interpretation, not a typed CU fact", "policy-source-unavailable"));
   }).catch((error) => {
     if (!cell.isConnected) return;
     notice.textContent = `Claim source unavailable: ${error.message}`;
@@ -1860,7 +1856,12 @@ async function openClaimSource(source, field, link) {
   if (source.href !== `/data/packets/${selectedPacket}.pdf` ||
       !Number.isInteger(source.page) || source.page < 1)
     throw new Error("The claim source is not from the selected packet.");
-  const selected = beginPolicySource(link, `${field} · Claim ${selectedPacket} · page ${source.page}`);
+  const textSource = source.pages && !source.regions.length;
+  const pageRange = textSource && source.pages.end !== source.pages.start
+    ? `pages ${source.pages.start}–${source.pages.end}` : `page ${source.page}`;
+  const selected = beginPolicySource(link, textSource
+    ? `First-pass parsed page text · Claim ${selectedPacket} · ${pageRange} · derived interpretation, not a typed CU fact`
+    : `${field} · Claim ${selectedPacket} · ${pageRange}`);
   get("pdf-status").hidden = false;
   try {
     await previewPdf(source.href, source.page, source.regions);
@@ -1983,8 +1984,8 @@ function confirmPolicyRun(packetIds) {
   const packetId = packetIds?.[0];
   get("policy-confirm-summary").textContent =
     (packetId
-      ? `1 case: ${customerName(results.get(packetId)) || packetId} · ${policyModeLabel()}. Only this case will be retried. `
-      : `${run.items.filter((item) => item.rawSaved).length} cases · ${policyModeLabel()}.`);
+      ? `1 case: ${customerName(results.get(packetId)) || packetId} · ${policyModeLabel()}. Only this case's three checks will be retried. `
+      : `${run.items.filter((item) => item.rawSaved).length} cases · three checks per case · ${policyModeLabel()}.`);
   get("policy-confirmation").showModal();
 }
 get("policy-run").onclick = () => confirmPolicyRun();

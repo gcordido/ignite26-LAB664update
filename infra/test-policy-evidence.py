@@ -4,6 +4,7 @@ import importlib.util
 from pathlib import Path
 import sys
 import unittest
+from policy_check_inputs import check_evidence
 
 spec = importlib.util.spec_from_file_location(
     "policy_evidence_runtime", Path(__file__).with_name("policy-framework-agent.py"),
@@ -69,10 +70,40 @@ class PolicyEvidenceTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             runtime.source_evidence(row, config, sources, citations, "TX")
 
-    def test_first_three_check_names_are_the_evidence_scenarios(self):
-        self.assertEqual(runtime.CHECKS[:3], ["Amount", "Timing", "Effective terms"])
-        self.assertEqual(len(runtime.CHECKS), 5)
+    def test_three_check_names_are_the_evidence_scenarios(self):
+        self.assertEqual(runtime.CHECKS, ["Daily rate", "Rental start", "Effective terms"])
+        self.assertEqual(len(runtime.CHECKS), 3)
         self.assertIn("policyScope", runtime.Turn.model_fields)
+
+    def test_check_projections_keep_whole_controlling_pages_and_metadata(self):
+        sources = {
+            "terms.pdf": {"documentType": "policy_contract", "role": "rental_terms"},
+            "declarations.pdf": {"documentType": "policy_contract", "role": "declarations"},
+            "amendment.pdf": {"documentType": "policy_contract", "role": "effective_terms"},
+            "sop.pdf": {"documentType": "state_sop"},
+        }
+        whole = "<table><tr><th></th><th>Start</th></tr></table>\nFigure R-1\nBoth branches"
+        evidence = [
+            dict(id=f"page-{index}", file=file, documentId=f"doc-{index}", version="2.0",
+                 content=whole, page=page, pageTo=page, ruleIds=["R.6"],
+                 citationSections=["Figure R-1"], sha256="a" * 64, stateCodes=["TX"])
+            for index, (file, page) in enumerate([
+                ("terms.pdf", 1), ("terms.pdf", 2), ("declarations.pdf", 3),
+                ("amendment.pdf", 2), ("sop.pdf", 5),
+            ])
+        ]
+        start = check_evidence(evidence, sources, "Rental start")
+        self.assertEqual(start, evidence)
+        rate = check_evidence(evidence, sources, "Daily rate")
+        self.assertEqual([doc["file"] for doc in rate],
+                         ["terms.pdf", "declarations.pdf", "amendment.pdf"])
+        effective = check_evidence(evidence, sources, "Effective terms")
+        self.assertEqual([doc["file"] for doc in effective], ["declarations.pdf", "amendment.pdf"])
+        for doc in start:
+            self.assertEqual(doc["content"], whole)
+            self.assertEqual(doc["sha256"], "a" * 64)
+        start[0]["content"] = "changed copy"
+        self.assertEqual(evidence[0]["content"], whole)
 
     def test_flat_claim_schema_uses_literal_facts_without_boolean_defaults(self):
         definition = setup.claim_evidence_analyzer_definition()
