@@ -16,7 +16,7 @@ In this lab you will use Azure AI Content Understanding to turn synthetic insura
 - **Customize extraction:** extend an invoice template to extract vehicle, VIN, and odometer details from a repair estimate, then build a Statement analyzer that combines extracted facts with grounded summaries.
 - **Classify and split document packets:** identify document types and logical page ranges in mixed insurance packets, keeping continuation pages together without extracting fields yet.
 - **Add extraction routes:** connect document categories to prebuilt analyzers and your custom repair and Statement analyzers, including dedicated routes for towing and rental invoices. Review the returned fields and source highlights.
-- **Review results in the Insurance Workbench:** explore saved results, investigate consistency checks, compare policy reviews with and without retrieval, then connect your own built analyzer to run live analysis across ten customer packets.
+- **Review results in the Insurance Workbench:** explore saved results, review **Business rules validation** findings, compare policy reviews with and without retrieval, then connect your own built analyzer to run live analysis across ten customer packets.
 
 ===
 
@@ -260,7 +260,7 @@ Inspect ID fields on segment 1, nested 1099-A fields on segment 2, and custom `v
 
 In this step, you will move from authoring analyzers to reviewing their results in an application. The Insurance Workbench loads ten customer packets, totaling 120 pages, from `data\packets`; you do not need to upload them manually.
 
-The app automatically loads the included cached extraction results and policy reviews. Use it as a results viewer: inspect the collection, investigate consistency checks, and follow policy findings back to their evidence. CU Studio remains your tool for editing and building analyzers. Later, you will explicitly rerun one repair estimate and can ask the policy agent follow-up questions.
+The app automatically loads the included cached extraction results and policy reviews. Use it as a results viewer: inspect the collection, review **Business rules validation** results, and follow policy findings back to their evidence. CU Studio remains your tool for editing and building analyzers. Later, you will explicitly rerun one repair estimate and can ask the policy agent follow-up questions.
 
 ### Prepare and launch the app
 
@@ -326,7 +326,7 @@ Wait for the cached results to load. Opening the app or switching review tabs do
    | `PartsAmount` | `Part amount associated with each line item` |
    | `LaborAmount` | `Labor amount associated with each line item` |
 
-   Keep the field order `PartsAmount`, `LaborAmount`, then `TotalAmount`. Do not replace `TotalAmount`; the consistency check continues to prefer a returned row total and uses parts plus labor only when that total is missing.
+   Keep the field order `PartsAmount`, `LaborAmount`, then `TotalAmount`. Do not replace `TotalAmount`; the validation rule continues to prefer a returned row total and uses parts plus labor only when that total is missing.
 5. In Studio, upload and test [packet 8's repair estimate](../data/documents/packet-08/05-estimate.pdf) before building. Inspect every line item and its source regions. A useful result for this document is:
 
    | Line item | PartsAmount | LaborAmount | TotalAmount |
