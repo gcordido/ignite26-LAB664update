@@ -578,7 +578,7 @@ test("comparison source matching uses CU paths and exact cited rules, not labels
   assert.equal(policyRuleSources([{ ...citation, href: "https://example.com/claim.pdf" }], "POLICY-TERM").length, 0);
 });
 
-test("Result remains the default and switching to Chat preserves the result scroll position", async () => {
+test("policy detail modes preserve result scroll without replacing the extraction preview", async () => {
   const source = await readFile(
     new URL("../web/workbench.js", import.meta.url),
     "utf8",
@@ -620,14 +620,16 @@ test("Result remains the default and switching to Chat preserves the result scro
     };
     nodes.set(id, node);
   }
+  const panelVisibility: boolean[] = [];
   const context = vm.createContext({
     get: (id: string) => nodes.get(id),
     run: { id: "saved-run" },
+    view: "policy",
     policyMode: "search",
     selectedPacket: "packet-02",
     policyPaneMode: "result",
     policyResultScroll: new Map(),
-    showPolicyPanel: () => {},
+    showPolicyPanel: (show: boolean) => { panelVisibility.push(show); },
     renderPolicyOutput: () => {
       nodes.get("policy-review-pane")!.scrollTop = 0;
     },
@@ -643,6 +645,8 @@ test("Result remains the default and switching to Chat preserves the result scro
   nodes.get("policy-result-mode")!.onclick!();
   assert.equal(nodes.get("policy-review-pane")!.scrollTop, 180);
   assert.equal(nodes.get("policy-result-mode")!.pressed, "true");
+  vm.runInContext('view = "classification"; selectPolicyPane("result")', context);
+  assert.deepEqual(panelVisibility, [true, true, false]);
 });
 
 test("new chat messages reveal only the active visible composer", async () => {
@@ -764,7 +768,7 @@ test("retrieval choices are disabled placeholders until verified configuration l
   assert.ok(!select[1].includes('value="minimal"'));
 });
 
-test("startup loads both saved result sets without listing live analyzers", async () => {
+test("startup opens the first available customer without live calls or overriding a selection", async (t) => {
   const source = await readFile(
     new URL("../web/workbench.js", import.meta.url),
     "utf8",
@@ -777,8 +781,19 @@ test("startup loads both saved result sets without listing live analyzers", asyn
     source.indexOf('api("session", {})'),
     source.indexOf("function showPolicyPanel("),
   );
-  for (const resumed of [false, true]) {
+  for (const scenario of [
+    { name: "fresh cache", resumed: false, selectedPacket: "", policyMode: "",
+      available: ["packet-01", "packet-02"], openedPacket: "packet-01" },
+    { name: "restored cache with an unavailable first result", resumed: true, selectedPacket: "", policyMode: "",
+      available: ["packet-02"], openedPacket: "packet-02" },
+    { name: "customer selected while results load", resumed: false, selectedPacket: "packet-02", policyMode: "",
+      available: ["packet-01", "packet-02"], openedPacket: "" },
+    { name: "restored policy workflow", resumed: true, selectedPacket: "", policyMode: "search",
+      available: ["packet-01", "packet-02"], openedPacket: "" },
+  ]) await t.test(scenario.name, async () => {
+    const { resumed } = scenario;
     const errors: Error[] = [];
+    const opened: string[] = [];
     let restored = false;
     const calls: string[] = [];
     const select = {
@@ -795,6 +810,7 @@ test("startup loads both saved result sets without listing live analyzers", asyn
         calls.push(route);
         if (route === "session") return {
           sessionId: "session", ...(resumed ? { runId: "saved-run" } : {}),
+          ...(scenario.policyMode ? { policyMode: scenario.policyMode } : {}),
         };
         if (route === "policy/status") return {
           configured: true, batchRunning: false,
@@ -810,6 +826,15 @@ test("startup loads both saved result sets without listing live analyzers", asyn
       },
       loadPolicyCache: async () => { calls.push("load-policy"); },
       renderRun: async () => { restored = true; },
+      run: { items: [{ id: "packet-01" }, { id: "packet-02" }] },
+      results: new Map(scenario.available.map((id) => [id, {}] as const)),
+      selectedPacket: scenario.selectedPacket,
+      view: "classification",
+      showCustomer: async (id: string) => {
+        assert.ok(calls.includes("load-policy"));
+        opened.push(id);
+        context.selectedPacket = id;
+      },
       controls: () => {},
       fail: (error: Error) => errors.push(error),
       clearTimeout: () => {},
@@ -831,7 +856,10 @@ test("startup loads both saved result sets without listing live analyzers", asyn
     assert.equal(calls.includes("analyzers"), false);
     assert.equal(calls.includes("batch"), false);
     assert.equal(calls.includes("policy/batch"), false);
-  }
+    assert.deepEqual(opened, scenario.openedPacket ? [scenario.openedPacket] : []);
+    assert.equal(context.selectedPacket, scenario.openedPacket || scenario.selectedPacket);
+    assert.equal(context.view, scenario.policyMode ? "policy" : "classification");
+  });
 });
 
 test("cache reload controls are present only inside app settings", async () => {
@@ -1208,6 +1236,7 @@ test("first-run policy cache loading opens CU results before selecting bundled o
     let context: vm.Context;
     context = vm.createContext({
       get, run: undefined, policyMode: "search", busy: false,
+      selectedPacket: "", view: "classification", results: new Map(),
       savedExtractionRun: { id: "included-run" }, savedPolicyEntries: [],
       policyResults: new Map(), policyChat: { reset: () => {} },
       controls: () => {}, renderTable: () => {}, renderPolicyOutput: () => {},
@@ -1236,6 +1265,45 @@ test("first-run policy cache loading opens CU results before selecting bundled o
     assert.match(get("policy-cache-status").textContent, /Loaded saved policy checks for 10\/10/);
     assert.equal(context.busy, false);
   });
+});
+
+test("background policy hydration preserves the customer without overriding a newer selection", async (t) => {
+  const source = await readFile(new URL("../web/workbench.js", import.meta.url), "utf8");
+  for (const newerSelection of [false, true]) await t.test(
+    newerSelection ? "newer selection wins" : "restore the current customer",
+    async () => {
+      const opened: string[] = [];
+      const run = { id: "included-run" };
+      const context = vm.createContext({
+        get: () => ({ disabled: false }),
+        run, policyMode: "search", busy: false, view: "classification",
+        selectedPacket: "packet-02",
+        results: new Map([["packet-02", {}], ["packet-03", {}]]),
+        savedPolicyEntries: [{ mode: "search", source: "bundled" }],
+        policyResults: new Map(), policyChat: { reset: () => {} },
+        controls: () => {}, renderTable: () => {}, renderPolicyOutput: () => {},
+        policyMessage: () => {}, selectPolicyPane: () => {},
+        api: async (route: string) => route === "policy/cache/load"
+          ? { runId: run.id, source: "bundled", items: [] }
+          : run,
+        renderRun: async () => {
+          context.selectedPacket = newerSelection ? "packet-03" : "";
+        },
+        showCustomer: async (id: string) => {
+          opened.push(id);
+          context.selectedPacket = id;
+        },
+        fail: (error: unknown) => { throw error; },
+      });
+      vm.runInContext(source.slice(
+        source.indexOf("async function loadPolicyCache("),
+        source.indexOf("function confirmPolicyRun("),
+      ), context);
+      await vm.runInContext("loadPolicyCache()", context);
+      assert.deepEqual(opened, newerSelection ? [] : ["packet-02"]);
+      assert.equal(context.selectedPacket, newerSelection ? "packet-03" : "packet-02");
+    },
+  );
 });
 
 test("first-run retrieval changes do not try to render an unloaded CU run", async () => {

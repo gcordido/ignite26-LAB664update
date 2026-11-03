@@ -1244,6 +1244,10 @@ api("session", {})
       await renderRun(await api("cache/current"), "cached");
       if (!policyBusy) await loadPolicyCache();
     } else await loadSavedResults();
+    if (view !== "policy" && !selectedPacket) {
+      const first = run.items.find((item) => results.has(item.id));
+      if (first) await showCustomer(first.id);
+    }
     controls();
   })
   .catch(fail);
@@ -1920,7 +1924,7 @@ function selectPolicyPane(mode) {
     button.setAttribute("aria-pressed", String(value === mode));
     button.classList.toggle("secondary", value !== mode);
   }
-  showPolicyPanel(true);
+  showPolicyPanel(view === "policy");
   renderPolicyOutput();
   if (mode === "result")
     get("policy-review-pane").scrollTop = policyResultScroll.get(key) ?? 0;
@@ -1969,7 +1973,11 @@ async function loadPolicyCache() {
     policyResults.set(mode, value);
     policyChat.reset();
     if (value.source === "bundled") {
-      await renderRun(await api("cache/current"), "cached");
+      const current = await api("cache/current");
+      const packetId = selectedPacket;
+      await renderRun(current, "cached");
+      if (packetId && !selectedPacket && view !== "policy" && results.has(packetId))
+        await showCustomer(packetId);
       selectPolicyPane("result");
     }
     renderTable();
