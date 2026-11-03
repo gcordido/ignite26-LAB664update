@@ -8,6 +8,8 @@ To begin, log into the virtual machine using the following credentials: +++@lab.
 
 # From documents to an Insurance Workbench
 
+Imagine you are helping an insurance claims team review vehicle incident packets containing repair estimates, claimant statements, and towing and rental invoices. Manually piecing together these documents makes it difficult to spot inconsistencies and check the relevant policy information. Your goal is to bring the key facts and their source evidence into one workbench so reviewers can investigate each case more efficiently.
+
 In this lab you will use Azure AI Content Understanding to turn synthetic insurance documents into structured, source-linked results. You will build and test analyzers in CU Studio, then connect your finished analyzer to a **separate Insurance Workbench application**. Along the way, you will:
 
 - **Explore prebuilt analyzers:** compare document layout with pre-built extraction models, and inspect how returned values relate to the source documents.
@@ -277,11 +279,13 @@ Use the prepared lab environment with Azure CLI and **Python 3.10 or later**, in
 
    ```
 
-3. Run these two commands in order. Setup restores the locked npm dependencies, including Deep Chat, and prepares `.tools\policy-venv` using the lab's approved package sources. Deployment discovers Search, Storage, Foundry and the model in your resource group, uploads the policy PDFs to Blob Storage, and configures a Search indexer and Content Understanding skill. Azure AI Search runs extraction, semantic chunking and AI figure descriptions, then populates the index. Deployment also prepares the separate claim-summary analyzer and writes the workbench connection after verification. Python does not extract or manually upload policy chunks. No pre-filled configuration file or hosted agent is needed.
+3. Run the two commands below in the order they are listed. 
+   - **Setup** restores the locked npm dependencies, including *Deep Chat*, and prepares `.tools\policy-venv` using the lab's approved package sources.
+   - **Deploy** discovers Search, Storage, Foundry resources and the model in your resource group, uploads the policy PDFs to Blob Storage, and configures a Search indexer and Content Understanding skill. Azure AI Search runs extraction, semantic chunking and AI figure descriptions, then populates the index. Deployment also prepares the separate claim-summary analyzer and writes the workbench connection after verification. Python does not extract or manually upload policy chunks. No pre-filled configuration file or hosted agent is needed.
 
    ```PowerShell
    powershell -ExecutionPolicy Bypass -File .\infra\setup.ps1
-   powershell -ExecutionPolicy Bypass -File .\infra\deploy.ps1 -ResourceGroup "@lab.CloudResourceGroup(1).Name" -Apply
+   powershell -ExecutionPolicy Bypass -File .\infra\deploy.ps1 -ResourceGroup "@lab.CloudResourceGroup(ResourceGroup1).Name" -Apply
    ```
 
 
@@ -295,14 +299,14 @@ Use the prepared lab environment with Azure CLI and **Python 3.10 or later**, in
 
 The app reads the included CU results and historical policy reviews directly from the repository. 
 
-For live policy checks and follow-up chat, complete [Prepare live policy checks](#prepare-live-policy-checks) below before selecting **Run live**.
+For live policy checks and follow-up chat, jump to step 7 and complete [Prepare live policy checks](#prepare-live-policy-checks) before selecting **Run live**.
 
 > [!Note] To stop the app at anytime just return to PowerShell and press **Ctrl+C**. 
 
 ### Explore the included results first 
 
-1. Click **Parse and extract tab** then select **Load cached results** to load the included completed **10/10** run. 
-2. Start with **Classification**. Each row is one customer; each check is a returned document instance and page range. Click a check or field value to open its full source PDF at that page. Other is hidden from this grid, not removed from the response.
+1. Click **Parse and extract tab** then select **Load cached results** to load the included completed **10/10** run. A 10/10 run indicates that all customer document packets have been successfully processed and extracted.
+2. Start with **Classification**. Each row is one customer; each check is a returned document instance and page range. Click a check or field value to open its full source PDF at that page. Documents classified as `other` are not shown in this grid, but remain in the analyzer's full response.
 3. Switch to **ID**, **1099-A**, **Repair Estimate**, **Statement**, **Towing Invoice**, and **Rental Invoice**. 
 4. Turn on **Confidence** to inspect returned scores. Blank means the service omitted a score, not zero. Click line items for source boxes or their table icon to expand item rows below the customer.
 
@@ -367,9 +371,9 @@ The repository includes ten saved agent reviews from the current packet dataset 
 
 In the refreshed saved reviews, both packets show **Waiting for info** for rental dates and insurer approval. Packet 02's **Covered charges** requires review because its local rental levy needs supporting evidence. These saved results are model-generated, not scripted outcomes.
 
-5. [] For packet **01**, select the Texas **Source** link. Inspect **TX-R2** on page 2 and **Schedule A** on page 3 of `tx-rental-review-sop-v2.pdf`. The $75 value is internal routine handling authority, not the $85 contractual cap. Blank cells in the exception table don't grant extra authority. Also inspect the matching revised declarations, rental terms/diagram and issued amendment. The blank optional-code cell must not shift the Honda's deductible or rental limits.
-6. [] In the source viewer, compare **Document**, **CU Search** and **Digital parse**. CU Search uses `prebuilt-documentSearch` and its own analyzer-keyed cache, not relabeled Layout output. Select **Back to policy check** to restore the finding. Optionally inspect Washington's scanned SOP or Arizona's image-based eligibility flowchart. A missing extraction has an explicit billable generation action; switching tabs alone doesn't call CU.
-7. [] Optionally explore **Ask agent** in the right panel to ask additional questions about the selected claim. The bundled results are read-only, so this button is disabled for the cached demo. To use it, complete [Prepare live policy checks](#prepare-live-policy-checks), select **Run live**, and confirm the billable operation. Once a live-compatible review is available, select **Ask agent** and ask, "Why is Washington's daily cost satisfied, and what still needs human review? Cite the rental terms and distinguish routine authority from the contractual cap." Chat uses the selected case and mode without replacing its saved checks; each submitted question can incur Azure charges.
+5. For packet **01**, select the Texas **Source** link. Inspect **TX-R2** on page 2 and **Schedule A** on page 3 of `tx-rental-review-sop-v2.pdf`. The $75 value is internal routine handling authority, not the $85 contractual cap. Blank cells in the exception table don't grant extra authority. Also inspect the matching revised declarations, rental terms/diagram and issued amendment. The blank optional-code cell must not shift the Honda's deductible or rental limits.
+6. In the source viewer, compare **Document**, **CU Search** and **Digital parse**. CU Search uses `prebuilt-documentSearch` and its own analyzer-keyed cache, not relabeled Layout output. Select **Back to policy check** to restore the finding. Optionally inspect Washington's scanned SOP or Arizona's image-based eligibility flowchart. A missing extraction has an explicit billable generation action; switching tabs alone doesn't call CU.
+7. Optionally explore **Ask agent** in the right panel to ask additional questions about the selected claim. The bundled results are read-only, so this button is disabled for the cached demo. To use it, complete [Prepare live policy checks](#prepare-live-policy-checks), select **Run live**, and confirm the billable operation. Once a live-compatible review is available, select **Ask agent** and ask, "Why is Washington's daily cost satisfied, and what still needs human review? Cite the rental terms and distinguish routine authority from the contractual cap." Chat uses the selected case and mode without replacing its saved checks; each submitted question can incur Azure charges.
 
    During a live run, the status banner names the active packet and shows elapsed time. Each uncached packet gets one Search prefetch and five parallel Agent Framework calls, one per check. Missing claim fields can require one additional whole-packet CU extraction. Keep the tab open; refresh the same tab to resume progress rather than starting another run. Matching current reviews load from cache without another model call. **Run live** isn't a force-refresh button. You can also select **No policy retrieval** to inspect a saved baseline if available, then return to **FoundryIQ**; changing the dropdown alone doesn't submit a new run.
 
@@ -399,6 +403,5 @@ Setup above has already indexed the policies, prepared the claim-summary analyze
 Load the CU results and open **Check policies**. Check the displayed setup status and index before selecting **FoundryIQ** > **Run live** and confirming the billable operation. A configured status reports local configuration, not a successful live connection. Saved results do not prove that Search or the model is reachable. Follow-up chat requires a live-compatible review, not the read-only bundled demo.
 
 If live work fails, keep the exact error and use the [troubleshooting table](../docs/policy-setup.md#troubleshoot-live-policy-setup). Do not repeatedly submit billable runs to diagnose a configuration problem.
-
-### 
+ 
 ---
