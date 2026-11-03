@@ -80,6 +80,27 @@ class LayoutTests(unittest.TestCase):
         self.assertTrue(all(method == "GET" for method, _ in self.http.calls))
         self.assertEqual((self.root / layout.setup.CONFIG_PATH).read_bytes(), self.before)
 
+    def test_discovered_model_name_is_distinct_from_deployment_name(self):
+        self.run_setup("--apply", "--model-deployment", "lab-policy-model",
+                       "--cu-model-name", "gpt-5.2", "--index-name", "isolated-index")
+        config = layout.setup.read_json(self.root / layout.setup.CONFIG_PATH)
+        self.assertEqual(config["modelDeployment"], "lab-policy-model")
+        self.assertEqual(config["cuModelName"], "gpt-5.2")
+
+    def test_discovery_does_not_inherit_index_names_from_another_search_service(self):
+        layout.setup.atomic_json(self.root / layout.setup.DEPLOYMENT_PATH, {
+            **fixtures.RESOURCES, "layoutSourceIndex": "foreign-source",
+            "layoutIndexName": "foreign-target",
+        })
+        report = self.run_setup(
+            "--search-resource-id",
+            f"{fixtures.RESOURCE_ROOT}/Microsoft.Search/searchServices/other-search",
+        )
+        self.assertIsNone(report["sourceIndex"])
+        self.assertIsNone(report["targetIndex"])
+        self.assertFalse(any("foreign-" in url for _, url in self.http.calls))
+        self.assertEqual((self.root / layout.setup.CONFIG_PATH).read_bytes(), self.before)
+
     def test_fresh_apply_populates_all_sources_and_reuses_target_on_rerun(self):
         result = self.run_setup("--apply", "--index-name", "isolated-index")
         self.assertEqual(result["status"], "verified")
@@ -121,6 +142,24 @@ class LayoutTests(unittest.TestCase):
         with self.assertRaisesRegex(layout.setup.SetupError, "upload denied"):
             self.run_setup("--apply", "--index-name", "isolated-index")
         self.assertEqual((self.root / layout.setup.CONFIG_PATH).read_bytes(), self.before)
+
+    def test_empty_search_403_identifies_operation_and_request(self):
+        error = layout.request_error(
+            "GET", "https://test-search.search.windows.net/indexes/test?api-version=preview",
+            403, None, {"X-Ms-Request-Id": "test-request"},
+        )
+        self.assertIn("Azure AI Search GET https://test-search.search.windows.net/indexes/test", error)
+        self.assertIn("request ID: test-request", error)
+        self.assertIn("Search data-plane permissions", error)
+        self.assertNotIn("api-version", error)
+
+    def test_empty_cu_403_identifies_analyze_permissions(self):
+        error = layout.request_error(
+            "POST", "https://test-foundry.services.ai.azure.com/contentunderstanding/analyzers/prebuilt-layout:analyzeBinary",
+            403, None, {},
+        )
+        self.assertIn("Content Understanding POST", error)
+        self.assertIn("CU analyze permissions", error)
 
     def test_foreign_target_is_not_overwritten(self):
         self.http.objects["isolated-index"] = {"description": "shared index"}

@@ -262,7 +262,7 @@ You will first explore the included saved results without submitting analysis. T
 
 ### Prepare and launch the app
 
-The app requires **Python 3.10 or later**, including pip and venv. Use the prepared lab environment, where everything has been pre-installed for you.
+Use the prepared lab environment with Azure CLI and **Python 3.10 or later**, including pip and venv. The commands below restore dependencies, discover the lab's existing Azure resources, and index the policy PDFs using Search-managed Standard extraction with figure descriptions. They do not redeploy Azure infrastructure or assign roles.
 
 1. Open **Windows PowerShell** CLI and move to the repository root, the folder containing `src`, `data`, and `infra`:
 
@@ -270,27 +270,27 @@ The app requires **Python 3.10 or later**, including pip and venv. Use the prepa
    Set-Location "C:\Users\LabUser\Desktop\ignite26-LAB664"
    ```
 
-2. Run the setup command below. It restores the app's locked npm dependencies, including Deep Chat, and prepares the Python Agent Framework environment in `.tools\policy-venv`. It also installs a supported Node runtime or Azure CLI if missing.
-
-   ```PowerShell
-   powershell -ExecutionPolicy Bypass -File .\infra\setup.ps1
-   ```
-
-3. After setup completes, restore the included synthetic policy reviews and claim fields:
-
-   ```PowerShell
-   powershell -ExecutionPolicy Bypass -File .\infra\policy-demo-cache.ps1
-   ```
-
-   This command makes no Azure calls, contains no credentials, and refuses to replace different local configuration or cache files. If it reports a conflict, ask the lab owner to review it rather than deleting your local files.
-
-3. Login to Azure via the az CLI:
+2. Sign in with the account provided in the **Resources** tab. Choose **Work or School account** if prompted, then select the lab subscription:
 
    ```PowerShell
    az login
+   az account set --subscription "@lab.CloudSubscription.Id"
    ```
-   
-   This command opens a browser window for you to sign in with the Azure account you used to log into the CU studio. Select **Work or School account** and complete the sign-in process with the credentials provided in the **Resources** tab. When asked, confirm the Azure subscription shown in the CLI with enter.
+
+3. Run these two commands in order. Setup restores the locked npm dependencies, including Deep Chat, and prepares `.tools\policy-venv` using the lab's approved package sources. Deployment discovers Search, Storage, Foundry and the model in your resource group, uploads the policy PDFs to Blob Storage, and configures a Search indexer and Content Understanding skill. Azure AI Search runs extraction, semantic chunking and AI figure descriptions, then populates the index. Deployment also prepares the separate claim-summary analyzer and writes the workbench connection after verification. Python does not extract or manually upload policy chunks. No pre-filled configuration file or hosted agent is needed.
+
+   ```PowerShell
+   powershell -ExecutionPolicy Bypass -File .\infra\setup.ps1
+   powershell -ExecutionPolicy Bypass -File .\infra\deploy.ps1 -ResourceGroup "@lab.CloudResourceGroup(1).Name" -Apply
+   ```
+
+   CU extraction and Search usage incur Azure charges. This reuses existing services and models; it does not deploy the ARM template or create role assignments. Skillable fills in the subscription and resource-group tokens; they do not resolve on GitHub or in a local Markdown preview. If discovery finds multiple services or cannot select one ready `gpt-5.2` deployment, it lists the candidates and the command-line option needed to select the intended one. Do not guess or select an unrelated resource.
+
+   Wait for setup to succeed before deployment, and for deployment to finish with `"status": "verified"` and `"runtimeActivated": true` before continuing. Successful apply saves discovered settings in `.tools\policy-deployment.json` and writes `.tools\policy-agent-framework.json` to connect the workbench to the verified Standard index, model and claim analyzer. No second preparation command is needed. A different existing analyzer definition is not overwritten; resolve any reported conflict with the lab owner.
+
+   Watch the timestamped console messages for authentication, uploads, indexing and retrieval verification. While waiting for Search, the script normally reports progress every 15 seconds with processed/failed counts and elapsed time. Authentication can take up to 30 seconds; each HTTP request has a 120-second timeout. A completed indexer is followed by chunk and state-retrieval checks, so wait for the final verified report rather than stopping at "indexer complete".
+
+   If either command fails, stop and ask the lab owner to review the error. Your identity needs resource-read, Search index-management/query, Blob upload, and CU analyzer management/invocation permissions, plus model invocation access for live reviews. The Search service's managed identity needs **Storage Blob Data Reader** on Storage and **Cognitive Services User** on Foundry. Deployment does not grant permissions. Do not install individual packages, change registries, delete local configuration, or retry billable work to bypass an error.
 
 4. Launch the separate app and keep this terminal open:
 
@@ -299,6 +299,10 @@ The app requires **Python 3.10 or later**, including pip and venv. Use the prepa
    ```
 
 5. Open +++http://127.0.0.1:8791/+++ in a new browser tab. Do not open `workbench.html` directly.
+
+The app reads the included CU results and historical policy reviews directly from the repository. Do not run `policy-demo-cache.ps1` as part of setup: its optional restore copies the original demo's public resource configuration, which may not match your lab. Loading saved results makes no Azure calls, even though setup above prepares Azure for live work.
+
+For live policy checks and follow-up chat, complete [Prepare live policy checks](#prepare-live-policy-checks) below before selecting **Run live**.
 
 > [!Note] To stop the app at anytime just return to PowerShell and press **Ctrl+C**. 
 
@@ -314,10 +318,10 @@ The app requires **Python 3.10 or later**, including pip and venv. Use the prepa
 
 Use the top-level tabs to move between **Parse and extract**, **Check consistency**, and **Check policies**. **Check consistency** validates returned fields, arithmetic, and cross-document consistency. **Check policies** uses an agent and retrieved policy evidence for five rental-processing checks. Neither changes the other's results. Selecting a policy check opens its finding and claim-versus-policy values in the right panel. Select a linked value to inspect its source PDF, then **Back to policy check** to return. The loaded CU results remain shared across tabs.
 
-Load the current CU results first. In **Check policies**, the checked-in bundled reviews can be loaded as a read-only historical demo even though they were created from the original packet dataset. The app labels them **Stale policy results from a different extraction dataset** and does not present them as a fresh review of the customized packets. Loading them makes no Azure calls, does not replace the current Parse and extract results, and does not enable follow-up chat. The lab owner must complete [policy setup](../docs/policy-setup.md) before live policy work. Sign in with `az login` using your approved lab identity only when running live work.
+The repository includes ten saved agent reviews from the current packet dataset and Search-managed Standard index. These are portable: on another machine, start the app and select **Load cached results** without restoring `.tools` files, signing in to Azure, or deploying Search. The **Bundled demo** label identifies the saved reviews and their source index. Loading makes no Azure calls and does not enable follow-up chat. If you later change the extraction dataset, the app labels unmatched bundled reviews as **Stale policy results from a different extraction dataset** rather than presenting them as current results. Setup above connects the app to Azure for live reviews; it is not required just to view the saved bundle.
 
-1. Start with **Parse and extract** > **Load cached results**, then open **Check policies**, select **FoundryIQ**, and select **Load cached results**. The status identifies the historical bundled results as stale and read-only; no Azure calls are made.
-2. To request live policy work, select **Run live** and confirm the operation for all loaded cases. The status banner names the active packet and shows elapsed time. Each uncached packet gets one Search prefetch and five parallel Agent Framework calls, one per check. Missing claim fields can require one additional whole-packet CU extraction. Azure charges apply.
+1. Start with **Parse and extract** > **Load cached results**, then open **Check policies**, select **FoundryIQ**, and select **Load cached results**. The included bundle loads all ten cases and 50 saved checks as read-only results; no Azure calls are made.
+2. After completing [Prepare live policy checks](#prepare-live-policy-checks), select **Run live** and confirm the operation for all loaded cases. The status banner names the active packet and shows elapsed time. Each uncached packet gets one Search prefetch and five parallel Agent Framework calls, one per check. Missing claim fields can require one additional whole-packet CU extraction. Azure charges apply.
 
    Keep the tab open; refresh the same tab to resume progress rather than starting another run. Matching current reviews load from cache without another model call. **Run live** isn't a force-refresh button.
 3. Optionally select **No policy retrieval** to inspect a saved baseline if available, then return to **FoundryIQ**. Changing the dropdown alone doesn't submit a new run.
@@ -347,7 +351,17 @@ These are source-based examples, not guaranteed model answers. Inspect differing
 
 For shared-resource names and subscriptions, see [under the hood](../docs/policy-checks.md#optional-look-under-the-hood). Don't change roles, networking or shared resources during this exercise.
 
-**FoundryIQ** is the lab's umbrella label for grounded retrieval. This implementation queries an ordinary Azure AI Search index directly, not a Foundry IQ knowledge base. Read the actual extraction label: the configured shared index uses **CU Layout**. The optional [managed CU pipeline](../docs/policy-setup.md) provides semantic extraction only after successful setup. **CU Search** and **Digital parse** document tabs are separate cached representations; changing the viewer doesn't change the active Search index.
+**FoundryIQ** is the lab's umbrella label for grounded retrieval. This implementation queries an ordinary Azure AI Search index directly, not a Foundry IQ knowledge base. Setup builds a Search-managed **Standard** index with semantic chunks and AI figure descriptions. The bundled reviews record the Standard index used for their export; loading them does not query any currently configured index. Older local caches may retain **CU Layout** provenance. **CU Search** and **Digital parse** document tabs are separate cached representations; changing the viewer doesn't change the active Search index.
+
+### Prepare live policy checks
+
+The policy agent runs locally in Python Agent Framework and queries an ordinary Azure AI Search index. There is no hosted agent to create in Studio. Studio sign-in does not authenticate the local app.
+
+Setup above has already indexed the policies, prepared the claim-summary analyzer and activated `.tools\policy-agent-framework.json`. No additional deployment command is needed here. The claim analyzer extracts facts from customer packets, not policies for Search, and is separate from the router you built in step 4. If you rerun deployment after launching the app, restart the app and reload the browser before continuing.
+
+Load the CU results and open **Check policies**. Check the displayed setup status and index before selecting **FoundryIQ** > **Run live** and confirming the billable operation. A configured status reports local configuration, not a successful live connection. Saved results do not prove that Search or the model is reachable. Follow-up chat requires a live-compatible review, not the read-only bundled demo.
+
+If live work fails, keep the exact error and use the [troubleshooting table](../docs/policy-setup.md#troubleshoot-live-policy-setup). Do not repeatedly submit billable runs to diagnose a configuration problem.
 
 ### Connect your own built analyzer and run live
 
@@ -355,7 +369,7 @@ Stop the app first. Sign in with Azure CLI; browser Studio sign-in does not auth
 
 ```PowerShell
 az login
-az account set --subscription "YOUR-SUBSCRIPTION-ID"
+az account set --subscription "@lab.CloudSubscription.Id"
 
 powershell -ExecutionPolicy Bypass -File .\infra\launch-workbench.ps1 `
   -Endpoint "https://YOUR-APPROVED-RESOURCE.services.ai.azure.com"

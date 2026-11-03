@@ -1,18 +1,18 @@
 {
-  "analyzerFingerprint": "fbdd5e69358edfa88723425716f60bf8e9e6449a93adfc0553dee0e8bf28c4f0",
+  "analyzerFingerprint": "7c5eec1408015b6a74d67afa6fb6abfcd350eec3fe38ce4ecc1ee7c7ab9be70e",
   "response": {
-    "id": "4ad20d48-5f28-41d4-a82c-5ad12a344e0a",
+    "id": "2015a3ab-8776-4560-8c04-0e95a85ac320",
     "status": "Succeeded",
     "result": {
-      "analyzerId": "lab664_rental_request_414186fd50e4",
+      "analyzerId": "lab664_policy_checks_claim_summary",
       "apiVersion": "2026-06-01-preview",
-      "createdAt": "2026-10-29T15:49:22Z",
+      "createdAt": "2026-11-03T00:22:50Z",
       "stringEncoding": "codePoint",
       "warnings": [],
       "infos": [
         {
           "code": "LLMStats",
-          "message": "completion calls: 3; avg completion latency: 3.40s; total completion latency: 10.19s"
+          "message": "completion calls: 3; avg completion latency: 3.64s; total completion latency: 10.93s"
         }
       ],
       "contents": [
@@ -29,7 +29,7 @@
                   "length": 13
                 }
               ],
-              "confidence": 0.795,
+              "confidence": 0.945,
               "source": "D(5,1.3126,1.3307,2.6918,1.3330,2.6915,1.5109,1.3123,1.5086)"
             },
             "LossState": {
@@ -41,7 +41,7 @@
                   "length": 2
                 }
               ],
-              "confidence": 0.879,
+              "confidence": 0.977,
               "source": "D(5,2.7289,3.8208,2.8907,3.8242,2.8907,3.9557,2.7289,3.9524)"
             },
             "LossDate": {
@@ -53,7 +53,7 @@
                   "length": 10
                 }
               ],
-              "confidence": 0.986,
+              "confidence": 0.989,
               "source": "D(5,1.0111,4.5051,1.7359,4.5060,1.7359,4.6511,1.0122,4.6484)"
             },
             "LossTime": {
@@ -65,7 +65,7 @@
                   "length": 5
                 }
               ],
-              "confidence": 0.959,
+              "confidence": 0.963,
               "source": "D(5,2.6998,4.5263,3.0594,4.5279,3.0588,4.6687,2.6992,4.6671)"
             },
             "CustomerName": {
@@ -89,7 +89,7 @@
                   "length": 12
                 }
               ],
-              "confidence": 0.945,
+              "confidence": 0.948,
               "source": "D(5,3.6025,1.3305,4.9196,1.3406,4.9182,1.5185,3.6012,1.5084)"
             },
             "InsuredVIN": {
@@ -101,7 +101,7 @@
                   "length": 17
                 }
               ],
-              "confidence": 0.978,
+              "confidence": 0.984,
               "source": "D(5,5.6943,3.3910,6.9810,3.3910,6.9810,3.5327,5.6943,3.5300)"
             },
             "InsuredVehicle": {
@@ -113,32 +113,36 @@
                   "length": 18
                 }
               ],
-              "confidence": 0.949,
+              "confidence": 0.957,
               "source": "D(5,1.0340,3.3738,2.2557,3.3707,2.2561,3.5173,1.0344,3.5203)"
             },
             "RentalRequested": {
               "type": "boolean",
-              "confidence": 0.381
+              "confidence": 0.509
             },
             "RentalUsed": {
               "type": "boolean",
-              "confidence": 0.381
+              "confidence": 0.509
             },
             "RequestTypeEvidence": {
               "type": "string",
-              "confidence": 0.8
+              "confidence": 0.816
             },
             "DrivabilityEvidence": {
               "type": "string",
-              "valueString": "Yes",
+              "valueString": "Drivable: Yes",
               "spans": [
                 {
-                  "offset": 8710,
+                  "offset": 25820,
+                  "length": 9
+                },
+                {
+                  "offset": 25830,
                   "length": 3
                 }
               ],
-              "confidence": 0.644,
-              "source": "D(5,1.1725,6.7300,1.3510,6.7300,1.3510,6.8481,1.1725,6.8481)"
+              "confidence": 0.965,
+              "source": "D(12,4.1438,2.6558,4.5248,2.6645,4.5225,2.7649,4.1415,2.7562);D(12,5.1025,2.6740,5.2583,2.6747,5.2583,2.7701,5.1025,2.7694)"
             },
             "PolicyTerm": {
               "type": "string",
@@ -149,7 +153,7 @@
                   "length": 24
                 }
               ],
-              "confidence": 0.947,
+              "confidence": 0.958,
               "source": "D(2,5.7441,1.6570,7.4832,1.6570,7.4832,1.8165,5.7441,1.8165)"
             },
             "PolicyDailyBaseCap": {
@@ -161,7 +165,7 @@
                   "length": 2
                 }
               ],
-              "confidence": 0.941,
+              "confidence": 0.945,
               "source": "D(2,2.8441,6.8587,2.9639,6.8588,2.9639,7.0222,2.8441,7.0222)"
             },
             "PolicyMaximumDays": {
@@ -173,7 +177,7 @@
                   "length": 2
                 }
               ],
-              "confidence": 0.888,
+              "confidence": 0.883,
               "source": "D(2,4.5830,6.8612,4.6973,6.8616,4.6973,7.0230,4.5830,7.0229)"
             },
             "PolicyTaxTreatment": {
@@ -185,13 +189,25 @@
                   "length": 37
                 }
               ],
-              "confidence": 0.77,
+              "confidence": 0.934,
               "source": "D(2,2.7844,7.0562,5.0635,7.0495,5.0640,7.2117,2.7849,7.2184)"
             },
             "PolicyEndorsement": {
               "type": "string",
-              "valueString": "Limit: $85/day base charge, maximum 30 days; mandatory taxes/surcharges additional.",
+              "valueString": "Rental Reimbursement Coverage We will pay the reasonable expense of renting a car while your covered auto is out of service due to a covered loss. Limit: $85/day base charge, maximum 30 days; mandatory taxes/surcharges additional.",
               "spans": [
+                {
+                  "offset": 3934,
+                  "length": 29
+                },
+                {
+                  "offset": 3965,
+                  "length": 75
+                },
+                {
+                  "offset": 4041,
+                  "length": 40
+                },
                 {
                   "offset": 4082,
                   "length": 44
@@ -201,8 +217,8 @@
                   "length": 38
                 }
               ],
-              "confidence": 0.861,
-              "source": "D(3,0.9805,6.5626,4.2316,6.5696,4.2313,6.7315,0.9802,6.7244);D(3,1.5066,6.7424,4.2334,6.7424,4.2334,6.9015,1.5066,6.9015)"
+              "confidence": 0.782,
+              "source": "D(3,0.9473,5.9883,3.1548,5.9955,3.1543,6.1469,0.9468,6.1396);D(3,0.9836,6.2057,6.4997,6.2138,6.4995,6.3813,0.9834,6.3732);D(3,0.9883,6.3916,3.8931,6.3916,3.8931,6.5420,0.9883,6.5420);D(3,0.9805,6.5626,4.2316,6.5696,4.2313,6.7315,0.9802,6.7244);D(3,1.5066,6.7424,4.2334,6.7424,4.2334,6.9015,1.5066,6.9015)"
             },
             "RentalAgreementId": {
               "type": "string",
@@ -213,36 +229,36 @@
                   "length": 9
                 }
               ],
-              "confidence": 0.967,
+              "confidence": 0.973,
               "source": "D(10,5.8271,0.9451,6.5328,0.9458,6.5327,1.0764,5.8270,1.0757)"
             },
             "RentalClaimLink": {
               "type": "string",
-              "confidence": 0.8
+              "confidence": 0.816
             },
             "RentalPickup": {
               "type": "string",
               "valueString": "02/17/2026 09:30",
               "spans": [
                 {
-                  "offset": 18681,
+                  "offset": 19255,
                   "length": 16
                 }
               ],
-              "confidence": 0.958,
-              "source": "D(10,5.8354,1.3150,6.8694,1.3188,6.8689,1.4571,5.8349,1.4534)"
+              "confidence": 0.965,
+              "source": "D(10,2.8744,3.2445,3.7034,3.2661,3.6998,3.4024,2.8709,3.3807)"
             },
             "RentalReturn": {
               "type": "string",
               "valueString": "2026-02-21 09:30",
               "spans": [
                 {
-                  "offset": 23891,
+                  "offset": 23081,
                   "length": 16
                 }
               ],
-              "confidence": 0.938,
-              "source": "D(11,2.5380,7.7663,3.6130,7.7667,3.6129,7.9242,2.5379,7.9238)"
+              "confidence": 0.95,
+              "source": "D(11,5.4340,2.8937,6.4703,2.8712,6.4735,3.0216,5.4372,3.0441)"
             },
             "RentalScheduledReturn": {
               "type": "string",
@@ -253,7 +269,7 @@
                   "length": 16
                 }
               ],
-              "confidence": 0.965,
+              "confidence": 0.974,
               "source": "D(10,2.8759,3.4649,3.7021,3.4628,3.7024,3.5956,2.8762,3.5977)"
             },
             "RentalBilledDays": {
@@ -265,7 +281,7 @@
                   "length": 1
                 }
               ],
-              "confidence": 0.901,
+              "confidence": 0.9,
               "source": "D(11,5.4370,3.0916,5.5242,3.0878,5.5242,3.2119,5.4370,3.2119)"
             },
             "RentalDailyBaseRate": {
@@ -273,24 +289,24 @@
               "valueNumber": 54,
               "spans": [
                 {
-                  "offset": 21331,
-                  "length": 6
+                  "offset": 23205,
+                  "length": 5
                 }
               ],
-              "confidence": 0.38,
-              "source": "D(10,6.2628,4.7368,6.6116,4.7366,6.6117,4.8662,6.2629,4.8664)"
+              "confidence": 0.429,
+              "source": "D(11,6.9768,3.8648,7.3171,3.8602,7.3171,3.9960,6.9768,3.9984)"
             },
             "RentalSubtotal": {
               "type": "number",
               "valueNumber": 216,
               "spans": [
                 {
-                  "offset": 23439,
-                  "length": 6
+                  "offset": 23506,
+                  "length": 5
                 }
               ],
-              "confidence": 0.963,
-              "source": "D(11,6.9021,5.0845,7.3420,5.0804,7.3420,5.2228,6.9021,5.2268)"
+              "confidence": 0.43,
+              "source": "D(11,6.9934,5.3715,7.3420,5.3645,7.3420,5.5106,6.9934,5.5153)"
             },
             "RentalTaxes": {
               "type": "number",
@@ -301,36 +317,56 @@
                   "length": 5
                 }
               ],
-              "confidence": 0.964,
+              "confidence": 0.888,
               "source": "D(11,6.9934,5.3715,7.3420,5.3645,7.3420,5.5106,6.9934,5.5153)"
             },
             "RentalCharges": {
               "type": "string",
-              "valueString": "Rental day 2026-02-17; Rental day 2026-02-18; Rental day 2026-02-19; Rental day 2026-02-20; Texas motor vehicle rental tax",
+              "valueString": "Rental day 2026-02-17 54.00; Rental day 2026-02-18 54.00; Rental day 2026-02-19 54.00; Rental day 2026-02-20 54.00; Texas motor vehicle rental tax 21.60",
               "spans": [
                 {
                   "offset": 23174,
                   "length": 21
                 },
                 {
+                  "offset": 23205,
+                  "length": 5
+                },
+                {
                   "offset": 23231,
                   "length": 21
+                },
+                {
+                  "offset": 23262,
+                  "length": 5
                 },
                 {
                   "offset": 23288,
                   "length": 21
                 },
                 {
+                  "offset": 23319,
+                  "length": 5
+                },
+                {
                   "offset": 23345,
                   "length": 21
                 },
                 {
+                  "offset": 23376,
+                  "length": 5
+                },
+                {
                   "offset": 23466,
                   "length": 30
+                },
+                {
+                  "offset": 23506,
+                  "length": 5
                 }
               ],
-              "confidence": 0.726,
-              "source": "D(11,1.1597,3.8939,2.5214,3.8917,2.5217,4.0555,1.1600,4.0577);D(11,1.1537,4.1501,2.5151,4.1406,2.5163,4.3090,1.1548,4.3185);D(11,1.1519,4.4067,2.5150,4.3912,2.5169,4.5608,1.1538,4.5763);D(11,1.1465,4.6794,2.5151,4.6619,2.5172,4.8288,1.1486,4.8463);D(11,4.5685,5.3927,6.2339,5.3811,6.2350,5.5341,4.5696,5.5457)"
+              "confidence": 0.886,
+              "source": "D(11,1.1597,3.8939,2.5214,3.8917,2.5217,4.0555,1.1600,4.0577);D(11,6.9768,3.8648,7.3171,3.8602,7.3171,3.9960,6.9768,3.9984);D(11,1.1537,4.1501,2.5151,4.1406,2.5163,4.3090,1.1548,4.3185);D(11,6.9851,4.1116,7.3254,4.1097,7.3254,4.2493,6.9851,4.2457);D(11,1.1519,4.4067,2.5150,4.3912,2.5169,4.5608,1.1538,4.5763);D(11,6.9810,4.3698,7.3296,4.3655,7.3296,4.5051,6.9810,4.5041);D(11,1.1465,4.6794,2.5151,4.6619,2.5172,4.8288,1.1486,4.8463);D(11,6.9934,4.6397,7.3379,4.6356,7.3379,4.7752,6.9934,4.7794);D(11,4.5685,5.3927,6.2339,5.3811,6.2350,5.5341,4.5696,5.5457);D(11,6.9934,5.3715,7.3420,5.3645,7.3420,5.5106,6.9934,5.5153)"
             },
             "RentalTotal": {
               "type": "number",
@@ -341,7 +377,7 @@
                   "length": 6
                 }
               ],
-              "confidence": 0.961,
+              "confidence": 0.878,
               "source": "D(11,6.8191,5.6784,7.3628,5.6715,7.3628,5.8434,6.8191,5.8503)"
             },
             "RentalCurrency": {
@@ -349,12 +385,12 @@
               "valueString": "USD",
               "spans": [
                 {
-                  "offset": 23543,
+                  "offset": 23149,
                   "length": 3
                 }
               ],
-              "confidence": 0.97,
-              "source": "D(11,5.4638,5.6820,5.8102,5.6776,5.8102,5.8827,5.4638,5.8833)"
+              "confidence": 0.965,
+              "source": "D(11,6.9599,3.5552,7.2276,3.5492,7.2276,3.7217,6.9599,3.7239)"
             },
             "ScheduledRepairStart": {
               "type": "string",
@@ -365,7 +401,7 @@
                   "length": 10
                 }
               ],
-              "confidence": 0.973,
+              "confidence": 0.976,
               "source": "D(6,3.6980,7.9116,4.2915,7.9116,4.2915,8.0513,3.6980,8.0513)"
             },
             "ScheduledRepairCompletion": {
@@ -377,20 +413,20 @@
                   "length": 10
                 }
               ],
-              "confidence": 0.977,
+              "confidence": 0.981,
               "source": "D(6,5.6404,7.9116,6.2671,7.9116,6.2671,8.0513,5.6404,8.0513)"
             },
             "ActualRepairDelivery": {
               "type": "string",
-              "confidence": 0.8
+              "confidence": 0.816
             },
             "ActualRepairCompletion": {
               "type": "string",
-              "confidence": 0.8
+              "confidence": 0.816
             },
             "InsurerAuthorizationEvidence": {
               "type": "string",
-              "valueString": "Authorization Status Pending",
+              "valueString": "Authorization Status Pending Payment Status Pending Invoice Status Not invoiced Notes Repair authorization and payment are pending upon review of final repair documentation.",
               "spans": [
                 {
                   "offset": 12061,
@@ -399,14 +435,38 @@
                 {
                   "offset": 12082,
                   "length": 7
+                },
+                {
+                  "offset": 12091,
+                  "length": 14
+                },
+                {
+                  "offset": 12106,
+                  "length": 7
+                },
+                {
+                  "offset": 12115,
+                  "length": 14
+                },
+                {
+                  "offset": 12130,
+                  "length": 12
+                },
+                {
+                  "offset": 12144,
+                  "length": 5
+                },
+                {
+                  "offset": 12151,
+                  "length": 87
                 }
               ],
-              "confidence": 0.511,
-              "source": "D(6,0.7517,9.7163,1.4630,9.7163,1.4630,9.8345,0.7517,9.8345);D(6,0.7538,9.8712,1.1248,9.8787,1.1248,10.0291,0.7538,10.0216)"
+              "confidence": 0.853,
+              "source": "D(6,0.7517,9.7163,1.4630,9.7163,1.4630,9.8345,0.7517,9.8345);D(6,0.7538,9.8712,1.1248,9.8787,1.1248,10.0291,0.7538,10.0216);D(6,3.4448,9.7109,3.9844,9.7109,3.9844,9.8398,3.4448,9.8398);D(6,3.4531,9.8653,3.8121,9.8720,3.8121,10.0243,3.4531,10.0025);D(6,5.5825,9.6983,6.0504,9.7112,6.0471,9.8313,5.5792,9.8184);D(6,5.5823,9.8586,6.1449,9.8676,6.1426,10.0088,5.5800,9.9997);D(6,0.7507,10.1245,0.9821,10.1245,0.9821,10.2427,0.7512,10.2427);D(6,0.7559,10.2833,4.4907,10.2833,4.4907,10.4472,0.7559,10.4472)"
             },
             "PriorRentalUsageEvidence": {
               "type": "string",
-              "confidence": 0.8
+              "confidence": 0.816
             }
           },
           "kind": "document",
@@ -55813,7 +55873,7 @@
               "id": "9.1"
             }
           ],
-          "analyzerId": "lab664_rental_request_414186fd50e4",
+          "analyzerId": "lab664_policy_checks_claim_summary",
           "mimeType": "application/pdf"
         }
       ]
@@ -55822,9 +55882,8 @@
       "documentPagesStandard": 13,
       "contextualizationTokens": 13000,
       "tokens": {
-        "gpt-5-input": 28477,
-        "gpt-5-cached-input": 4224,
-        "gpt-5-output": 992
+        "gpt-5.2-input": 27661,
+        "gpt-5.2-output": 1073
       }
     }
   }

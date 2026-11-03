@@ -9,8 +9,9 @@ Default (no flags) is READ-ONLY: it validates local sources and checks Azure
 prerequisites with GET requests only. ``--apply`` is the only mode that creates or
 uploads anything, and only when every prerequisite is verified. Role assignments,
 network settings and deletions are never performed; missing roles are reported.
-The previously verified Layout configuration is preserved until a new generation
-is fully verified.
+``--index-only`` does not require a claim analyzer or change the app's active
+configuration. Full review preparation activates a new configuration only after
+the indexer and retrieval are verified.
 """
 
 from __future__ import annotations
@@ -509,6 +510,10 @@ def assert_owned(kind: str, expected: dict[str, Any], actual: dict[str, Any]) ->
 
 # ------------------------------------------------------------------- HTTP
 
+def progress(message: str) -> None:
+    print(f"[{time.strftime('%H:%M:%S')}] {message}", file=sys.stderr, flush=True)
+
+
 def _decode(payload: bytes) -> Any:
     if not payload:
         return None
@@ -521,7 +526,7 @@ def _decode(payload: bytes) -> Any:
 def _err(status: int, body: Any) -> str:
     error = body.get("error") if isinstance(body, dict) else None
     text = error.get("message") if isinstance(error, dict) else body
-    return f"HTTP {status}: {str(text)[:300]}"
+    return f"HTTP {status}: {str(text)[:300] if text is not None else 'empty response body'}"
 
 
 class Http:
@@ -529,12 +534,22 @@ class Http:
 
     def __init__(self, credential: Any | None = None, sleep: Callable[[float], None] = time.sleep):
         self._credential, self._sleep = credential, sleep
+        self._tokens: dict[str, tuple[str, int]] = {}
 
     def token(self, scope: str) -> str:
+        cached = self._tokens.get(scope)
+        if cached is not None and cached[1] > time.time() + 300:
+            return cached[0]
         if self._credential is None:
             from azure.identity import AzureCliCredential
-            self._credential = AzureCliCredential()
-        return self._credential.get_token(scope).token
+            self._credential = AzureCliCredential(process_timeout=30)
+        target = urllib.parse.urlsplit(scope).hostname
+        progress(f"Requesting Azure CLI token for {target} (CLI timeout: 30s)...")
+        started = time.monotonic()
+        token = self._credential.get_token(scope)
+        self._tokens[scope] = (token.token, token.expires_on)
+        progress(f"Authentication ready for {target} ({time.monotonic() - started:.1f}s).")
+        return token.token
 
     def request(self, method: str, url: str, scope: str, body: Any = None,
                 headers: dict[str, str] | None = None, raw: bytes | None = None
@@ -544,14 +559,22 @@ class Http:
         if body is not None:
             hdrs["Content-Type"] = "application/json"
         hdrs.update(headers or {})
+        target = urllib.parse.urlsplit(url)
+        operation = f"{method} {target.hostname}{target.path}"
         for attempt in range(4):
+            progress(f"{operation} (attempt {attempt + 1}/4, request timeout: 120s)...")
+            started = time.monotonic()
             req = urllib.request.Request(url, data=data, method=method, headers=hdrs)
             try:
                 with urllib.request.urlopen(req, timeout=120) as resp:
-                    return resp.status, _decode(resp.read()), dict(resp.headers)
+                    value = _decode(resp.read())
+                    progress(f"{operation} -> HTTP {resp.status} ({time.monotonic() - started:.1f}s).")
+                    return resp.status, value, dict(resp.headers)
             except urllib.error.HTTPError as err:
                 payload = _decode(err.read())
+                progress(f"{operation} -> HTTP {err.code} ({time.monotonic() - started:.1f}s).")
                 if err.code in (429, 503) and attempt < 3:
+                    progress(f"Service busy; retrying in {2 ** attempt}s.")
                     self._sleep(2 ** attempt)
                     continue
                 return err.code, payload, dict(err.headers or {})
@@ -664,8 +687,10 @@ def prepare_claim_analyzer(http: Any, settings: dict[str, Any], apply_changes: b
 
 
 def preflight(http: Any, root: Path = ROOT, offline: bool = False,
-              seed: dict[str, Any] | None = None, create_claim_analyzer: bool = False) -> dict[str, Any]:
+              seed: dict[str, Any] | None = None, create_claim_analyzer: bool = False,
+              index_only: bool = False) -> dict[str, Any]:
     """Read-only: local validation plus GET-only Azure checks."""
+    progress("Checking policy sources and deployment settings...")
     sources = load_sources(root)
     settings = runtime_settings(root, seed)
     generation = generation_hash(sources, settings)
@@ -673,12 +698,14 @@ def preflight(http: Any, root: Path = ROOT, offline: bool = False,
     report: dict[str, Any] = {
         "ready": False, "generation": generation, "names": names,
         "documents": len(sources["documents"]), "corpusHash": sources["corpusHash"],
+        "extractionMode": "standard", "figureDescriptions": True, "indexOnly": index_only,
         **{key: settings[key] for key in RESOURCE_TYPES},
         "checks": [], "missingRoles": [], "problems": [],
     }
     if offline:
         report["problems"].append("local-only: Azure prerequisites were not checked")
         return report
+    progress(f"Checking Azure resources and permissions for {len(sources['documents'])} policy PDFs...")
     scopes = {key: settings[f"{key}ResourceId"] for key in ("search", "storage", "foundry")}
     versions = {"search": "2025-05-01", "storage": "2023-05-01", "foundry": "2025-06-01"}
     resources = {}
@@ -723,19 +750,24 @@ def preflight(http: Any, root: Path = ROOT, offline: bool = False,
         for r in report["roles"] if not r["ok"]]
     report["existing"] = {}
     for kind, (collection, _) in definitions(names, generation, settings).items():
+        progress(f"Checking existing Search {kind}: {names[kind]}...")
         status, body, _ = http.request(
             "GET", f"{settings['searchEndpoint']}/{collection}('{names[kind]}')?api-version={SEARCH_API}", SEARCH_SCOPE)
         report["existing"][kind] = "present" if status == 200 else ("absent" if status == 404 else _err(status, body))
         if status not in (200, 404):
             report["problems"].append(f"Cannot inspect {kind}: {_err(status, body)}")
-    try:
-        resolved = (prepare_claim_analyzer(http, settings) if create_claim_analyzer
-                    else resolve_analyzer(http, settings))
-        report["claimAnalyzer"] = (resolved if resolved.get("status") == "planned" else
-                                   {"id": resolved["claimAnalyzerId"], "hash": resolved["claimAnalyzerHash"]})
-    except SetupError as exc:
-        report["problems"].append(str(exc))
+    if not index_only:
+        progress("Checking the separate claim-summary analyzer for live reviews...")
+        try:
+            resolved = (prepare_claim_analyzer(http, settings) if create_claim_analyzer
+                        else resolve_analyzer(http, settings))
+            report["claimAnalyzer"] = (resolved if resolved.get("status") == "planned" else
+                                       {"id": resolved["claimAnalyzerId"], "hash": resolved["claimAnalyzerHash"]})
+        except SetupError as exc:
+            report["problems"].append(str(exc))
     report["ready"] = not report["missingRoles"] and not report["problems"]
+    progress("Prerequisite checks passed." if report["ready"] else
+             "Prerequisite checks blocked indexing; see missingRoles and problems in the JSON report.")
     return report
 
 # ---------------------------------------------------------------- apply steps
@@ -755,18 +787,22 @@ def blob_metadata(doc: dict[str, Any], generation: str, corpus_hash: str) -> dic
 def upload_sources(http: Any, sources: dict[str, Any], names: dict[str, str], generation: str,
                    refresh: bool, settings: dict[str, Any]) -> dict[str, str]:
     base = {"x-ms-version": STORAGE_API}
+    progress(f"Preparing Blob container: {names['container']}...")
     status, body, _ = http.request("PUT", storage_url(names, settings, query="?restype=container"), STORAGE_SCOPE,
                                    headers=base, raw=b"")
     if status not in (201, 409):
         raise SetupError(f"Cannot create container: {_err(status, body)}")
     result = {}
-    for doc in sources["documents"]:
+    total = len(sources["documents"])
+    for number, doc in enumerate(sources["documents"], 1):
+        progress(f"Source {number}/{total}: checking {doc['file']}...")
         meta = blob_metadata(doc, generation, sources["corpusHash"])
         status, _, head = http.request("HEAD", storage_url(names, settings, doc["file"]), STORAGE_SCOPE, headers=base)
         lower = {k.lower(): v for k, v in (head or {}).items()}
         if status == 200:
             if all(lower.get(f"x-ms-meta-{k}") == v for k, v in meta.items()):
                 result[doc["file"]] = "unchanged"
+                progress(f"Source {number}/{total}: unchanged; reusing {doc['file']}.")
                 continue
             if not refresh:
                 raise ConflictError(f"Blob {doc['file']} exists with different metadata; use --refresh to replace it.")
@@ -774,23 +810,27 @@ def upload_sources(http: Any, sources: dict[str, Any], names: dict[str, str], ge
             raise SetupError(f"Cannot inspect blob {doc['file']}: HTTP {status}")
         put = {**base, "x-ms-blob-type": "BlockBlob", "Content-Type": "application/pdf",
                **{f"x-ms-meta-{k}": v for k, v in meta.items()}}
+        progress(f"Source {number}/{total}: uploading {doc['file']}...")
         status, body, _ = http.request("PUT", storage_url(names, settings, doc["file"]), STORAGE_SCOPE,
                                        headers=put, raw=Path(doc["path"]).read_bytes())
         if status != 201:
             raise SetupError(f"Cannot upload {doc['file']}: {_err(status, body)}")
         result[doc["file"]] = "uploaded"
+        progress(f"Source {number}/{total}: upload complete.")
     return result
 
 
 def ensure_objects(http: Any, names, generation, settings) -> dict[str, str]:
     outcome = {}
     for kind in ("index", "datasource", "skillset", "indexer"):
+        progress(f"Preparing Search {kind}: {names[kind]}...")
         collection, expected = definitions(names, generation, settings)[kind]
         url = f"{settings['searchEndpoint']}/{collection}('{names[kind]}')?api-version={SEARCH_API}"
         status, body, _ = http.request("GET", url, SEARCH_SCOPE)
         if status == 200:
             assert_owned(kind, expected, body)
             outcome[kind] = "reused"
+            progress(f"Search {kind}: reusing matching definition.")
             continue
         if status != 404:
             raise SetupError(f"Cannot inspect {kind}: {_err(status, body)}")
@@ -799,6 +839,7 @@ def ensure_objects(http: Any, names, generation, settings) -> dict[str, str]:
         if status not in (200, 201):
             raise SetupError(f"Cannot create {kind}: {_err(status, body)}")
         outcome[kind] = "created"
+        progress(f"Search {kind}: created.")
     return outcome
 
 
@@ -832,28 +873,41 @@ def indexer_ready(status: dict[str, Any], expected_documents: int) -> tuple[bool
 
 def run_indexer(http: Any, names, expected_documents: int, force: bool, settings: dict[str, Any], timeout: float = 1800,
                 sleep: Callable[[float], None] = time.sleep, interval: float = 15) -> dict[str, Any]:
+    progress(f"Checking Search indexer: {names['indexer']}...")
+    started = time.monotonic()
     status = indexer_status(http, names, settings)
     previous_start = (status.get("lastResult") or {}).get("startTime")
     ready, _ = indexer_ready(status, expected_documents)
-    if force or not ready:
+    waiting_for_run = force or not ready
+    if waiting_for_run:
+        joining_run = _running(status) and not force
+        if joining_run:
+            progress("Search indexer is already running; waiting for that run without submitting another.")
         if force:
             code, body, _ = http.request(
                 "POST", f"{settings['searchEndpoint']}/indexers('{names['indexer']}')/search.reset?api-version={SEARCH_API}",
                 SEARCH_SCOPE, body={})
             if code != 204:
                 raise SetupError(f"Cannot reset indexer for refresh: {_err(code, body)}")
-        code, body, _ = http.request(
-            "POST", f"{settings['searchEndpoint']}/indexers('{names['indexer']}')/search.run?api-version={SEARCH_API}",
-            SEARCH_SCOPE, body={})
-        if code not in (202, 409):
-            raise SetupError(f"Cannot run indexer: {_err(code, body)}")
+        if not joining_run:
+            progress("Starting Search-managed extraction, figure descriptions and indexing...")
+            code, body, _ = http.request(
+                "POST", f"{settings['searchEndpoint']}/indexers('{names['indexer']}')/search.run?api-version={SEARCH_API}",
+                SEARCH_SCOPE, body={})
+            if code not in (202, 409):
+                raise SetupError(f"Cannot run indexer: {_err(code, body)}")
         waited = 0.0
         while True:
+            last = status.get("lastResult") or {}
+            progress(f"Waiting for indexer; latest reported result: {last.get('status', status.get('status', 'unknown'))}, "
+                     f"{last.get('itemsProcessed', 0)}/{expected_documents} documents processed, "
+                     f"{last.get('itemsFailed', 0)} failed; elapsed {time.monotonic() - started:.0f}s. "
+                     f"Checking again in {interval:g}s.")
             sleep(interval)
             waited += interval
             status = indexer_status(http, names, settings)
             last = status.get("lastResult") or {}
-            if not _running(status) and (not previous_start or last.get("startTime") != previous_start):
+            if not _running(status) and (joining_run or not previous_start or last.get("startTime") != previous_start):
                 break
             if waited > timeout:
                 raise SetupError("Timed out waiting for the indexer.")
@@ -861,6 +915,12 @@ def run_indexer(http: Any, names, expected_documents: int, force: bool, settings
     if not ready:
         errors = [str(e.get("errorMessage", ""))[:200] for e in (status.get("lastResult") or {}).get("errors", [])[:3]]
         raise SetupError(f"Indexer not ready: {reason} {errors}")
+    if waiting_for_run:
+        progress(f"Search indexer complete: {(status.get('lastResult') or {}).get('itemsProcessed', 0)} "
+                 f"documents processed, 0 failed ({time.monotonic() - started:.1f}s).")
+    else:
+        progress("Search indexer has a successful matching run; no new extraction requested "
+                 f"({time.monotonic() - started:.1f}s).")
     return status
 
 
@@ -878,6 +938,7 @@ def digest_chunks(chunks: list[dict[str, Any]]) -> str:
 
 def read_chunks(http: Any, names: dict[str, str], settings: dict[str, Any]) -> list[dict[str, Any]]:
     rows, last = [], None
+    progress(f"Reading indexed chunks from {names['index']}...")
     url = f"{settings['searchEndpoint']}/indexes('{names['index']}')/docs/search.post.search?api-version={SEARCH_API}"
     while True:
         body = {"search": "*", "top": 1000, "orderby": "id asc", "select": ",".join(INDEX_FIELDS)}
@@ -888,6 +949,7 @@ def read_chunks(http: Any, names: dict[str, str], settings: dict[str, Any]) -> l
             raise SetupError(f"Cannot read back chunks: {_err(status, payload)}")
         page = [{k: v for k, v in r.items() if not k.startswith("@")} for r in payload.get("value", [])]
         rows += page
+        progress(f"Read {len(rows)} indexed chunks so far.")
         if len(page) < 1000:
             return rows
         last = str(page[-1]["id"]).replace("'", "''")
@@ -936,11 +998,14 @@ def generation_filter(sources: dict[str, Any], generation: str, state: str | Non
 
 def verify_generation(http: Any, sources: dict[str, Any], names, generation: str,
                       settings: dict[str, Any]) -> dict[str, Any]:
+    progress("Verifying indexed source metadata, page coverage and retrieval...")
     chunks = validate_chunks(read_chunks(http, names, settings), sources, generation)
+    progress(f"Validated {len(chunks)} chunks; checking state-scoped retrieval...")
     url = f"{settings['searchEndpoint']}/indexes('{names['index']}')/docs/search.post.search?api-version={SEARCH_API}"
     probes = {}
     states = sorted({s for d in sources["documents"] for s in d["stateCodes"] if s != "SHARED"})
-    for state in states:
+    for number, state in enumerate(states, 1):
+        progress(f"Retrieval check {number}/{len(states)}: {state}...")
         status, payload, _ = http.request("POST", url, SEARCH_SCOPE, body={
             "search": "rental rate duration evidence", "searchFields": "content", "top": 3,
             "filter": generation_filter(sources, generation, state)})
@@ -950,6 +1015,7 @@ def verify_generation(http: Any, sources: dict[str, Any], names, generation: str
         if any(row.get("documentId") not in allowed_ids for row in payload["value"]):
             raise SetupError(f"Filtered retrieval probe for {state} returned another state's policy.")
         probes[state] = len(payload["value"])
+        progress(f"Retrieval check {number}/{len(states)}: {state} passed ({probes[state]} matches).")
     return {"chunkCount": len(chunks), "chunkDigest": digest_chunks(chunks), "chunks": chunks, "probes": probes}
 
 
@@ -959,16 +1025,20 @@ def write_state(root: Path, state: dict[str, Any]) -> None:
     atomic_json(root / STATE_PATH, {"schemaVersion": 1, **state})
 
 
+def save_snapshot(root: Path, sources, generation, verification, path: Path = SNAPSHOT_PATH) -> None:
+    docs = [{k: d[k] for k in ("documentId", "version", "file", "sha256", "stateCodes", "ruleIds", "sections")}
+            for d in sources["documents"]]
+    atomic_json(root / path, {
+        "schemaVersion": SCHEMA, "corpusHash": sources["corpusHash"], "indexFingerprint": generation,
+        "chunkDigest": verification["chunkDigest"], "documents": docs, "chunks": verification["chunks"]})
+
+
 def activate(root: Path, sources, settings, names, generation, verification) -> dict[str, Any]:
     """Write the new snapshot/config only after verification; keep a backup of the old config."""
     current = root / CONFIG_PATH
     if current.is_file() and not (root / BACKUP_PATH).exists():
         atomic_json(root / BACKUP_PATH, read_json(current))
-    docs = [{k: d[k] for k in ("documentId", "version", "file", "sha256", "stateCodes", "ruleIds", "sections")}
-            for d in sources["documents"]]
-    atomic_json(root / SNAPSHOT_PATH, {
-        "schemaVersion": SCHEMA, "corpusHash": sources["corpusHash"], "indexFingerprint": generation,
-        "chunkDigest": verification["chunkDigest"], "documents": docs, "chunks": verification["chunks"]})
+    save_snapshot(root, sources, generation, verification)
     config = {
         "schemaVersion": 1, "provider": "agent-framework",
         **{key: settings[key] for key in RESOURCE_TYPES},
@@ -994,27 +1064,39 @@ def activate(root: Path, sources, settings, names, generation, verification) -> 
 
 def apply(http: Any, root: Path = ROOT, refresh: bool = False,
           sleep: Callable[[float], None] = time.sleep, seed: dict[str, Any] | None = None,
-          create_claim_analyzer: bool = False) -> dict[str, Any]:
-    report = preflight(http, root, seed=seed, create_claim_analyzer=create_claim_analyzer)
+          create_claim_analyzer: bool = False, index_only: bool = False) -> dict[str, Any]:
+    report = preflight(http, root, seed=seed, create_claim_analyzer=create_claim_analyzer, index_only=index_only)
     if not report["ready"]:
         write_state(root, {"status": "blocked", "generation": report["generation"],
                            "missingRoles": report["missingRoles"], "problems": report["problems"]})
         report["status"] = "blocked"
         return report
     sources, settings = load_sources(root), runtime_settings(root, seed)
-    settings = (prepare_claim_analyzer(http, settings, apply_changes=True, sleep=sleep)
-                if create_claim_analyzer else resolve_analyzer(http, settings))
+    if not index_only:
+        progress("Preparing the separate claim-summary analyzer...")
+        settings = (prepare_claim_analyzer(http, settings, apply_changes=True, sleep=sleep)
+                    if create_claim_analyzer else resolve_analyzer(http, settings))
     generation, names = report["generation"], report["names"]
     write_state(root, {"status": "running", "generation": generation, "names": names})
     steps = {"blobs": upload_sources(http, sources, names, generation, refresh, settings),
              "objects": ensure_objects(http, names, generation, settings)}
     run_indexer(http, names, len(sources["documents"]), refresh, settings, sleep=sleep)
     verification = verify_generation(http, sources, names, generation, settings)
-    config = activate(root, sources, settings, names, generation, verification)
+    if index_only:
+        progress("Saving the verified index snapshot; leaving the app configuration unchanged...")
+        snapshot_path = Path(".tools") / f"policy-index-{generation[:12]}.json"
+        save_snapshot(root, sources, generation, verification, snapshot_path)
+    else:
+        progress("Activating the verified index in the app configuration...")
+        activate(root, sources, settings, names, generation, verification)
     write_state(root, {"status": "verified", "generation": generation, "names": names,
                        "chunkDigest": verification["chunkDigest"]})
     report.update(status="verified", steps=steps, chunkCount=verification["chunkCount"],
-                  chunkDigest=verification["chunkDigest"], indexName=config["indexName"])
+                  chunkDigest=verification["chunkDigest"], indexName=names["index"],
+                  extractionMode="standard", figureDescriptions=True, runtimeActivated=not index_only)
+    if index_only:
+        report["snapshotPath"] = snapshot_path.as_posix()
+    progress(f"Indexing verified: {names['index']} ({verification['chunkCount']} chunks).")
     return report
 
 
@@ -1031,6 +1113,8 @@ def resource_seed(args: argparse.Namespace) -> dict[str, Any]:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     parser.add_argument("--apply", action="store_true", help="create/upload/index when prerequisites are verified")
+    parser.add_argument("--index-only", action="store_true",
+                        help="index policy PDFs without reading/creating a claim analyzer or changing app configuration")
     parser.add_argument("--refresh", action="store_true", help="with --apply: re-run indexing, replacing drifted blobs")
     parser.add_argument("--model-deployment", help="existing Foundry model deployment (seed for a fresh clone)")
     parser.add_argument("--cu-model-name", help="CU model name when it differs from the deployment name")
@@ -1043,15 +1127,23 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     if args.refresh and not args.apply:
         parser.error("--refresh requires --apply")
+    if args.index_only and args.create_claim_analyzer:
+        parser.error("--index-only cannot be combined with --create-claim-analyzer")
     try:
         http = Http()
         seed = {**resource_seed(args), "modelDeployment": args.model_deployment, "cuModelName": args.cu_model_name,
                 "claimAnalyzerId": args.claim_analyzer_id, "cuApiVersion": args.cu_api_version}
-        report = (apply(http, ROOT, args.refresh, seed=seed, create_claim_analyzer=args.create_claim_analyzer)
-                  if args.apply else preflight(http, ROOT, args.local_only, seed, args.create_claim_analyzer))
+        report = (apply(http, ROOT, args.refresh, seed=seed, create_claim_analyzer=args.create_claim_analyzer,
+                        index_only=args.index_only)
+                  if args.apply else preflight(http, ROOT, args.local_only, seed, args.create_claim_analyzer,
+                                               index_only=args.index_only))
     except SetupError as exc:
         print(f"Setup stopped: {exc}", file=sys.stderr)
         return 1
+    except KeyboardInterrupt:
+        progress("Setup interrupted. Search may still be running; check the indexer in Azure before retrying. "
+                 "No verification success is being reported.")
+        return 130
     print(json.dumps(report, indent=2))
     return 0 if report.get("status") == "verified" or (not args.apply and report["ready"]) else 2
 

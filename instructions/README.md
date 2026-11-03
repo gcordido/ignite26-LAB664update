@@ -20,7 +20,11 @@ with packet 01, compare the amount checks for packets 01 and 02,
 and open the cited policy documents. Azure Search, Blob Storage and the Python
 agent are optional under-the-hood explorations after the app comparison.
 
-Run `infra\setup.ps1` again after pulling updates. It installs both the npm UI
-dependencies and the Python policy agent. A prepared Search configuration and
-Azure sign-in are required for policy checks; see
-[lab-owner setup](../docs/policy-setup.md).
+The lab owner should restore dependencies with `infra\setup.ps1` after pulling
+updates, using approved package sources. It restores the locked npm UI
+dependencies and installs the pinned Python policy agent requirements; it does
+not ordinarily provision Search or connect the agent. Saved results need neither
+Azure sign-in nor a cache-restore command. Live policy checks and chat require
+Azure sign-in, a verified Search/model/analyzer configuration, and the appropriate
+permissions; see
+[lab-owner setup and troubleshooting](../docs/policy-setup.md#prepare-live-policy-checks-on-a-lab-machine).

@@ -14,6 +14,7 @@ from pathlib import Path
 import re
 import sys
 import time
+from urllib.parse import urlsplit
 
 spec = importlib.util.spec_from_file_location("policy_setup", Path(__file__).with_name("setup-policy-index.py"))
 setup = importlib.util.module_from_spec(spec)
@@ -24,11 +25,27 @@ FIELDS = ("id", "content", "stateCodes", "documentId", "version", "file",
 API = setup.SEARCH_API
 
 
+def request_error(method, url, status, value, headers):
+    target = urlsplit(url)
+    service = "Azure AI Search" if target.hostname and target.hostname.endswith(".search.windows.net") else "Content Understanding"
+    correlation = next((str(v) for k, v in headers.items()
+                        if k.lower() in ("x-ms-request-id", "apim-request-id", "request-id")), None)
+    message = f"{service} {method} {target.scheme}://{target.netloc}{target.path}: {setup._err(status, value)}"
+    if correlation:
+        message += f" (request ID: {correlation})"
+    if status == 403:
+        message += (" Check the signed-in identity's Search data-plane permissions "
+                    "(index management, document upload/query) and the service network rules."
+                    if service == "Azure AI Search" else
+                    " Check the signed-in identity's CU analyze permissions and the resource network rules.")
+    return message
+
+
 def request(http, method, url, scope=setup.SEARCH_SCOPE, body=None, raw=None, headers=None,
             allowed=(200,)):
     status, value, response_headers = http.request(method, url, scope, body=body, raw=raw, headers=headers)
     if status not in allowed:
-        raise setup.SetupError(setup._err(status, value))
+        raise setup.SetupError(request_error(method, url, status, value, response_headers))
     return value, response_headers
 
 
@@ -157,11 +174,14 @@ def run(args, http=None, root=None):
     sources = setup.load_sources(root)
     settings = setup.runtime_settings(root, {
         **setup.resource_seed(args),
-        "modelDeployment": args.model_deployment, "claimAnalyzerId": args.claim_analyzer_id,
+        "modelDeployment": args.model_deployment, "cuModelName": args.cu_model_name,
+        "claimAnalyzerId": args.claim_analyzer_id,
         "cuApiVersion": args.cu_api_version,
     })
     deployment = root / setup.DEPLOYMENT_PATH
     saved = setup.read_json(deployment) if deployment.exists() else {}
+    if saved.get("searchResourceId") != settings["searchResourceId"]:
+        saved = {}
     source_index = args.source_index or saved.get("layoutSourceIndex")
     target_index = args.index_name or saved.get("layoutIndexName")
     for name in (source_index, target_index):
@@ -207,7 +227,8 @@ def run(args, http=None, root=None):
     verify_rows(rows, sources, generation)
     target = {"name": name, "description": f"LAB664 verified CU Layout extension; generation={generation}",
               "fields": definition["fields"]}
-    status, actual, _ = http.request("GET", f"{index_url(name, settings)}?api-version={API}", setup.SEARCH_SCOPE)
+    target_url = f"{index_url(name, settings)}?api-version={API}"
+    status, actual, response_headers = http.request("GET", target_url, setup.SEARCH_SCOPE)
     if status == 200:
         setup.assert_owned("index", target, actual)
         existing = read_rows(http, name, settings)
@@ -220,7 +241,7 @@ def run(args, http=None, root=None):
                 headers={"If-None-Match": "*"}, allowed=(200, 201))
         present_ids = set()
     else:
-        raise setup.SetupError(setup._err(status, actual))
+        raise setup.SetupError(request_error("GET", target_url, status, actual, response_headers))
     pending = [row for row in rows if row["id"] not in present_ids]
     for offset in range(0, len(pending), 100):
         value, _ = request(http, "POST", f"{index_url(name, settings)}/docs/index?api-version={API}",
@@ -275,6 +296,7 @@ def parser():
     parser.add_argument("--source-index", help="optional verified CU Layout index to read, never modify")
     parser.add_argument("--index-name", help="isolated target name; reruns verify and reuse matching chunks")
     parser.add_argument("--model-deployment")
+    parser.add_argument("--cu-model-name", help="CU model name when it differs from its deployment name")
     parser.add_argument("--claim-analyzer-id")
     parser.add_argument("--cu-api-version")
     parser.add_argument("--apply", action="store_true")

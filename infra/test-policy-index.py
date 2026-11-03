@@ -5,11 +5,15 @@ from __future__ import annotations
 import copy
 import hashlib
 import importlib.util
+import io
 import json
 import shutil
 import unittest
 import uuid
+from contextlib import redirect_stderr, redirect_stdout
 from pathlib import Path
+from types import SimpleNamespace
+from unittest.mock import Mock, patch
 
 SPEC = importlib.util.spec_from_file_location(
     "policy_index_setup", Path(__file__).with_name("setup-policy-index.py"),
@@ -124,7 +128,7 @@ class FakeAzure:
         path = url.split(".net/")[1]
         if "/search.status" in path:
             if self.runs == 0:
-                return 200, {"status": "running", "lastResult": None}, {}
+                return 200, {"status": "idle", "lastResult": None}, {}
             return 200, {"status": "running" if self.run_status == "inProgress" else "idle",
                          "lastResult": {"status": self.run_status, "startTime": f"run-{self.runs}",
                                         "itemsProcessed": len(self.sources["documents"]),
@@ -160,6 +164,98 @@ def good_chunks(sources, generation):
                          "ordinal": n, "sha256": doc["sha256"], "corpusHash": sources["corpusHash"],
                          "indexFingerprint": generation})
     return rows
+
+
+class TransportTests(unittest.TestCase):
+    def test_progress_is_timestamped_and_flushed_to_stderr(self):
+        with patch.object(setup.time, "strftime", return_value="12:34:56"), \
+                patch("builtins.print") as output:
+            setup.progress("Waiting for indexer")
+        output.assert_called_once_with("[12:34:56] Waiting for indexer", file=setup.sys.stderr, flush=True)
+
+    def test_tokens_are_cached_per_scope_until_five_minutes_before_expiry(self):
+        credential = Mock()
+        credential.get_token.side_effect = [
+            SimpleNamespace(token="search-secret", expires_on=2000),
+            SimpleNamespace(token="storage-secret", expires_on=3000),
+            SimpleNamespace(token="refreshed-secret", expires_on=4000),
+        ]
+        http = setup.Http(credential=credential)
+        with patch.object(setup.time, "time", return_value=1000):
+            self.assertEqual(http.token(setup.SEARCH_SCOPE), "search-secret")
+            self.assertEqual(http.token(setup.SEARCH_SCOPE), "search-secret")
+            self.assertEqual(http.token(setup.STORAGE_SCOPE), "storage-secret")
+        self.assertEqual(credential.get_token.call_count, 2)
+        with patch.object(setup.time, "time", return_value=1699):
+            self.assertEqual(http.token(setup.SEARCH_SCOPE), "search-secret")
+        self.assertEqual(credential.get_token.call_count, 2)
+        with patch.object(setup.time, "time", return_value=1700):
+            self.assertEqual(http.token(setup.SEARCH_SCOPE), "refreshed-secret")
+            self.assertEqual(http.token(setup.STORAGE_SCOPE), "storage-secret")
+        self.assertEqual(credential.get_token.call_count, 3)
+        self.assertEqual([call.args[0] for call in credential.get_token.call_args_list],
+                         [setup.SEARCH_SCOPE, setup.STORAGE_SCOPE, setup.SEARCH_SCOPE])
+
+    def test_authentication_failures_are_not_cached_or_reported_as_success(self):
+        credential = Mock()
+        credential.get_token.side_effect = [
+            RuntimeError("CLI timed out"),
+            SimpleNamespace(token="secret", expires_on=4000),
+        ]
+        http = setup.Http(credential=credential)
+        output = io.StringIO()
+        with redirect_stderr(output), self.assertRaisesRegex(RuntimeError, "CLI timed out"):
+            http.token(setup.SEARCH_SCOPE)
+        self.assertNotIn("Authentication ready", output.getvalue())
+        with patch.object(setup.time, "time", return_value=1000):
+            self.assertEqual(http.token(setup.SEARCH_SCOPE), "secret")
+        self.assertEqual(credential.get_token.call_count, 2)
+
+    def test_request_logs_status_without_tokens_query_or_document_contents(self):
+        credential = Mock()
+        credential.get_token.return_value = SimpleNamespace(token="private-token", expires_on=4000)
+        response = Mock(status=200, headers={})
+        response.read.return_value = b'{"value":[]}'
+        response.__enter__ = Mock(return_value=response)
+        response.__exit__ = Mock(return_value=False)
+        output, stdout = io.StringIO(), io.StringIO()
+        with patch.object(setup.time, "time", return_value=1000), \
+                patch.object(setup.urllib.request, "urlopen", return_value=response), \
+                redirect_stderr(output), redirect_stdout(stdout):
+            http = setup.Http(credential=credential)
+            result = http.request(
+                "POST", SEARCH_ENDPOINT + "/indexes/test/docs/search?secret=private-query",
+                setup.SEARCH_SCOPE, body={"search": "private-document"},
+            )
+            http.request("GET", SEARCH_ENDPOINT + "/indexes/test", setup.SEARCH_SCOPE)
+        self.assertEqual(result, (200, {"value": []}, {}))
+        credential.get_token.assert_called_once_with(setup.SEARCH_SCOPE)
+        logs = output.getvalue()
+        self.assertIn("Requesting Azure CLI token", logs)
+        self.assertIn("Authentication ready", logs)
+        self.assertIn("POST test-search.search.windows.net/indexes/test/docs/search", logs)
+        self.assertIn("HTTP 200", logs)
+        for secret in ("private-token", "private-query", "private-document"):
+            self.assertNotIn(secret, logs)
+        self.assertEqual(stdout.getvalue(), "")
+
+    def test_default_cli_authentication_has_a_bounded_timeout(self):
+        factory = Mock(return_value=Mock(
+            get_token=Mock(return_value=SimpleNamespace(token="secret", expires_on=4000)),
+        ))
+        with patch.dict("sys.modules", {"azure.identity": SimpleNamespace(AzureCliCredential=factory)}):
+            self.assertEqual(setup.Http().token(setup.SEARCH_SCOPE), "secret")
+        factory.assert_called_once_with(process_timeout=30)
+
+    def test_interruption_reports_remote_indexer_may_continue_without_success_json(self):
+        output, stdout = io.StringIO(), io.StringIO()
+        with patch.object(setup, "Http"), patch.object(setup, "apply", side_effect=KeyboardInterrupt), \
+                redirect_stderr(output), redirect_stdout(stdout):
+            code = setup.main(["--apply", "--index-only"])
+        self.assertEqual(code, 130)
+        self.assertIn("Search may still be running", output.getvalue())
+        self.assertIn("No verification success", output.getvalue())
+        self.assertEqual(stdout.getvalue(), "")
 
 
 class PolicyIndexTests(unittest.TestCase):
@@ -438,6 +534,69 @@ class PolicyIndexTests(unittest.TestCase):
         self.assertEqual(snapshot["chunkDigest"], config["chunkDigest"])
         self.assertTrue(all("citationSections" in c for c in snapshot["chunks"]))
         self.assertFalse([c for c in fake.calls if c[0] == "DELETE"])
+
+    def test_index_only_uses_search_indexer_without_claim_analyzer_or_runtime_changes(self):
+        fake = self.fake()
+        fake.analyzer = None
+        before = (self.root / setup.CONFIG_PATH).read_bytes()
+        setup.atomic_json(self.root / setup.SNAPSHOT_PATH, {"existing": "active app snapshot"})
+        snapshot_before = (self.root / setup.SNAPSHOT_PATH).read_bytes()
+        output = io.StringIO()
+        with redirect_stderr(output):
+            result = setup.apply(fake, self.root, sleep=lambda s: None, index_only=True)
+        logs = output.getvalue()
+        for stage in ("Checking policy sources", "uploading", "Preparing Search skillset",
+                      "Waiting for indexer", "Search indexer complete", "Read 6 indexed chunks",
+                      "Retrieval check 1/3", "Retrieval check 3/3", "Indexing verified"):
+            self.assertIn(stage, logs)
+        self.assertEqual(result["status"], "verified")
+        self.assertTrue(result["figureDescriptions"])
+        self.assertFalse(result["runtimeActivated"])
+        self.assertEqual(result["extractionMode"], "standard")
+        self.assertEqual((self.root / setup.CONFIG_PATH).read_bytes(), before)
+        self.assertIsNone(fake.analyzer)
+        self.assertFalse(any("/contentunderstanding/analyzers/" in url for _, url in fake.calls))
+        self.assertFalse(any("/docs/index" in url for _, url in fake.calls))
+        self.assertTrue(any("/search.run" in url for _, url in fake.calls))
+        self.assertTrue((self.root / result["snapshotPath"]).exists())
+        self.assertEqual((self.root / setup.SNAPSHOT_PATH).read_bytes(), snapshot_before)
+        skill = fake.objects[setup.names_for(self.generation)["skillset"]]["skills"][0]
+        self.assertEqual(skill["@odata.type"], "#Microsoft.Skills.Util.ContentUnderstandingSkill")
+        self.assertEqual(skill["modelName"], self.settings["modelName"])
+        self.assertEqual(skill["modelDeployment"], self.settings["modelDeployment"])
+        self.assertEqual(skill["chunkingProperties"]["method"], "semantic")
+
+    def test_index_only_preflight_does_not_require_claim_settings(self):
+        (self.root / setup.CONFIG_PATH).unlink()
+        fake = self.fake()
+        fake.analyzer = None
+        report = setup.preflight(fake, self.root, seed={
+            **RESOURCES, "modelDeployment": "lab-policy", "cuModelName": "gpt-5.2",
+        }, index_only=True)
+        self.assertTrue(report["ready"], report["problems"])
+        self.assertNotIn("claimAnalyzer", report)
+        self.assertTrue(all(method == "GET" for method, _ in fake.calls))
+        self.assertFalse(any("/contentunderstanding/analyzers/" in url for _, url in fake.calls))
+
+    def test_existing_indexer_run_is_awaited_without_submitting_another_run(self):
+        fake = self.fake()
+        responses = iter([
+            {"status": "running", "lastResult": {"status": "inProgress", "startTime": "same-run"}},
+            {"status": "idle", "lastResult": {"status": "success", "startTime": "same-run",
+                                              "itemsProcessed": 3, "itemsFailed": 0}},
+        ])
+        with patch.object(setup, "indexer_status", side_effect=lambda *args: next(responses)):
+            result = setup.run_indexer(fake, setup.names_for(self.generation), 3, False,
+                                       self.settings, sleep=lambda s: None)
+        self.assertEqual(result["lastResult"]["startTime"], "same-run")
+        self.assertFalse(any("/search.run" in url for _, url in fake.calls))
+
+    def test_failed_index_only_run_does_not_activate_or_publish_a_snapshot(self):
+        before = (self.root / setup.CONFIG_PATH).read_bytes()
+        with self.assertRaises(setup.SetupError):
+            setup.apply(self.fake(failed=1), self.root, sleep=lambda s: None, index_only=True)
+        self.assertEqual((self.root / setup.CONFIG_PATH).read_bytes(), before)
+        self.assertFalse((self.root / ".tools" / f"policy-index-{self.generation[:12]}.json").exists())
 
     def test_failed_indexer_leaves_working_config_untouched(self):
         before = (self.root / setup.CONFIG_PATH).read_text()

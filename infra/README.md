@@ -104,15 +104,19 @@ An existing Node installation without npm triggers the portable Node setup.
 Installing dependencies alone doesn't deploy or connect a policy index. A prepared
 lab machine also needs `.tools\policy-agent-framework.json` for its verified
 index, a reachable model deployment and Azure permissions. Follow
-[policy index setup](../docs/policy-setup.md) before the session. Setup reports
-missing permissions rather than granting roles. The
+[live policy preparation and troubleshooting](../docs/policy-setup.md#prepare-live-policy-checks-on-a-lab-machine)
+before the session. Do not use `policy-demo-cache.ps1` as live setup: it restores
+the original demo's resource configuration, not verified access to your lab
+resources. Setup does not grant roles. Managed indexing checks the Search
+identity's Storage and Foundry access; it does not prove that the local app can
+invoke its model. The
 [policy walkthrough](../docs/policy-checks.md#compare-packets-01-and-02)
 then starts with the app, not Azure provisioning.
 
 ### Deploy infrastructure and the policy index
 
 Use [`deploy.ps1`](deploy.ps1) as the infrastructure entrypoint. With an existing
-`.tools\policy-deployment.json`, preview the CU Layout policy deployment first,
+`.tools\policy-deployment.json`, preview Search-managed Standard ingestion first,
 then apply it:
 
 ```powershell
@@ -120,7 +124,70 @@ then apply it:
 .\infra\deploy.ps1 -Apply
 ```
 
-For a separate named index, supply `-IndexName YOUR-NEW-INDEX`. Optionally add
+For a provisioned lab, supply only its existing resource group; no hand-filled
+deployment settings file is required:
+
+```powershell
+.\infra\deploy.ps1 -ResourceGroup YOUR-EXISTING-RESOURCE-GROUP
+.\infra\deploy.ps1 -ResourceGroup YOUR-EXISTING-RESOURCE-GROUP -Apply
+```
+
+These commands discover existing Search, Storage and Foundry (`AIServices`)
+resources, and the ready `gpt-5.2` deployment used by the lab template.
+They do **not** deploy ARM, create services/models, assign roles, or change
+network rules. Python uploads policy PDFs to a scoped Blob container and creates
+the datasource, index, skillset and indexer. Search runs the Content Understanding
+skill, semantic chunking and AI figure descriptions, and projects chunks into
+the index. Figure descriptions are enabled by `modelName` and `modelDeployment`
+on the skill using the `2026-05-01-preview` API; `extractionOptions: ["images"]`
+is not required to verbalize figures into searchable Markdown.
+The preview displays targets and runs read-only checks without saving settings.
+Apply waits for the Search indexer, verifies retrieval, saves a local chunk
+snapshot and discovered settings, and reports the index name. It also prepares
+the claim analyzer and activates `.tools\policy-agent-framework.json` after
+verification, connecting the workbench without a second command.
+
+Console progress includes timestamps for prerequisite checks, authentication,
+each source upload/reuse, Search object creation/reuse, indexer polling, and each
+state's retrieval check. Indexer polls normally occur every 15 seconds and show
+processed/failed counts and elapsed time. HTTP operations show their target,
+status and duration; a request can wait up to 120 seconds before returning.
+Azure CLI token acquisition has a 30-second timeout. Tokens are cached in memory
+per service scope and refreshed five minutes before expiry, rather than launching
+Azure CLI for every request. Tokens, request payloads and URL query strings are
+not logged. Progress goes to stderr; the final JSON report stays on stdout.
+Ctrl+C reports interruption, not success; the remote indexer may continue running.
+
+Discovery requires exactly one matching resource of each type and one matching
+ready policy model. Ambiguity or missing resources stops with candidate details;
+it never selects the first result or falls back to ARM. Select among existing
+resources with `-SearchResourceId`, `-StorageResourceId`, `-FoundryResourceId`,
+or `-ModelDeployment`. `-ClaimAnalyzerId` selects a different existing analyzer;
+add `-CreateClaimAnalyzer` to explicitly create that ID if absent.
+`-Subscription` scopes all Azure CLI discovery reads. Resource overrides must
+belong to the supplied group. Required Azure permissions remain administrator
+prerequisites. The caller needs Blob upload and Search management/query access;
+the Search identity needs Storage Blob Data Reader and Cognitive Services User.
+
+After initial discovery, rerun using the saved settings with:
+
+```powershell
+.\infra\deploy.ps1 -Apply
+```
+
+This reuses a completed matching indexer run and writes the workbench connection
+again after verification. The default `lab664_policy_checks_claim_summary`
+analyzer is created only if absent; conflicting definitions are never overwritten.
+Custom `-ClaimAnalyzerId` values select an existing analyzer unless creation is
+explicitly requested with `-CreateClaimAnalyzer`. The claim analyzer is not part
+of policy indexing, but it is required by the workbench's live-review runtime.
+For deliberately indexing without activation, invoke the Python script directly
+with `--index-only`; that advanced mode is not used by `deploy.ps1`.
+
+Standard ingestion uses generation-scoped names so changed sources or model
+settings cannot overwrite the previous working index. The earlier direct Layout
+pipeline is retained only behind **`-UseLayout`**. For that legacy path,
+supply `-IndexName YOUR-NEW-INDEX`. Optionally add
 `-SourceIndex YOUR-VERIFIED-LAYOUT-INDEX` to reuse verified source chunks without
 changing that source index. Without a source, setup extracts every registered
 policy PDF with CU Layout. Explicit names are saved after verification so later
@@ -132,27 +199,34 @@ all sources and indexed content pass verification.
 To provision a new lab's Azure resources and then populate its policy index:
 
 ```powershell
-.\infra\deploy.ps1 -ResourceGroup YOUR-EXISTING-RESOURCE-GROUP
-.\infra\deploy.ps1 -ResourceGroup YOUR-EXISTING-RESOURCE-GROUP -Apply
+.\infra\deploy.ps1 -ResourceGroup YOUR-EXISTING-RESOURCE-GROUP -DeployResources
+.\infra\deploy.ps1 -ResourceGroup YOUR-EXISTING-RESOURCE-GROUP -DeployResources -Apply
 ```
 
 The first command previews the ARM deployment only. The apply command deploys
 [`Lab664-arm-template.json`](Lab664-arm-template.json), propagates its resource
-IDs and model settings, creates the claim analyzer only if absent, and runs
-Layout ingestion. Use `-Subscription` and `-ParametersFile` for a specific
+IDs and model settings, runs Search-managed Standard ingestion, prepares the
+claim analyzer and activates the app's configuration after verification.
+Use `-Subscription` and `-ParametersFile` for a specific
 subscription and ARM parameters file. Resource groups must already exist.
 This provisions the template's billable services and model deployments; use the
 existing-resource path to reuse shared services without redeploying them.
 For an existing prepared Python environment, pass `-PythonExecutable`.
 No roles, network rules, or existing analyzers are changed by policy setup.
 
+Use this explicit `-DeployResources` command when updating the lab's ARM deployment.
+Reuse its original ARM parameters (including any custom `uniqueSuffix`) with
+`-ParametersFile` on both preview and apply. Search ingestion and verified
+workbench configuration follow ARM deployment automatically.
+Require the final `"status": "verified"`
+report, not just ARM success. Restart the app afterward. See the
+[combined Azure and Search walkthrough](../docs/policy-setup.md#deploy-or-update-azure-and-search-together).
+
 Lab provisioning can combine dependency restoration and index deployment with
 `.\infra\setup.ps1 -DeployPolicyIndex` after Azure CLI sign-in and deployment
 settings are prepared. The switch is opt-in: ordinary setup and app launch
-still make no cloud changes. Layout ingestion queries an ordinary Search index,
-not a Foundry IQ knowledge base, and doesn't require Blob ingestion.
-The deployment settings retain the existing Storage resource for the optional
-managed Standard pipeline. CU extraction and live policy/model calls incur
+still make no cloud changes. Standard ingestion uses Blob Storage and an ordinary
+Search index, not a Foundry IQ knowledge base. CU extraction and live policy/model calls incur
 Azure charges.
 
 The **FoundryIQ** UI label is the lab's umbrella name; the initial five-check
@@ -172,9 +246,10 @@ policy sources. It includes only those reviews, their claim fields and the
 public runtime configuration under `data\policy-demo`; credentials and request
 logs aren't exported. Review that synthetic bundle with the source changes.
 
-Provision `.tools\policy-deployment.json` with the machine's Search, Storage
-and Foundry resource IDs plus its model/analyzer names. Both policy deployment
-scripts use these settings instead of environment-specific source constants.
+`deploy.ps1 -ResourceGroup` discovers and saves `.tools\policy-deployment.json`
+after successful apply. Alternatively, provision it with the machine's Search,
+Storage and Foundry resource IDs plus its model/analyzer names. Both Python
+policy deployment scripts use these settings instead of environment-specific source constants.
 The deployment file does not enable policy checks by itself; only verified
 activation writes the runtime configuration.
 The launcher uses that verified configuration's CU endpoint when neither

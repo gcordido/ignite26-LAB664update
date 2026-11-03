@@ -1,18 +1,18 @@
 {
-  "analyzerFingerprint": "fbdd5e69358edfa88723425716f60bf8e9e6449a93adfc0553dee0e8bf28c4f0",
+  "analyzerFingerprint": "7c5eec1408015b6a74d67afa6fb6abfcd350eec3fe38ce4ecc1ee7c7ab9be70e",
   "response": {
-    "id": "7cecffe5-8d0c-4b2b-8bf3-7bf0c201f583",
+    "id": "b4e813a5-7ee3-47b2-b36c-1f0abb39d497",
     "status": "Succeeded",
     "result": {
-      "analyzerId": "lab664_rental_request_414186fd50e4",
+      "analyzerId": "lab664_policy_checks_claim_summary",
       "apiVersion": "2026-06-01-preview",
-      "createdAt": "2026-10-29T15:49:57Z",
+      "createdAt": "2026-11-03T00:25:13Z",
       "stringEncoding": "codePoint",
       "warnings": [],
       "infos": [
         {
           "code": "LLMStats",
-          "message": "completion calls: 1; avg completion latency: 7.20s; total completion latency: 7.20s"
+          "message": "completion calls: 1; avg completion latency: 3.70s; total completion latency: 3.70s"
         }
       ],
       "contents": [
@@ -22,15 +22,7 @@
           "fields": {
             "ClaimId": {
               "type": "string",
-              "valueString": "PRC-25-862846",
-              "spans": [
-                {
-                  "offset": 5131,
-                  "length": 13
-                }
-              ],
-              "confidence": 0.487,
-              "source": "D(4,1.2740,1.7807,2.2599,1.7791,2.2601,1.9337,1.2742,1.9353)"
+              "confidence": 0.816
             },
             "LossState": {
               "type": "string",
@@ -41,7 +33,7 @@
                   "length": 2
                 }
               ],
-              "confidence": 0.357,
+              "confidence": 0.726,
               "source": "D(4,4.7854,5.1198,4.8976,5.1194,4.8976,5.2795,4.7854,5.2801)"
             },
             "LossDate": {
@@ -53,7 +45,7 @@
                   "length": 10
                 }
               ],
-              "confidence": 0.708,
+              "confidence": 0.99,
               "source": "D(4,2.4384,4.8471,3.0464,4.8451,3.0464,4.9874,2.4384,4.9864)"
             },
             "LossTime": {
@@ -65,7 +57,7 @@
                   "length": 5
                 }
               ],
-              "confidence": 0.586,
+              "confidence": 0.975,
               "source": "D(4,5.5034,4.8535,5.7742,4.8555,5.7732,4.9877,5.5024,4.9857)"
             },
             "CustomerName": {
@@ -77,7 +69,7 @@
                   "length": 13
                 }
               ],
-              "confidence": 0.43,
+              "confidence": 0.989,
               "source": "D(2,1.7188,2.8140,2.3576,2.8329,2.3528,2.9956,1.7140,2.9767)"
             },
             "PolicyId": {
@@ -89,7 +81,7 @@
                   "length": 12
                 }
               ],
-              "confidence": 0.553,
+              "confidence": 0.949,
               "source": "D(2,6.0010,2.6142,6.8523,2.6112,6.8528,2.7675,6.0015,2.7705)"
             },
             "InsuredVIN": {
@@ -101,7 +93,7 @@
                   "length": 17
                 }
               ],
-              "confidence": 0.813,
+              "confidence": 0.996,
               "source": "D(2,2.8160,4.8335,3.6274,4.8348,3.6274,4.9652,2.8160,4.9653)"
             },
             "InsuredVehicle": {
@@ -109,24 +101,24 @@
               "valueString": "2019 Toyota Corolla LE",
               "spans": [
                 {
-                  "offset": 293,
+                  "offset": 1101,
                   "length": 22
                 }
               ],
-              "confidence": 0.504,
-              "source": "D(1,0.9751,6.7501,4.0981,6.7457,4.0985,7.0690,0.9755,7.0734)"
+              "confidence": 0.958,
+              "source": "D(2,1.4755,4.8355,2.2916,4.8388,2.2910,4.9831,1.4749,4.9797)"
             },
             "RentalRequested": {
               "type": "boolean",
-              "confidence": 0.381
+              "confidence": 0.509
             },
             "RentalUsed": {
               "type": "boolean",
-              "confidence": 0.381
+              "confidence": 0.509
             },
             "RequestTypeEvidence": {
               "type": "string",
-              "confidence": 0.8
+              "confidence": 0.816
             },
             "DrivabilityEvidence": {
               "type": "string",
@@ -153,7 +145,7 @@
                   "length": 2
                 }
               ],
-              "confidence": 0.359,
+              "confidence": 0.904,
               "source": "D(4,1.0077,6.3016,1.4214,6.3248,1.4130,6.4748,0.9993,6.4516);D(4,1.0174,6.5366,1.1331,6.5420,1.1331,6.6709,1.0174,6.6709);D(4,1.1714,6.5435,1.3312,6.5362,1.3302,6.6704,1.1714,6.6778);D(4,1.4858,6.5420,1.6010,6.5366,1.6010,6.6655,1.4858,6.6709);D(4,1.6487,6.5420,1.7888,6.5420,1.7888,6.6709,1.6487,6.6709)"
             },
             "PolicyTerm": {
@@ -165,7 +157,7 @@
                   "length": 24
                 }
               ],
-              "confidence": 0.553,
+              "confidence": 0.946,
               "source": "D(2,5.9973,3.9347,7.4044,3.9354,7.4043,4.0989,5.9972,4.0982)"
             },
             "PolicyDailyBaseCap": {
@@ -173,120 +165,116 @@
               "valueNumber": 85,
               "spans": [
                 {
-                  "offset": 1792,
-                  "length": 20
+                  "offset": 1793,
+                  "length": 2
                 }
               ],
-              "confidence": 0.352,
-              "source": "D(2,4.6816,6.7721,5.5043,6.7768,5.5034,6.9299,4.6807,6.9252)"
+              "confidence": 0.902,
+              "source": "D(2,4.7356,6.7728,4.8409,6.7731,4.8409,6.9235,4.7356,6.9232)"
             },
             "PolicyMaximumDays": {
               "type": "number",
               "valueNumber": 30,
               "spans": [
                 {
-                  "offset": 1813,
-                  "length": 16
+                  "offset": 1821,
+                  "length": 2
                 }
               ],
-              "confidence": 0.356,
-              "source": "D(2,4.6770,6.9388,5.3872,6.9363,5.3877,7.0781,4.6775,7.0805)"
+              "confidence": 0.875,
+              "source": "D(2,5.0627,6.9395,5.1631,6.9392,5.1631,7.0788,5.0627,7.0792)"
             },
             "PolicyTaxTreatment": {
               "type": "string",
-              "valueString": "mandatory taxes/surcharges additional",
+              "valueString": "mandatory taxes/ surcharges additional",
               "spans": [
                 {
-                  "offset": 3008,
-                  "length": 37
+                  "offset": 1830,
+                  "length": 16
+                },
+                {
+                  "offset": 1847,
+                  "length": 21
                 }
               ],
-              "confidence": 0.553,
-              "source": "D(3,2.8700,2.6588,4.8726,2.6588,4.8726,2.8264,2.8700,2.8264)"
+              "confidence": 0.898,
+              "source": "D(2,4.6816,7.0952,5.3457,7.0952,5.3457,7.2349,4.6816,7.2349);D(2,4.6775,7.2510,5.4868,7.2510,5.4868,7.3906,4.6775,7.3906)"
             },
             "PolicyEndorsement": {
               "type": "string",
-              "valueString": "Rental reimbursement",
-              "spans": [
-                {
-                  "offset": 2940,
-                  "length": 20
-                }
-              ],
-              "confidence": 0.35,
-              "source": "D(3,0.9214,2.4707,2.0679,2.4709,2.0679,2.6196,0.9214,2.6194)"
+              "confidence": 0.816
             },
             "RentalAgreementId": {
               "type": "string",
-              "confidence": 0.8
+              "confidence": 0.816
             },
             "RentalClaimLink": {
               "type": "string",
-              "confidence": 0.8
+              "confidence": 0.816
             },
             "RentalPickup": {
               "type": "string",
-              "confidence": 0.8
+              "confidence": 0.816
             },
             "RentalReturn": {
               "type": "string",
-              "confidence": 0.8
+              "confidence": 0.816
             },
             "RentalScheduledReturn": {
               "type": "string",
-              "confidence": 0.8
+              "confidence": 0.816
             },
             "RentalBilledDays": {
               "type": "number",
-              "confidence": 0.937
+              "confidence": 0.966
             },
             "RentalDailyBaseRate": {
               "type": "number",
-              "confidence": 0.937
+              "confidence": 0.966
             },
             "RentalSubtotal": {
               "type": "number",
-              "confidence": 0.937
+              "confidence": 0.966
             },
             "RentalTaxes": {
               "type": "number",
-              "confidence": 0.937
+              "confidence": 0.966
             },
             "RentalCharges": {
               "type": "string",
-              "confidence": 0.8
+              "confidence": 0.816
             },
             "RentalTotal": {
               "type": "number",
-              "confidence": 0.937
+              "confidence": 0.966
             },
             "RentalCurrency": {
               "type": "string",
-              "confidence": 0.8
+              "confidence": 0.816
             },
             "ScheduledRepairStart": {
               "type": "string",
               "valueString": "09/28/2025",
               "spans": [
                 {
-                  "offset": 12733,
+                  "offset": 12083,
                   "length": 10
                 }
               ],
-              "confidence": 0.553,
-              "source": "D(6,6.3649,3.9205,6.9187,3.9213,6.9187,4.0712,6.3649,4.0714)"
+              "confidence": 0.989,
+              "source": "D(6,4.8062,1.3726,5.3623,1.3723,5.3623,1.5135,4.8062,1.5150)"
             },
             "ScheduledRepairCompletion": {
               "type": "string",
-              "confidence": 0.8
+              "confidence": 0.816
             },
             "ActualRepairDelivery": {
               "type": "string",
-              "confidence": 0.8
+              "confidence": 0.816
             },
             "ActualRepairCompletion": {
               "type": "string",
-              "confidence": 0.8
+              "confidence": 0.816
             },
             "InsurerAuthorizationEvidence": {
               "type": "string",
@@ -301,12 +289,12 @@
                   "length": 7
                 }
               ],
-              "confidence": 0.505,
+              "confidence": 0.89,
               "source": "D(6,0.9375,9.1751,2.2434,9.1756,2.2433,9.3582,0.9374,9.3577);D(6,6.7610,9.1725,7.2300,9.1801,7.2300,9.3627,6.7610,9.3551)"
             },
             "PriorRentalUsageEvidence": {
               "type": "string",
-              "confidence": 0.8
+              "confidence": 0.816
             }
           },
           "kind": "document",
@@ -42734,7 +42722,7 @@
             "contentType": "application/pdf",
             "pageCount": "10"
           },
-          "analyzerId": "lab664_rental_request_414186fd50e4",
+          "analyzerId": "lab664_policy_checks_claim_summary",
           "mimeType": "application/pdf"
         }
       ]
@@ -42743,9 +42731,9 @@
       "documentPagesStandard": 10,
       "contextualizationTokens": 10000,
       "tokens": {
-        "gpt-5-input": 17696,
-        "gpt-5-cached-input": 4224,
-        "gpt-5-output": 532
+        "gpt-5.2-input": 17288,
+        "gpt-5.2-cached-input": 6144,
+        "gpt-5.2-output": 400
       }
     }
   }

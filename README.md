@@ -111,8 +111,12 @@ configuration. Complete [policy index setup](docs/policy-setup.md) before runnin
 live work in the session; the bundled demo doesn't need it. The existing CU Layout index remains valid while optional managed
 Standard ingestion prerequisites are unresolved; don't label it Standard.
 Use [`infra/deploy.ps1`](infra/README.md#deploy-infrastructure-and-the-policy-index)
-to include verified CU Layout index provisioning in the infrastructure workflow.
-It supports existing services or ARM deployment followed by index ingestion.
+to run Search-managed Standard indexing with semantic chunks and AI figure descriptions.
+Pass `-ResourceGroup` to discover existing lab services and configure the index
+without a hand-filled settings file. ARM deployment requires the explicit
+`-DeployResources` switch and a provisioning identity with role-assignment permissions.
+Successful deployment also prepares the claim analyzer and writes the workbench's
+verified runtime configuration, so no separate activation command is needed.
 The setup notebook also walks through managed ingestion on the existing Search service.
 
 ### 🎯 Learning outcomes
