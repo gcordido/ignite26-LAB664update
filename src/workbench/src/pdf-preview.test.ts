@@ -3,13 +3,16 @@ import { readFile } from "node:fs/promises";
 import { test } from "node:test";
 import vm from "node:vm";
 
-test("PDF renders settle across scrollbar-height changes and only resize for a new width", async () => {
+test("PDF preview handles resizing, document lifecycles, and worker recovery", async (t) => {
   const source = await readFile(new URL("../web/pdf-preview.js", import.meta.url), "utf8");
   let renders = 0;
   let documentError: Error | undefined;
   let recoveryError: Error | undefined;
   let recoveries = 0;
   let failedLoads = 0;
+  let destroyedLoads = 0;
+  let deferNextLoad = false;
+  let resumeLoad: (() => void) | undefined;
   let resized = () => {};
   const timers = new Map<number, () => void>();
   const nodes = new Map<string, {
@@ -56,10 +59,17 @@ test("PDF renders settle across scrollbar-height changes and only resize for a n
     GlobalWorkerOptions: {},
     getDocument() {
       if (documentError) failedLoads++;
+      const pdf = { numPages: 2, getPage: async () => page };
+      let promise = documentError ? Promise.reject(documentError) : Promise.resolve(pdf);
+      if (deferNextLoad) {
+        deferNextLoad = false;
+        promise = new Promise<typeof pdf>((resolve) => {
+          resumeLoad = () => resolve(pdf);
+        });
+      }
       return {
-        promise: documentError ? Promise.reject(documentError) :
-          Promise.resolve({ numPages: 2, getPage: async () => page, destroy() {} }),
-        destroy() {},
+        promise,
+        destroy() { destroyedLoads++; },
       };
     },
   };
@@ -113,6 +123,28 @@ test("PDF renders settle across scrollbar-height changes and only resize for a n
   await flushResize();
   assert.equal(renders, 2, "Hidden viewers must not resize.");
   get("pdf-scroll").hidden = false;
+  await t.test("document changes and reset dispose the loading task, not the PDF proxy", async () => {
+    await vm.runInContext('previewPdf("/next.pdf", 1)', context);
+    assert.equal(destroyedLoads, 1);
+    assert.equal(get("pdf-stage").dataset.source, "/next.pdf");
+    vm.runInContext("resetPreview()", context);
+    assert.equal(destroyedLoads, 2);
+    assert.equal(get("pdf-stage").hidden, true);
+    assert.equal(get("pdf-controls").hidden, true);
+    assert.equal(get("preview-empty").hidden, false);
+  });
+  await t.test("a superseded selection does not destroy a PDF needed by the latest selection", async () => {
+    deferNextLoad = true;
+    const first = vm.runInContext('previewPdf("/pending.pdf", 1)', context);
+    const latest = vm.runInContext('previewPdf("/pending.pdf", 2)', context);
+    assert.ok(resumeLoad);
+    resumeLoad();
+    await Promise.all([first, latest]);
+    assert.equal(destroyedLoads, 2);
+    assert.equal(get("pdf-stage").dataset.source, "/pending.pdf");
+    assert.equal(get("pdf-stage").dataset.page, 2);
+    assert.equal(get("pdf-stage").dataset.ready, "true");
+  });
   documentError = new Error('Setting up fake worker failed: "Failed to fetch dynamically imported module"');
   await vm.runInContext('previewPdf("/after-restart.pdf", 1)', context);
   assert.equal(recoveries, 1, "A cached worker failure must get one fresh renderer.");

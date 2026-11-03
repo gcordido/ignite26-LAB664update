@@ -157,7 +157,6 @@ export async function previewPdf(url, page, highlights = [], options = {}) {
   }
   if (url !== selectedUrl) {
     loading?.destroy();
-    documentPdf?.destroy();
     documentPdf = undefined;
     selectedUrl = url;
     zoom = 1;
@@ -169,10 +168,7 @@ export async function previewPdf(url, page, highlights = [], options = {}) {
       const task = loading;
       try {
         const pdf = await task.promise;
-        if (task !== loading || current !== selection) {
-          await pdf.destroy();
-          return;
-        }
+        if (task !== loading || current !== selection) return;
         documentPdf = pdf;
         break;
       } catch (error) {
@@ -233,7 +229,6 @@ export function resetPreview() {
   ++version;
   renderTask?.cancel();
   loading?.destroy();
-  documentPdf?.destroy();
   if (wheelFrame) cancelAnimationFrame(wheelFrame);
   wheelFrame = 0;
   loading = undefined;
