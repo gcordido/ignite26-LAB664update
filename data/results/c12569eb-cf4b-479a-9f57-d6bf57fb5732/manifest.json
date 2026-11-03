@@ -1,0 +1,2336 @@
+{
+  "id": "c12569eb-cf4b-479a-9f57-d6bf57fb5732",
+  "origin": "Live CU",
+  "status": "completed",
+  "endpoint": "https://ignite-anatolip-test-scus.services.ai.azure.com",
+  "apiVersion": "2026-06-01-preview",
+  "analyzer": {
+    "id": "lab664_cache_20261103_195602_router",
+    "mode": "routed",
+    "categories": {
+      "id_document": {
+        "description": "The lab's identity-like demo card with named holder, portrait and membership identifier. This synthetic membership card demonstrates ID field extraction, not government-ID authenticity. Exclude invoice, tax and repair documents.",
+        "analyzerId": "prebuilt-idDocument.generic"
+      },
+      "tax_1099a": {
+        "description": "An IRS Form 1099-A Acquisition or Abandonment of Secured Property, including fictional borrower-copy examples. Exclude other tax forms and prose references.",
+        "analyzerId": "prebuilt-tax.us.1099A"
+      },
+      "repair_estimate": {
+        "description": "A standalone repair workshop estimate or quote with vehicle details and proposed parts/labor. Keep continuation pages of the same estimate together; split a different estimate even if adjacent. Exclude towing/rental/glass invoices and their supporting inspection supplements even when they mention a proposed repair schedule.",
+        "analyzerId": "lab664_cache_20261103_195602_repair"
+      },
+      "other": {
+        "description": "Each distinct unrouted supporting document: policy declarations/endorsements, claim intake forms, incident reports, glass/panel service supporting records, valuation/downtime schedules, and workshop inspection records. Statements, towing bills, and rental billing belong to their named categories, not Other. Identify logical boundaries even when adjacent documents both have category other. Keep continuation pages together; do not merge different titles or identifiers. These documents are unrouted, not discarded. Exclude towing/recovery/security charge supplements; classify those as towing_invoice."
+      },
+      "statement": {
+        "description": "A handwritten or typed claimant statement or email describing the incident, claimant vehicle, and reported damage. Keep continuation pages of the same statement together. Exclude claim forms, incident reports, witness or other-driver accounts, and repair or invoice documents.",
+        "analyzerId": "lab664_cache_20261103_195602_statement"
+      },
+      "towing_invoice": {
+        "description": "A towing or roadside-recovery invoice, bill or charge ledger for vehicle transport, storage or release. Keep continuation and release/custody supplements from the same bill together. Payment may be unpaid or pending; do not infer payment. Exclude repair estimates, rental billing, and glass or panel service quotes. Include towing/recovery/security charge supplements that list service charges or a total due, even when they also contain inspection details or repair-quote references.",
+        "analyzerId": "prebuilt-invoice"
+      },
+      "rental_invoice": {
+        "description": "A vehicle rental billing document or invoice with rental agreement references, dates or daily charges. Keep the same agreement's pickup/billing/vehicle-condition continuation pages together. Payment may be unpaid or pending; do not infer payment. Exclude towing bills, repair estimates, and glass or panel service quotes.",
+        "analyzerId": "prebuilt-invoice"
+      }
+    },
+    "models": {
+      "completion": "gpt-5.5"
+    },
+    "definition": {
+      "config": {
+        "returnDetails": false,
+        "enableOcr": true,
+        "enableLayout": true,
+        "enableFormula": true,
+        "enableFigureDescription": false,
+        "enableFigureAnalysis": false,
+        "chartFormat": "chartjs",
+        "workflow": "standard.2026-06-01-preview",
+        "tableFormat": "html",
+        "contentCategories": {
+          "id_document": {
+            "description": "The lab's identity-like demo card with named holder, portrait and membership identifier. This synthetic membership card demonstrates ID field extraction, not government-ID authenticity. Exclude invoice, tax and repair documents.",
+            "analyzerId": "prebuilt-idDocument.generic"
+          },
+          "tax_1099a": {
+            "description": "An IRS Form 1099-A Acquisition or Abandonment of Secured Property, including fictional borrower-copy examples. Exclude other tax forms and prose references.",
+            "analyzerId": "prebuilt-tax.us.1099A"
+          },
+          "repair_estimate": {
+            "description": "A standalone repair workshop estimate or quote with vehicle details and proposed parts/labor. Keep continuation pages of the same estimate together; split a different estimate even if adjacent. Exclude towing/rental/glass invoices and their supporting inspection supplements even when they mention a proposed repair schedule.",
+            "analyzerId": "lab664_cache_20261103_195602_repair"
+          },
+          "other": {
+            "description": "Each distinct unrouted supporting document: policy declarations/endorsements, claim intake forms, incident reports, glass/panel service supporting records, valuation/downtime schedules, and workshop inspection records. Statements, towing bills, and rental billing belong to their named categories, not Other. Identify logical boundaries even when adjacent documents both have category other. Keep continuation pages together; do not merge different titles or identifiers. These documents are unrouted, not discarded. Exclude towing/recovery/security charge supplements; classify those as towing_invoice."
+          },
+          "statement": {
+            "description": "A handwritten or typed claimant statement or email describing the incident, claimant vehicle, and reported damage. Keep continuation pages of the same statement together. Exclude claim forms, incident reports, witness or other-driver accounts, and repair or invoice documents.",
+            "analyzerId": "lab664_cache_20261103_195602_statement"
+          },
+          "towing_invoice": {
+            "description": "A towing or roadside-recovery invoice, bill or charge ledger for vehicle transport, storage or release. Keep continuation and release/custody supplements from the same bill together. Payment may be unpaid or pending; do not infer payment. Exclude repair estimates, rental billing, and glass or panel service quotes. Include towing/recovery/security charge supplements that list service charges or a total due, even when they also contain inspection details or repair-quote references.",
+            "analyzerId": "prebuilt-invoice"
+          },
+          "rental_invoice": {
+            "description": "A vehicle rental billing document or invoice with rental agreement references, dates or daily charges. Keep the same agreement's pickup/billing/vehicle-condition continuation pages together. Payment may be unpaid or pending; do not infer payment. Exclude towing bills, repair estimates, and glass or panel service quotes.",
+            "analyzerId": "prebuilt-invoice"
+          }
+        },
+        "enableSegment": true,
+        "omitContent": false,
+        "segmentPerPage": false,
+        "allowInPageSegments": false,
+        "annotationFormat": "markdown",
+        "allowInputTruncation": false
+      },
+      "models": {
+        "completion": "gpt-5.5"
+      },
+      "children": [
+        {
+          "id": "prebuilt-idDocument.generic",
+          "definition": {
+            "config": {
+              "returnDetails": true,
+              "enableOcr": true,
+              "enableLayout": false,
+              "enableFormula": false,
+              "enableFigureDescription": false,
+              "enableFigureAnalysis": false,
+              "chartFormat": "chartjs",
+              "workflow": "standard.2026-06-01-preview",
+              "tableFormat": "html",
+              "estimateFieldSourceAndConfidence": true,
+              "enableSegment": false,
+              "omitContent": false,
+              "segmentPerPage": false,
+              "annotationFormat": "markdown",
+              "allowInputTruncation": false
+            },
+            "models": {
+              "completion": "prebuilt-analyzer-completion",
+              "embedding": "prebuilt-analyzer-embedding"
+            },
+            "fieldSchema": {
+              "name": "IdDocumentGenericAnalysis",
+              "fields": {
+                "CountryRegion": {
+                  "type": "string",
+                  "method": "generate",
+                  "description": "Country or region code"
+                },
+                "Region": {
+                  "type": "string",
+                  "method": "generate",
+                  "description": "State or province"
+                },
+                "DocumentNumber": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "Driver license number"
+                },
+                "DocumentDiscriminator": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "Driver license document discriminator"
+                },
+                "FirstName": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "Given name and middle initial if applicable"
+                },
+                "LastName": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "Surname"
+                },
+                "Address": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "Address"
+                },
+                "BirthDate": {
+                  "type": "date",
+                  "method": "extract",
+                  "description": "Date of birth"
+                },
+                "ExpirationDate": {
+                  "type": "date",
+                  "method": "extract",
+                  "description": "Date of expiration"
+                },
+                "IssueDate": {
+                  "type": "date",
+                  "method": "extract",
+                  "description": "Date of issue"
+                },
+                "EyeColor": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "Eye color"
+                },
+                "HairColor": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "Hair color"
+                },
+                "Height": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "Height"
+                },
+                "Weight": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "Weight"
+                },
+                "Sex": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "Sex",
+                  "enum": [
+                    "M",
+                    "F",
+                    "X"
+                  ]
+                },
+                "Endorsements": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "Endorsements"
+                },
+                "Restrictions": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "Restrictions"
+                },
+                "PersonalNumber": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "Personal Id. No."
+                },
+                "PlaceOfBirth": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "Place of birth"
+                },
+                "VehicleClass": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "Vehicle class"
+                },
+                "Category": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "Permit category"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": "prebuilt-tax.us.1099A",
+          "definition": {
+            "config": {
+              "returnDetails": true,
+              "enableOcr": true,
+              "enableLayout": true,
+              "enableFormula": false,
+              "enableFigureDescription": false,
+              "enableFigureAnalysis": false,
+              "chartFormat": "chartjs",
+              "workflow": "standard.2026-06-01-preview",
+              "tableFormat": "html",
+              "estimateFieldSourceAndConfidence": true,
+              "contentCategories": {
+                "tax.us.1099A.2025": {
+                  "description": "Extract tax US 1099 a document fields of 2025 form.",
+                  "analyzerId": "prebuilt-tax.us.1099A.2025"
+                }
+              },
+              "enableSegment": false,
+              "omitContent": true,
+              "segmentPerPage": false,
+              "annotationFormat": "markdown",
+              "allowInputTruncation": false
+            },
+            "models": {
+              "completion": "prebuilt-analyzer-completion",
+              "embedding": "prebuilt-analyzer-embedding"
+            }
+          }
+        },
+        {
+          "id": "lab664_cache_20261103_195602_repair",
+          "definition": {
+            "config": {
+              "returnDetails": false,
+              "enableOcr": true,
+              "enableLayout": true,
+              "enableFormula": true,
+              "enableFigureDescription": false,
+              "enableFigureAnalysis": false,
+              "chartFormat": "chartjs",
+              "workflow": "standard.2026-06-01-preview",
+              "tableFormat": "html",
+              "estimateFieldSourceAndConfidence": true,
+              "enableSegment": false,
+              "omitContent": false,
+              "segmentPerPage": false,
+              "annotationFormat": "markdown",
+              "allowInputTruncation": false
+            },
+            "models": {
+              "completion": "gpt-5.5"
+            },
+            "fieldSchema": {
+              "name": "InvoiceAnalysis",
+              "fields": {
+                "AmountDue": {
+                  "type": "object",
+                  "method": "generate",
+                  "description": "Total Amount Due to the vendor",
+                  "properties": {
+                    "Amount": {
+                      "type": "number",
+                      "method": "extract"
+                    },
+                    "CurrencyCode": {
+                      "type": "string",
+                      "method": "generate"
+                    }
+                  }
+                },
+                "BalanceForward": {
+                  "type": "object",
+                  "method": "generate",
+                  "description": "Explicit previously unpaid balance",
+                  "properties": {
+                    "Amount": {
+                      "type": "number",
+                      "method": "extract"
+                    },
+                    "CurrencyCode": {
+                      "type": "string",
+                      "method": "generate"
+                    }
+                  }
+                },
+                "BillingAddress": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "Explicit billing address for the customer"
+                },
+                "BillingAddressRecipient": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "Name associated with the BillingAddress"
+                },
+                "CountryRegion": {
+                  "type": "string",
+                  "method": "generate",
+                  "description": "Country or region where the invoice was issued"
+                },
+                "CustomerAddress": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "Mailing address for the Customer"
+                },
+                "CustomerAddressRecipient": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "Name associated with the CustomerAddress"
+                },
+                "CustomerId": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "Reference ID for the customer"
+                },
+                "CustomerName": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "Customer being invoiced"
+                },
+                "CustomerTaxId": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "The government ID number associated with the customer"
+                },
+                "DueDate": {
+                  "type": "date",
+                  "method": "extract",
+                  "description": "Date payment for this invoice is due"
+                },
+                "InvoiceDate": {
+                  "type": "date",
+                  "method": "extract",
+                  "description": "Date the invoice was issued"
+                },
+                "InvoiceId": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "ID for this specific invoice (often 'Invoice Number')"
+                },
+                "LineItems": {
+                  "type": "array",
+                  "method": "generate",
+                  "description": "List of line items",
+                  "items": {
+                    "type": "object",
+                    "method": "generate",
+                    "properties": {
+                      "Date": {
+                        "type": "date",
+                        "method": "extract",
+                        "description": "Date corresponding to each line item. Often it is a date the line item was shipped"
+                      },
+                      "Description": {
+                        "type": "string",
+                        "method": "extract",
+                        "description": "The text description for the invoice line item"
+                      },
+                      "ProductCode": {
+                        "type": "string",
+                        "method": "extract",
+                        "description": "Product code, product number, or SKU associated with the specific line item"
+                      },
+                      "Quantity": {
+                        "type": "number",
+                        "method": "extract",
+                        "description": "The quantity for this invoice line item"
+                      },
+                      "QuantityUnit": {
+                        "type": "string",
+                        "method": "extract",
+                        "description": "The unit of the line item, e.g., kg, lb, hours"
+                      },
+                      "TaxAmount": {
+                        "type": "object",
+                        "method": "generate",
+                        "description": "Tax associated with each line item",
+                        "properties": {
+                          "Amount": {
+                            "type": "number",
+                            "method": "extract"
+                          },
+                          "CurrencyCode": {
+                            "type": "string",
+                            "method": "generate"
+                          }
+                        }
+                      },
+                      "TaxRate": {
+                        "type": "number",
+                        "method": "extract",
+                        "description": "Tax rate associated with each line item (decimal fraction)"
+                      },
+                      "TotalAmount": {
+                        "type": "object",
+                        "method": "generate",
+                        "description": "The amount of the line item",
+                        "properties": {
+                          "Amount": {
+                            "type": "number",
+                            "method": "extract"
+                          },
+                          "CurrencyCode": {
+                            "type": "string",
+                            "method": "generate"
+                          }
+                        }
+                      },
+                      "UnitPrice": {
+                        "type": "object",
+                        "method": "generate",
+                        "description": "The net or gross price (depending on the gross invoice setting of the invoice) of one unit of this item",
+                        "properties": {
+                          "Amount": {
+                            "type": "number",
+                            "method": "extract"
+                          },
+                          "CurrencyCode": {
+                            "type": "string",
+                            "method": "generate"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "PaymentTerm": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "The terms under which the payment is meant to be paid"
+                },
+                "PONumber": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "A purchase order reference number"
+                },
+                "RemittanceAddress": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "Explicit remittance or payment address for the customer"
+                },
+                "RemittanceAddressRecipient": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "Name associated with the RemittanceAddress"
+                },
+                "ServiceAddress": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "Explicit service address or property address for the customer"
+                },
+                "ServiceAddressRecipient": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "Name associated with the ServiceAddress"
+                },
+                "ShippingAddress": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "Explicit shipping address for the customer"
+                },
+                "ShippingAddressRecipient": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "Name associated with the ShippingAddress"
+                },
+                "SubtotalAmount": {
+                  "type": "object",
+                  "method": "generate",
+                  "description": "Subtotal field identified on this invoice",
+                  "properties": {
+                    "Amount": {
+                      "type": "number",
+                      "method": "generate"
+                    },
+                    "CurrencyCode": {
+                      "type": "string",
+                      "method": "generate"
+                    }
+                  }
+                },
+                "TaxDetails": {
+                  "type": "array",
+                  "method": "generate",
+                  "description": "List of tax details",
+                  "items": {
+                    "type": "object",
+                    "method": "generate",
+                    "properties": {
+                      "Amount": {
+                        "type": "object",
+                        "method": "generate",
+                        "description": "The amount of the tax detail",
+                        "properties": {
+                          "Amount": {
+                            "type": "number",
+                            "method": "extract"
+                          },
+                          "CurrencyCode": {
+                            "type": "string",
+                            "method": "generate"
+                          }
+                        }
+                      },
+                      "Description": {
+                        "type": "string",
+                        "method": "extract",
+                        "description": "The description of the tax detail"
+                      },
+                      "NetAmount": {
+                        "type": "object",
+                        "method": "generate",
+                        "description": "The net amount before tax.",
+                        "properties": {
+                          "Amount": {
+                            "type": "number",
+                            "method": "extract"
+                          },
+                          "CurrencyCode": {
+                            "type": "string",
+                            "method": "generate"
+                          }
+                        }
+                      },
+                      "Rate": {
+                        "type": "number",
+                        "method": "extract",
+                        "description": "The rate of the tax detail (decimal fraction)"
+                      }
+                    }
+                  }
+                },
+                "TotalAmount": {
+                  "type": "object",
+                  "method": "generate",
+                  "description": "Total new charges associated with this invoice",
+                  "properties": {
+                    "Amount": {
+                      "type": "number",
+                      "method": "extract"
+                    },
+                    "CurrencyCode": {
+                      "type": "string",
+                      "method": "generate"
+                    }
+                  }
+                },
+                "TotalDiscountAmount": {
+                  "type": "object",
+                  "method": "generate",
+                  "description": "Total discount field identified on this invoice",
+                  "properties": {
+                    "Amount": {
+                      "type": "number",
+                      "method": "extract"
+                    },
+                    "CurrencyCode": {
+                      "type": "string",
+                      "method": "generate"
+                    }
+                  }
+                },
+                "TotalTaxAmount": {
+                  "type": "object",
+                  "method": "generate",
+                  "description": "Total tax field identified on this invoice",
+                  "properties": {
+                    "Amount": {
+                      "type": "number",
+                      "method": "generate"
+                    },
+                    "CurrencyCode": {
+                      "type": "string",
+                      "method": "generate"
+                    }
+                  }
+                },
+                "VendorAddress": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "Mailing address for the Vendor"
+                },
+                "VendorAddressRecipient": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "Name associated with the VendorAddress"
+                },
+                "VendorName": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "Vendor who has created this invoice"
+                },
+                "VendorTaxId": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "The government ID number associated with the vendor"
+                },
+                "vehicle": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "Printed vehicle name as one string, including year/make/model when present. Do not add color, decode the VIN, or infer missing details.",
+                  "estimateSourceAndConfidence": true
+                },
+                "vin": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "Exact value explicitly labeled VIN. Do not correct it or substitute registration, plate, or account numbers. Leave unset if absent.",
+                  "estimateSourceAndConfidence": true
+                },
+                "odometer": {
+                  "type": "number",
+                  "method": "extract",
+                  "description": "Printed Odometer or Inspection Mileage as a number. Remove grouping separators; no units. Do not substitute Annual Mileage or infer an absent value.",
+                  "estimateSourceAndConfidence": true
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": "prebuilt-invoice",
+          "definition": {
+            "config": {
+              "returnDetails": true,
+              "enableOcr": true,
+              "enableLayout": true,
+              "enableFormula": false,
+              "enableFigureDescription": false,
+              "enableFigureAnalysis": false,
+              "chartFormat": "chartjs",
+              "workflow": "standard.2026-06-01-preview",
+              "tableFormat": "html",
+              "estimateFieldSourceAndConfidence": true,
+              "enableSegment": false,
+              "omitContent": false,
+              "segmentPerPage": false,
+              "annotationFormat": "markdown",
+              "allowInputTruncation": false
+            },
+            "models": {
+              "completion": "prebuilt-analyzer-completion",
+              "embedding": "prebuilt-analyzer-embedding"
+            },
+            "fieldSchema": {
+              "name": "InvoiceAnalysis",
+              "fields": {
+                "AmountDue": {
+                  "type": "object",
+                  "method": "generate",
+                  "description": "Total Amount Due to the vendor",
+                  "properties": {
+                    "Amount": {
+                      "type": "number",
+                      "method": "extract"
+                    },
+                    "CurrencyCode": {
+                      "type": "string",
+                      "method": "generate"
+                    }
+                  }
+                },
+                "BalanceForward": {
+                  "type": "object",
+                  "method": "generate",
+                  "description": "Explicit previously unpaid balance",
+                  "properties": {
+                    "Amount": {
+                      "type": "number",
+                      "method": "extract"
+                    },
+                    "CurrencyCode": {
+                      "type": "string",
+                      "method": "generate"
+                    }
+                  }
+                },
+                "BillingAddress": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "Explicit billing address for the customer"
+                },
+                "BillingAddressRecipient": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "Name associated with the BillingAddress"
+                },
+                "CountryRegion": {
+                  "type": "string",
+                  "method": "generate",
+                  "description": "Country or region where the invoice was issued"
+                },
+                "CustomerAddress": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "Mailing address for the Customer"
+                },
+                "CustomerAddressRecipient": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "Name associated with the CustomerAddress"
+                },
+                "CustomerId": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "Reference ID for the customer"
+                },
+                "CustomerName": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "Customer being invoiced"
+                },
+                "CustomerTaxId": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "The government ID number associated with the customer"
+                },
+                "DueDate": {
+                  "type": "date",
+                  "method": "extract",
+                  "description": "Date payment for this invoice is due"
+                },
+                "InvoiceDate": {
+                  "type": "date",
+                  "method": "extract",
+                  "description": "Date the invoice was issued"
+                },
+                "InvoiceId": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "ID for this specific invoice (often 'Invoice Number')"
+                },
+                "LineItems": {
+                  "type": "array",
+                  "method": "generate",
+                  "description": "List of line items",
+                  "items": {
+                    "type": "object",
+                    "method": "generate",
+                    "properties": {
+                      "Date": {
+                        "type": "date",
+                        "method": "extract",
+                        "description": "Date corresponding to each line item. Often it is a date the line item was shipped"
+                      },
+                      "Description": {
+                        "type": "string",
+                        "method": "extract",
+                        "description": "The text description for the invoice line item"
+                      },
+                      "ProductCode": {
+                        "type": "string",
+                        "method": "extract",
+                        "description": "Product code, product number, or SKU associated with the specific line item"
+                      },
+                      "Quantity": {
+                        "type": "number",
+                        "method": "extract",
+                        "description": "The quantity for this invoice line item"
+                      },
+                      "QuantityUnit": {
+                        "type": "string",
+                        "method": "extract",
+                        "description": "The unit of the line item, e.g., kg, lb, hours"
+                      },
+                      "TaxAmount": {
+                        "type": "object",
+                        "method": "generate",
+                        "description": "Tax associated with each line item",
+                        "properties": {
+                          "Amount": {
+                            "type": "number",
+                            "method": "extract"
+                          },
+                          "CurrencyCode": {
+                            "type": "string",
+                            "method": "generate"
+                          }
+                        }
+                      },
+                      "TaxRate": {
+                        "type": "number",
+                        "method": "extract",
+                        "description": "Tax rate associated with each line item (decimal fraction)"
+                      },
+                      "TotalAmount": {
+                        "type": "object",
+                        "method": "generate",
+                        "description": "The amount of the line item",
+                        "properties": {
+                          "Amount": {
+                            "type": "number",
+                            "method": "extract"
+                          },
+                          "CurrencyCode": {
+                            "type": "string",
+                            "method": "generate"
+                          }
+                        }
+                      },
+                      "UnitPrice": {
+                        "type": "object",
+                        "method": "generate",
+                        "description": "The net or gross price (depending on the gross invoice setting of the invoice) of one unit of this item",
+                        "properties": {
+                          "Amount": {
+                            "type": "number",
+                            "method": "extract"
+                          },
+                          "CurrencyCode": {
+                            "type": "string",
+                            "method": "generate"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "PaymentTerm": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "The terms under which the payment is meant to be paid"
+                },
+                "PONumber": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "A purchase order reference number"
+                },
+                "RemittanceAddress": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "Explicit remittance or payment address for the customer"
+                },
+                "RemittanceAddressRecipient": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "Name associated with the RemittanceAddress"
+                },
+                "ServiceAddress": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "Explicit service address or property address for the customer"
+                },
+                "ServiceAddressRecipient": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "Name associated with the ServiceAddress"
+                },
+                "ShippingAddress": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "Explicit shipping address for the customer"
+                },
+                "ShippingAddressRecipient": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "Name associated with the ShippingAddress"
+                },
+                "SubtotalAmount": {
+                  "type": "object",
+                  "method": "generate",
+                  "description": "Subtotal field identified on this invoice",
+                  "properties": {
+                    "Amount": {
+                      "type": "number",
+                      "method": "generate"
+                    },
+                    "CurrencyCode": {
+                      "type": "string",
+                      "method": "generate"
+                    }
+                  }
+                },
+                "TaxDetails": {
+                  "type": "array",
+                  "method": "generate",
+                  "description": "List of tax details",
+                  "items": {
+                    "type": "object",
+                    "method": "generate",
+                    "properties": {
+                      "Amount": {
+                        "type": "object",
+                        "method": "generate",
+                        "description": "The amount of the tax detail",
+                        "properties": {
+                          "Amount": {
+                            "type": "number",
+                            "method": "extract"
+                          },
+                          "CurrencyCode": {
+                            "type": "string",
+                            "method": "generate"
+                          }
+                        }
+                      },
+                      "Description": {
+                        "type": "string",
+                        "method": "extract",
+                        "description": "The description of the tax detail"
+                      },
+                      "NetAmount": {
+                        "type": "object",
+                        "method": "generate",
+                        "description": "The net amount before tax.",
+                        "properties": {
+                          "Amount": {
+                            "type": "number",
+                            "method": "extract"
+                          },
+                          "CurrencyCode": {
+                            "type": "string",
+                            "method": "generate"
+                          }
+                        }
+                      },
+                      "Rate": {
+                        "type": "number",
+                        "method": "extract",
+                        "description": "The rate of the tax detail (decimal fraction)"
+                      }
+                    }
+                  }
+                },
+                "TotalAmount": {
+                  "type": "object",
+                  "method": "generate",
+                  "description": "Total new charges associated with this invoice",
+                  "properties": {
+                    "Amount": {
+                      "type": "number",
+                      "method": "extract"
+                    },
+                    "CurrencyCode": {
+                      "type": "string",
+                      "method": "generate"
+                    }
+                  }
+                },
+                "TotalDiscountAmount": {
+                  "type": "object",
+                  "method": "generate",
+                  "description": "Total discount field identified on this invoice",
+                  "properties": {
+                    "Amount": {
+                      "type": "number",
+                      "method": "extract"
+                    },
+                    "CurrencyCode": {
+                      "type": "string",
+                      "method": "generate"
+                    }
+                  }
+                },
+                "TotalTaxAmount": {
+                  "type": "object",
+                  "method": "generate",
+                  "description": "Total tax field identified on this invoice",
+                  "properties": {
+                    "Amount": {
+                      "type": "number",
+                      "method": "generate"
+                    },
+                    "CurrencyCode": {
+                      "type": "string",
+                      "method": "generate"
+                    }
+                  }
+                },
+                "VendorAddress": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "Mailing address for the Vendor"
+                },
+                "VendorAddressRecipient": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "Name associated with the VendorAddress"
+                },
+                "VendorName": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "Vendor who has created this invoice"
+                },
+                "VendorTaxId": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "The government ID number associated with the vendor"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": "prebuilt-invoice",
+          "definition": {
+            "config": {
+              "returnDetails": true,
+              "enableOcr": true,
+              "enableLayout": true,
+              "enableFormula": false,
+              "enableFigureDescription": false,
+              "enableFigureAnalysis": false,
+              "chartFormat": "chartjs",
+              "workflow": "standard.2026-06-01-preview",
+              "tableFormat": "html",
+              "estimateFieldSourceAndConfidence": true,
+              "enableSegment": false,
+              "omitContent": false,
+              "segmentPerPage": false,
+              "annotationFormat": "markdown",
+              "allowInputTruncation": false
+            },
+            "models": {
+              "completion": "prebuilt-analyzer-completion",
+              "embedding": "prebuilt-analyzer-embedding"
+            },
+            "fieldSchema": {
+              "name": "InvoiceAnalysis",
+              "fields": {
+                "AmountDue": {
+                  "type": "object",
+                  "method": "generate",
+                  "description": "Total Amount Due to the vendor",
+                  "properties": {
+                    "Amount": {
+                      "type": "number",
+                      "method": "extract"
+                    },
+                    "CurrencyCode": {
+                      "type": "string",
+                      "method": "generate"
+                    }
+                  }
+                },
+                "BalanceForward": {
+                  "type": "object",
+                  "method": "generate",
+                  "description": "Explicit previously unpaid balance",
+                  "properties": {
+                    "Amount": {
+                      "type": "number",
+                      "method": "extract"
+                    },
+                    "CurrencyCode": {
+                      "type": "string",
+                      "method": "generate"
+                    }
+                  }
+                },
+                "BillingAddress": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "Explicit billing address for the customer"
+                },
+                "BillingAddressRecipient": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "Name associated with the BillingAddress"
+                },
+                "CountryRegion": {
+                  "type": "string",
+                  "method": "generate",
+                  "description": "Country or region where the invoice was issued"
+                },
+                "CustomerAddress": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "Mailing address for the Customer"
+                },
+                "CustomerAddressRecipient": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "Name associated with the CustomerAddress"
+                },
+                "CustomerId": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "Reference ID for the customer"
+                },
+                "CustomerName": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "Customer being invoiced"
+                },
+                "CustomerTaxId": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "The government ID number associated with the customer"
+                },
+                "DueDate": {
+                  "type": "date",
+                  "method": "extract",
+                  "description": "Date payment for this invoice is due"
+                },
+                "InvoiceDate": {
+                  "type": "date",
+                  "method": "extract",
+                  "description": "Date the invoice was issued"
+                },
+                "InvoiceId": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "ID for this specific invoice (often 'Invoice Number')"
+                },
+                "LineItems": {
+                  "type": "array",
+                  "method": "generate",
+                  "description": "List of line items",
+                  "items": {
+                    "type": "object",
+                    "method": "generate",
+                    "properties": {
+                      "Date": {
+                        "type": "date",
+                        "method": "extract",
+                        "description": "Date corresponding to each line item. Often it is a date the line item was shipped"
+                      },
+                      "Description": {
+                        "type": "string",
+                        "method": "extract",
+                        "description": "The text description for the invoice line item"
+                      },
+                      "ProductCode": {
+                        "type": "string",
+                        "method": "extract",
+                        "description": "Product code, product number, or SKU associated with the specific line item"
+                      },
+                      "Quantity": {
+                        "type": "number",
+                        "method": "extract",
+                        "description": "The quantity for this invoice line item"
+                      },
+                      "QuantityUnit": {
+                        "type": "string",
+                        "method": "extract",
+                        "description": "The unit of the line item, e.g., kg, lb, hours"
+                      },
+                      "TaxAmount": {
+                        "type": "object",
+                        "method": "generate",
+                        "description": "Tax associated with each line item",
+                        "properties": {
+                          "Amount": {
+                            "type": "number",
+                            "method": "extract"
+                          },
+                          "CurrencyCode": {
+                            "type": "string",
+                            "method": "generate"
+                          }
+                        }
+                      },
+                      "TaxRate": {
+                        "type": "number",
+                        "method": "extract",
+                        "description": "Tax rate associated with each line item (decimal fraction)"
+                      },
+                      "TotalAmount": {
+                        "type": "object",
+                        "method": "generate",
+                        "description": "The amount of the line item",
+                        "properties": {
+                          "Amount": {
+                            "type": "number",
+                            "method": "extract"
+                          },
+                          "CurrencyCode": {
+                            "type": "string",
+                            "method": "generate"
+                          }
+                        }
+                      },
+                      "UnitPrice": {
+                        "type": "object",
+                        "method": "generate",
+                        "description": "The net or gross price (depending on the gross invoice setting of the invoice) of one unit of this item",
+                        "properties": {
+                          "Amount": {
+                            "type": "number",
+                            "method": "extract"
+                          },
+                          "CurrencyCode": {
+                            "type": "string",
+                            "method": "generate"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "PaymentTerm": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "The terms under which the payment is meant to be paid"
+                },
+                "PONumber": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "A purchase order reference number"
+                },
+                "RemittanceAddress": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "Explicit remittance or payment address for the customer"
+                },
+                "RemittanceAddressRecipient": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "Name associated with the RemittanceAddress"
+                },
+                "ServiceAddress": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "Explicit service address or property address for the customer"
+                },
+                "ServiceAddressRecipient": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "Name associated with the ServiceAddress"
+                },
+                "ShippingAddress": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "Explicit shipping address for the customer"
+                },
+                "ShippingAddressRecipient": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "Name associated with the ShippingAddress"
+                },
+                "SubtotalAmount": {
+                  "type": "object",
+                  "method": "generate",
+                  "description": "Subtotal field identified on this invoice",
+                  "properties": {
+                    "Amount": {
+                      "type": "number",
+                      "method": "generate"
+                    },
+                    "CurrencyCode": {
+                      "type": "string",
+                      "method": "generate"
+                    }
+                  }
+                },
+                "TaxDetails": {
+                  "type": "array",
+                  "method": "generate",
+                  "description": "List of tax details",
+                  "items": {
+                    "type": "object",
+                    "method": "generate",
+                    "properties": {
+                      "Amount": {
+                        "type": "object",
+                        "method": "generate",
+                        "description": "The amount of the tax detail",
+                        "properties": {
+                          "Amount": {
+                            "type": "number",
+                            "method": "extract"
+                          },
+                          "CurrencyCode": {
+                            "type": "string",
+                            "method": "generate"
+                          }
+                        }
+                      },
+                      "Description": {
+                        "type": "string",
+                        "method": "extract",
+                        "description": "The description of the tax detail"
+                      },
+                      "NetAmount": {
+                        "type": "object",
+                        "method": "generate",
+                        "description": "The net amount before tax.",
+                        "properties": {
+                          "Amount": {
+                            "type": "number",
+                            "method": "extract"
+                          },
+                          "CurrencyCode": {
+                            "type": "string",
+                            "method": "generate"
+                          }
+                        }
+                      },
+                      "Rate": {
+                        "type": "number",
+                        "method": "extract",
+                        "description": "The rate of the tax detail (decimal fraction)"
+                      }
+                    }
+                  }
+                },
+                "TotalAmount": {
+                  "type": "object",
+                  "method": "generate",
+                  "description": "Total new charges associated with this invoice",
+                  "properties": {
+                    "Amount": {
+                      "type": "number",
+                      "method": "extract"
+                    },
+                    "CurrencyCode": {
+                      "type": "string",
+                      "method": "generate"
+                    }
+                  }
+                },
+                "TotalDiscountAmount": {
+                  "type": "object",
+                  "method": "generate",
+                  "description": "Total discount field identified on this invoice",
+                  "properties": {
+                    "Amount": {
+                      "type": "number",
+                      "method": "extract"
+                    },
+                    "CurrencyCode": {
+                      "type": "string",
+                      "method": "generate"
+                    }
+                  }
+                },
+                "TotalTaxAmount": {
+                  "type": "object",
+                  "method": "generate",
+                  "description": "Total tax field identified on this invoice",
+                  "properties": {
+                    "Amount": {
+                      "type": "number",
+                      "method": "generate"
+                    },
+                    "CurrencyCode": {
+                      "type": "string",
+                      "method": "generate"
+                    }
+                  }
+                },
+                "VendorAddress": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "Mailing address for the Vendor"
+                },
+                "VendorAddressRecipient": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "Name associated with the VendorAddress"
+                },
+                "VendorName": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "Vendor who has created this invoice"
+                },
+                "VendorTaxId": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "The government ID number associated with the vendor"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": "lab664_cache_20261103_195602_statement",
+          "definition": {
+            "config": {
+              "returnDetails": false,
+              "enableOcr": true,
+              "enableLayout": true,
+              "enableFormula": true,
+              "enableFigureDescription": false,
+              "enableFigureAnalysis": false,
+              "chartFormat": "chartjs",
+              "workflow": "standard.2026-06-01-preview",
+              "tableFormat": "html",
+              "estimateFieldSourceAndConfidence": true,
+              "enableSegment": false,
+              "omitContent": false,
+              "segmentPerPage": false,
+              "annotationFormat": "markdown",
+              "allowInputTruncation": false
+            },
+            "models": {
+              "completion": "gpt-5.5"
+            },
+            "fieldSchema": {
+              "fields": {
+                "claimant_name": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "Name explicitly identifying the claimant or insured vehicle owner. Do not substitute a witness, other driver, adjuster, or recipient. Leave unset if unclear.",
+                  "estimateSourceAndConfidence": true
+                },
+                "incident_date": {
+                  "type": "date",
+                  "method": "extract",
+                  "description": "Date the reported incident occurred, not the date the statement or email was written or sent. Leave unset if absent.",
+                  "estimateSourceAndConfidence": true
+                },
+                "incident_location": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "Location explicitly reported for the incident. Leave unset if absent.",
+                  "estimateSourceAndConfidence": true
+                },
+                "vehicle": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "Claimant vehicle as one string, including year, make, model, and trim when stated. Do not include color or the other vehicle. Do not infer unstated details.",
+                  "estimateSourceAndConfidence": true
+                },
+                "vin": {
+                  "type": "string",
+                  "method": "extract",
+                  "description": "Exact VIN explicitly stated for the claimant vehicle. Do not decode, correct, or infer it; leave unset if absent.",
+                  "estimateSourceAndConfidence": true
+                },
+                "reported_damage": {
+                  "type": "string",
+                  "method": "generate",
+                  "description": "Generate a concise description of damage reported by the claimant, combining mentions across the statement or email. Use only stated information. Do not present reported damage as inspected or verified, or infer damage, cause, fault, coverage, liability, or payment. Leave unset if no damage is reported.",
+                  "estimateSourceAndConfidence": true
+                },
+                "summary": {
+                  "type": "string",
+                  "method": "generate",
+                  "description": "Generate a concise summary of the claimant's narrative using only information in this statement or email. Preserve uncertainty and distinguish reported events from verified facts. Do not infer missing details, fault, coverage, liability, or payment.",
+                  "estimateSourceAndConfidence": true
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "fingerprint": "83e101078bfc63509aaff8def985ddbd67b1428fb8567c2d06b485a7e3a68a14",
+    "verifiedReadOnly": true
+  },
+  "datasetHash": "bc965f1e10a708d0d35d0ffa36473aafef340c233c255930023716c200799d52",
+  "startedAt": "2026-11-03T19:57:56.637Z",
+  "maxInFlight": 10,
+  "items": [
+    {
+      "id": "packet-01",
+      "status": "completed",
+      "startedAt": "2026-11-03T21:02:51.727Z",
+      "rawSaved": true,
+      "completedAt": "2026-11-03T21:03:41.250Z"
+    },
+    {
+      "id": "packet-02",
+      "status": "completed",
+      "startedAt": "2026-11-03T19:57:56.637Z",
+      "rawSaved": true,
+      "completedAt": "2026-11-03T19:58:50.531Z"
+    },
+    {
+      "id": "packet-03",
+      "status": "completed",
+      "startedAt": "2026-11-03T19:57:56.637Z",
+      "rawSaved": true,
+      "completedAt": "2026-11-03T19:59:05.260Z"
+    },
+    {
+      "id": "packet-04",
+      "status": "completed",
+      "startedAt": "2026-11-03T19:57:56.637Z",
+      "rawSaved": true,
+      "completedAt": "2026-11-03T19:58:42.421Z"
+    },
+    {
+      "id": "packet-05",
+      "status": "completed",
+      "startedAt": "2026-11-03T19:57:56.637Z",
+      "rawSaved": true,
+      "completedAt": "2026-11-03T19:58:50.456Z"
+    },
+    {
+      "id": "packet-06",
+      "status": "completed",
+      "startedAt": "2026-11-03T19:57:56.637Z",
+      "rawSaved": true,
+      "completedAt": "2026-11-03T19:58:41.834Z"
+    },
+    {
+      "id": "packet-07",
+      "status": "completed",
+      "startedAt": "2026-11-03T19:57:56.637Z",
+      "rawSaved": true,
+      "completedAt": "2026-11-03T19:58:49.567Z"
+    },
+    {
+      "id": "packet-08",
+      "status": "completed",
+      "startedAt": "2026-11-03T19:57:56.637Z",
+      "rawSaved": true,
+      "completedAt": "2026-11-03T19:58:36.904Z"
+    },
+    {
+      "id": "packet-09",
+      "status": "completed",
+      "startedAt": "2026-11-03T19:57:56.637Z",
+      "rawSaved": true,
+      "completedAt": "2026-11-03T19:58:50.845Z"
+    },
+    {
+      "id": "packet-10",
+      "status": "completed",
+      "startedAt": "2026-11-03T19:57:56.637Z",
+      "rawSaved": true,
+      "completedAt": "2026-11-03T19:58:45.251Z"
+    }
+  ],
+  "source": [
+    {
+      "id": "packet-01",
+      "sourceBatch": "auto-claim-batch-1",
+      "claimId": "CMM-26-467202",
+      "file": "packets/packet-01.pdf",
+      "pages": 13,
+      "sha256": "87ef2277c0d1273790a47439cbfcb4d1f5a93eb0e3fc2e576ba185b92cc63fd4",
+      "expectedDocuments": [
+        {
+          "sourceId": "01-card",
+          "title": "Roadside membership card",
+          "category": "id_document",
+          "start": 1,
+          "end": 1
+        },
+        {
+          "sourceId": "02-policy",
+          "title": "Policy declarations and endorsements",
+          "category": "other",
+          "start": 2,
+          "end": 4
+        },
+        {
+          "sourceId": "03-claim_form",
+          "title": "Loss intake and assessment",
+          "category": "other",
+          "start": 5,
+          "end": 6
+        },
+        {
+          "sourceId": "04-incident_report",
+          "title": "Police incident record",
+          "category": "other",
+          "start": 7,
+          "end": 7
+        },
+        {
+          "sourceId": "05-estimate",
+          "title": "Itemized repair assessment",
+          "category": "repair_estimate",
+          "start": 8,
+          "end": 8
+        },
+        {
+          "sourceId": "06-handwriting",
+          "title": "Driver or owner statement",
+          "category": "other",
+          "start": 9,
+          "end": 9
+        },
+        {
+          "sourceId": "07-invoice",
+          "title": "Rental billing and vehicle condition",
+          "category": "other",
+          "start": 10,
+          "end": 11
+        },
+        {
+          "sourceId": "08-inspection",
+          "title": "Workshop damage inspection",
+          "category": "other",
+          "start": 12,
+          "end": 12
+        },
+        {
+          "sourceId": "09-form-1099-a",
+          "title": "2025 Form 1099-A supplemental tax test",
+          "category": "tax_1099a",
+          "start": 13,
+          "end": 13
+        }
+      ],
+      "expectedRepair": {
+        "vehicle": "2022 Honda CR-V EX",
+        "vin": "7FARW1H55NA510781",
+        "odometer": 36420
+      }
+    },
+    {
+      "id": "packet-02",
+      "sourceBatch": "auto-claim-batch-2",
+      "claimId": "ASA-25-615743",
+      "file": "packets/packet-02.pdf",
+      "pages": 11,
+      "sha256": "9539d6fe4047c0f445ca202fed235dbe8ffc86d020ffd9c8fa0af2a6c2d20265",
+      "expectedDocuments": [
+        {
+          "sourceId": "01-card",
+          "title": "Roadside membership card",
+          "category": "id_document",
+          "start": 1,
+          "end": 1
+        },
+        {
+          "sourceId": "02-policy",
+          "title": "Policy declarations and endorsements",
+          "category": "other",
+          "start": 2,
+          "end": 3
+        },
+        {
+          "sourceId": "03-claim_form",
+          "title": "Loss intake and assessment",
+          "category": "other",
+          "start": 4,
+          "end": 4
+        },
+        {
+          "sourceId": "04-incident_report",
+          "title": "Police incident record",
+          "category": "other",
+          "start": 5,
+          "end": 5
+        },
+        {
+          "sourceId": "05-estimate",
+          "title": "Itemized repair assessment",
+          "category": "repair_estimate",
+          "start": 6,
+          "end": 6
+        },
+        {
+          "sourceId": "06-handwriting",
+          "title": "Driver or owner statement",
+          "category": "other",
+          "start": 7,
+          "end": 7
+        },
+        {
+          "sourceId": "07-invoice",
+          "title": "Replacement rental and handover",
+          "category": "other",
+          "start": 8,
+          "end": 9
+        },
+        {
+          "sourceId": "08-inspection",
+          "title": "Workshop damage inspection",
+          "category": "other",
+          "start": 10,
+          "end": 10
+        },
+        {
+          "sourceId": "09-form-1099-a",
+          "title": "2025 Form 1099-A supplemental tax test",
+          "category": "tax_1099a",
+          "start": 11,
+          "end": 11
+        }
+      ],
+      "expectedRepair": {
+        "vehicle": "2020 Subaru Outback Premium",
+        "vin": "4S4BTACC1LA511562",
+        "odometer": 62715
+      }
+    },
+    {
+      "id": "packet-03",
+      "sourceBatch": "auto-claim-batch-3",
+      "claimId": "SCI-25-526383",
+      "file": "packets/packet-03.pdf",
+      "pages": 13,
+      "sha256": "7229eb2559266dd9570b5f1c1798986fcf7a0cbc62ee8248a1e702be7f0ee6cf",
+      "expectedDocuments": [
+        {
+          "sourceId": "01-card",
+          "title": "Roadside membership card",
+          "category": "id_document",
+          "start": 1,
+          "end": 1
+        },
+        {
+          "sourceId": "02-policy",
+          "title": "Policy declarations and endorsements",
+          "category": "other",
+          "start": 2,
+          "end": 4
+        },
+        {
+          "sourceId": "03-claim_form",
+          "title": "Loss intake and assessment",
+          "category": "other",
+          "start": 5,
+          "end": 6
+        },
+        {
+          "sourceId": "04-incident_report",
+          "title": "Police incident record",
+          "category": "other",
+          "start": 7,
+          "end": 7
+        },
+        {
+          "sourceId": "05-estimate",
+          "title": "Itemized repair assessment",
+          "category": "repair_estimate",
+          "start": 8,
+          "end": 8
+        },
+        {
+          "sourceId": "10-estimate-secondary",
+          "title": "Independent repair estimate - Sonoran Ridge Auto Repair",
+          "category": "repair_estimate",
+          "start": 9,
+          "end": 9
+        },
+        {
+          "sourceId": "06-handwriting",
+          "title": "Driver or owner statement",
+          "category": "other",
+          "start": 10,
+          "end": 10
+        },
+        {
+          "sourceId": "07-invoice",
+          "title": "Recovery towing invoice (page 1 excerpt)",
+          "category": "other",
+          "start": 11,
+          "end": 11
+        },
+        {
+          "sourceId": "08-inspection",
+          "title": "Workshop damage inspection",
+          "category": "other",
+          "start": 12,
+          "end": 12
+        },
+        {
+          "sourceId": "09-form-1099-a",
+          "title": "2025 Form 1099-A supplemental tax test",
+          "category": "tax_1099a",
+          "start": 13,
+          "end": 13
+        }
+      ],
+      "expectedRepair": {
+        "vehicle": "2023 Kia Sportage LX",
+        "vin": "KNDPMCAC0PA512343",
+        "odometer": 23180
+      }
+    },
+    {
+      "id": "packet-04",
+      "sourceBatch": "auto-claim-batch-4",
+      "claimId": "ARC-26-739979",
+      "file": "packets/packet-04.pdf",
+      "pages": 12,
+      "sha256": "1c6b787bdc91f8b12211bfeb1762b9c14e2c68a85726a6e70c687db1bc088ebc",
+      "expectedDocuments": [
+        {
+          "sourceId": "01-card",
+          "title": "Roadside membership card",
+          "category": "id_document",
+          "start": 1,
+          "end": 1
+        },
+        {
+          "sourceId": "02-policy",
+          "title": "Policy declarations and endorsements",
+          "category": "other",
+          "start": 2,
+          "end": 3
+        },
+        {
+          "sourceId": "03-claim_form",
+          "title": "Loss intake and assessment",
+          "category": "other",
+          "start": 4,
+          "end": 4
+        },
+        {
+          "sourceId": "04-incident_report",
+          "title": "Customer-reported incident record",
+          "category": "other",
+          "start": 5,
+          "end": 5
+        },
+        {
+          "sourceId": "05-estimate",
+          "title": "Itemized repair assessment",
+          "category": "repair_estimate",
+          "start": 6,
+          "end": 7
+        },
+        {
+          "sourceId": "06-handwriting",
+          "title": "Driver or owner statement",
+          "category": "other",
+          "start": 8,
+          "end": 8
+        },
+        {
+          "sourceId": "07-claim_form",
+          "title": "PDR panel supplement and quality control",
+          "category": "other",
+          "start": 9,
+          "end": 10
+        },
+        {
+          "sourceId": "08-inspection",
+          "title": "Workshop damage inspection",
+          "category": "other",
+          "start": 11,
+          "end": 11
+        },
+        {
+          "sourceId": "09-form-1099-a",
+          "title": "2025 Form 1099-A supplemental tax test",
+          "category": "tax_1099a",
+          "start": 12,
+          "end": 12
+        }
+      ],
+      "expectedRepair": {
+        "vehicle": "2024 Mazda CX-5 2.5 S Preferred",
+        "vin": "JM3KFBCM6RA513124",
+        "odometer": 17845
+      }
+    },
+    {
+      "id": "packet-05",
+      "sourceBatch": "auto-claim-batch-5",
+      "claimId": "PRC-25-862846",
+      "file": "packets/packet-05.pdf",
+      "pages": 10,
+      "sha256": "6c7104afd8a160719c26e7dc6c93483132356f2b9659097fe9901121dfec8bce",
+      "expectedDocuments": [
+        {
+          "sourceId": "01-card",
+          "title": "Roadside membership card",
+          "category": "id_document",
+          "start": 1,
+          "end": 1
+        },
+        {
+          "sourceId": "02-policy",
+          "title": "Policy declarations and endorsements",
+          "category": "other",
+          "start": 2,
+          "end": 3
+        },
+        {
+          "sourceId": "03-claim_form",
+          "title": "Loss intake and assessment",
+          "category": "other",
+          "start": 4,
+          "end": 4
+        },
+        {
+          "sourceId": "04-incident_report",
+          "title": "Customer-reported incident record",
+          "category": "other",
+          "start": 5,
+          "end": 5
+        },
+        {
+          "sourceId": "05-estimate",
+          "title": "Itemized repair assessment",
+          "category": "repair_estimate",
+          "start": 6,
+          "end": 6
+        },
+        {
+          "sourceId": "06-handwriting",
+          "title": "Driver or owner statement",
+          "category": "other",
+          "start": 7,
+          "end": 7
+        },
+        {
+          "sourceId": "07-invoice",
+          "title": "Towing invoice (page 1 excerpt)",
+          "category": "other",
+          "start": 8,
+          "end": 8
+        },
+        {
+          "sourceId": "08-inspection",
+          "title": "Workshop damage inspection",
+          "category": "other",
+          "start": 9,
+          "end": 9
+        },
+        {
+          "sourceId": "09-form-1099-a",
+          "title": "2025 Form 1099-A supplemental tax test",
+          "category": "tax_1099a",
+          "start": 10,
+          "end": 10
+        }
+      ],
+      "expectedRepair": {
+        "vehicle": "2019 Toyota Corolla LE",
+        "vin": "5YFEPMAE3KA513905",
+        "odometer": 94360
+      }
+    },
+    {
+      "id": "packet-06",
+      "sourceBatch": "auto-claim-batch-6",
+      "claimId": "PMM-26-321506",
+      "file": "packets/packet-06.pdf",
+      "pages": 13,
+      "sha256": "2914140cf5167e60fdf980bae3e4723bf17fe808245b02eeb1beb8e28945fb50",
+      "expectedDocuments": [
+        {
+          "sourceId": "01-card",
+          "title": "Roadside membership card",
+          "category": "id_document",
+          "start": 1,
+          "end": 1
+        },
+        {
+          "sourceId": "02-policy",
+          "title": "Policy declarations and endorsements",
+          "category": "other",
+          "start": 2,
+          "end": 4
+        },
+        {
+          "sourceId": "03-claim_form",
+          "title": "Loss intake and assessment",
+          "category": "other",
+          "start": 5,
+          "end": 6
+        },
+        {
+          "sourceId": "04-incident_report",
+          "title": "Police incident record",
+          "category": "other",
+          "start": 7,
+          "end": 8
+        },
+        {
+          "sourceId": "05-estimate",
+          "title": "Itemized repair assessment",
+          "category": "repair_estimate",
+          "start": 9,
+          "end": 9
+        },
+        {
+          "sourceId": "06-handwriting",
+          "title": "Driver or owner statement",
+          "category": "other",
+          "start": 10,
+          "end": 10
+        },
+        {
+          "sourceId": "07-claim_form",
+          "title": "Evidence chronology and liability review",
+          "category": "other",
+          "start": 11,
+          "end": 11
+        },
+        {
+          "sourceId": "08-inspection",
+          "title": "Workshop damage inspection",
+          "category": "other",
+          "start": 12,
+          "end": 12
+        },
+        {
+          "sourceId": "09-form-1099-a",
+          "title": "2025 Form 1099-A supplemental tax test",
+          "category": "tax_1099a",
+          "start": 13,
+          "end": 13
+        }
+      ],
+      "expectedRepair": {
+        "vehicle": "2021 Ford Escape SE",
+        "vin": "1FMCU0G63MA514686",
+        "odometer": 51840
+      }
+    },
+    {
+      "id": "packet-07",
+      "sourceBatch": "auto-claim-batch-7",
+      "claimId": "CDA-25-239878",
+      "file": "packets/packet-07.pdf",
+      "pages": 13,
+      "sha256": "5eb468325e0f55c66e9b2e911a16decc2d66ae62ec67ff322a77d0111126d35e",
+      "expectedDocuments": [
+        {
+          "sourceId": "01-card",
+          "title": "Roadside membership card",
+          "category": "id_document",
+          "start": 1,
+          "end": 1
+        },
+        {
+          "sourceId": "02-policy",
+          "title": "Policy declarations and endorsements",
+          "category": "other",
+          "start": 2,
+          "end": 3
+        },
+        {
+          "sourceId": "03-claim_form",
+          "title": "Loss intake and assessment",
+          "category": "other",
+          "start": 4,
+          "end": 5
+        },
+        {
+          "sourceId": "04-incident_report",
+          "title": "Customer-reported incident record",
+          "category": "other",
+          "start": 6,
+          "end": 6
+        },
+        {
+          "sourceId": "05-estimate",
+          "title": "Itemized repair assessment",
+          "category": "repair_estimate",
+          "start": 7,
+          "end": 8
+        },
+        {
+          "sourceId": "06-handwriting",
+          "title": "Driver or owner statement",
+          "category": "other",
+          "start": 9,
+          "end": 9
+        },
+        {
+          "sourceId": "07-invoice",
+          "title": "Comparable valuation and proposed settlement",
+          "category": "other",
+          "start": 10,
+          "end": 11
+        },
+        {
+          "sourceId": "08-inspection",
+          "title": "Workshop damage inspection",
+          "category": "other",
+          "start": 12,
+          "end": 12
+        },
+        {
+          "sourceId": "09-form-1099-a",
+          "title": "2025 Form 1099-A supplemental tax test",
+          "category": "tax_1099a",
+          "start": 13,
+          "end": 13
+        }
+      ],
+      "expectedRepair": {
+        "vehicle": "2020 Volkswagen Jetta S",
+        "vin": "3VWC57BU3LA515467",
+        "odometer": 89725
+      }
+    },
+    {
+      "id": "packet-08",
+      "sourceBatch": "auto-claim-batch-8",
+      "claimId": "SLI-26-394117",
+      "file": "packets/packet-08.pdf",
+      "pages": 9,
+      "sha256": "7c91fa895764c6d40193bf8f8de6612380fced3e2bfb978c752657ae417ae53d",
+      "expectedDocuments": [
+        {
+          "sourceId": "05-estimate",
+          "title": "Itemized repair assessment",
+          "category": "repair_estimate",
+          "start": 1,
+          "end": 1
+        },
+        {
+          "sourceId": "01-card",
+          "title": "Roadside membership card",
+          "category": "id_document",
+          "start": 2,
+          "end": 2
+        },
+        {
+          "sourceId": "02-policy",
+          "title": "Policy declarations and endorsements",
+          "category": "other",
+          "start": 3,
+          "end": 4
+        },
+        {
+          "sourceId": "03-claim_form",
+          "title": "Loss intake and assessment",
+          "category": "other",
+          "start": 5,
+          "end": 5
+        },
+        {
+          "sourceId": "04-incident_report",
+          "title": "Customer-reported incident record",
+          "category": "other",
+          "start": 6,
+          "end": 6
+        },
+        {
+          "sourceId": "06-handwriting",
+          "title": "Driver or owner statement",
+          "category": "other",
+          "start": 7,
+          "end": 7
+        },
+        {
+          "sourceId": "09-form-1099-a",
+          "title": "2025 Form 1099-A supplemental tax test",
+          "category": "tax_1099a",
+          "start": 8,
+          "end": 8
+        },
+        {
+          "sourceId": "08-inspection",
+          "title": "Workshop damage inspection",
+          "category": "other",
+          "start": 9,
+          "end": 9
+        }
+      ],
+      "expectedRepair": {
+        "vehicle": "2022 Hyundai IONIQ 5 SE",
+        "vin": "KM8KNDAF4NA516248",
+        "odometer": 30910
+      }
+    },
+    {
+      "id": "packet-09",
+      "sourceBatch": "auto-claim-batch-9",
+      "claimId": "MCM-25-998392",
+      "file": "packets/packet-09.pdf",
+      "pages": 11,
+      "sha256": "3e77ede596abd387dfe9a14a116249c715ce59a8d6c9edec034d2c630d32c5b8",
+      "expectedDocuments": [
+        {
+          "sourceId": "05-estimate",
+          "title": "Itemized repair assessment",
+          "category": "repair_estimate",
+          "start": 1,
+          "end": 1
+        },
+        {
+          "sourceId": "01-card",
+          "title": "Roadside membership card",
+          "category": "id_document",
+          "start": 2,
+          "end": 2
+        },
+        {
+          "sourceId": "02-policy",
+          "title": "Policy declarations and endorsements",
+          "category": "other",
+          "start": 3,
+          "end": 4
+        },
+        {
+          "sourceId": "03-claim_form",
+          "title": "Loss intake (follow-up assessment omitted)",
+          "category": "other",
+          "start": 5,
+          "end": 5
+        },
+        {
+          "sourceId": "04-incident_report",
+          "title": "Police incident record",
+          "category": "other",
+          "start": 6,
+          "end": 6
+        },
+        {
+          "sourceId": "06-handwriting",
+          "title": "Driver or owner statement",
+          "category": "other",
+          "start": 7,
+          "end": 7
+        },
+        {
+          "sourceId": "07-invoice",
+          "title": "Rental billing and winter condition record",
+          "category": "other",
+          "start": 8,
+          "end": 9
+        },
+        {
+          "sourceId": "09-form-1099-a",
+          "title": "2025 Form 1099-A supplemental tax test",
+          "category": "tax_1099a",
+          "start": 10,
+          "end": 10
+        },
+        {
+          "sourceId": "08-inspection",
+          "title": "Workshop damage inspection",
+          "category": "other",
+          "start": 11,
+          "end": 11
+        }
+      ],
+      "expectedRepair": {
+        "vehicle": "2023 Chevrolet Equinox LT",
+        "vin": "3GNAXUEG3PA517029",
+        "odometer": 41870
+      }
+    },
+    {
+      "id": "packet-10",
+      "sourceBatch": "auto-claim-batch-10",
+      "claimId": "BTU-26-717497",
+      "file": "packets/packet-10.pdf",
+      "pages": 13,
+      "sha256": "408b92ebe2d82646b8a381712143d92860cee9c6432bda69f8bf89350ac866c8",
+      "expectedDocuments": [
+        {
+          "sourceId": "01-card",
+          "title": "Roadside membership card",
+          "category": "id_document",
+          "start": 1,
+          "end": 1
+        },
+        {
+          "sourceId": "02-policy",
+          "title": "Policy declarations and endorsements",
+          "category": "other",
+          "start": 2,
+          "end": 4
+        },
+        {
+          "sourceId": "03-claim_form",
+          "title": "Loss intake and assessment",
+          "category": "other",
+          "start": 5,
+          "end": 6
+        },
+        {
+          "sourceId": "04-incident_report",
+          "title": "Customer-reported incident record",
+          "category": "other",
+          "start": 7,
+          "end": 7
+        },
+        {
+          "sourceId": "05-estimate",
+          "title": "Itemized repair assessment",
+          "category": "repair_estimate",
+          "start": 8,
+          "end": 9
+        },
+        {
+          "sourceId": "06-handwriting",
+          "title": "Driver or owner statement",
+          "category": "other",
+          "start": 10,
+          "end": 10
+        },
+        {
+          "sourceId": "07-claim_form",
+          "title": "Fleet downtime and cargo classification",
+          "category": "other",
+          "start": 11,
+          "end": 11
+        },
+        {
+          "sourceId": "08-inspection",
+          "title": "Workshop damage inspection",
+          "category": "other",
+          "start": 12,
+          "end": 12
+        },
+        {
+          "sourceId": "09-form-1099-a",
+          "title": "2025 Form 1099-A supplemental tax test",
+          "category": "tax_1099a",
+          "start": 13,
+          "end": 13
+        }
+      ],
+      "expectedRepair": {
+        "vehicle": "2021 Ram ProMaster City",
+        "vin": "ZFBERFAB8MA517810",
+        "odometer": 84510
+      }
+    }
+  ],
+  "completedAt": "2026-11-03T21:03:41.250Z"
+}

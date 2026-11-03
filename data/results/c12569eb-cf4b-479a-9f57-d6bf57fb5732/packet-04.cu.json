@@ -1,0 +1,1932 @@
+{
+  "id": "87f3bd42-6467-4d7a-b199-d1d0b916895b",
+  "status": "Succeeded",
+  "result": {
+    "analyzerId": "lab664_cache_20261103_195602_router",
+    "apiVersion": "2026-06-01-preview",
+    "createdAt": "2026-11-03T19:57:59Z",
+    "stringEncoding": "codePoint",
+    "warnings": [],
+    "infos": [
+      {
+        "code": "LLMStats",
+        "message": "completion calls: 7; avg completion latency: 3.96s; total completion latency: 27.74s"
+      }
+    ],
+    "contents": [
+      {
+        "path": "input1",
+        "markdown": "# Alpine Mile Club\n\nMembership Assistance\nAvailable 24/7\n\n\n![](figures/1.1)\n\n\nMEMBERSHIP NUMBER\nMR-748312\n\nMEMBER NAME\nMarcus Coleman\n\nVALID FROM\n11/14/2025\n\nVALID UNTIL\n11/14/2026\n\nVEHICLE\n2024 Mazda CX-5 2.5 S Preferred\n\nCOLOR\nRed\n\nMEMBER ADDRESS\n304 Linden Terrace\nAspen Hollow, CO 80525\n\nRoadside assistance is available for the\nmember, vehicle and immediate family.\n\nMember\n\n<!-- PageBreak -->\n\n\n![](figures/2.1)\n\n\nAspen Ridge Cooperative\n\n452 Civic Lane\nAspen Hollow, CO 80525\n(303) 555-0124\n\nPOLICY INFORMATION\n\nPolicy Number:\nARC-A8669481\n\nNamed Insured:\nMarcus Coleman\n\nGaraging Address:\n304 Linden Terrace\nAspen Hollow, CO 80525\n\nPolicy Issue Date:\n12/30/2025\n\nPOLICY TERM\n\nPolicy Period:\nFrom:\n01/13/2026\n\nTo:\n01/13/2027\n\n12:01 a.m. standard time at\nthe garaging address shown\n\nAsset Reference:\nCO-74391\n\n\n<table>\n<tr>\n<td colspan=\"6\">VEHICLE SCHEDULE</td>\n</tr>\n<tr>\n<th>Year / Make / Model</th>\n<th>VIN</th>\n<th>Use</th>\n<th>Annual Mileage</th>\n<th>Registration</th>\n<th>Lienholder</th>\n</tr>\n<tr>\n<td>2024 Mazda CX-5 2.5 S Preferred Color: Red</td>\n<td>JM3KFBCM6RA513124</td>\n<td>Personal/ commute</td>\n<td>15,000</td>\n<td>CO91642</td>\n<td>None</td>\n</tr>\n</table>\n\n\n<table>\n<tr>\n<td colspan=\"4\">COVERAGES AND PREMIUMS</td>\n</tr>\n<tr>\n<th rowspan=\"2\">Coverages</th>\n<th colspan=\"2\">Coverage</th>\n<th rowspan=\"2\">Annual Premium</th>\n</tr>\n<tr>\n<th>Limit</th>\n<th>Deductible</th>\n</tr>\n<tr>\n<td>1. Liability</td>\n<td>$100,000/person; $300,000/accident; $100,000 property</td>\n<td>Refer applicable policy form</td>\n<td>$614.00</td>\n</tr>\n<tr>\n<td>2. Collision</td>\n<td>Actual cash value minus deductible</td>\n<td>Refer applicable policy form</td>\n<td>$785.00</td>\n</tr>\n<tr>\n<td>3. Comprehensive</td>\n<td>Actual cash value minus deductible</td>\n<td>$500.00</td>\n<td>$412.00</td>\n</tr>\n<tr>\n<td>4. Rental reimbursement</td>\n<td>$85/day base charge, maximum 30 days; mandatory taxes/surcharges additional</td>\n<td>N/A</td>\n<td>$61.00</td>\n</tr>\n<tr>\n<td colspan=\"3\">ANNUAL TOTAL PREMIUM</td>\n<td>$1,872.00</td>\n</tr>\n</table>\n\n\nGlass Repair: No special glass waiver\n\nBilling: Annual billed premium\n\n<!-- PageNumber: Page 1 of 2 -->\n<!-- PageBreak -->\n\n\n![ASPEN RIDGE COOPERATIVE](figures/3.1)\n\n\nAspen Ridge Cooperative\n452 Civic Lane\nAspen Hollow, CO 80525\n(303) 555-0124\n\n\n<table>\n<tr>\n<td colspan=\"2\">Policy Number: ARC-A8669481</td>\n</tr>\n<tr>\n<td>Issued:</td>\n<td>2025-12-30</td>\n</tr>\n<tr>\n<td>Policy</td>\n<td>Term:</td>\n</tr>\n<tr>\n<td></td>\n<td>January13 2026 to January13 2027</td>\n</tr>\n<tr>\n<td>Billing:</td>\n<td>Annual billed premium</td>\n</tr>\n</table>\n\n\n<table>\n<tr>\n<td colspan=\"3\">COVERAGE CONDITIONS AND ENDORSEMENTS</td>\n</tr>\n<tr>\n<td>Coverage Condition</td>\n<td>Applies To</td>\n<td>Details</td>\n</tr>\n<tr>\n<td>Comprehensive Coverage</td>\n<td>This Vehicle</td>\n<td>Subject to policy terms, conditions and exclusions</td>\n</tr>\n<tr>\n<td>Rental Reimbursement Limit</td>\n<td>This Vehicle</td>\n<td>$85/day base charge, maximum 30 days; mandatory taxes/surcharges additional</td>\n</tr>\n<tr>\n<td>Glass Rule</td>\n<td>This Vehicle</td>\n<td>No special glass waiver</td>\n</tr>\n</table>\n\n\n<table>\n<tr>\n<td colspan=\"4\">ENDORSEMENTS AND COVERAGE FORMS</td>\n</tr>\n<tr>\n<th>Endorsement / Coverage</th>\n<th>Applies To</th>\n<th>Included</th>\n<th>Form Reference</th>\n</tr>\n<tr>\n<td>Comprehensive Coverage</td>\n<td>This Vehicle</td>\n<td>☑</td>\n<td>ARC CP 04 21</td>\n</tr>\n<tr>\n<td>Collision Coverage</td>\n<td>This Vehicle</td>\n<td>☑</td>\n<td>ARC CL 04 21</td>\n</tr>\n<tr>\n<td>Rental Reimbursement</td>\n<td>This Vehicle</td>\n<td>☑</td>\n<td>ARC RR 04 21</td>\n</tr>\n</table>\n\n\n## INSURED AND VEHICLE RECAP\n\n\n<table>\n<tr>\n<td colspan=\"2\">Named Insured</td>\n</tr>\n<tr>\n<td>Name</td>\n<td>Marcus Coleman</td>\n</tr>\n<tr>\n<td>Address</td>\n<td>304 Linden Terrace Aspen Hollow, CO 80525</td>\n</tr>\n<tr>\n<td>Phone</td>\n<td>(303) 555-0104</td>\n</tr>\n<tr>\n<td>Email</td>\n<td>marcus.coleman@example.com</td>\n</tr>\n</table>\n\n\n<table>\n<tr>\n<td colspan=\"2\">Policy Reference</td>\n</tr>\n<tr>\n<td>Policy Number</td>\n<td>ARC-A8669481</td>\n</tr>\n<tr>\n<td>Policy Term</td>\n<td>January13 2026 to January13 2027</td>\n</tr>\n<tr>\n<td>Issued</td>\n<td>2025-12-30</td>\n</tr>\n<tr>\n<td>Coverage</td>\n<td>Comprehensive</td>\n</tr>\n<tr>\n<td>Liability Limits</td>\n<td>$100,000/person; $300,000/accident; $100,000 property</td>\n</tr>\n</table>\n\n\n<table>\n<tr>\n<td colspan=\"2\">Vehicle Information</td>\n</tr>\n<tr>\n<td>Vehicle</td>\n<td>2024 Mazda CX-5 2.5 S Preferred</td>\n</tr>\n<tr>\n<td>VIN</td>\n<td>JM3KFBCM6RA513124</td>\n</tr>\n<tr>\n<td>Color</td>\n<td>Red</td>\n</tr>\n<tr>\n<td>Registration</td>\n<td>CO91642</td>\n</tr>\n<tr>\n<td>Use</td>\n<td>Personal / commute</td>\n</tr>\n<tr>\n<td>Annual Mileage</td>\n<td>15,000</td>\n</tr>\n<tr>\n<td>Asset Reference</td>\n<td>CO-74391</td>\n</tr>\n<tr>\n<td>Lienholder</td>\n<td>None</td>\n</tr>\n</table>\n\n\n<table>\n<tr>\n<td colspan=\"2\">DEDUCTIBLES</td>\n</tr>\n<tr>\n<td>Comprehensive Deductible</td>\n<td>$500.00</td>\n</tr>\n<tr>\n<td>Collision Deductible</td>\n<td>Refer applicable policy form</td>\n</tr>\n</table>\n\n\n<table>\n<tr>\n<td colspan=\"2\">BILLING SUMMARY</td>\n</tr>\n<tr>\n<td>Annual Premium</td>\n<td>$1,872.00</td>\n</tr>\n<tr>\n<td>Premium Schedule</td>\n<td>See below</td>\n</tr>\n<tr>\n<td>Payment Plan</td>\n<td>Annual billed premium</td>\n</tr>\n</table>\n\n\n<table>\n<tr>\n<td colspan=\"2\">PREMIUM COMPONENTS</td>\n</tr>\n<tr>\n<td>Coverages</td>\n<td>Premium</td>\n</tr>\n<tr>\n<td>Liability</td>\n<td>$614.00</td>\n</tr>\n<tr>\n<td>Collision</td>\n<td>$785.00</td>\n</tr>\n<tr>\n<td>Comprehensive</td>\n<td>$412.00</td>\n</tr>\n<tr>\n<td>Rental Reimbursement</td>\n<td>$61.00</td>\n</tr>\n<tr>\n<td>TOTAL ANNUAL PREMIUM</td>\n<td>$1,872.00</td>\n</tr>\n</table>\n\n\nThis policy is subject to all terms, conditions,\nexclusions and declarations contained in the\npolicy and applicable endorsements.\n\n<!-- PageFooter: Policy Number: ARC-A8669481 -->\n<!-- PageNumber: Page 2 of 2 -->\n<!-- PageBreak -->\n\n\n![ASPEN RIDGE COOPERATIVE](figures/4.1)\n\n\n452 Civic Lane, Aspen Hollow, CO 80525\n(303) 555-0124\n\n\n# LOSS INTAKE AND ASSESSMENT FORM Claims Desk\n\n\n<table>\n<tr>\n<td>Claim Number:</td>\n<td>ARC-26-739979</td>\n</tr>\n<tr>\n<td>Policy Number:</td>\n<td>ARC-A8669481</td>\n</tr>\n<tr>\n<td>Intake Date:</td>\n<td>06/13/2026</td>\n</tr>\n<tr>\n<td>Adjuster:</td>\n<td>Elise Warren</td>\n</tr>\n</table>\n\n\n## 0. POLICYHOLDER / INSURED CONTACT\n\nName:\nMarcus Coleman\n\nPhone:\n(303) 555-0104\n\nAddress:\n304 Linden Terrace, Aspen Hollow, CO 80525\n\nEmail:\nmarcus.coleman@example.com\n\nPolicy Term:\n01/13/2026 through 01/13/2027\n\nApplicable Deductible:\n$500.00\n\n\n## 1. VEHICLE INFORMATION\n\nVehicle Description:\n2024 Mazda CX-5 2.5 S Preferred\n\nColor:\nRed\n\nVIN:\nJM3KFBCM6RA513124\n\nRegistration Number:\nCO91642\n\nPrimary Use:\nPersonal / commute\n\nAsset Reference:\nCO-74391\n\n\n## 2. LOSS INFORMATION\n\nDate of Loss:\n06/12/2026\n\nTime of Loss:\n16:18\n\nLocation of Loss:\nJuniper Center uncovered lot, Aspen Hollow, CO 80525\n\nWas the vehicle drivable at the time\nof intake?\n\n☑\nYes\n\n☐\nNo\n\nPolice Involvement:\n\n☐\nYes\n\n☑\nNo\n\nRental Requested:\n\n☐\nYes\n\n☑\nNo\n\nOther Parties Involved:\nNot applicable\n\n\n## 3. INCIDENT SUMMARY\n\nDescribe what\nhappened:\n\nMarcus reports hail striking the parked vehicle during the afternoon storm. Small dents\nare visible on the hood, roof and upper left-side panels. There was no vehicle contact and\nno police attendance. Storm timing is customer-reported, not an independent weather\ncertification.\n\nObserved Damage (customer-reported):\nHail dents on hood, roof, left front fender and left upper doors; glass intact.\n\nInjuries Reported:\nNone reported\n\nOther Driver:\nNot applicable\n\nLiability Consideration:\nNot determined\n\n\n## 4. PRELIMINARY ASSESSMENT\n\nEstimated Repair Cost (Initial):\nPending\n\nInspection Mileage (At Repair Facility):\nPending\n\nStorage / Tow Required:\n\n☐\nYes\n\n☑\nNo\n\nGlass Damage:\n\n☐\nYes\n\n☑\nNo\n\n☑\nIntact\n\nVehicle Drivable:\n\n☑\nYes\n\n☐\nNo\n\nInjuries:\nNone reported\n\nLiability Status:\nNot determined\n\nNotes / Additional Comments:\n\nBy signing below, I acknowledge that the above information is true and complete to the best of my knowledge.\n\nCustomer Initials:\nM.C.\n\nDate:\n06/13/2026\n\n<!-- PageNumber: Page 1 of 1 -->\n<!-- PageBreak -->\n\n<!-- PageHeader: ![ASPEN RIDGE COOPERATIVE](figures/5.1) -->\n\n\n## Customer Incident Record\n\n\n<table>\n<tr>\n<td>Claim Number:</td>\n<td>ARC-26-739979</td>\n</tr>\n<tr>\n<td>Internal Reference:</td>\n<td>CO-2026-87899</td>\n</tr>\n<tr>\n<td>Report Date:</td>\n<td>06/13/2026</td>\n</tr>\n<tr>\n<td>Policy Reference:</td>\n<td>ARC-A8669481</td>\n</tr>\n</table>\n\n\n### CUSTOMER DETAILS\n\n\n<table>\n<tr>\n<td>Name:</td>\n<td>Marcus Coleman</td>\n</tr>\n<tr>\n<td>Address:</td>\n<td>304 Linden Terrace, Aspen Hollow, CO 80525</td>\n</tr>\n<tr>\n<td>Phone:</td>\n<td>(303) 555-0104</td>\n</tr>\n<tr>\n<td>Email:</td>\n<td>marcus.coleman@example.com</td>\n</tr>\n</table>\n\n\n### VEHICLE DETAILS\n\n\n<table>\n<tr>\n<td>Description:</td>\n<td>2024 Mazda CX-5 2.5 S Preferred</td>\n</tr>\n<tr>\n<td>Color:</td>\n<td>Red</td>\n</tr>\n<tr>\n<td>VIN:</td>\n<td>JM3KFBCM6RA513124</td>\n</tr>\n<tr>\n<td>Registration:</td>\n<td>CO91642</td>\n</tr>\n<tr>\n<td>Use:</td>\n<td>Personal / commute</td>\n</tr>\n</table>\n\n\n### INSURER DETAILS\n\n\n<table>\n<tr>\n<td>Company:</td>\n<td>Aspen Ridge Cooperative</td>\n</tr>\n<tr>\n<td>Address:</td>\n<td>452 Civic Lane, Aspen Hollow, CO 80525</td>\n</tr>\n<tr>\n<td>Phone:</td>\n<td>(303) 555-0124</td>\n</tr>\n<tr>\n<td>Adjuster:</td>\n<td>Elise Warren</td>\n</tr>\n</table>\n\n\n## INCIDENT DETAILS\n\n\n<table>\n<tr>\n<td>Location:</td>\n<td>Juniper Center uncovered lot, Aspen Hollow, CO 80525</td>\n</tr>\n<tr>\n<td>Occurrence Date:</td>\n<td>06/12/2026</td>\n</tr>\n<tr>\n<td>Discovery Time:</td>\n<td>16:18</td>\n</tr>\n<tr>\n<td>Police Attended:</td>\n<td>☐ Yes<br>☑ No</td>\n</tr>\n<tr>\n<td>Agency:</td>\n<td>Aspen Ridge Cooperative Claims Desk</td>\n</tr>\n<tr>\n<td>Officer:</td>\n<td>Not applicable</td>\n</tr>\n<tr>\n<td>Agency Reference:</td>\n<td>CO-2026-87899</td>\n</tr>\n<tr>\n<td>Recovered Date:</td>\n<td>Not applicable</td>\n</tr>\n</table>\n\n\n## INCIDENT NARRATIVE\n\nMarcus reports hail striking the parked vehicle during the\nafternoon storm. Small dents are visible on the hood, roof\nand upper left-side panels. There was no vehicle contact\nand no police attendance. Storm timing is customer-\nreported, not an independent weather certification.\n\n\n## DAMAGE / LOSS INFORMATION\n\n\n<table>\n<tr>\n<td>Damage:</td>\n<td>Hail dents on hood, roof, left front fender and left upper doors; glass intact.</td>\n</tr>\n<tr>\n<td>Drivable:</td>\n<td>Yes</td>\n</tr>\n<tr>\n<td>Injuries:</td>\n<td>None reported</td>\n</tr>\n<tr>\n<td>Other Driver:</td>\n<td>Not applicable</td>\n</tr>\n<tr>\n<td>Liability:</td>\n<td>Not determined</td>\n</tr>\n</table>\n\n\n## REPORTING CHRONOLOGY\n\n\n<table>\n<tr>\n<th>Date</th>\n<th>Time</th>\n<th>Event</th>\n<th>Recorded By</th>\n<th>Notes</th>\n</tr>\n<tr>\n<td>06/12/2026</td>\n<td>16:18</td>\n<td>Customer report received</td>\n<td>Marcus Coleman</td>\n<td>Reported same-day via online claim portal.</td>\n</tr>\n<tr>\n<td>06/13/2026</td>\n<td>09:27</td>\n<td>Intake assignment</td>\n<td>Aspen Ridge Cooperative Claims Desk</td>\n<td>Claim opened and assigned to Elise Warren.</td>\n</tr>\n<tr>\n<td>06/13/2026</td>\n<td>09:30</td>\n<td>Inspection pending</td>\n<td>Aspen Ridge Cooperative Claims Desk</td>\n<td>Inspection to be scheduled.</td>\n</tr>\n</table>\n\n\nMEMO: Please direct all correspondence and updates regarding this incident to the Aspen Ridge Cooperative\nClaims Desk referencing claim number ARC-26-739979.\n\n<!-- PageNumber: Page 1 of 1 -->\n<!-- PageBreak -->\n\n\n## REPAIR ASSESSMENT\n\nPeak Panel Restoration\n158 Works Road, Aspen Hollow, CO 80525\n(303) 555-0144\n\nQuote Reference:\n\nQ-CO-35345\n\nInsurer Contact:\nAspen Ridge Cooperative\n452 Civic Lane, Aspen Hollow, CO 80525\n(303) 555-0124\nAdjuster: Elise Warren\n\n\n<table>\n<tr>\n<td>Customer:</td>\n<td>Marcus Coleman</td>\n</tr>\n<tr>\n<td>Address:</td>\n<td>304 Linden Terrace, Aspen Hollow, CO 80525</td>\n</tr>\n<tr>\n<td>Phone:</td>\n<td>(303) 555-0104</td>\n</tr>\n<tr>\n<td>Email:</td>\n<td>marcus.coleman@example.com</td>\n</tr>\n<tr>\n<td>Claim Reference:</td>\n<td>ARC-26-739979</td>\n</tr>\n<tr>\n<td>Policy Reference:</td>\n<td>ARC-A8669481</td>\n</tr>\n<tr>\n<td>Vehicle:</td>\n<td>2024 Mazda CX-5 2.5 S Preferred</td>\n</tr>\n<tr>\n<td>Color:</td>\n<td>Red</td>\n</tr>\n<tr>\n<td>VIN:</td>\n<td>JM3KFBCM6RA513124</td>\n</tr>\n<tr>\n<td>Registration:</td>\n<td>CO91642</td>\n</tr>\n<tr>\n<td>Use:</td>\n<td>Personal / commute</td>\n</tr>\n<tr>\n<td>Odometer:</td>\n<td>17,845</td>\n</tr>\n<tr>\n<td>Inspection Date:</td>\n<td>06/15/2026</td>\n</tr>\n<tr>\n<td>Inspector:</td>\n<td>Cody Ellis</td>\n</tr>\n</table>\n\n\n<table>\n<tr>\n<th rowspan=\"2\">Operation</th>\n<th rowspan=\"2\">Quantity</th>\n<th rowspan=\"2\">Labor Hours</th>\n<th colspan=\"3\">Amount (USD)</th>\n</tr>\n<tr>\n<th>Labor</th>\n<th>Parts</th>\n<th>Line Total</th>\n</tr>\n<tr>\n<td>Hood paintless dent repair</td>\n<td>1</td>\n<td>4.8</td>\n<td>504.00</td>\n<td>0.00</td>\n<td>504.00</td>\n</tr>\n<tr>\n<td>Roof paintless dent repair</td>\n<td>1</td>\n<td>6.3</td>\n<td>661.50</td>\n<td>0.00</td>\n<td>661.50</td>\n</tr>\n<tr>\n<td>Left front fender PDR</td>\n<td>1</td>\n<td>2.1</td>\n<td>220.50</td>\n<td>0.00</td>\n<td>220.50</td>\n</tr>\n<tr>\n<td>Left door zone PDR</td>\n<td>1</td>\n<td>3.4</td>\n<td>357.00</td>\n<td>0.00</td>\n<td>357.00</td>\n</tr>\n<tr>\n<td>Access and trim removal</td>\n<td>1</td>\n<td>1.6</td>\n<td>168.00</td>\n<td>85.00</td>\n<td>253.00</td>\n</tr>\n</table>\n\n\nEstimate Notes\nLabor rate: 105.00 per hour.\nAll repairs will be completed in accordance with\nmanufacturer procedures and I-CAR standards.\nThis estimate is valid for 30 days from the\ninspection date.\n\nRepair Details\n\n\n<table>\n<tr>\n<td>Repair Status:</td>\n<td>Scheduled</td>\n</tr>\n<tr>\n<td>Scheduled Start:</td>\n<td>06/17/2026</td>\n</tr>\n<tr>\n<td>Deductible:</td>\n<td>500.00</td>\n</tr>\n</table>\n\n\nEstimated Repair Less Deductible:\n1,502.38\n\n\n<table>\n<tr>\n<td>Subtotal</td>\n<td>1,996.00</td>\n</tr>\n<tr>\n<td>Taxable Parts</td>\n<td>85.00</td>\n</tr>\n<tr>\n<td>Tax on Parts (7.50%)</td>\n<td>6.38</td>\n</tr>\n<tr>\n<td>ESTIMATE TOTAL (USD)</td>\n<td>2,002.38</td>\n</tr>\n</table>\n\n\nInvoice/payment status: Pending\n\n<!-- PageNumber: Page 1 of 2 -->\n<!-- PageBreak -->\n\n<!-- PageHeader: PEAK PANEL RESTORATION 158 Works Road Aspen Hollow, CO 80525 Phone: (303) 555-0144 -->\n<!-- PageHeader: PRELIMINARY REPAIR ASSESSMENT AND ESTIMATE -->\n<!-- PageHeader: Estimate Reference: Q-CO-35345 -->\n<!-- PageHeader: Date of Inspection: 2026-06-15 -->\n<!-- PageNumber: Page: 2 of 2 -->\n\nCUSTOMER\nMarcus Coleman\n304 Linden Terrace\nAspen Hollow, CO 80525\nPhone: (303) 555-0104\nEmail: marcus.coleman@example.com\n\nVEHICLE\n2024 Mazda CX-5 2.5 S Preferred\n\nColor: Red\n\nVIN: JM3KFBCM6RA513124\n\nLicense: CO91642\nUse: Personal / commute\nOdometer: 17,845\n\nCLAIM AND INSURER\n\nClaim Reference: ARC-26-739979\nPolicy Reference: ARC-A8669481\n\nAspen Ridge Cooperative\n452 Civic Lane\nAspen Hollow, CO 80525\nPhone: (303) 555-0124\nAdjuster: Elise Warren\n\n\n## PAINTLESS DENT REPAIR (PDR) ZONE AND ACCESS CHECKLIST\n\n\n<table>\n<tr>\n<th>PANEL / AREA</th>\n<th>ZONE DESCRIPTION</th>\n<th>ACCESS / METHOD</th>\n<th>ACCESS NOTES</th>\n<th>TECHNICIAN INITIALS</th>\n</tr>\n<tr>\n<td>Hood</td>\n<td>Front center and leading edge</td>\n<td>Top-side access</td>\n<td>Access through engine bay; remove cowl cover as needed</td>\n<td></td>\n</tr>\n<tr>\n<td>Roof</td>\n<td>Center panel</td>\n<td>Top-side access</td>\n<td>Interior headliner drop for full access</td>\n<td></td>\n</tr>\n<tr>\n<td>Left Front Fender</td>\n<td>Upper front wheel arch and crown</td>\n<td>Top-side and inner structure access</td>\n<td>Wheel well liner removal required</td>\n<td></td>\n</tr>\n<tr>\n<td>Left Upper Door</td>\n<td>Between beltline and window frame</td>\n<td>Top-side access</td>\n<td>Glass lowered for tool entry; interior trim pull as needed</td>\n<td></td>\n</tr>\n</table>\n\n\n<table>\n<tr>\n<td colspan=\"2\">ESTIMATE SUMMARY</td>\n</tr>\n<tr>\n<td>Taxable Parts</td>\n<td>85.00</td>\n</tr>\n<tr>\n<td>Tax on Parts (7.50%)</td>\n<td>6.38</td>\n</tr>\n<tr>\n<td>Subtotal</td>\n<td>1,996.00</td>\n</tr>\n<tr>\n<td>Total</td>\n<td>2,002.38</td>\n</tr>\n<tr>\n<td>Deductible</td>\n<td>500.00</td>\n</tr>\n<tr>\n<td>Estimate Less Deductible</td>\n<td>1,502.38</td>\n</tr>\n</table>\n\n\n<table>\n<tr>\n<td colspan=\"3\">REPAIR SCHEDULING</td>\n</tr>\n<tr>\n<th>Repair Start Date</th>\n<th>Repair End Date</th>\n<th>Repair Status</th>\n</tr>\n<tr>\n<td>06/17/2026</td>\n<td>06/19/2026</td>\n<td>Scheduled</td>\n</tr>\n</table>\n\n\nESTIMATED LABOR RATE: $105.00 / HR\nINSPECTOR: Cody Ellis\nPREPARED BY: Cody Ellis\n\nThis asseesment is provisional and based on conditions observed at the time of inspection. Additional\ndamage or concealed conditions may be identified during repair. This document is an estimate only and\nnot a payment authorization.\n\n<!-- PageNumber: Page 2 of 2 -->\n<!-- PageBreak -->\n\n<!-- PageHeader: Claim: ARC-26-739979 -->\n<!-- PageHeader: Statement Date: 06/13/2026 -->\n\nOn 06/12/2026 at about 4:18PM, I was at Juniper\nCenter in Aspen Hollow for a short appointment . I parked\nin the uncovered lot on the south side of the building.\nWithin a few minutes, a strong storm moved in with\nheavy rain and hail.\n\nI stayed indoors until the storm passed. When I returned\nto my vehicle, I noticed small dents across the hood,\nroof and on the upper panels of the left side. The left\nfront fender and the upper portions of the left doors\nhave the most visible marks. The glass (windshield,\nwindows and rear glass) appears to be intact.\n\nThere was no contact with any other vehicle or object\nto my knowledge. No one else was involved and the\npolice were not called.\n\nI started the vehicle and it ran normally. The vehicle\nremained drivable after the storm on 06/12/2026.\nI drove home without issue.\n\nI am reporting hail damage only. No injuries.\nPhotos were taken at the scene and at home.\n\nThis account is true to the best of my knowledge.\n\nSincerely,\nM.C.\n\nMarcus Coleman\n\n<!-- PageBreak -->\n\n\n![PEAK PANEL RESTORATION](figures/9.1)\n\n\n158 Works Road\nAspen Hollow, CO 80525\n(303) 555-0144\n\n\n## INSURED\n\nMarcus Coleman\n304 Linden Terrace\nAspen Hollow, CO 80525\n(303) 555-0104\nmarcus.coleman@example.com\n\n\n## INSURER\n\nAspen Ridge Cooperative\n452 Civic Lane\nAspen Hollow, CO 80525\n(303) 555-0124\nAdjuster: Elise Warren\n\n\n## REPAIRER / INSPECTOR\n\nPeak Panel Restoration\n158 Works Road\nAspen Hollow, CO 80525\n(303) 555-0144\nInspector: Cody Eliis\n\n\n## PDR SUPPLEMENT & PLANNED ACCESS\n\nPolicy Reference:\nARC-A8669481\n\nClaim Reference:\nARC-26-739979\n\nRepair Quote #:\nQ-CO-35345\n\nPage:\n1 of 2\n\nDate:\n2026-06-15\n\n\n### CLAIM INFORMATION\n\nDate of Loss:\n2026-06-12\n\nTime of Loss:\n16:18\n\nLocation of Loss:\nJuniper Center uncovered lot,\nAspen Hollow, CO 80525\n\nLoss Narrative:\n\nMarcus reports hail striking the parked vehicle during the\nafternoon storm. Small dents are visible on the hood, roof\nand upper left-side panels. There was no vehicle contact\nand no police attendance. Storm timing is customer-\nreported, not an independent weather certification.\n\nDamaged Area/Description:\nHail dents on hood, roof, left front fender\nand left upper doors; glass intact.\n\nDrivable:\nYes\n\nInjuries:\nNone reported\n\nOther Driver:\nNot applicable\n\nLiability:\nNot determined\n\n\n### VEHICLE INFORMATION\n\nVehicle:\n2024 Mazda CX-5 2.5 S Preferred\n\nColor:\nRed\n\nVIN:\nJM3KFBCM6RA513124\n\nRegistration:\nCO91642\n\nUse:\nPersonal / commute\n\n\n### INSPECTION INFORMATION\n\nInspection Date:\n2026-06-15\n\nMileage:\n17,845\n\n\n#### QUALITATIVE AFFECTED ZONE MATRIX (OBSERVED)\n\nI = Impact Zone\n\nS = Surround Area\n\\- = No Damage Observed\n\n\n![IMPACT (1)](figures/9.2)\n\n\n![](figures/9.3)\n\n\nSURROLIND\n(S)\n\n\n![](figures/9.4)\n\n\nNONE\n(一)\n\n\n<table>\n<tr>\n<th>HOOD</th>\n<th>ROOF</th>\n<th>L FRONT FENDER</th>\n<th>L FRONT DOOR</th>\n<th>L REAR DOOR</th>\n<th>OTHER PANELS</th>\n<th>GLASS</th>\n</tr>\n<tr>\n<td>|</td>\n<td>I</td>\n<td>I</td>\n<td>I</td>\n<td>-</td>\n<td>-</td>\n<td>-</td>\n</tr>\n<tr>\n<td>S</td>\n<td>S</td>\n<td>S</td>\n<td>S</td>\n<td>S</td>\n<td>-</td>\n<td>-</td>\n</tr>\n<tr>\n<td>-</td>\n<td>-</td>\n<td>-</td>\n<td>-</td>\n<td>-</td>\n<td>-</td>\n<td>Intact</td>\n</tr>\n</table>\n\n\nPLANNED ACCESS (NOT YET PERFORMED)\n\n☑\n= Needed\n\n☐\n= Not Needed\n\n\n<table>\n<tr>\n<th></th>\n<th>HOOD</th>\n<th>ROOF</th>\n<th>L FRONT FENDER</th>\n<th>L FRONT DOOR</th>\n<th>L REAR DOOR</th>\n</tr>\n<tr>\n<td>Interior Trim Removal</td>\n<td>☑</td>\n<td>☑</td>\n<td>☑</td>\n<td>☑</td>\n<td>☑</td>\n</tr>\n<tr>\n<td>Handles / Hardware Removal</td>\n<td>☑</td>\n<td>☑</td>\n<td>☑</td>\n<td>☑</td>\n<td>☑</td>\n</tr>\n<tr>\n<td>Molding / Garnish Removal</td>\n<td>☑</td>\n<td>☑</td>\n<td>☑</td>\n<td>☑</td>\n<td>☑</td>\n</tr>\n<tr>\n<td>Lighting / Electrical Access</td>\n<td>☐</td>\n<td>☐</td>\n<td>☐</td>\n<td>☐</td>\n<td>☐</td>\n</tr>\n<tr>\n<td>Other Access (notes) Roof rail trim for tool access</td>\n<td>☑</td>\n<td>☑</td>\n<td>☐</td>\n<td>☐</td>\n<td>☐</td>\n</tr>\n</table>\n\n\nREPAIR OPERATIONS (PDR)\n\n\n<table>\n<tr>\n<th>Operation</th>\n<th>Labor</th>\n<th>Parts</th>\n<th>Line Total</th>\n</tr>\n<tr>\n<td>Hood paintless dent repair</td>\n<td>504.00</td>\n<td>0.00</td>\n<td>504.00</td>\n</tr>\n<tr>\n<td>Roof paintless dent repair</td>\n<td>661.50</td>\n<td>0.00</td>\n<td>661.50</td>\n</tr>\n<tr>\n<td>Left front fender PDR</td>\n<td>220.50</td>\n<td>0.00</td>\n<td>220.50</td>\n</tr>\n<tr>\n<td>Left door zone PDR</td>\n<td>357.00</td>\n<td>0.00</td>\n<td>357.00</td>\n</tr>\n<tr>\n<td>Access and trim removal</td>\n<td>168.00</td>\n<td>85.00</td>\n<td>253.00</td>\n</tr>\n<tr>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n</tr>\n</table>\n\n\n### FINANCIAL SUMMARY\n\n\n<table>\n<tr>\n<th>Item</th>\n<th>Amount</th>\n</tr>\n<tr>\n<td>Total Labor</td>\n<td>1,911.00</td>\n</tr>\n<tr>\n<td>Total Parts</td>\n<td>85.00</td>\n</tr>\n<tr>\n<td>Subtotal</td>\n<td>1,996.00</td>\n</tr>\n<tr>\n<td>Parts Tax (7.50%)</td>\n<td>6.38</td>\n</tr>\n<tr>\n<td>Gross Estimate</td>\n<td>2,002.38</td>\n</tr>\n<tr>\n<td>Deductible</td>\n<td>500.00</td>\n</tr>\n<tr>\n<td>Estimate Less Deductible</td>\n<td>1,502.38</td>\n</tr>\n</table>\n\n\n<table>\n<tr>\n<td colspan=\"2\">SCHEDULE / AUTHORIZATION</td>\n</tr>\n<tr>\n<td>Repair Status:</td>\n<td>Scheduled</td>\n</tr>\n<tr>\n<td>Repair Scheduled Dates:</td>\n<td>2026-06-17 to 2026-06-19</td>\n</tr>\n<tr>\n<td>Authorization Status:</td>\n<td>Pending</td>\n</tr>\n<tr>\n<td>Authorization Notes:</td>\n<td>Awaiting insurer approval.</td>\n</tr>\n<tr>\n<td>Estimate Valid Through:</td>\n<td>2026-07-15</td>\n</tr>\n</table>\n\n\n<!-- PageFooter: This supplement documents observed hail damage and planned PDR repair operations and access needs. No repair work has been performed. -->\n<!-- PageNumber: Page 1 of 2 -->\n<!-- PageBreak -->\n\n\n![PEAK PANEL RESTORATION PAINTLESS DENT REPAIR](figures/10.1)\n\n\n### PLANNED PDR QUALITY CONTROL WORKSHEET\n\n\n<table>\n<tr>\n<td>Form ID:</td>\n<td>PPR-PDR-QC-02</td>\n</tr>\n<tr>\n<td>Revision:</td>\n<td>1.0</td>\n</tr>\n<tr>\n<td>Date:</td>\n<td>06/15/2026</td>\n</tr>\n</table>\n\n\n## REFERENCE\n\nPolicy / Member\n\nARC-A8669481\n\n\n## Claim Reference\n\nARC-26-739979\n\n\n## Insured\n\nMarcus Coleman\n304 Linden Terrace\nAspen Hollow, CO 80525\n(303) 555-0104\nmarcus.coleman@example.com\n\n\n## Vehicle\n\n2024 Mazda CX-5\n2.5 S Preferred\n\nRed\n\nVIN: JM3KFBCM6RA513124\n\nReg: CO91642\n\nUse: Personal / commute\n\n\n## Loss Information\n\nDate: 06/12/2026\n\nTime: 16:18\n\nLocation: Juniper Center\nuncovered lot,\nAspen Hollow, CO 80525\n\n\n## Inspection\n\nDate: 06/15/2026\n\nMileage: 17,845\n\nInspector: Cody Ellis\n\n\n## Repair Status\n\nScheduled\n\nREPAIR SCHEDULE (PLANNED)\n\n\n<table>\n<tr>\n<td>Start Date:</td>\n<td>06/17/2026</td>\n</tr>\n<tr>\n<td>End Date:</td>\n<td>06/19/2026</td>\n</tr>\n<tr>\n<td>Technician Team:</td>\n<td>TBD</td>\n</tr>\n</table>\n\n\n<table>\n<tr>\n<td colspan=\"6\">AFFECTED PANELS / REPAIR PLAN</td>\n</tr>\n<tr>\n<th>Panel / Area</th>\n<th>Repair Status</th>\n<th>Completion Status</th>\n<th>Repaired Count</th>\n<th>100% Repaired</th>\n<th>Completed Observations</th>\n</tr>\n<tr>\n<td>Hood</td>\n<td>Scheduled</td>\n<td>Pending</td>\n<td></td>\n<td></td>\n<td></td>\n</tr>\n<tr>\n<td>Roof</td>\n<td>Scheduled</td>\n<td>Pending</td>\n<td></td>\n<td></td>\n<td></td>\n</tr>\n<tr>\n<td>Left Fender</td>\n<td>Scheduled</td>\n<td>Pending</td>\n<td></td>\n<td></td>\n<td></td>\n</tr>\n<tr>\n<td>Left Door</td>\n<td>Scheduled</td>\n<td>Pending</td>\n<td></td>\n<td></td>\n<td></td>\n</tr>\n</table>\n\n\n<table>\n<tr>\n<th colspan=\"3\">PLANNED PDR QUALITY CONTROL CHECKS</th>\n<th colspan=\"2\">Result</th>\n<th rowspan=\"2\">Technician Initials</th>\n</tr>\n<tr>\n<th>Check / Test</th>\n<th>Method / Reference</th>\n<th>Status</th>\n<th>Pass</th>\n<th>Fail</th>\n</tr>\n<tr>\n<td>Hood reflection check</td>\n<td>LED board reflection (pre-repair plan)</td>\n<td>Pending</td>\n<td>☐</td>\n<td>☐</td>\n<td></td>\n</tr>\n<tr>\n<td>Roof line check</td>\n<td>LED board reflection (pre-repair plan)</td>\n<td>Pending</td>\n<td>☐</td>\n<td>☐</td>\n<td></td>\n</tr>\n<tr>\n<td>Trim reinstallation check</td>\n<td>Fit / alignment verification (planned)</td>\n<td>Pending</td>\n<td>☐</td>\n<td>☐</td>\n<td></td>\n</tr>\n<tr>\n<td>Door edge check</td>\n<td>Edge alignment verification (planned)</td>\n<td>Pending</td>\n<td>☐</td>\n<td>☐</td>\n<td></td>\n</tr>\n</table>\n\n\n<table>\n<tr>\n<td colspan=\"5\">PLANNED SCOPE OF WORK</td>\n</tr>\n<tr>\n<th>Line</th>\n<th>Operation / Description</th>\n<th>Labor</th>\n<th>Parts</th>\n<th>Total</th>\n</tr>\n<tr>\n<td>1</td>\n<td>Hood paintless dent repair</td>\n<td>504.00</td>\n<td>-</td>\n<td>504.00</td>\n</tr>\n<tr>\n<td>2</td>\n<td>Roof paintless dent repair</td>\n<td>661.50</td>\n<td>-</td>\n<td>661.50</td>\n</tr>\n<tr>\n<td>3</td>\n<td>Left front fender PDR</td>\n<td>220.50</td>\n<td>-</td>\n<td>220.50</td>\n</tr>\n<tr>\n<td>4</td>\n<td>Left door zone PDR</td>\n<td>357.00</td>\n<td>-</td>\n<td>357.00</td>\n</tr>\n<tr>\n<td>5</td>\n<td>Access and trim removal</td>\n<td>168.00</td>\n<td>85.00</td>\n<td>253.00</td>\n</tr>\n<tr>\n<td colspan=\"2\">SUBTOTAL</td>\n<td colspan=\"2\"></td>\n<td>1,996.00</td>\n</tr>\n<tr>\n<td colspan=\"2\">Tax on parts @ 7.5%</td>\n<td>Parts Taxable Base:</td>\n<td>85.00</td>\n<td>6.38</td>\n</tr>\n<tr>\n<td colspan=\"4\">GROSS ESTIMATE</td>\n<td>2,002.38</td>\n</tr>\n</table>\n\n\n<table>\n<tr>\n<td colspan=\"2\">COST SUMMARY</td>\n</tr>\n<tr>\n<td>Reference / Quote #:</td>\n<td>Q-CO-35345</td>\n</tr>\n<tr>\n<td>Gross Estimate (incl. tax):</td>\n<td>2,002.38</td>\n</tr>\n<tr>\n<td>Customer Deductible:</td>\n<td>500.00</td>\n</tr>\n<tr>\n<td>ESTIMATED REPAIR LESS DEDUCTIBLE:</td>\n<td>1,502.38</td>\n</tr>\n</table>\n\n\n<table>\n<tr>\n<td colspan=\"2\">AUTHORIZATION</td>\n</tr>\n<tr>\n<td>Repair Authorization Status:</td>\n<td>Pending</td>\n</tr>\n<tr>\n<td>Authorized By:</td>\n<td>-</td>\n</tr>\n<tr>\n<td>Date / Time:</td>\n<td>-</td>\n</tr>\n</table>\n\n\n<table>\n<tr>\n<td colspan=\"2\">PAYMENT STATUS</td>\n</tr>\n<tr>\n<td>Payment Status:</td>\n<td>Pending</td>\n</tr>\n<tr>\n<td>Payment Method:</td>\n<td>-</td>\n</tr>\n<tr>\n<td>Transaction / Check #:</td>\n<td>-</td>\n</tr>\n</table>\n\n\nNOTES\n\n<!-- PageNumber: Page 2 of 2 -->\n<!-- PageBreak -->\n\n\n![PEAK PANEL RESTORATION](figures/11.1)\n\n\nPeak Panel Restoration\n158 Works Road\nAspen Hollow, CO 80525\n(303) 555-0144\n\n\n## WORKSHOP DAMAGE INSPECTION SHEET\n\nClaim Reference:\n\nARC-26-739979\n\nInspection Date:\n06/15/2026\n\nRepair Status:\nScheduled\n\nInspector:\nCody Ellis\n\nInsured Name:\n\nMarcus Coleman\n\nVehicle:\n\n2024 Mazda CX-5 2.5 S Preferred\n\nColor:\nRed\n\nVIN:\nJM3KFBCM6RA513124\n\nRegistration:\nCO91642\n\nUse:\nPersonal / commute\n\nOdometer (mi):\n17,845\n\n\n![](figures/11.2)\n\n\n![](figures/11.3)\n\n\n![](figures/11.4)\n\n\n![](figures/11.5)\n\n\n<table>\n<tr>\n<td>Area / Panel</td>\n<td>Damage Observations</td>\n</tr>\n<tr>\n<td>Hood</td>\n<td>Numerous shallow hail dents across hood skin.</td>\n</tr>\n<tr>\n<td>Roof</td>\n<td>Scattered shallow hail dents across roof panel.</td>\n</tr>\n<tr>\n<td>Left Front Fender</td>\n<td>Multiple shallow hail dents on fender panel.</td>\n</tr>\n<tr>\n<td>Left Upper Door(s)</td>\n<td>Light to moderate hail dents on upper door skins.</td>\n</tr>\n<tr>\n<td>Glass</td>\n<td>Glass intact. No chips or cracks observed.</td>\n</tr>\n<tr>\n<td>Drivability</td>\n<td>Vehicle starts, runs and drives normally.</td>\n</tr>\n</table>\n\n\nDamage Summary: Hail dents on hood, roof, left front fender and left upper doors; glass intact.\n\nEstimate Reference:\nQ-CO-35345\n\nRepair Recommendation:\nPaintless Dent Repair (PDR)\n\nNotes: Damage consistent with hail event. No prior repairs detected in the inspected areas.\n\n<!-- PageNumber: Page 1 of 1 -->\n<!-- PageBreak -->\n\n☐\nCORRECTED (if checked)\n\nLENDER'S name, street address, city or town, state or province, country, ZIP or\nforeign postal code, and telephone no.\nFront Range Secured Lending Co.\n7600 Alpine Center Drive\nFort Collins, CO 80525\n(970) 555-0164\n\nOMB No. 1545-0877\nForm\n1099-A\n(Rev. April 2025)\n\nFor calendar year\n2025\n\n\n## Acquisition or Abandonment of Secured Property\n\nLENDER'S TIN\n97-***-8456\n\nBORROWER'S TIN\n\\*\\**-\\*\\*-8456\n\n1 Date of lender's acquisition or\nknowledge of abandonment\n09/30/2025\n\n2 Balance of principal\noutstanding\n$\n12,480.00\n\nBORROWER'S name\nMarcus Coleman\nStreet address (including apt. no.)\n304 Linden Terrace\nCity or town, state or province, country, and ZIP or foreign postal code\nAspen Hollow, CO 80525\n\nAccount number (see instructions)\nSYN-CO-1099A-04\n\n3\n\n4 Fair market value of property\n$\n9,775.00\n\n5 If checked, the borrower was personally liable for repayment\nof the debt\n☐\n\n6 Description of property\n2016 Jeep Cherokee Latitude, black\nTraining asset ref: SYN-CO-1099A-04\n\n\n### Copy B For Borrower\n\nThis is important tax\ninformation and is being\nfurnished to the IRS. If\nyou are required to file a\nreturn, a negligence\npenalty or other\nsanction may be\nimposed on you if\ntaxable income results\nfrom this transaction\nand the IRS determines\nthat it has not been\nreported.\n\n<!-- PageFooter: Form 1099-A (Rev. 4-2025) -->\n<!-- PageFooter: (keep for your records) -->\n<!-- PageFooter: www.irs.gov/Form1099A -->\n<!-- PageFooter: Department of the Treasury - Internal Revenue Service -->\n",
+        "kind": "document",
+        "startPageNumber": 1,
+        "endPageNumber": 12,
+        "unit": "inch",
+        "pages": [
+          {
+            "pageNumber": 1,
+            "angle": -0.1069,
+            "width": 11,
+            "height": 8.5
+          },
+          {
+            "pageNumber": 2,
+            "angle": 0,
+            "width": 8.5,
+            "height": 11
+          },
+          {
+            "pageNumber": 3,
+            "angle": 0,
+            "width": 8.5,
+            "height": 11
+          },
+          {
+            "pageNumber": 4,
+            "angle": 0,
+            "width": 8.5,
+            "height": 11
+          },
+          {
+            "pageNumber": 5,
+            "angle": 0,
+            "width": 8.5,
+            "height": 11
+          },
+          {
+            "pageNumber": 6,
+            "angle": 0,
+            "width": 8.5,
+            "height": 11
+          },
+          {
+            "pageNumber": 7,
+            "angle": 0.01605272,
+            "width": 8.5,
+            "height": 11
+          },
+          {
+            "pageNumber": 8,
+            "angle": -0.1912,
+            "width": 8.5,
+            "height": 11
+          },
+          {
+            "pageNumber": 9,
+            "angle": 0,
+            "width": 11,
+            "height": 8.5
+          },
+          {
+            "pageNumber": 10,
+            "angle": 0,
+            "width": 11,
+            "height": 8.5
+          },
+          {
+            "pageNumber": 11,
+            "angle": 0.09200316,
+            "width": 11,
+            "height": 8.5
+          },
+          {
+            "pageNumber": 12,
+            "angle": 0,
+            "width": 8.5,
+            "height": 11
+          }
+        ],
+        "segments": [
+          {
+            "span": {
+              "offset": 0,
+              "length": 400
+            },
+            "segmentId": "segment1",
+            "startPageNumber": 1,
+            "endPageNumber": 1,
+            "category": "id_document",
+            "confidence": 0.99
+          },
+          {
+            "span": {
+              "offset": 400,
+              "length": 5452
+            },
+            "segmentId": "segment2",
+            "startPageNumber": 2,
+            "endPageNumber": 3,
+            "category": "other",
+            "confidence": 0.98
+          },
+          {
+            "span": {
+              "offset": 5852,
+              "length": 2230
+            },
+            "segmentId": "segment3",
+            "startPageNumber": 4,
+            "endPageNumber": 4,
+            "category": "other",
+            "confidence": 0.97
+          },
+          {
+            "span": {
+              "offset": 8082,
+              "length": 3283
+            },
+            "segmentId": "segment4",
+            "startPageNumber": 5,
+            "endPageNumber": 5,
+            "category": "other",
+            "confidence": 0.96
+          },
+          {
+            "span": {
+              "offset": 11365,
+              "length": 5194
+            },
+            "segmentId": "segment5",
+            "startPageNumber": 6,
+            "endPageNumber": 7,
+            "category": "repair_estimate",
+            "confidence": 0.99
+          },
+          {
+            "span": {
+              "offset": 16559,
+              "length": 1103
+            },
+            "segmentId": "segment6",
+            "startPageNumber": 8,
+            "endPageNumber": 8,
+            "category": "statement",
+            "confidence": 0.99
+          },
+          {
+            "span": {
+              "offset": 17662,
+              "length": 8702
+            },
+            "segmentId": "segment7",
+            "startPageNumber": 9,
+            "endPageNumber": 10,
+            "category": "other",
+            "confidence": 0.88
+          },
+          {
+            "span": {
+              "offset": 26364,
+              "length": 1452
+            },
+            "segmentId": "segment8",
+            "startPageNumber": 11,
+            "endPageNumber": 11,
+            "category": "other",
+            "confidence": 0.95
+          },
+          {
+            "span": {
+              "offset": 27816,
+              "length": 1507
+            },
+            "segmentId": "segment9",
+            "startPageNumber": 12,
+            "endPageNumber": 12,
+            "category": "tax_1099a"
+          }
+        ],
+        "metadata": {
+          "contentType": "application/pdf",
+          "pageCount": "12"
+        },
+        "analyzerId": "lab664_cache_20261103_195602_router",
+        "mimeType": "application/pdf"
+      },
+      {
+        "path": "input1/segment1",
+        "category": "id_document",
+        "markdown": "Alpine Mile Club\n\nMembership Assistance\nAvailable 24/7\n\nMEMBERSHIP NUMBER\nMR-748312\n\nMEMBER NAME\nMarcus Coleman\n\nVALID FROM\n11/14/2025\n\nVALID UNTIL\n11/14/2026\n\nVEHICLE\n2024 Mazda CX-5 2.5 S Preferred\n\nCOLOR\nRed\n\nMEMBER ADDRESS\n304 Linden Terrace\nAspen Hollow, CO 80525\n\nRoadside assistance is available for the\nmember, vehicle and immediate family.\n\nMember\n",
+        "fields": {
+          "CountryRegion": {
+            "type": "string"
+          },
+          "Region": {
+            "type": "string"
+          },
+          "DocumentNumber": {
+            "type": "string",
+            "valueString": "MR-748312",
+            "spans": [
+              {
+                "offset": 74,
+                "length": 9
+              }
+            ],
+            "confidence": 0.93,
+            "source": "D(1,3.8162,3.2210,5.4329,3.2208,5.4329,3.4864,3.8162,3.4866)"
+          },
+          "DocumentDiscriminator": {
+            "type": "string",
+            "confidence": 0.816
+          },
+          "FirstName": {
+            "type": "string",
+            "valueString": "Marcus",
+            "spans": [
+              {
+                "offset": 97,
+                "length": 6
+              }
+            ],
+            "confidence": 0.771,
+            "source": "D(1,6.7783,3.2051,7.8199,3.2044,7.8199,3.4694,6.7783,3.4673)"
+          },
+          "LastName": {
+            "type": "string",
+            "valueString": "Coleman",
+            "spans": [
+              {
+                "offset": 104,
+                "length": 7
+              }
+            ],
+            "confidence": 0.783,
+            "source": "D(1,7.9037,3.2043,9.1792,3.2011,9.1792,3.4636,7.9037,3.4693)"
+          },
+          "Address": {
+            "type": "string",
+            "valueString": "304 Linden Terrace Aspen Hollow, CO 80525",
+            "spans": [
+              {
+                "offset": 227,
+                "length": 18
+              },
+              {
+                "offset": 246,
+                "length": 22
+              }
+            ],
+            "confidence": 0.611,
+            "source": "D(1,1.1070,6.3667,3.6926,6.3589,3.6934,6.6212,1.1078,6.6291);D(1,1.1019,6.7400,4.3183,6.7055,4.3216,7.0068,1.1051,7.0413)"
+          },
+          "BirthDate": {
+            "type": "date",
+            "confidence": 0.854
+          },
+          "ExpirationDate": {
+            "type": "date",
+            "valueDate": "2026-11-14",
+            "spans": [
+              {
+                "offset": 148,
+                "length": 10
+              }
+            ],
+            "confidence": 0.898,
+            "source": "D(1,6.8052,4.2589,8.3467,4.2521,8.3467,4.5034,6.8052,4.5076)"
+          },
+          "IssueDate": {
+            "type": "date",
+            "valueDate": "2025-11-14",
+            "spans": [
+              {
+                "offset": 124,
+                "length": 10
+              }
+            ],
+            "confidence": 0.919,
+            "source": "D(1,3.8323,4.2593,5.3926,4.2583,5.3926,4.5073,3.8323,4.5083)"
+          },
+          "EyeColor": {
+            "type": "string",
+            "confidence": 0.816
+          },
+          "HairColor": {
+            "type": "string",
+            "confidence": 0.816
+          },
+          "Height": {
+            "type": "string",
+            "confidence": 0.816
+          },
+          "Weight": {
+            "type": "string",
+            "confidence": 0.816
+          },
+          "Sex": {
+            "type": "string",
+            "confidence": 0.816
+          },
+          "Endorsements": {
+            "type": "string",
+            "confidence": 0.816
+          },
+          "Restrictions": {
+            "type": "string",
+            "confidence": 0.816
+          },
+          "PersonalNumber": {
+            "type": "string",
+            "confidence": 0.816
+          },
+          "PlaceOfBirth": {
+            "type": "string",
+            "confidence": 0.816
+          },
+          "VehicleClass": {
+            "type": "string",
+            "confidence": 0.816
+          },
+          "Category": {
+            "type": "string",
+            "confidence": 0.816
+          }
+        },
+        "kind": "document",
+        "startPageNumber": 1,
+        "endPageNumber": 1,
+        "unit": "inch",
+        "pages": [
+          {
+            "pageNumber": 1,
+            "angle": -0.1069,
+            "width": 11,
+            "height": 8.5
+          }
+        ],
+        "metadata": {
+          "contentType": "application/pdf",
+          "pageCount": "1"
+        },
+        "analyzerId": "prebuilt-idDocument.generic"
+      },
+      {
+        "path": "input1/segment5",
+        "category": "repair_estimate",
+        "markdown": "\n## REPAIR ASSESSMENT\n\nPeak Panel Restoration\n158 Works Road, Aspen Hollow, CO 80525\n(303) 555-0144\n\nQuote Reference:\n\nQ-CO-35345\n\nInsurer Contact:\nAspen Ridge Cooperative\n452 Civic Lane, Aspen Hollow, CO 80525\n(303) 555-0124\nAdjuster: Elise Warren\n\n\n<table>\n<tr>\n<td>Customer:</td>\n<td>Marcus Coleman</td>\n</tr>\n<tr>\n<td>Address:</td>\n<td>304 Linden Terrace, Aspen Hollow, CO 80525</td>\n</tr>\n<tr>\n<td>Phone:</td>\n<td>(303) 555-0104</td>\n</tr>\n<tr>\n<td>Email:</td>\n<td>marcus.coleman@example.com</td>\n</tr>\n<tr>\n<td>Claim Reference:</td>\n<td>ARC-26-739979</td>\n</tr>\n<tr>\n<td>Policy Reference:</td>\n<td>ARC-A8669481</td>\n</tr>\n<tr>\n<td>Vehicle:</td>\n<td>2024 Mazda CX-5 2.5 S Preferred</td>\n</tr>\n<tr>\n<td>Color:</td>\n<td>Red</td>\n</tr>\n<tr>\n<td>VIN:</td>\n<td>JM3KFBCM6RA513124</td>\n</tr>\n<tr>\n<td>Registration:</td>\n<td>CO91642</td>\n</tr>\n<tr>\n<td>Use:</td>\n<td>Personal / commute</td>\n</tr>\n<tr>\n<td>Odometer:</td>\n<td>17,845</td>\n</tr>\n<tr>\n<td>Inspection Date:</td>\n<td>06/15/2026</td>\n</tr>\n<tr>\n<td>Inspector:</td>\n<td>Cody Ellis</td>\n</tr>\n</table>\n\n\n<table>\n<tr>\n<th rowspan=\"2\">Operation</th>\n<th rowspan=\"2\">Quantity</th>\n<th rowspan=\"2\">Labor Hours</th>\n<th colspan=\"3\">Amount (USD)</th>\n</tr>\n<tr>\n<th>Labor</th>\n<th>Parts</th>\n<th>Line Total</th>\n</tr>\n<tr>\n<td>Hood paintless dent repair</td>\n<td>1</td>\n<td>4.8</td>\n<td>504.00</td>\n<td>0.00</td>\n<td>504.00</td>\n</tr>\n<tr>\n<td>Roof paintless dent repair</td>\n<td>1</td>\n<td>6.3</td>\n<td>661.50</td>\n<td>0.00</td>\n<td>661.50</td>\n</tr>\n<tr>\n<td>Left front fender PDR</td>\n<td>1</td>\n<td>2.1</td>\n<td>220.50</td>\n<td>0.00</td>\n<td>220.50</td>\n</tr>\n<tr>\n<td>Left door zone PDR</td>\n<td>1</td>\n<td>3.4</td>\n<td>357.00</td>\n<td>0.00</td>\n<td>357.00</td>\n</tr>\n<tr>\n<td>Access and trim removal</td>\n<td>1</td>\n<td>1.6</td>\n<td>168.00</td>\n<td>85.00</td>\n<td>253.00</td>\n</tr>\n</table>\n\n\nEstimate Notes\nLabor rate: 105.00 per hour.\nAll repairs will be completed in accordance with\nmanufacturer procedures and I-CAR standards.\nThis estimate is valid for 30 days from the\ninspection date.\n\nRepair Details\n\n\n<table>\n<tr>\n<td>Repair Status:</td>\n<td>Scheduled</td>\n</tr>\n<tr>\n<td>Scheduled Start:</td>\n<td>06/17/2026</td>\n</tr>\n<tr>\n<td>Deductible:</td>\n<td>500.00</td>\n</tr>\n</table>\n\n\nEstimated Repair Less Deductible:\n1,502.38\n\n\n<table>\n<tr>\n<td>Subtotal</td>\n<td>1,996.00</td>\n</tr>\n<tr>\n<td>Taxable Parts</td>\n<td>85.00</td>\n</tr>\n<tr>\n<td>Tax on Parts (7.50%)</td>\n<td>6.38</td>\n</tr>\n<tr>\n<td>ESTIMATE TOTAL (USD)</td>\n<td>2,002.38</td>\n</tr>\n</table>\n\n\nInvoice/payment status: Pending\n\n<!-- PageNumber: Page 1 of 2 -->\n<!-- PageBreak -->\n\n<!-- PageHeader: PEAK PANEL RESTORATION 158 Works Road Aspen Hollow, CO 80525 Phone: (303) 555-0144 -->\n<!-- PageHeader: PRELIMINARY REPAIR ASSESSMENT AND ESTIMATE -->\n<!-- PageHeader: Estimate Reference: Q-CO-35345 -->\n<!-- PageHeader: Date of Inspection: 2026-06-15 -->\n<!-- PageNumber: Page: 2 of 2 -->\n\nCUSTOMER\nMarcus Coleman\n304 Linden Terrace\nAspen Hollow, CO 80525\nPhone: (303) 555-0104\nEmail: marcus.coleman@example.com\n\nVEHICLE\n2024 Mazda CX-5 2.5 S Preferred\n\nColor: Red\n\nVIN: JM3KFBCM6RA513124\n\nLicense: CO91642\nUse: Personal / commute\nOdometer: 17,845\n\nCLAIM AND INSURER\n\nClaim Reference: ARC-26-739979\nPolicy Reference: ARC-A8669481\n\nAspen Ridge Cooperative\n452 Civic Lane\nAspen Hollow, CO 80525\nPhone: (303) 555-0124\nAdjuster: Elise Warren\n\n\n## PAINTLESS DENT REPAIR (PDR) ZONE AND ACCESS CHECKLIST\n\n\n<table>\n<tr>\n<th>PANEL / AREA</th>\n<th>ZONE DESCRIPTION</th>\n<th>ACCESS / METHOD</th>\n<th>ACCESS NOTES</th>\n<th>TECHNICIAN INITIALS</th>\n</tr>\n<tr>\n<td>Hood</td>\n<td>Front center and leading edge</td>\n<td>Top-side access</td>\n<td>Access through engine bay; remove cowl cover as needed</td>\n<td></td>\n</tr>\n<tr>\n<td>Roof</td>\n<td>Center panel</td>\n<td>Top-side access</td>\n<td>Interior headliner drop for full access</td>\n<td></td>\n</tr>\n<tr>\n<td>Left Front Fender</td>\n<td>Upper front wheel arch and crown</td>\n<td>Top-side and inner structure access</td>\n<td>Wheel well liner removal required</td>\n<td></td>\n</tr>\n<tr>\n<td>Left Upper Door</td>\n<td>Between beltline and window frame</td>\n<td>Top-side access</td>\n<td>Glass lowered for tool entry; interior trim pull as needed</td>\n<td></td>\n</tr>\n</table>\n\n\n<table>\n<tr>\n<td colspan=\"2\">ESTIMATE SUMMARY</td>\n</tr>\n<tr>\n<td>Taxable Parts</td>\n<td>85.00</td>\n</tr>\n<tr>\n<td>Tax on Parts (7.50%)</td>\n<td>6.38</td>\n</tr>\n<tr>\n<td>Subtotal</td>\n<td>1,996.00</td>\n</tr>\n<tr>\n<td>Total</td>\n<td>2,002.38</td>\n</tr>\n<tr>\n<td>Deductible</td>\n<td>500.00</td>\n</tr>\n<tr>\n<td>Estimate Less Deductible</td>\n<td>1,502.38</td>\n</tr>\n</table>\n\n\n<table>\n<tr>\n<td colspan=\"3\">REPAIR SCHEDULING</td>\n</tr>\n<tr>\n<th>Repair Start Date</th>\n<th>Repair End Date</th>\n<th>Repair Status</th>\n</tr>\n<tr>\n<td>06/17/2026</td>\n<td>06/19/2026</td>\n<td>Scheduled</td>\n</tr>\n</table>\n\n\nESTIMATED LABOR RATE: $105.00 / HR\nINSPECTOR: Cody Ellis\nPREPARED BY: Cody Ellis\n\nThis asseesment is provisional and based on conditions observed at the time of inspection. Additional\ndamage or concealed conditions may be identified during repair. This document is an estimate only and\nnot a payment authorization.\n\n<!-- PageNumber: Page 2 of 2 -->\n<!-- PageBreak -->\n\n",
+        "fields": {
+          "AmountDue": {
+            "type": "object",
+            "valueObject": {
+              "Amount": {
+                "type": "number",
+                "valueNumber": 1502.38,
+                "spans": [
+                  {
+                    "offset": 2277,
+                    "length": 8
+                  }
+                ],
+                "confidence": 0.904,
+                "source": "D(6,3.0464,9.1201,3.4386,9.1201,3.4386,9.2705,3.0464,9.2705)"
+              },
+              "CurrencyCode": {
+                "type": "string",
+                "valueString": "USD",
+                "spans": [
+                  {
+                    "offset": 1182,
+                    "length": 12
+                  },
+                  {
+                    "offset": 2456,
+                    "length": 20
+                  }
+                ],
+                "confidence": 0.638,
+                "source": "D(6,5.7269,4.5245,6.4539,4.5219,6.4545,4.6866,5.7275,4.6892);D(6,4.2958,8.0228,5.9249,8.0408,5.9226,8.2512,4.2935,8.2332)"
+              }
+            }
+          },
+          "BalanceForward": {
+            "type": "object",
+            "valueObject": {
+              "Amount": {
+                "type": "number",
+                "confidence": 0.929
+              },
+              "CurrencyCode": {
+                "type": "string",
+                "confidence": 0.849
+              }
+            }
+          },
+          "BillingAddress": {
+            "type": "string",
+            "confidence": 0.8
+          },
+          "BillingAddressRecipient": {
+            "type": "string",
+            "confidence": 0.8
+          },
+          "CountryRegion": {
+            "type": "string",
+            "valueString": "US",
+            "spans": [
+              {
+                "offset": 46,
+                "length": 38
+              }
+            ],
+            "confidence": 0.715,
+            "source": "D(6,1.3167,1.8218,3.3934,1.8287,3.3929,1.9728,1.3162,1.9659)"
+          },
+          "CustomerAddress": {
+            "type": "string",
+            "valueString": "304 Linden Terrace, Aspen Hollow, CO 80525",
+            "spans": [
+              {
+                "offset": 340,
+                "length": 42
+              }
+            ],
+            "confidence": 0.709,
+            "source": "D(6,5.0291,1.7550,7.1179,1.7371,7.1191,1.8792,5.0303,1.8971)"
+          },
+          "CustomerAddressRecipient": {
+            "type": "string",
+            "valueString": "Marcus Coleman",
+            "spans": [
+              {
+                "offset": 287,
+                "length": 14
+              }
+            ],
+            "confidence": 0.895,
+            "source": "D(6,5.0259,1.5792,5.8562,1.5778,5.8564,1.6990,5.0261,1.7004)"
+          },
+          "CustomerId": {
+            "type": "string",
+            "confidence": 0.8
+          },
+          "CustomerName": {
+            "type": "string",
+            "valueString": "Marcus Coleman",
+            "spans": [
+              {
+                "offset": 287,
+                "length": 14
+              }
+            ],
+            "confidence": 0.895,
+            "source": "D(6,5.0259,1.5792,5.8562,1.5778,5.8564,1.6990,5.0261,1.7004)"
+          },
+          "CustomerTaxId": {
+            "type": "string",
+            "confidence": 0.8
+          },
+          "DueDate": {
+            "type": "date",
+            "confidence": 0.829
+          },
+          "InvoiceDate": {
+            "type": "date",
+            "valueDate": "2026-06-15",
+            "spans": [
+              {
+                "offset": 975,
+                "length": 10
+              }
+            ],
+            "confidence": 0.501,
+            "source": "D(6,5.0593,3.9539,5.6030,3.9597,5.6030,4.0912,5.0593,4.0832)"
+          },
+          "InvoiceId": {
+            "type": "string",
+            "valueString": "Q-CO-35345",
+            "spans": [
+              {
+                "offset": 119,
+                "length": 10
+              }
+            ],
+            "confidence": 0.748,
+            "source": "D(6,1.4692,2.8146,2.2498,2.8160,2.2495,2.9735,1.4689,2.9721)"
+          },
+          "LineItems": {
+            "type": "array",
+            "valueArray": [
+              {
+                "type": "object",
+                "valueObject": {
+                  "Date": {
+                    "type": "date",
+                    "confidence": 0.972
+                  },
+                  "Description": {
+                    "type": "string",
+                    "valueString": "Hood paintless dent repair",
+                    "spans": [
+                      {
+                        "offset": 1276,
+                        "length": 26
+                      }
+                    ],
+                    "confidence": 0.718,
+                    "source": "D(6,1.2711,5.1034,2.4249,5.1111,2.4238,5.2756,1.2700,5.2679)"
+                  },
+                  "ProductCode": {
+                    "type": "string",
+                    "confidence": 0.972
+                  },
+                  "Quantity": {
+                    "type": "number",
+                    "valueNumber": 1,
+                    "spans": [
+                      {
+                        "offset": 1312,
+                        "length": 1
+                      }
+                    ],
+                    "confidence": 0.526,
+                    "source": "D(6,3.7208,5.1278,3.7852,5.1310,3.7852,5.2498,3.7208,5.2482)"
+                  },
+                  "QuantityUnit": {
+                    "type": "string",
+                    "confidence": 0.972
+                  },
+                  "TaxAmount": {
+                    "type": "object",
+                    "valueObject": {
+                      "Amount": {
+                        "type": "number",
+                        "confidence": 0.92
+                      },
+                      "CurrencyCode": {
+                        "type": "string",
+                        "confidence": 0.972
+                      }
+                    }
+                  },
+                  "TaxRate": {
+                    "type": "number",
+                    "confidence": 0.92
+                  },
+                  "TotalAmount": {
+                    "type": "object",
+                    "valueObject": {
+                      "Amount": {
+                        "type": "number",
+                        "valueNumber": 504,
+                        "spans": [
+                          {
+                            "offset": 1366,
+                            "length": 6
+                          }
+                        ],
+                        "confidence": 0.836,
+                        "source": "D(6,6.9229,5.1170,7.2798,5.1145,7.2798,5.2548,6.9229,5.2535)"
+                      },
+                      "CurrencyCode": {
+                        "type": "string",
+                        "valueString": "USD",
+                        "spans": [
+                          {
+                            "offset": 1182,
+                            "length": 12
+                          }
+                        ],
+                        "confidence": 0.689,
+                        "source": "D(6,5.7269,4.5245,6.4539,4.5219,6.4545,4.6866,5.7275,4.6892)"
+                      }
+                    }
+                  },
+                  "UnitPrice": {
+                    "type": "object",
+                    "valueObject": {
+                      "Amount": {
+                        "type": "number",
+                        "valueNumber": 504,
+                        "spans": [
+                          {
+                            "offset": 1336,
+                            "length": 6
+                          }
+                        ],
+                        "confidence": 0.817,
+                        "source": "D(6,5.0552,5.1209,5.4121,5.1191,5.4121,5.2543,5.0552,5.2553)"
+                      },
+                      "CurrencyCode": {
+                        "type": "string",
+                        "valueString": "USD",
+                        "spans": [
+                          {
+                            "offset": 1182,
+                            "length": 12
+                          }
+                        ],
+                        "confidence": 0.689,
+                        "source": "D(6,5.7269,4.5245,6.4539,4.5219,6.4545,4.6866,5.7275,4.6892)"
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "valueObject": {
+                  "Date": {
+                    "type": "date",
+                    "confidence": 0.972
+                  },
+                  "Description": {
+                    "type": "string",
+                    "valueString": "Roof paintless dent repair",
+                    "spans": [
+                      {
+                        "offset": 1393,
+                        "length": 26
+                      }
+                    ],
+                    "confidence": 0.718,
+                    "source": "D(6,1.2669,5.4685,2.4085,5.4775,2.4072,5.6440,1.2656,5.6351)"
+                  },
+                  "ProductCode": {
+                    "type": "string",
+                    "confidence": 0.972
+                  },
+                  "Quantity": {
+                    "type": "number",
+                    "valueNumber": 1,
+                    "spans": [
+                      {
+                        "offset": 1429,
+                        "length": 1
+                      }
+                    ],
+                    "confidence": 0.547,
+                    "source": "D(6,3.7271,5.4893,3.7852,5.4859,3.7852,5.6042,3.7271,5.6091)"
+                  },
+                  "QuantityUnit": {
+                    "type": "string",
+                    "confidence": 0.972
+                  },
+                  "TaxAmount": {
+                    "type": "object",
+                    "valueObject": {
+                      "Amount": {
+                        "type": "number",
+                        "confidence": 0.92
+                      },
+                      "CurrencyCode": {
+                        "type": "string",
+                        "confidence": 0.972
+                      }
+                    }
+                  },
+                  "TaxRate": {
+                    "type": "number",
+                    "confidence": 0.92
+                  },
+                  "TotalAmount": {
+                    "type": "object",
+                    "valueObject": {
+                      "Amount": {
+                        "type": "number",
+                        "valueNumber": 661.5,
+                        "spans": [
+                          {
+                            "offset": 1483,
+                            "length": 6
+                          }
+                        ],
+                        "confidence": 0.858,
+                        "source": "D(6,6.9312,5.4764,7.2839,5.4781,7.2839,5.6174,6.9312,5.6139)"
+                      },
+                      "CurrencyCode": {
+                        "type": "string",
+                        "valueString": "USD",
+                        "spans": [
+                          {
+                            "offset": 1182,
+                            "length": 12
+                          }
+                        ],
+                        "confidence": 0.689,
+                        "source": "D(6,5.7269,4.5245,6.4539,4.5219,6.4545,4.6866,5.7275,4.6892)"
+                      }
+                    }
+                  },
+                  "UnitPrice": {
+                    "type": "object",
+                    "valueObject": {
+                      "Amount": {
+                        "type": "number",
+                        "valueNumber": 661.5,
+                        "spans": [
+                          {
+                            "offset": 1453,
+                            "length": 6
+                          }
+                        ],
+                        "confidence": 0.837,
+                        "source": "D(6,5.0635,5.4762,5.4121,5.4858,5.4121,5.6228,5.0635,5.6131)"
+                      },
+                      "CurrencyCode": {
+                        "type": "string",
+                        "valueString": "USD",
+                        "spans": [
+                          {
+                            "offset": 1182,
+                            "length": 12
+                          }
+                        ],
+                        "confidence": 0.689,
+                        "source": "D(6,5.7269,4.5245,6.4539,4.5219,6.4545,4.6866,5.7275,4.6892)"
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "valueObject": {
+                  "Date": {
+                    "type": "date",
+                    "confidence": 0.972
+                  },
+                  "Description": {
+                    "type": "string",
+                    "valueString": "Left front fender PDR",
+                    "spans": [
+                      {
+                        "offset": 1510,
+                        "length": 21
+                      }
+                    ],
+                    "confidence": 0.721,
+                    "source": "D(6,1.2584,5.8389,2.2288,5.8379,2.2290,5.9921,1.2586,5.9931)"
+                  },
+                  "ProductCode": {
+                    "type": "string",
+                    "confidence": 0.972
+                  },
+                  "Quantity": {
+                    "type": "number",
+                    "valueNumber": 1,
+                    "spans": [
+                      {
+                        "offset": 1541,
+                        "length": 1
+                      }
+                    ],
+                    "confidence": 0.684,
+                    "source": "D(6,3.7271,5.8496,3.7789,5.8503,3.7789,5.9685,3.7271,5.9678)"
+                  },
+                  "QuantityUnit": {
+                    "type": "string",
+                    "confidence": 0.972
+                  },
+                  "TaxAmount": {
+                    "type": "object",
+                    "valueObject": {
+                      "Amount": {
+                        "type": "number",
+                        "confidence": 0.92
+                      },
+                      "CurrencyCode": {
+                        "type": "string",
+                        "confidence": 0.972
+                      }
+                    }
+                  },
+                  "TaxRate": {
+                    "type": "number",
+                    "confidence": 0.92
+                  },
+                  "TotalAmount": {
+                    "type": "object",
+                    "valueObject": {
+                      "Amount": {
+                        "type": "number",
+                        "valueNumber": 220.5,
+                        "spans": [
+                          {
+                            "offset": 1595,
+                            "length": 6
+                          }
+                        ],
+                        "confidence": 0.834,
+                        "source": "D(6,6.9353,5.8383,7.2922,5.8388,7.2922,5.9785,6.9353,5.9779)"
+                      },
+                      "CurrencyCode": {
+                        "type": "string",
+                        "valueString": "USD",
+                        "spans": [
+                          {
+                            "offset": 1182,
+                            "length": 12
+                          }
+                        ],
+                        "confidence": 0.689,
+                        "source": "D(6,5.7269,4.5245,6.4539,4.5219,6.4545,4.6866,5.7275,4.6892)"
+                      }
+                    }
+                  },
+                  "UnitPrice": {
+                    "type": "object",
+                    "valueObject": {
+                      "Amount": {
+                        "type": "number",
+                        "valueNumber": 220.5,
+                        "spans": [
+                          {
+                            "offset": 1565,
+                            "length": 6
+                          }
+                        ],
+                        "confidence": 0.808,
+                        "source": "D(6,5.0593,5.8380,5.4121,5.8388,5.4121,5.9784,5.0593,5.9777)"
+                      },
+                      "CurrencyCode": {
+                        "type": "string",
+                        "valueString": "USD",
+                        "spans": [
+                          {
+                            "offset": 1182,
+                            "length": 12
+                          }
+                        ],
+                        "confidence": 0.689,
+                        "source": "D(6,5.7269,4.5245,6.4539,4.5219,6.4545,4.6866,5.7275,4.6892)"
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "valueObject": {
+                  "Date": {
+                    "type": "date",
+                    "confidence": 0.972
+                  },
+                  "Description": {
+                    "type": "string",
+                    "valueString": "Left door zone PDR",
+                    "spans": [
+                      {
+                        "offset": 1622,
+                        "length": 18
+                      }
+                    ],
+                    "confidence": 0.718,
+                    "source": "D(6,1.2465,6.2060,2.1354,6.2022,2.1361,6.3565,1.2472,6.3603)"
+                  },
+                  "ProductCode": {
+                    "type": "string",
+                    "confidence": 0.972
+                  },
+                  "Quantity": {
+                    "type": "number",
+                    "valueNumber": 1,
+                    "spans": [
+                      {
+                        "offset": 1650,
+                        "length": 1
+                      }
+                    ],
+                    "confidence": 0.56,
+                    "source": "D(6,3.7167,6.2144,3.7769,6.2144,3.7769,6.3362,3.7167,6.3369)"
+                  },
+                  "QuantityUnit": {
+                    "type": "string",
+                    "confidence": 0.972
+                  },
+                  "TaxAmount": {
+                    "type": "object",
+                    "valueObject": {
+                      "Amount": {
+                        "type": "number",
+                        "confidence": 0.92
+                      },
+                      "CurrencyCode": {
+                        "type": "string",
+                        "confidence": 0.972
+                      }
+                    }
+                  },
+                  "TaxRate": {
+                    "type": "number",
+                    "confidence": 0.92
+                  },
+                  "TotalAmount": {
+                    "type": "object",
+                    "valueObject": {
+                      "Amount": {
+                        "type": "number",
+                        "valueNumber": 357,
+                        "spans": [
+                          {
+                            "offset": 1704,
+                            "length": 6
+                          }
+                        ],
+                        "confidence": 0.804,
+                        "source": "D(6,6.9436,6.2038,7.3005,6.2086,7.3005,6.3535,6.9436,6.3428)"
+                      },
+                      "CurrencyCode": {
+                        "type": "string",
+                        "valueString": "USD",
+                        "spans": [
+                          {
+                            "offset": 1182,
+                            "length": 12
+                          }
+                        ],
+                        "confidence": 0.689,
+                        "source": "D(6,5.7269,4.5245,6.4539,4.5219,6.4545,4.6866,5.7275,4.6892)"
+                      }
+                    }
+                  },
+                  "UnitPrice": {
+                    "type": "object",
+                    "valueObject": {
+                      "Amount": {
+                        "type": "number",
+                        "valueNumber": 357,
+                        "spans": [
+                          {
+                            "offset": 1674,
+                            "length": 6
+                          }
+                        ],
+                        "confidence": 0.771,
+                        "source": "D(6,5.0593,6.2034,5.4163,6.2082,5.4163,6.3479,5.0593,6.3430)"
+                      },
+                      "CurrencyCode": {
+                        "type": "string",
+                        "valueString": "USD",
+                        "spans": [
+                          {
+                            "offset": 1182,
+                            "length": 12
+                          }
+                        ],
+                        "confidence": 0.689,
+                        "source": "D(6,5.7269,4.5245,6.4539,4.5219,6.4545,4.6866,5.7275,4.6892)"
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "valueObject": {
+                  "Date": {
+                    "type": "date",
+                    "confidence": 0.972
+                  },
+                  "Description": {
+                    "type": "string",
+                    "valueString": "Access and trim removal",
+                    "spans": [
+                      {
+                        "offset": 1731,
+                        "length": 23
+                      }
+                    ],
+                    "confidence": 0.816,
+                    "source": "D(6,1.2389,6.5675,2.3637,6.5682,2.3636,6.7200,1.2388,6.7193)"
+                  },
+                  "ProductCode": {
+                    "type": "string",
+                    "confidence": 0.972
+                  },
+                  "Quantity": {
+                    "type": "number",
+                    "valueNumber": 1,
+                    "spans": [
+                      {
+                        "offset": 1764,
+                        "length": 1
+                      }
+                    ],
+                    "confidence": 0.509,
+                    "source": "D(6,3.7188,6.5742,3.7769,6.5742,3.7769,6.7034,3.7188,6.7023)"
+                  },
+                  "QuantityUnit": {
+                    "type": "string",
+                    "confidence": 0.972
+                  },
+                  "TaxAmount": {
+                    "type": "object",
+                    "valueObject": {
+                      "Amount": {
+                        "type": "number",
+                        "confidence": 0.92
+                      },
+                      "CurrencyCode": {
+                        "type": "string",
+                        "confidence": 0.972
+                      }
+                    }
+                  },
+                  "TaxRate": {
+                    "type": "number",
+                    "confidence": 0.92
+                  },
+                  "TotalAmount": {
+                    "type": "object",
+                    "valueObject": {
+                      "Amount": {
+                        "type": "number",
+                        "valueNumber": 253,
+                        "spans": [
+                          {
+                            "offset": 1819,
+                            "length": 6
+                          }
+                        ],
+                        "confidence": 0.816,
+                        "source": "D(6,6.9561,6.5739,7.3171,6.5740,7.3171,6.7218,6.9561,6.7191)"
+                      },
+                      "CurrencyCode": {
+                        "type": "string",
+                        "valueString": "USD",
+                        "spans": [
+                          {
+                            "offset": 1182,
+                            "length": 12
+                          }
+                        ],
+                        "confidence": 0.689,
+                        "source": "D(6,5.7269,4.5245,6.4539,4.5219,6.4545,4.6866,5.7275,4.6892)"
+                      }
+                    }
+                  },
+                  "UnitPrice": {
+                    "type": "object",
+                    "valueObject": {
+                      "Amount": {
+                        "type": "number",
+                        "valueNumber": 168,
+                        "spans": [
+                          {
+                            "offset": 1788,
+                            "length": 6
+                          }
+                        ],
+                        "confidence": 0.648,
+                        "source": "D(6,5.0718,6.5682,5.4246,6.5664,5.4246,6.7085,5.0718,6.7085)"
+                      },
+                      "CurrencyCode": {
+                        "type": "string",
+                        "valueString": "USD",
+                        "spans": [
+                          {
+                            "offset": 1182,
+                            "length": 12
+                          }
+                        ],
+                        "confidence": 0.689,
+                        "source": "D(6,5.7269,4.5245,6.4539,4.5219,6.4545,4.6866,5.7275,4.6892)"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          "PaymentTerm": {
+            "type": "string",
+            "valueString": "Estimate is valid for 30 days from the inspection date.",
+            "spans": [
+              {
+                "offset": 1991,
+                "length": 38
+              },
+              {
+                "offset": 2030,
+                "length": 16
+              }
+            ],
+            "confidence": 0.65,
+            "source": "D(6,1.4250,7.7680,3.0070,7.7647,3.0073,7.9197,1.4253,7.9230);D(6,1.2098,7.9384,1.8943,7.9130,1.8999,8.0627,1.2154,8.0881)"
+          },
+          "PONumber": {
+            "type": "string",
+            "confidence": 0.8
+          },
+          "RemittanceAddress": {
+            "type": "string",
+            "confidence": 0.8
+          },
+          "RemittanceAddressRecipient": {
+            "type": "string",
+            "confidence": 0.8
+          },
+          "ServiceAddress": {
+            "type": "string",
+            "confidence": 0.8
+          },
+          "ServiceAddressRecipient": {
+            "type": "string",
+            "confidence": 0.8
+          },
+          "ShippingAddress": {
+            "type": "string",
+            "confidence": 0.8
+          },
+          "ShippingAddressRecipient": {
+            "type": "string",
+            "confidence": 0.8
+          },
+          "SubtotalAmount": {
+            "type": "object",
+            "valueObject": {
+              "Amount": {
+                "type": "number",
+                "valueNumber": 1996,
+                "spans": [
+                  {
+                    "offset": 2323,
+                    "length": 8
+                  }
+                ],
+                "confidence": 0.793,
+                "source": "D(6,6.9727,7.0810,7.3918,7.0796,7.3918,7.2290,6.9727,7.2396)"
+              },
+              "CurrencyCode": {
+                "type": "string",
+                "valueString": "USD",
+                "spans": [
+                  {
+                    "offset": 2456,
+                    "length": 20
+                  }
+                ],
+                "confidence": 0.668,
+                "source": "D(6,4.2958,8.0228,5.9249,8.0408,5.9226,8.2512,4.2935,8.2332)"
+              }
+            }
+          },
+          "TaxDetails": {
+            "type": "array",
+            "valueArray": [
+              {
+                "type": "object",
+                "valueObject": {
+                  "Amount": {
+                    "type": "object",
+                    "valueObject": {
+                      "Amount": {
+                        "type": "number",
+                        "valueNumber": 6.38,
+                        "spans": [
+                          {
+                            "offset": 2431,
+                            "length": 4
+                          }
+                        ],
+                        "confidence": 0.631,
+                        "source": "D(6,7.1843,7.7012,7.4209,7.7010,7.4209,7.8521,7.1843,7.8503)"
+                      },
+                      "CurrencyCode": {
+                        "type": "string",
+                        "valueString": "USD",
+                        "spans": [
+                          {
+                            "offset": 2456,
+                            "length": 20
+                          }
+                        ],
+                        "confidence": 0.671,
+                        "source": "D(6,4.2958,8.0228,5.9249,8.0408,5.9226,8.2512,4.2935,8.2332)"
+                      }
+                    }
+                  },
+                  "Description": {
+                    "type": "string",
+                    "valueString": "Tax on Parts (7.50%)",
+                    "spans": [
+                      {
+                        "offset": 2401,
+                        "length": 20
+                      }
+                    ],
+                    "confidence": 0.756,
+                    "source": "D(6,4.2874,7.6910,5.2544,7.6910,5.2544,7.8637,4.2874,7.8637)"
+                  },
+                  "NetAmount": {
+                    "type": "object",
+                    "valueObject": {
+                      "Amount": {
+                        "type": "number",
+                        "valueNumber": 85,
+                        "spans": [
+                          {
+                            "offset": 2375,
+                            "length": 5
+                          }
+                        ],
+                        "confidence": 0.522,
+                        "source": "D(6,7.1221,7.3960,7.4084,7.3960,7.4084,7.5454,7.1221,7.5419)"
+                      },
+                      "CurrencyCode": {
+                        "type": "string",
+                        "valueString": "USD",
+                        "spans": [
+                          {
+                            "offset": 2352,
+                            "length": 13
+                          },
+                          {
+                            "offset": 2456,
+                            "length": 20
+                          }
+                        ],
+                        "confidence": 0.649,
+                        "source": "D(6,4.2832,7.3830,4.8743,7.3896,4.8725,7.5420,4.2815,7.5354);D(6,4.2958,8.0228,5.9249,8.0408,5.9226,8.2512,4.2935,8.2332)"
+                      }
+                    }
+                  },
+                  "Rate": {
+                    "type": "number",
+                    "valueNumber": 0.075,
+                    "spans": [
+                      {
+                        "offset": 2415,
+                        "length": 5
+                      }
+                    ],
+                    "confidence": 0.572,
+                    "source": "D(6,4.9192,7.6911,5.2077,7.6911,5.2077,7.8635,4.9192,7.8635)"
+                  }
+                }
+              }
+            ]
+          },
+          "TotalAmount": {
+            "type": "object",
+            "valueObject": {
+              "Amount": {
+                "type": "number",
+                "valueNumber": 2002.38,
+                "spans": [
+                  {
+                    "offset": 2486,
+                    "length": 8
+                  }
+                ],
+                "confidence": 0.926,
+                "source": "D(6,6.8606,8.0417,7.4250,8.0372,7.4250,8.2311,6.8606,8.2402)"
+              },
+              "CurrencyCode": {
+                "type": "string",
+                "valueString": "USD",
+                "spans": [
+                  {
+                    "offset": 2456,
+                    "length": 20
+                  }
+                ],
+                "confidence": 0.891,
+                "source": "D(6,4.2958,8.0228,5.9249,8.0408,5.9226,8.2512,4.2935,8.2332)"
+              }
+            }
+          },
+          "TotalDiscountAmount": {
+            "type": "object",
+            "valueObject": {
+              "Amount": {
+                "type": "number",
+                "confidence": 0.929
+              },
+              "CurrencyCode": {
+                "type": "string",
+                "confidence": 0.849
+              }
+            }
+          },
+          "TotalTaxAmount": {
+            "type": "object",
+            "valueObject": {
+              "Amount": {
+                "type": "number",
+                "valueNumber": 6.38,
+                "spans": [
+                  {
+                    "offset": 2431,
+                    "length": 4
+                  }
+                ],
+                "confidence": 0.824,
+                "source": "D(6,7.1843,7.7012,7.4209,7.7010,7.4209,7.8521,7.1843,7.8503)"
+              },
+              "CurrencyCode": {
+                "type": "string",
+                "valueString": "USD",
+                "spans": [
+                  {
+                    "offset": 2456,
+                    "length": 20
+                  }
+                ],
+                "confidence": 0.668,
+                "source": "D(6,4.2958,8.0228,5.9249,8.0408,5.9226,8.2512,4.2935,8.2332)"
+              }
+            }
+          },
+          "VendorAddress": {
+            "type": "string",
+            "valueString": "158 Works Road, Aspen Hollow, CO 80525",
+            "spans": [
+              {
+                "offset": 46,
+                "length": 38
+              }
+            ],
+            "confidence": 0.715,
+            "source": "D(6,1.3167,1.8218,3.3934,1.8287,3.3929,1.9728,1.3162,1.9659)"
+          },
+          "VendorAddressRecipient": {
+            "type": "string",
+            "valueString": "Peak Panel Restoration",
+            "spans": [
+              {
+                "offset": 23,
+                "length": 22
+              }
+            ],
+            "confidence": 0.716,
+            "source": "D(6,1.3115,1.6317,2.6998,1.6320,2.6998,1.7728,1.3115,1.7726)"
+          },
+          "VendorName": {
+            "type": "string",
+            "valueString": "Peak Panel Restoration",
+            "spans": [
+              {
+                "offset": 23,
+                "length": 22
+              }
+            ],
+            "confidence": 0.716,
+            "source": "D(6,1.3115,1.6317,2.6998,1.6320,2.6998,1.7728,1.3115,1.7726)"
+          },
+          "VendorTaxId": {
+            "type": "string",
+            "confidence": 0.8
+          },
+          "vehicle": {
+            "type": "string",
+            "valueString": "2024 Mazda CX-5 2.5 S Preferred",
+            "spans": [
+              {
+                "offset": 655,
+                "length": 31
+              }
+            ],
+            "confidence": 0.937,
+            "source": "D(6,5.0462,2.8186,6.7029,2.8099,6.7036,2.9430,5.0469,2.9518)"
+          },
+          "vin": {
+            "type": "string",
+            "valueString": "JM3KFBCM6RA513124",
+            "spans": [
+              {
+                "offset": 761,
+                "length": 17
+              }
+            ],
+            "confidence": 0.992,
+            "source": "D(6,5.0552,3.1670,6.1965,3.1657,6.1965,3.2919,5.0552,3.2926)"
+          },
+          "odometer": {
+            "type": "number",
+            "valueNumber": 17845,
+            "spans": [
+              {
+                "offset": 922,
+                "length": 6
+              }
+            ],
+            "confidence": 0.982,
+            "source": "D(6,5.0676,3.6926,5.3914,3.6926,5.3914,3.8242,5.0676,3.8242)"
+          }
+        },
+        "kind": "document",
+        "startPageNumber": 6,
+        "endPageNumber": 7,
+        "unit": "inch",
+        "pages": [
+          {
+            "pageNumber": 6,
+            "angle": 0,
+            "width": 8.5,
+            "height": 11
+          },
+          {
+            "pageNumber": 7,
+            "angle": 0.01605272,
+            "width": 8.5,
+            "height": 11
+          }
+        ],
+        "segments": [
+          {
+            "span": {
+              "offset": 0,
+              "length": 5194
+            },
+            "segmentId": "segment5",
+            "startPageNumber": 6,
+            "endPageNumber": 7,
+            "category": "repair_estimate",
+            "confidence": 0.99
+          }
+        ],
+        "metadata": {
+          "contentType": "application/pdf",
+          "pageCount": "12"
+        },
+        "analyzerId": "lab664_cache_20261103_195602_repair"
+      },
+      {
+        "path": "input1/segment6",
+        "category": "statement",
+        "markdown": "<!-- PageHeader: Claim: ARC-26-739979 -->\n<!-- PageHeader: Statement Date: 06/13/2026 -->\n\nOn 06/12/2026 at about 4:18PM, I was at Juniper\nCenter in Aspen Hollow for a short appointment . I parked\nin the uncovered lot on the south side of the building.\nWithin a few minutes, a strong storm moved in with\nheavy rain and hail.\n\nI stayed indoors until the storm passed. When I returned\nto my vehicle, I noticed small dents across the hood,\nroof and on the upper panels of the left side. The left\nfront fender and the upper portions of the left doors\nhave the most visible marks. The glass (windshield,\nwindows and rear glass) appears to be intact.\n\nThere was no contact with any other vehicle or object\nto my knowledge. No one else was involved and the\npolice were not called.\n\nI started the vehicle and it ran normally. The vehicle\nremained drivable after the storm on 06/12/2026.\nI drove home without issue.\n\nI am reporting hail damage only. No injuries.\nPhotos were taken at the scene and at home.\n\nThis account is true to the best of my knowledge.\n\nSincerely,\nM.C.\n\nMarcus Coleman\n\n<!-- PageBreak -->\n\n",
+        "fields": {
+          "claimant_name": {
+            "type": "string",
+            "valueString": "Marcus Coleman",
+            "spans": [
+              {
+                "offset": 1067,
+                "length": 14
+              }
+            ],
+            "confidence": 0.891,
+            "source": "D(8,1.1187,10.1805,2.6853,10.1343,2.6925,10.3773,1.1259,10.4235)"
+          },
+          "incident_date": {
+            "type": "date",
+            "valueDate": "2026-06-12",
+            "spans": [
+              {
+                "offset": 94,
+                "length": 10
+              }
+            ],
+            "confidence": 0.926,
+            "source": "D(8,1.8107,1.4960,3.0334,1.5592,3.0275,1.7790,1.8030,1.7153)"
+          },
+          "incident_location": {
+            "type": "string",
+            "valueString": "Juniper Center in Aspen Hollow",
+            "spans": [
+              {
+                "offset": 131,
+                "length": 7
+              },
+              {
+                "offset": 139,
+                "length": 22
+              }
+            ],
+            "confidence": 0.866,
+            "source": "D(8,6.3069,1.7091,6.9893,1.7382,6.9893,1.9537,6.3058,1.9258);D(8,1.3668,1.7828,3.7450,1.9025,3.7336,2.1274,1.3554,2.0077)"
+          },
+          "vehicle": {
+            "type": "string",
+            "confidence": 0.8
+          },
+          "vin": {
+            "type": "string",
+            "confidence": 0.8
+          },
+          "reported_damage": {
+            "type": "string",
+            "valueString": "Small dents across the hood, roof, and upper panels of the left side, with the most visible marks on the left front fender and upper portions of the left doors; glass appears intact.",
+            "spans": [
+              {
+                "offset": 326,
+                "length": 56
+              },
+              {
+                "offset": 383,
+                "length": 53
+              },
+              {
+                "offset": 437,
+                "length": 55
+              },
+              {
+                "offset": 493,
+                "length": 53
+              },
+              {
+                "offset": 547,
+                "length": 51
+              },
+              {
+                "offset": 599,
+                "length": 45
+              },
+              {
+                "offset": 908,
+                "length": 45
+              },
+              {
+                "offset": 954,
+                "length": 43
+              }
+            ],
+            "confidence": 0.635,
+            "source": "D(8,1.3655,3.2724,7.2868,3.3454,7.2836,3.5990,1.3624,3.5260);D(8,1.3385,3.5862,7.0119,3.6344,7.0099,3.8728,1.3365,3.8246);D(8,1.3331,3.8893,7.1395,3.9091,7.1387,4.1561,1.3323,4.1363);D(8,1.3105,4.1854,6.9027,4.1992,6.9021,4.4450,1.3099,4.4312);D(8,1.3142,4.4878,6.7319,4.4780,6.7323,4.7250,1.3146,4.7348);D(8,1.3134,4.7889,6.1384,4.7664,6.1396,5.0247,1.3146,5.0472);D(8,1.2203,7.6979,6.1963,7.5636,6.2036,7.8355,1.2276,7.9698);D(8,1.1982,8.0221,6.1216,7.8602,6.1291,8.0895,1.2057,8.2515)"
+          },
+          "summary": {
+            "type": "string",
+            "valueString": "On 06/12/2026 at about 4:18PM, Marcus Coleman reported being parked in the uncovered south-side lot at Juniper Center in Aspen Hollow when a storm with heavy rain and hail moved in. After the storm, he noticed hail damage to his vehicle, reported no contact with another vehicle or object, no other people involved, police not called, no injuries, and that the vehicle remained drivable and ran normally.",
+            "spans": [
+              {
+                "offset": 91,
+                "length": 47
+              },
+              {
+                "offset": 139,
+                "length": 57
+              },
+              {
+                "offset": 197,
+                "length": 55
+              },
+              {
+                "offset": 253,
+                "length": 50
+              },
+              {
+                "offset": 304,
+                "length": 20
+              },
+              {
+                "offset": 326,
+                "length": 56
+              },
+              {
+                "offset": 383,
+                "length": 53
+              },
+              {
+                "offset": 437,
+                "length": 55
+              },
+              {
+                "offset": 493,
+                "length": 53
+              },
+              {
+                "offset": 547,
+                "length": 51
+              },
+              {
+                "offset": 599,
+                "length": 45
+              },
+              {
+                "offset": 646,
+                "length": 53
+              },
+              {
+                "offset": 700,
+                "length": 49
+              },
+              {
+                "offset": 750,
+                "length": 23
+              },
+              {
+                "offset": 775,
+                "length": 54
+              },
+              {
+                "offset": 830,
+                "length": 48
+              },
+              {
+                "offset": 879,
+                "length": 27
+              },
+              {
+                "offset": 908,
+                "length": 45
+              },
+              {
+                "offset": 954,
+                "length": 43
+              }
+            ],
+            "confidence": 0.645,
+            "source": "D(8,1.3572,1.4725,6.9995,1.7366,6.9888,1.9654,1.3465,1.7014);D(8,1.3665,1.7881,7.1140,2.0135,7.1046,2.2544,1.3571,2.0290);D(8,1.3699,2.0966,7.0051,2.2896,6.9973,2.5167,1.3622,2.3237);D(8,1.3707,2.3985,6.9004,2.5651,6.8930,2.8102,1.3633,2.6436);D(8,1.3772,2.7213,3.5530,2.7620,3.5485,3.0016,1.3727,2.9608);D(8,1.3655,3.2724,7.2868,3.3454,7.2836,3.5990,1.3624,3.5260);D(8,1.3385,3.5862,7.0119,3.6344,7.0099,3.8728,1.3365,3.8246);D(8,1.3331,3.8893,7.1395,3.9091,7.1387,4.1561,1.3323,4.1363);D(8,1.3105,4.1854,6.9027,4.1992,6.9021,4.4450,1.3099,4.4312);D(8,1.3142,4.4878,6.7319,4.4780,6.7323,4.7250,1.3146,4.7348);D(8,1.3134,4.7889,6.1384,4.7664,6.1396,5.0247,1.3146,5.0472);D(8,1.3155,5.3588,6.9976,5.3301,6.9989,5.5824,1.3168,5.6110);D(8,1.2807,5.6853,6.7822,5.6017,6.7860,5.8524,1.2845,5.9359);D(8,1.2653,6.0021,3.7143,5.9327,3.7211,6.1735,1.2721,6.2429);D(8,1.2730,6.5121,6.9187,6.4101,6.9231,6.6530,1.2774,6.7550);D(8,1.2702,6.8239,6.6405,6.7014,6.6456,6.9222,1.2753,7.0447);D(8,1.2560,7.1219,4.3869,7.0526,4.3917,7.2691,1.2608,7.3384);D(8,1.2203,7.6979,6.1963,7.5636,6.2036,7.8355,1.2276,7.9698);D(8,1.1982,8.0221,6.1216,7.8602,6.1291,8.0895,1.2057,8.2515)"
+          }
+        },
+        "kind": "document",
+        "startPageNumber": 8,
+        "endPageNumber": 8,
+        "unit": "inch",
+        "pages": [
+          {
+            "pageNumber": 8,
+            "angle": -0.1912,
+            "width": 8.5,
+            "height": 11
+          }
+        ],
+        "segments": [
+          {
+            "span": {
+              "offset": 0,
+              "length": 1103
+            },
+            "segmentId": "segment6",
+            "startPageNumber": 8,
+            "endPageNumber": 8,
+            "category": "statement",
+            "confidence": 0.99
+          }
+        ],
+        "metadata": {
+          "contentType": "application/pdf",
+          "pageCount": "12"
+        },
+        "analyzerId": "lab664_cache_20261103_195602_statement"
+      },
+      {
+        "path": "input1/segment9/segment1",
+        "category": "tax.us.1099A.2025",
+        "markdown": "☐\nCORRECTED (if checked)\n\nLENDER'S name, street address, city or town, state or province, country, ZIP or\nforeign postal code, and telephone no.\nFront Range Secured Lending Co.\n7600 Alpine Center Drive\nFort Collins, CO 80525\n(970) 555-0164\n\nOMB No. 1545-0877\nForm\n1099-A\n(Rev. April 2025)\n\nFor calendar year\n2025\n\n\n# Acquisition or Abandonment of Secured Property\n\nLENDER'S TIN\n97-***-8456\n\nBORROWER'S TIN\n\\*\\**-\\*\\*-8456\n\n1 Date of lender's acquisition or\nknowledge of abandonment\n09/30/2025\n\n2 Balance of principal\noutstanding\n$\n12,480.00\n\nBORROWER'S name\nMarcus Coleman\nStreet address (including apt. no.)\n304 Linden Terrace\nCity or town, state or province, country, and ZIP or foreign postal code\nAspen Hollow, CO 80525\n\nAccount number (see instructions)\nSYN-CO-1099A-04\n\n3\n\n4 Fair market value of property\n$\n9,775.00\n\n5 If checked, the borrower was personally liable for repayment\nof the debt\n☐\n\n6 Description of property\n2016 Jeep Cherokee Latitude, black\nTraining asset ref: SYN-CO-1099A-04\n\n\n## Copy B For Borrower\n\nThis is important tax\ninformation and is being\nfurnished to the IRS. If\nyou are required to file a\nreturn, a negligence\npenalty or other\nsanction may be\nimposed on you if\ntaxable income results\nfrom this transaction\nand the IRS determines\nthat it has not been\nreported.\n\n<!-- PageFooter: Form 1099-A (Rev. 4-2025) -->\n<!-- PageFooter: (keep for your records) -->\n<!-- PageFooter: www.irs.gov/Form1099A -->\n<!-- PageFooter: Department of the Treasury - Internal Revenue Service -->\n",
+        "fields": {
+          "Form1099ACopies": {
+            "type": "array",
+            "valueArray": [
+              {
+                "type": "object",
+                "valueObject": {
+                  "TaxYear": {
+                    "type": "string",
+                    "valueString": "2025",
+                    "spans": [
+                      {
+                        "offset": 308,
+                        "length": 4
+                      }
+                    ],
+                    "confidence": 0.887,
+                    "source": "D(12,5.7981,1.1563,6.0969,1.1587,6.0969,1.2761,5.7981,1.2738)"
+                  },
+                  "CopyLabel": {
+                    "type": "string",
+                    "valueString": "Copy B For Borrower",
+                    "spans": [
+                      {
+                        "offset": 1003,
+                        "length": 6
+                      },
+                      {
+                        "offset": 1010,
+                        "length": 12
+                      }
+                    ],
+                    "confidence": 0.892,
+                    "source": "D(12,7.5084,1.3252,8.0066,1.3403,8.0018,1.5003,7.5035,1.4852);D(12,7.1926,1.5180,8.0064,1.5199,8.0061,1.6438,7.1923,1.6419)"
+                  },
+                  "Lender": {
+                    "type": "object",
+                    "valueObject": {
+                      "TIN": {
+                        "type": "string",
+                        "valueString": "97-***-8456",
+                        "spans": [
+                          {
+                            "offset": 378,
+                            "length": 11
+                          }
+                        ],
+                        "confidence": 0.886,
+                        "source": "D(12,1.2179,1.6590,1.8770,1.6581,1.8772,1.7837,1.2181,1.7846)"
+                      },
+                      "Name": {
+                        "type": "string",
+                        "valueString": "Front Range Secured Lending Co.",
+                        "spans": [
+                          {
+                            "offset": 145,
+                            "length": 31
+                          }
+                        ],
+                        "confidence": 0.771,
+                        "source": "D(12,0.7455,0.8747,2.3826,0.8786,2.3823,1.0093,0.7452,1.0054)"
+                      },
+                      "Address": {
+                        "type": "string",
+                        "valueString": "7600 Alpine Center Drive Fort Collins, CO 80525",
+                        "spans": [
+                          {
+                            "offset": 177,
+                            "length": 24
+                          },
+                          {
+                            "offset": 202,
+                            "length": 22
+                          }
+                        ],
+                        "confidence": 0.862,
+                        "source": "D(12,0.7466,1.0002,1.9528,1.0004,1.9528,1.1161,0.7466,1.1159);D(12,0.7466,1.1231,1.8460,1.1238,1.8459,1.2395,0.7465,1.2388)"
+                      },
+                      "PhoneNumber": {
+                        "type": "string",
+                        "valueString": "(970) 555-0164",
+                        "spans": [
+                          {
+                            "offset": 225,
+                            "length": 14
+                          }
+                        ],
+                        "confidence": 0.859,
+                        "source": "D(12,0.7466,1.2459,1.4921,1.2416,1.4928,1.3606,0.7473,1.3649)"
+                      }
+                    }
+                  },
+                  "Borrower": {
+                    "type": "object",
+                    "valueObject": {
+                      "TIN": {
+                        "type": "string",
+                        "valueString": "\\*\\**-\\*\\*-8456",
+                        "spans": [
+                          {
+                            "offset": 406,
+                            "length": 15
+                          }
+                        ],
+                        "confidence": 0.892,
+                        "source": "D(12,2.9426,1.6547,3.5558,1.6598,3.5548,1.7853,2.9416,1.7802)"
+                      },
+                      "Name": {
+                        "type": "string",
+                        "valueString": "Marcus Coleman",
+                        "spans": [
+                          {
+                            "offset": 558,
+                            "length": 14
+                          }
+                        ],
+                        "confidence": 0.883,
+                        "source": "D(12,0.7424,2.0758,1.7092,2.0784,1.7089,2.2067,0.7421,2.2042)"
+                      },
+                      "Address": {
+                        "type": "string",
+                        "valueString": "304 Linden Terrace Aspen Hollow, CO 80525",
+                        "spans": [
+                          {
+                            "offset": 609,
+                            "length": 18
+                          },
+                          {
+                            "offset": 701,
+                            "length": 22
+                          }
+                        ],
+                        "confidence": 0.875,
+                        "source": "D(12,0.7424,2.4949,1.8429,2.4954,1.8428,2.6264,0.7423,2.6259);D(12,0.7424,2.8294,2.1644,2.8193,2.1654,2.9606,0.7434,2.9707)"
+                      },
+                      "AccountNumber": {
+                        "type": "string",
+                        "valueString": "SYN-CO-1099A-04",
+                        "spans": [
+                          {
+                            "offset": 759,
+                            "length": 15
+                          }
+                        ],
+                        "confidence": 0.846,
+                        "source": "D(12,1.8521,3.1558,2.9426,3.1556,2.9426,3.2893,1.8521,3.2895)"
+                      }
+                    }
+                  },
+                  "Box1": {
+                    "type": "date",
+                    "valueDate": "2025-09-30",
+                    "spans": [
+                      {
+                        "offset": 482,
+                        "length": 10
+                      }
+                    ],
+                    "confidence": 0.892,
+                    "source": "D(12,4.4741,1.6772,5.1174,1.6782,5.1174,1.8071,4.4741,1.8058)"
+                  },
+                  "Box2": {
+                    "type": "number",
+                    "valueNumber": 12480,
+                    "spans": [
+                      {
+                        "offset": 531,
+                        "length": 9
+                      }
+                    ],
+                    "confidence": 0.906,
+                    "source": "D(12,6.3003,1.6785,6.8564,1.6785,6.8564,1.8047,6.3003,1.8047)"
+                  },
+                  "Box4": {
+                    "type": "number",
+                    "valueNumber": 9775,
+                    "spans": [
+                      {
+                        "offset": 813,
+                        "length": 8
+                      }
+                    ],
+                    "confidence": 0.865,
+                    "source": "D(12,6.3625,2.1758,6.8564,2.1771,6.8564,2.3073,6.3625,2.3090)"
+                  },
+                  "Box5": {
+                    "type": "boolean",
+                    "valueBoolean": false,
+                    "spans": [
+                      {
+                        "offset": 898,
+                        "length": 1
+                      }
+                    ],
+                    "confidence": 0.885,
+                    "source": "D(12,6.7153,2.5204,6.8440,2.5204,6.8440,2.6453,6.7153,2.6439)"
+                  },
+                  "Box6": {
+                    "type": "string",
+                    "valueString": "2016 Jeep Cherokee Latitude, black Training asset ref: SYN-CO-1099A-04",
+                    "spans": [
+                      {
+                        "offset": 927,
+                        "length": 34
+                      },
+                      {
+                        "offset": 962,
+                        "length": 35
+                      }
+                    ],
+                    "confidence": 0.863,
+                    "source": "D(12,4.1420,2.8547,5.9392,2.8538,5.9393,2.9833,4.1421,2.9842);D(12,4.1438,2.9806,6.0347,2.9755,6.0350,3.1063,4.1442,3.1114)"
+                  },
+                  "IsCorrected": {
+                    "type": "boolean",
+                    "valueBoolean": false,
+                    "spans": [
+                      {
+                        "offset": 0,
+                        "length": 1
+                      }
+                    ],
+                    "confidence": 0.897,
+                    "source": "D(12,3.3909,0.3374,3.5465,0.3389,3.5465,0.4901,3.3909,0.4915)"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "kind": "document",
+        "startPageNumber": 12,
+        "endPageNumber": 12,
+        "unit": "inch",
+        "pages": [
+          {
+            "pageNumber": 12,
+            "angle": 0,
+            "width": 8.5,
+            "height": 11
+          }
+        ],
+        "segments": [
+          {
+            "span": {
+              "offset": 0,
+              "length": 1505
+            },
+            "segmentId": "segment1",
+            "startPageNumber": 12,
+            "endPageNumber": 12,
+            "category": "tax.us.1099A.2025"
+          }
+        ],
+        "metadata": {
+          "contentType": "application/pdf",
+          "pageCount": "1"
+        },
+        "analyzerId": "prebuilt-tax.us.1099A.2025"
+      }
+    ]
+  },
+  "usage": {
+    "documentPagesStandard": 12,
+    "contextualizationTokens": 12000,
+    "tokens": {
+      "gpt-5.5-input": 20324,
+      "gpt-5.5-output": 2151,
+      "gpt-5.2-input": 6951,
+      "gpt-5.2-cached-input": 3456,
+      "gpt-5.2-output": 520,
+      "gpt-5.5-cached-input": 3840
+    }
+  }
+}

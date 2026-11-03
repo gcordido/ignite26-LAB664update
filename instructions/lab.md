@@ -305,7 +305,7 @@ Wait for the cached results to load. Opening the app or switching review tabs do
 
 1. Open **Parse and extract**. The cached results load automatically; wait until the **Cached** badge and all ten customer rows appear. There is no batch to start or completion counter to wait for.
 2. Start with **Classification**. Each row is one customer; each check is a returned document instance and page range. Click a check or field value to open its full source PDF at that page. Documents classified as `other` are not shown in this grid, but remain in the analyzer's full response.
-3. Switch to the available **ID**, **1099-A**, **Repair Estimate**, **Towing Invoice**, and **Rental Invoice** views. The included saved run did not route Statement documents, so it has no Statement tab; building a new router in Studio does not change these saved results.
+3. Switch to the **ID**, **1099-A**, **Repair Estimate**, **Statement**, **Towing Invoice**, and **Rental Invoice** views. Select a returned value to inspect its source document.
 4. Turn on **Confidence** to inspect returned scores. Blank means the service omitted a score, not zero. Click line items for source boxes or their table icon to expand item rows below the customer.
 
 ===
@@ -344,7 +344,7 @@ Wait for the cached results to load. Opening the app or switching review tabs do
 >
 > `instructions\lab.md` is the Markdown version of this single guide; `instructions\lab.html` is the original HTML version. `infra\setup.ps1` installs dependencies; `infra\launch-workbench.ps1` launches only the app. `src\workbench` contains the minimal app runtime, not another lab guide.
 >
-> `data\packets`: 10 complete customer PDFs. `data\documents\packet-01` through `packet-10`: 90 individual logical-document PDFs, extracted from the authored page groups. `data\samples`: six small Studio specimens. `data\packets.json`: source hashes and authored page ranges. `data\results`: one included completed run with its original manifest and ten native JSON responses; future live runs save here too.
+> `data\packets`: 10 complete customer PDFs. `data\documents\packet-01` through `packet-10`: 90 individual logical-document PDFs, extracted from the authored page groups. `data\samples`: six small Studio specimens. `data\packets.json`: source hashes and authored page ranges. `data\results`: completed CU runs, each with its original manifest and ten native JSON responses; future live runs save here too.
 >
 > `data\step1` through `data\step4` are convenience copies of the recommended inputs, not a second dataset. The app uses the canonical PDFs under `data`. Full packet 01 contains a statement and rental billing; full packet 03 contains towing. The authored four-class reference labels statements and both invoice types as Other, while the seven-class routed run gives them separate categories.
 

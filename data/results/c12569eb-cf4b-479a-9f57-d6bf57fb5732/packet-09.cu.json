@@ -1,0 +1,2796 @@
+{
+  "id": "0ee27f1c-fcd1-46ef-9053-a7feff01e61e",
+  "status": "Succeeded",
+  "result": {
+    "analyzerId": "lab664_cache_20261103_195602_router",
+    "apiVersion": "2026-06-01-preview",
+    "createdAt": "2026-11-03T19:58:00Z",
+    "stringEncoding": "codePoint",
+    "warnings": [],
+    "infos": [
+      {
+        "code": "LLMStats",
+        "message": "completion calls: 7; avg completion latency: 4.89s; total completion latency: 34.26s"
+      }
+    ],
+    "contents": [
+      {
+        "path": "input1",
+        "markdown": "![Millstone Collision & Recovery 243 Works Road, Maple Crossing, NY 12009 (518) 555-0149](figures/1.1)\n\n\n# REPAIR ESTIMATE\n\n\n<table>\n<tr>\n<td>Claim Reference:</td>\n<td>MCM-25-998392</td>\n</tr>\n<tr>\n<td>Policy Reference:</td>\n<td>MCM-A4370409</td>\n</tr>\n<tr>\n<td>Estimate Reference:</td>\n<td>Q-NY-53183</td>\n</tr>\n</table>\n\n\nINSURER / CUSTOMER INFORMATION\n\nMaple Crossing Mutual\n517 Civic Lane\nMaple Crossing, NY 12009\n(518) 555-0129\n\nAdjuster:\nZoe Ellis\n\nInsured:\nGrace Okafor\n459 Linden Terrace\nMaple Crossing, NY 12009\n(518) 555-0109\ngrace.okafor@example.com\n\nREPAIRER INFORMATION\nMillstone Collision & Recovery\n243 Works Road\nMaple Crossing, NY 12009\n(518) 555-0149\n\nInspector:\nPeter Adeyemi\n\nVehicle:\n2023 Chevrolet Equinox LT\nColor:\nDark blue\nViN:\n3GNAXUEG3PA517029\n\nRegistration: NY38941\n\nUse:\nPersonal / commute\n\nOdometer:\n41,870\n\n\n<table>\n<tr>\n<th rowspan=\"2\">Item</th>\n<th rowspan=\"2\">Description</th>\n<th rowspan=\"2\">Qty.</th>\n<th>PARTS</th>\n<th colspan=\"2\">LABOR</th>\n<th>LINE TOTAL</th>\n</tr>\n<tr>\n<th>Amount</th>\n<th>Hours</th>\n<th>Amount</th>\n<th>Amount</th>\n</tr>\n<tr>\n<td>1</td>\n<td>Front bumper assembly</td>\n<td>1</td>\n<td>726.00</td>\n<td>1.9</td>\n<td>262.20</td>\n<td>988.20</td>\n</tr>\n<tr>\n<td>2</td>\n<td>Grille and brackets</td>\n<td>1</td>\n<td>385.00</td>\n<td>0.9</td>\n<td>124.20</td>\n<td>509.20</td>\n</tr>\n<tr>\n<td>3</td>\n<td>Right headlamp</td>\n<td>1</td>\n<td>643.00</td>\n<td>0.7</td>\n<td>96.60</td>\n<td>739.60</td>\n</tr>\n<tr>\n<td>4</td>\n<td>Hood leading-edge repair</td>\n<td>1</td>\n<td>0.00</td>\n<td>2.8</td>\n<td>386.40</td>\n<td>386.40</td>\n</tr>\n<tr>\n<td>5</td>\n<td>Front-panel refinish</td>\n<td>1</td>\n<td>238.00</td>\n<td>4.3</td>\n<td>593.40</td>\n<td>831.40</td>\n</tr>\n<tr>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n</tr>\n<tr>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n</tr>\n<tr>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n</tr>\n<tr>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n</tr>\n</table>\n\n\nLABOR RATE\n\nRate Per Hour\n$138.00\n\nThis repair valuation is provisional and based on\na visual inspection only. Final costs may change\npending teardown or supplemental review.\n\n\n<table>\n<tr>\n<th>Tax Description</th>\n<th>Tax Rate</th>\n</tr>\n<tr>\n<td>Tax on parts</td>\n<td>8.00%</td>\n</tr>\n</table>\n\n\n<table>\n<tr>\n<td>Taxable Parts Base</td>\n<td>$1,992.00</td>\n</tr>\n<tr>\n<td>Tax on parts (8.00%)</td>\n<td>$159.36</td>\n</tr>\n<tr>\n<td>Subtotal (Parts &amp; Labor)</td>\n<td>$3,454.80</td>\n</tr>\n<tr>\n<td>Gross Estimate Total</td>\n<td>$3,614.16</td>\n</tr>\n<tr>\n<td>Deductible</td>\n<td>$250.00</td>\n</tr>\n<tr>\n<td>Net Estimate (Less Deductible)</td>\n<td>$3,364.16</td>\n</tr>\n</table>\n\n\n<table>\n<tr>\n<th>Inspection Date</th>\n<th>Estimated Repair Start</th>\n<th>Repair Status</th>\n<th>Prepared By</th>\n</tr>\n<tr>\n<td>12/18/2025</td>\n<td>12/20/2025</td>\n<td>Scheduled</td>\n<td>Peter Adeyemi</td>\n</tr>\n</table>\n\n\nNotes / Additional Information\n\nEstimate includes disassembly and reassembly. OEM parts pricing used where available.\n\n<!-- PageFooter: Estimate Reference: Q-NY-53183 -->\n<!-- PageFooter: Inspection Date: 12/18/2025 -->\n<!-- PageFooter: Repair Status: Scheduled -->\n<!-- PageNumber: Page 1 of 1 -->\n<!-- PageBreak -->\n\n\n![HUDSON 9W<!-- PageHeader: Hudson Route Club -->\n](figures/2.1)\n\n\n<table>\n<tr>\n<td>Member Name:</td>\n<td>Grace Okafor</td>\n</tr>\n<tr>\n<td>Membership No.:</td>\n<td>MR-158734</td>\n</tr>\n<tr>\n<td>Valid From:</td>\n<td>05/19/2025</td>\n</tr>\n<tr>\n<td>Valid Until:</td>\n<td>05/19/2026</td>\n</tr>\n</table>\n\n\n## VEHICLE REFERENCE\n\n\n<table>\n<tr>\n<td>Vehicle:</td>\n<td>2023 Chevrolet Equinox LT</td>\n</tr>\n<tr>\n<td>Color:</td>\n<td>Dark blue</td>\n</tr>\n<tr>\n<td>Asset Reference:</td>\n<td>NY-35149</td>\n</tr>\n</table>\n\n\n## MEMBER ASSISTANCE SUMMARY\n\n\n![](figures/2.2)\n\n\nTOWING COORDINATION\nCoordination with approved\nservice providers.\n\n\n![+](figures/2.3)\n\n\nBATTERY ASSISTANCE\nJump start coordination\nwhen available.\n\n\n![](figures/2.4)\n\n\nLOCKOUT ASSISTANCE\nAssistance for vehicle\nlockout situations.\n\n\n![](figures/2.5)\n\n\nTRIP INTERRUPTION REFERRALS\nReferrals for lodging, travel and\nother services.\n\n\n![](figures/2.6)\n\n\nIMPORTANT: Keep this card in your vehicle. See reverse for full terms and conditions.\n\n<!-- PageBreak -->\n\n\n![Maple Crossing Mutual](figures/3.1)\n\n\n# AUTO INSURANCE POLICY DECLARATIONS\n\n517 Civic Lane\nMaple Crossing, NY 12009\n(518) 555-0129\n\nPolicy Number\nMCM-A4370409\n\nIssue Date\n2025-07-04\n\nEffective Date\n2025-07-18\n\nExpiration Date\n2026-07-18\n\nBilling Plan\nAnnual billed premium\n\nAgent\nMaple Crossing Mutual\nCustomer Service\n(518) 555-0129\n\nThis Declarations Page, together with the applicable policy forms and endorsements,\nif any, completes your policy.\n\n\n<table>\n<tr>\n<td colspan=\"2\">INSURED INFORMATION</td>\n</tr>\n<tr>\n<td>Name</td>\n<td>Grace Okafor</td>\n</tr>\n<tr>\n<td>Address</td>\n<td>459 Linden Terrace, Maple Crossing, NY 12009</td>\n</tr>\n<tr>\n<td>Phone</td>\n<td>(518) 555-0109</td>\n</tr>\n<tr>\n<td>Email</td>\n<td>grace.okafor@example.com</td>\n</tr>\n</table>\n\n\n<table>\n<tr>\n<td colspan=\"4\">VEHICLE INFORMATION</td>\n</tr>\n<tr>\n<td>Vehicle Description</td>\n<td colspan=\"3\">2023 Chevrolet Equinox LT</td>\n</tr>\n<tr>\n<td>Color</td>\n<td colspan=\"3\">Dark blue</td>\n</tr>\n<tr>\n<td>VIN</td>\n<td colspan=\"3\">3GNAXUEG3PA517029</td>\n</tr>\n<tr>\n<td>Registration</td>\n<td>NY38941</td>\n<td>State</td>\n<td>NY</td>\n</tr>\n<tr>\n<td>Use</td>\n<td>Personal / commute</td>\n<td>Annual Mileage</td>\n<td>22500</td>\n</tr>\n<tr>\n<td>Asset Reference</td>\n<td colspan=\"3\">NY-35149</td>\n</tr>\n<tr>\n<td>Lienholder</td>\n<td colspan=\"3\">None</td>\n</tr>\n</table>\n\n\n<table>\n<tr>\n<th rowspan=\"2\">COVERAGES AND LIMITS</th>\n<th colspan=\"3\">LIABILITY LIMITS</th>\n</tr>\n<tr>\n<th>Per Person</th>\n<th>Per Accident</th>\n<th>Property Damage</th>\n</tr>\n<tr>\n<td>Liability</td>\n<td>$100,000</td>\n<td>$300,000</td>\n<td>$100,000</td>\n</tr>\n<tr>\n<td colspan=\"2\">Limits shown are the most we will pay regardless of the number of claims or persons involved in an accident.</td>\n<td colspan=\"2\">No special glass waiver</td>\n</tr>\n</table>\n\n\n<table>\n<tr>\n<td>PREMIUM SCHEDULE</td>\n</tr>\n<tr>\n<td>COVERAGE<br>ANNUAL PREMIUM</td>\n</tr>\n<tr>\n<td>1. Liability<br>$352.00</td>\n</tr>\n<tr>\n<td>2. Collision<br>$918.00</td>\n</tr>\n<tr>\n<td>3. Comprehensive<br>$427.00</td>\n</tr>\n<tr>\n<td>4. Rental reimbursement $89.00</td>\n</tr>\n<tr>\n<td>TOTAL ANNUAL PREMIUM<br>$1,786.00</td>\n</tr>\n</table>\n\n\nDEDUCTIBLES AND LIMITS\n\n\n<table>\n<tr>\n<td>Comprehensive Deductible</td>\n<td>$250.00</td>\n</tr>\n<tr>\n<td>Collision Deductible</td>\n<td>Refer applicable policy form</td>\n</tr>\n<tr>\n<td>Rental Limit</td>\n<td>$85/day base charge, maximum 30 days; mandatory taxes/ surcharges additional</td>\n</tr>\n</table>\n\n\nPremium shown is for the policy term and coverages listed. Premium is subject to change\nupon policy renewal.\n\nThis policy is subject to all terms, conditions, exclusions and endorsements of the policy.\n\nPLEASE RETAIN THIS DECLARATIONS PAGE FOR YOUR RECORDS.\n\n<!-- PageNumber: MCM-A4370409 I Page 1 of 2 -->\n<!-- PageBreak -->\n\n\n![Maple Crossing Mutual](figures/4.1)\n\n\nPolicy Number\nMCM-A4370409\n\nPolicy Period:\n2025-07-18 to 2026-07-18\n\nIssued:\n2025-07-04\n\nNamed Insured\nGrace Okafor\n459 Linden Terrace\nMaple Crossing, NY 12009\n\nContact\n(518) 555-0109\ngrace.okafor@example.com\n\nPolicy Reference\nMCM-A4370409\n\nPolicy Period\n2025-07-18 to 2026-07-18\n\nPolicy Type\nPersonal Auto\n\nBilling Plan\nAnnual billed premium\n\nProducer\nMaple Crossing Mutual\nService Center\n\nUnderwriting Office\n517 Civic Lane\nMaple Crossing, NY 12009\n(518) 555-0129\n\nEndorsement Schedule\n\nEndorsement Number\n\nEndorsement Title\n\nEffective Date\n\nCA 04 12\n\nChange of Address\n\n2025-07-04\n\nThe coverage provided by this policy is subject to all terms, conditions and exclusions of this policy\nand any applicable endorsements.\n\n\n## Policy Conditions\n\nCoverage Territory\nCoverage applies within the United States, its territories and possessions, and Canada.\n\nComprehensive Coverage\n\nWe will pay for direct and accidental loss to your covered auto from causes other than collision,\nsubject to the comprehensive deductible shown in the premium schedule below.\n\nCollision Coverage\n\nWe will pay for direct and accidental loss to your covered auto from collision with another object\nor overturn, subject to the terms of this policy and the collision deductible shown in the premium\nschedule below.\n\nRental Reimbursement\n\nWe will pay the actual expense incurred for the rental of a private passenger auto when a covered\nauto is out of service due to a covered loss, subject to the limits shown in the premium schedule\nbelow.\n\nGlass Coverage\n\nNo special glass waiver.\n\n\n<table>\n<tr>\n<td colspan=\"4\">Vehicle and Insured Verification</td>\n</tr>\n<tr>\n<td>Policy Number</td>\n<td>MCM-A4370409</td>\n<td>Registration Number</td>\n<td>NY38941</td>\n</tr>\n<tr>\n<td>Named Insured</td>\n<td>Grace Okafor</td>\n<td>Use</td>\n<td>Personal / commute</td>\n</tr>\n<tr>\n<td>Vehicle</td>\n<td>2023 Chevrolet Equinox LT</td>\n<td>Annual Mileage</td>\n<td>22,500</td>\n</tr>\n<tr>\n<td>Color</td>\n<td>Dark blue</td>\n<td>Asset Reference</td>\n<td>NY-35149</td>\n</tr>\n<tr>\n<td>VIN</td>\n<td>3GNAXUEG3PA517029</td>\n<td>Lienholder</td>\n<td>None</td>\n</tr>\n<tr>\n<td>Garaging Address</td>\n<td colspan=\"3\">459 Linden Terrace, Maple Crossing, NY 12009</td>\n</tr>\n</table>\n\n\n<table>\n<tr>\n<td colspan=\"3\">Premium Details</td>\n</tr>\n<tr>\n<th>Coverage</th>\n<th>Deductible</th>\n<th>Annual Premium</th>\n</tr>\n<tr>\n<td>Liability</td>\n<td>$100,000/person; $300,000/accident; $100,000 property</td>\n<td>$352.00</td>\n</tr>\n<tr>\n<td>Collision</td>\n<td>Refer applicable policy form</td>\n<td>$918.00</td>\n</tr>\n<tr>\n<td>Comprehensive</td>\n<td>$250.00</td>\n<td>$427.00</td>\n</tr>\n<tr>\n<td>Rental reimbursement</td>\n<td>N/A $85/day base charge, maximum 30 days; mandatory taxes/surcharges additional</td>\n<td>$89.00</td>\n</tr>\n</table>\n\n\nAnnual Premium Total\n$1,786.00\n\n<!-- PageFooter: ![](figures/4.2) -->\n<!-- PageFooter: Maple Crossing Mutual 517 Civic Lane, Maple Crossing, NY 12009 (518) 555-0129 -->\n<!-- PageNumber: Page 2 of 2 -->\n<!-- PageBreak -->\n\n\n![](figures/5.1)\n\n\n<!-- PageHeader: Maple Crossing Mutual -->\n\n517 Civic Lane\nMaple Crossing, NY 12009\n(518) 555-0129\n\n\n# FIRST NOTICE OF LOSS INTAKE\n\n\n<table>\n<tr>\n<td>Claim No.</td>\n<td>MCM-25-998392</td>\n</tr>\n<tr>\n<td>Policy No.</td>\n<td>MCM-A4370409</td>\n</tr>\n</table>\n\n\n## INTAKE INFORMATION\n\nIntake Date\n2025-12-16\n\nReported By\nInsured\n\nInsured Name\nGrace Okafor\n\nMailing Address\n459 Linden Terrace\nMaple Crossing, NY 12009\n\nPhone Number\n(518) 555-0109\n\nPolicy Number\nMCM-A4370409\n\nClaim Number\nMCM-25-998392\n\n\n## VEHICLE INFORMATION\n\nYear / Make / Model\n2023 Chevrolet Equinox LT\n\nColor\nDark blue\n\nVIN\n3GNAXUEG3PA517029\n\nRegistration No.\nNY38941\n\nVehicle Use\nPersonal / commute\n\nLOSS INFORMATION\n\nDate of Loss\n2025-12-15\n\nTime of Loss\n06:51\n\nLocation\nCounty Route 18 near Mill Lane,\nMaple Crossing, NY 12009\n\nTowing Company\nTo be determined\n\nPolice Report No.\nTo be provided\n\nAdjuster\nZoe Ellis\n\nApplicable Deductible\n$250.00\n\nThis intake is not a determination\nof coverage. Cause and coverage\nare under review.\n\n\n## INCIDENT NARRATIVE (REPORTED BY INSURED)\n\nGrace reports a deer entering the roadway before contact with the front of the\nvehicle. No second vehicle or injuries were reported. Front lighting and grille\ndamage prompted towing. Cause and coverage remain subject to review.\n\nREPORTED DAMAGE\nFront bumper, grille, hood edge and right headlamp; no rear damage.\n\n\n## LOSS DETAILS\n\nWas Vehicle Drivable?\n\n☐\nYes\n\n☒\nNo\n\nTowing Required?\n\n☒\nYes\n\n☐\nNo\n\nPolice Attended?\n\n☒\nYes\n\n☐\nNo\n\nInjuries?\n\n☒\nNone reported\n\n☐\nYes\n\nOther Vehicle Involved?\n\n☐\nYes\n\n☒\nNo\n\nOther Driver?\n\n☐\nYes\n\n☐\nNo\n\n☒\nN/A\n\nOther Property Damage?\n\n☐\nYes\n\n☒\nNo\n\nIf yes, describe:\n\nInjuries Description:\nNone reported\n\nOther Driver / Party:\nNot applicable\n\nLiability / Fault:\nNot determined\n\n\n## ASSESSMENT\n\nPreliminary Cause\nPENDING\n\nCoverage Determination\nPENDING\n\n\n### ADDITIONAL NOTES\n\nInitial report taken by phone. Cause and coverage remain under review.\n\n\n### ESTIMATE / REPAIR INFORMATION\n\nPreliminary Estimate\nPENDING\n\nRepair Facility Preference\n\n\n## PHOTOGRAPHS REQUESTED\n\n☐\nOverall Vehicle\n\n☐\nFront\n\n☐\nRear\n\n☐\nDriver Side\n\n☐\nPassenger Side\n\n☐\nInterior\n\n☐\nOther:\n\nPreferred Delivery:\n\n☐\nAt Pickup\n\n☐\nBy Mail\n\n☐\nOther\n\n\n## NEXT STEPS\n\n. We will assign your claim to an adjuster.\n\n. You will be contacted if additional information is needed.\n\n. Do not authorize repairs until instructed.\n\n<!-- PageFooter: Form INT-1 (01/2025) -->\n<!-- PageNumber: Page 1 of 2 -->\n<!-- PageBreak -->\n\n<!-- PageHeader: Maple Crossing Traffic and Property Unit Incident Report -->\n<!-- PageHeader: Incident Reference: NY-2025-90930 -->\n\nReport Date:\n12/16/2025\n\nReporting Officer:\nRuth Carver\n\nLocation:\nCounty Route 18 near Mill Lane,\nMaple Crossing, NY 12009\n\n\n## Incident Summary\n\nOn December 16, 2025, I responded to a report of a vehicle striking a deer on\nCounty Route 18 near Mill Lane, Maple Crossing, NY 12009.\n\nThe operator, Grace Okafor, stated a deer entered the roadway before contact\nwith the front of her vehicle.\n\nNo injuries or second vehicle were reported.\n\nIncident Details\n\nDate of Collision:\n12/15/2025\n\nTime of Collision:\n06:51\n\nWeather/Road Conditions:\nWinter morning roadway conditions.\n\nDescription of Events:\nGrace reports a deer entering the roadway before\ncontact with the front of the vehicle.\n\nPolice Observations:\nI observed front-end damage consistent with the\nreported collision. No debris or fluids creating a hazard.\n\nInjuries Reported:\nNone reported.\n\nOther Vehicles Involved:\nNot applicable.\n\nTowing Requested:\nYes. Requested due to front lighting and grille damage.\n\nDrivable Status:\nNo. Vehicle not drivable.\n\nLiability:\nNot determined.\n\n\n## Officer Narrative\n\nI spoke with the operator, Grace Okafor, who advised a deer entered the roadway\nand struck the front of her vehicle.\n\nThe animal left the scene. No injuries, passengers, or other vehicles involved.\n\nThe vehicle sustained front damage and was towed from the scene.\n\nThis report documents facts reported to and observed by police at the scene.\n\n\n### Incident Classifications\n\n☑\nAnimal Strike (Deer)\n\n☐\nInjury\n\n☑\nProperty Damage\n\n☐\nHit and Run\n\n☑\nTow Required\n\n☐\nOther\n\n\n## Report Information\n\n\n<table>\n<tr>\n<td>Police Attended:</td>\n<td>Yes</td>\n</tr>\n<tr>\n<td>Report Date:</td>\n<td>12/16/2025</td>\n</tr>\n<tr>\n<td>Recovered Date:</td>\n<td>Not applicable</td>\n</tr>\n<tr>\n<td>Incident Reference:</td>\n<td>NY-2025-90930</td>\n</tr>\n<tr>\n<td>Reporting Officer:</td>\n<td>Ruth Carver</td>\n</tr>\n</table>\n\n\n## Claim Information\n\n\n<table>\n<tr>\n<td>Insurer:</td>\n<td>Maple Crossing Mutual</td>\n</tr>\n<tr>\n<td>Policy Reference:</td>\n<td>MCM-A4370409</td>\n</tr>\n<tr>\n<td>Claim Reference:</td>\n<td>MCM-25-998392</td>\n</tr>\n<tr>\n<td>Adjuster:</td>\n<td>Zoe Ellis</td>\n</tr>\n<tr>\n<td>Insurer Phone:</td>\n<td>(518) 555-0129</td>\n</tr>\n</table>\n\n\n## Insured\n\n\n<table>\n<tr>\n<td>Name:</td>\n<td>Grace Okafor</td>\n</tr>\n<tr>\n<td>Address:</td>\n<td>459 Linden Terrace, Maple Crossing, NY 12009</td>\n</tr>\n<tr>\n<td>Phone:</td>\n<td>(518) 555-0109</td>\n</tr>\n<tr>\n<td>Email:</td>\n<td>grace.okafor@example.com</td>\n</tr>\n</table>\n\n\n## Vehicle Information\n\nYear / Make / Model:\n2023 Chevrolet Equinox LT\n\n\n<table>\n<tr>\n<td>Color:</td>\n<td>Dark blue</td>\n</tr>\n<tr>\n<td>VIN:</td>\n<td>3GNAXUEG3PA517029</td>\n</tr>\n<tr>\n<td>Registration:</td>\n<td>NY38941</td>\n</tr>\n<tr>\n<td>Use:</td>\n<td>Personal / commute</td>\n</tr>\n</table>\n\n\n### Loss Information\n\nDate of Collision:\n12/15/2025\n\nTime of Collision:\n06:51\n\nLocation:\nCounty Route 18 near Mill Lane,\nMaple Crossing, NY 12009\n\n\n### Damage Description:\n\nFront bumper, grille, hood edge\nand right headlamp; no rear\ndamage.\n\n\n<table>\n<tr>\n<td>Drivable:</td>\n<td>No</td>\n</tr>\n<tr>\n<td>Injuries:</td>\n<td>None reported</td>\n</tr>\n<tr>\n<td>Other Driver:</td>\n<td>Not applicable</td>\n</tr>\n<tr>\n<td>Liability:</td>\n<td>Not determined</td>\n</tr>\n</table>\n\n\n<!-- PageNumber: Page 1 of 1 -->\n<!-- PageBreak -->\n\n<!-- PageHeader: Claim #: MCM-25-998392 Date Written: 12/16/2025 -->\n\nTo whom it may concern,\n\nI am writing to provide my statement regarding the\nincident that occurred on 12/15/2025.\n\nOn Monday, December 15, 2025, at approximately 6:51 a.m.,\nI was driving my 2023 Chevrolet Equinox LT northbound on\nCounty Route 18 near Mill Lane, Maple Crossing, NY 12009.\nIt was still dark and the roads were clear. As I approached\nthe area near Mill Lane, a deer suddenly entered the roadway\nfrom the right shoulder and ran into the path of my vehicle.\nI had no time to react or stop. The deer made contact with\nthe front of my vehicle, striking the front grille area and\nright front corner.\n\nAfter the impact, I pulled over to the right as much as\npossible and turned on my hazard lights. I inspected the\ndamage and saw that the front bumper, grille, hood edge,\nand right headlamp were damaged. The right headlamp was\nnot working, and parts of the front fascia were loose.\nBecause of the damage and the headlamp being out, I did\nnot feel it was safe to continue driving.\n\nI contacted roadside assistance and had the vehicle towed\nto a repair facility later that morning.\n\nThere were no injuries to myself or any passengers. No\nother vehicles were involved.\n\nThis statement is true and accurate to the best of my\nknowledge.\n\nGrace Okafor (printed name)\n\nG.O.(initials)\n\n<!-- PageBreak -->\n\n\n![MAPLEWAY VEHICLE RENTAL](figures/8.1)\n\n\nMapleway Vehicle Rental\n221 Station Street\nMaple Crossing, NY 12009\n(518) 555-0169\n\n\n## PICKUP AGREEMENT\n\nAgreement No.\nRA-703731\n\nDate / Time\n12/20/2025 09:30\n\nStatus\nOPEN; no payment or\ninsurance authorization\n\n\n<table>\n<tr>\n<td>Renter</td>\n<td>Grace Okafor</td>\n</tr>\n<tr>\n<td>Address</td>\n<td>459 Linden Terrace Maple Crossing, NY 12009</td>\n</tr>\n<tr>\n<td>Phone</td>\n<td>(518) 555-0109</td>\n</tr>\n</table>\n\n\nEmail\n\ngrace.okafor@example.com\n\n\n## RENTAL VEHICLE\n\n\n<table>\n<tr>\n<th>Unit No.</th>\n<th>Year / Make / Model</th>\n<th>Color</th>\n<th>Vehicle Class</th>\n</tr>\n<tr>\n<td>RV-109</td>\n<td>2024 Ford Escape Active</td>\n<td>Blue</td>\n<td>Compact SUV</td>\n</tr>\n</table>\n\n\n## RENTAL PERIOD\n\n\n<table>\n<tr>\n<th>Pickup</th>\n<th>Scheduled Return</th>\n<th>Rental Days</th>\n</tr>\n<tr>\n<td>12/20/2025 09:30</td>\n<td>12/24/2025 09:30</td>\n<td>4</td>\n</tr>\n</table>\n\n\n## MILEAGE & FUEL\n\n\n<table>\n<tr>\n<th></th>\n<th>OUT (at Pickup)</th>\n<th>IN (at Return)</th>\n<th>Total Distance</th>\n<th>Fuel</th>\n</tr>\n<tr>\n<td>Mileage</td>\n<td>20,392</td>\n<td>Pending</td>\n<td>Pending</td>\n<td>-</td>\n</tr>\n<tr>\n<td>Fuel Level</td>\n<td>Full out</td>\n<td>Pending</td>\n<td>-</td>\n<td>Pending</td>\n</tr>\n</table>\n\n\n## CONDITION RECORD\n\n\n<table>\n<tr>\n<th>AT PICKUP</th>\n<th>AT RETURN (PENDING)</th>\n</tr>\n<tr>\n<td>Pre-existing left-rear bumper scuff noted; return inspection Pending.</td>\n<td>☐ No new damage<br>☐ New damage noted<br>☐ Vehicle not returned</td>\n</tr>\n</table>\n\n\n## RENTAL CHARGES (Estimated)\n\n\n<table>\n<tr>\n<th>Description</th>\n<th>Rate</th>\n<th>Days</th>\n<th>Amount</th>\n</tr>\n<tr>\n<td>Daily Rate</td>\n<td>$73.00</td>\n<td>4</td>\n<td>$292.00</td>\n</tr>\n<tr>\n<td>Estimated Total</td>\n<td></td>\n<td></td>\n<td>$292.00</td>\n</tr>\n</table>\n\n\nPAYMENT / INSURANCE AUTHORIZATION\n\nAuthorization Status:\nPENDING\nNo payment or insurance authorization\nhas been received.\n\n\n## AGREEMENT TERMS\n\nRenter agrees to be responsible for all charges and applicable taxes, fees, and surcharges\nincurred during the rental period. Renter is also responsible for any loss or damage to the\nvehicle, subject to the terms and conditions of this agreement.\nThis agreement is governed by the laws of the State of New York.\n\nRenter Signature\n\nDate\n\n<!-- PageFooter: Thank you for renting with Mapleway Vehicle Rental. -->\n<!-- PageNumber: Page 1 of 2 -->\n<!-- PageBreak -->\n\n\n![Mapleway VEHICLE RENTAL](figures/9.1)\n\n\nMapleway Vehicle Rental\n221 Station Street\nMaple Crossing, NY 12009\n(518) 555-0169\n\nRenter\nGrace Okafor\n459 Linden Terrace\nMaple Crossing, NY 12009\n(518) 555-0109\ngrace.okafor@example.com\n\nRental Agreement:\nRA-703731\n\nInvoice #:\n\nR-NY-45735\n\n\n<table>\n<tr>\n<td>Unit Number:</td>\n<td>RV-109</td>\n</tr>\n<tr>\n<td>Vehicle:</td>\n<td>2024 Ford Escape Active</td>\n</tr>\n<tr>\n<td>Color:</td>\n<td>Blue</td>\n</tr>\n<tr>\n<td>Class:</td>\n<td>Compact SUV</td>\n</tr>\n</table>\n\n\n<table>\n<tr>\n<td>Invoice Date:</td>\n<td>12/24/2025</td>\n</tr>\n<tr>\n<td>Due Date:</td>\n<td>01/07/2026</td>\n</tr>\n<tr>\n<td>Days:</td>\n<td>4</td>\n</tr>\n</table>\n\n\n<table>\n<tr>\n<th>Pickup Date/Time</th>\n<th>Return Date/Time</th>\n<th>Miles Out</th>\n<th>Miles In</th>\n<th>Distance</th>\n<th>Fuel Level</th>\n</tr>\n<tr>\n<td>2025-12-20 09:30</td>\n<td>2025-12-24 09:30</td>\n<td>20,392</td>\n<td>20,634</td>\n<td>242</td>\n<td>Full out / Full in</td>\n</tr>\n</table>\n\n\n### RENTAL CHARGES\n\n\n<table>\n<tr>\n<th>Description</th>\n<th>Amount (USD)</th>\n</tr>\n<tr>\n<td>Rental day 2025-12-20</td>\n<td>73.00</td>\n</tr>\n<tr>\n<td>Rental day 2025-12-21</td>\n<td>73.00</td>\n</tr>\n<tr>\n<td>Rental day 2025-12-22</td>\n<td>73.00</td>\n</tr>\n<tr>\n<td>Rental day 2025-12-23</td>\n<td>73.00</td>\n</tr>\n</table>\n\n\n<table>\n<tr>\n<td>Subtotal</td>\n<td>292.00</td>\n</tr>\n<tr>\n<td>Quoted state/local sales tax</td>\n<td>23.36</td>\n</tr>\n<tr>\n<td>State passenger rental tax</td>\n<td>17.52</td>\n</tr>\n<tr>\n<td>Non-MCTD regional rental tax</td>\n<td>17.52</td>\n</tr>\n<tr>\n<td>Total Tax</td>\n<td>58.40</td>\n</tr>\n<tr>\n<td>INVOICE TOTAL (USD)</td>\n<td>350.40</td>\n</tr>\n</table>\n\n\n## NOTES\n\nWinter roadway conditions may include\nsnow, ice, and reduced visibility.\nDrive cautiously and allow extra time.\n\nCustomer acknowledgment:\nOne pre-existing left-rear bumper scuff,\nunchanged; no new damage.\nBy signing the rental agreement, I\nacknowledge the vehicle condition as\nnoted above.\n\n\n## CONDITION RECORD (AT RETURN)\n\nExterior Condition\n\n◉\nNo New Damage\n\n○\nNew Damage Noted\n\nInterior Condition\n\n◉\nClean\n\n○\nSoiling Noted\n\nTire Condition\n\n◉\nNormal Wear\n\n○\nDamage Noted\n\nGlass Condition\n\n◉\nClear\n\n○\nChip/Crack Noted\n\nNotes: One pre-existing left-rear bumper scuff, unchanged; no new damage.\n\nACCOUNT STATUS: OPEN; no payment or insurance authorization\n\n<!-- PageNumber: Page 2 of 2 -->\n<!-- PageBreak -->\n\n☐\nCORRECTED (if checked)\n\nLENDER'S name, street address, city or town, state or province, country, ZIP or\nforeign postal code, and telephone no.\nMaple Crossing Recovery Finance\n875 Hudson Commerce Plaza\nAlbany, NY 12207\n(518) 555-0119\n\nOMB No. 1545-0877\nForm\n1099-A\n(Rev. April 2025)\n\nFor calendar year\n2025\n\n\n# Acquisition or Abandonment of Secured Property\n\nLENDER'S TIN\n\\*\\*-\\*\\**3529\n\nBORROWER'S TIN\n983-64-3529\n\n1 Date of lender's acquisition or\nknowledge of abandonment\n04/04/2025\n\n2 Balance of principal\noutstanding\n$\n17,590.00\n\nBORROWER'S name\nGrace Okafor\nStreet address (including apt. no.)\n459 Linden Terrace\nCity or town, state or province, country, and ZIP or foreign postal code\nMaple Crossing, NY 12009\n\nAccount number (see instructions)\nSYN-NY-1099A-09\n\n3\n\n4 Fair market value of property\n$\n12,425.00\n\n5 If checked, the borrower was personally liable for repayment\nof the debt\n☑\n\n6 Description of property\n2017 Volkswagen Tiguan S, silver\nTraining asset ref: SYN-NY-1099A-09\n\n\n## Copy B For Borrower\n\nThis is important tax\ninformation and is being\nfurnished to the IRS. If\nyou are required to file a\nreturn, a negligence\npenalty or other\nsanction may be\nimposed on you if\ntaxable income results\nfrom this transaction\nand the IRS determines\nthat it has not been\nreported.\n\n<!-- PageFooter: Form 1099-A (Rev. 4-2025) -->\n<!-- PageFooter: (keep for your records) -->\n<!-- PageFooter: www.irs.gov/Form1099A -->\n<!-- PageFooter: Department of the Treasury - Internal Revenue Service -->\n<!-- PageBreak -->\n\n\n![M<!-- PageHeader: MILLSTONE COLLISION & RECOVERY -->\n](figures/11.1)\n\n\n243 Works Road\nMaple Crossing, NY 12009\n(518) 555-0149\n\n\n<table>\n<tr>\n<th>Inspector:</th>\n</tr>\n<tr>\n<td>Claim Reference:</td>\n</tr>\n<tr>\n<th>Inspection Date:</th>\n</tr>\n<tr>\n<td>Repair Status:</td>\n</tr>\n</table>\n\n\nPeter Adeyemi\n\nMCM-25-998392\n\n2025-12-18\n\nScheduled\n\n\n<table>\n<tr>\n<td>Insured Name:</td>\n<td>Grace Okafor</td>\n</tr>\n<tr>\n<td>Vehicle:</td>\n<td>2023 Chevrolet Equinox LT</td>\n</tr>\n<tr>\n<td>Color:</td>\n<td>Dark blue</td>\n</tr>\n</table>\n\n\nVIN:\n3GNAXUEG3PA517029\n\nRegistration:\nNY38941\n\nUse:\nPersonal / commute\n\nOdometer at Inspection:\n41,870\n\nAsset Reference:\nNY-35149\n\n\n![](figures/11.2)\n\n\n<table>\n<tr>\n<td>Condition Summary</td>\n<td></td>\n</tr>\n<tr>\n<td>Damage Description:</td>\n<td>Front bumper, grille, hood edge and right headlamp; no rear damage.</td>\n</tr>\n<tr>\n<td>Cause of Loss:</td>\n<td>Front-end impact from animal strike.</td>\n</tr>\n<tr>\n<td>Drivable:</td>\n<td>No - vehicle not drivable due to lighting damage.</td>\n</tr>\n</table>\n\n\n<table>\n<tr>\n<td>Airbags Deployed:</td>\n<td>No</td>\n</tr>\n<tr>\n<td>Prior Damage Noted:</td>\n<td>No</td>\n</tr>\n<tr>\n<td>Rear Damage Observed:</td>\n<td>No</td>\n</tr>\n<tr>\n<td>Keys / Remotes:</td>\n<td>2 / 2</td>\n</tr>\n</table>\n\n\nNotes:\nVehicle towed in. All fluids observed - no visible leaks. Further teardown required.\n\n<!-- PageNumber: Page 1 of 1 -->\n",
+        "kind": "document",
+        "startPageNumber": 1,
+        "endPageNumber": 11,
+        "unit": "inch",
+        "pages": [
+          {
+            "pageNumber": 1,
+            "angle": 0,
+            "width": 8.5,
+            "height": 11
+          },
+          {
+            "pageNumber": 2,
+            "angle": -0.0298,
+            "width": 11,
+            "height": 8.5
+          },
+          {
+            "pageNumber": 3,
+            "angle": 0,
+            "width": 8.5,
+            "height": 11
+          },
+          {
+            "pageNumber": 4,
+            "angle": 0,
+            "width": 8.5,
+            "height": 11
+          },
+          {
+            "pageNumber": 5,
+            "angle": 0,
+            "width": 8.5,
+            "height": 11
+          },
+          {
+            "pageNumber": 6,
+            "angle": 0.00005550884,
+            "width": 8.5,
+            "height": 11
+          },
+          {
+            "pageNumber": 7,
+            "angle": 0.1707589,
+            "width": 8.5,
+            "height": 11
+          },
+          {
+            "pageNumber": 8,
+            "angle": 1.059505,
+            "width": 8.5,
+            "height": 11
+          },
+          {
+            "pageNumber": 9,
+            "angle": 0.2938485,
+            "width": 8.5,
+            "height": 11
+          },
+          {
+            "pageNumber": 10,
+            "angle": 0.002536179,
+            "width": 8.5,
+            "height": 11
+          },
+          {
+            "pageNumber": 11,
+            "angle": 0.06559831,
+            "width": 11,
+            "height": 8.5
+          }
+        ],
+        "segments": [
+          {
+            "span": {
+              "offset": 0,
+              "length": 3251
+            },
+            "segmentId": "segment1",
+            "startPageNumber": 1,
+            "endPageNumber": 1,
+            "category": "repair_estimate",
+            "confidence": 0.99
+          },
+          {
+            "span": {
+              "offset": 3251,
+              "length": 1016
+            },
+            "segmentId": "segment2",
+            "startPageNumber": 2,
+            "endPageNumber": 2,
+            "category": "id_document",
+            "confidence": 0.93
+          },
+          {
+            "span": {
+              "offset": 4267,
+              "length": 5798
+            },
+            "segmentId": "segment3",
+            "startPageNumber": 3,
+            "endPageNumber": 4,
+            "category": "other",
+            "confidence": 0.97
+          },
+          {
+            "span": {
+              "offset": 10065,
+              "length": 2473
+            },
+            "segmentId": "segment4",
+            "startPageNumber": 5,
+            "endPageNumber": 5,
+            "category": "other",
+            "confidence": 0.97
+          },
+          {
+            "span": {
+              "offset": 12538,
+              "length": 3416
+            },
+            "segmentId": "segment5",
+            "startPageNumber": 6,
+            "endPageNumber": 6,
+            "category": "other",
+            "confidence": 0.97
+          },
+          {
+            "span": {
+              "offset": 15954,
+              "length": 1377
+            },
+            "segmentId": "segment6",
+            "startPageNumber": 7,
+            "endPageNumber": 7,
+            "category": "statement",
+            "confidence": 0.99
+          },
+          {
+            "span": {
+              "offset": 17331,
+              "length": 4736
+            },
+            "segmentId": "segment7",
+            "startPageNumber": 8,
+            "endPageNumber": 9,
+            "category": "rental_invoice",
+            "confidence": 0.95
+          },
+          {
+            "span": {
+              "offset": 22067,
+              "length": 1518
+            },
+            "segmentId": "segment8",
+            "startPageNumber": 10,
+            "endPageNumber": 10,
+            "category": "tax_1099a",
+            "confidence": 0.99
+          },
+          {
+            "span": {
+              "offset": 23585,
+              "length": 1387
+            },
+            "segmentId": "segment9",
+            "startPageNumber": 11,
+            "endPageNumber": 11,
+            "category": "other",
+            "confidence": 0.95
+          }
+        ],
+        "metadata": {
+          "contentType": "application/pdf",
+          "pageCount": "11"
+        },
+        "analyzerId": "lab664_cache_20261103_195602_router",
+        "mimeType": "application/pdf"
+      },
+      {
+        "path": "input1/segment1",
+        "category": "repair_estimate",
+        "markdown": "![Millstone Collision & Recovery 243 Works Road, Maple Crossing, NY 12009 (518) 555-0149](figures/1.1)\n\n\n# REPAIR ESTIMATE\n\n\n<table>\n<tr>\n<td>Claim Reference:</td>\n<td>MCM-25-998392</td>\n</tr>\n<tr>\n<td>Policy Reference:</td>\n<td>MCM-A4370409</td>\n</tr>\n<tr>\n<td>Estimate Reference:</td>\n<td>Q-NY-53183</td>\n</tr>\n</table>\n\n\nINSURER / CUSTOMER INFORMATION\n\nMaple Crossing Mutual\n517 Civic Lane\nMaple Crossing, NY 12009\n(518) 555-0129\n\nAdjuster:\nZoe Ellis\n\nInsured:\nGrace Okafor\n459 Linden Terrace\nMaple Crossing, NY 12009\n(518) 555-0109\ngrace.okafor@example.com\n\nREPAIRER INFORMATION\nMillstone Collision & Recovery\n243 Works Road\nMaple Crossing, NY 12009\n(518) 555-0149\n\nInspector:\nPeter Adeyemi\n\nVehicle:\n2023 Chevrolet Equinox LT\nColor:\nDark blue\nViN:\n3GNAXUEG3PA517029\n\nRegistration: NY38941\n\nUse:\nPersonal / commute\n\nOdometer:\n41,870\n\n\n<table>\n<tr>\n<th rowspan=\"2\">Item</th>\n<th rowspan=\"2\">Description</th>\n<th rowspan=\"2\">Qty.</th>\n<th>PARTS</th>\n<th colspan=\"2\">LABOR</th>\n<th>LINE TOTAL</th>\n</tr>\n<tr>\n<th>Amount</th>\n<th>Hours</th>\n<th>Amount</th>\n<th>Amount</th>\n</tr>\n<tr>\n<td>1</td>\n<td>Front bumper assembly</td>\n<td>1</td>\n<td>726.00</td>\n<td>1.9</td>\n<td>262.20</td>\n<td>988.20</td>\n</tr>\n<tr>\n<td>2</td>\n<td>Grille and brackets</td>\n<td>1</td>\n<td>385.00</td>\n<td>0.9</td>\n<td>124.20</td>\n<td>509.20</td>\n</tr>\n<tr>\n<td>3</td>\n<td>Right headlamp</td>\n<td>1</td>\n<td>643.00</td>\n<td>0.7</td>\n<td>96.60</td>\n<td>739.60</td>\n</tr>\n<tr>\n<td>4</td>\n<td>Hood leading-edge repair</td>\n<td>1</td>\n<td>0.00</td>\n<td>2.8</td>\n<td>386.40</td>\n<td>386.40</td>\n</tr>\n<tr>\n<td>5</td>\n<td>Front-panel refinish</td>\n<td>1</td>\n<td>238.00</td>\n<td>4.3</td>\n<td>593.40</td>\n<td>831.40</td>\n</tr>\n<tr>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n</tr>\n<tr>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n</tr>\n<tr>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n</tr>\n<tr>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n</tr>\n</table>\n\n\nLABOR RATE\n\nRate Per Hour\n$138.00\n\nThis repair valuation is provisional and based on\na visual inspection only. Final costs may change\npending teardown or supplemental review.\n\n\n<table>\n<tr>\n<th>Tax Description</th>\n<th>Tax Rate</th>\n</tr>\n<tr>\n<td>Tax on parts</td>\n<td>8.00%</td>\n</tr>\n</table>\n\n\n<table>\n<tr>\n<td>Taxable Parts Base</td>\n<td>$1,992.00</td>\n</tr>\n<tr>\n<td>Tax on parts (8.00%)</td>\n<td>$159.36</td>\n</tr>\n<tr>\n<td>Subtotal (Parts &amp; Labor)</td>\n<td>$3,454.80</td>\n</tr>\n<tr>\n<td>Gross Estimate Total</td>\n<td>$3,614.16</td>\n</tr>\n<tr>\n<td>Deductible</td>\n<td>$250.00</td>\n</tr>\n<tr>\n<td>Net Estimate (Less Deductible)</td>\n<td>$3,364.16</td>\n</tr>\n</table>\n\n\n<table>\n<tr>\n<th>Inspection Date</th>\n<th>Estimated Repair Start</th>\n<th>Repair Status</th>\n<th>Prepared By</th>\n</tr>\n<tr>\n<td>12/18/2025</td>\n<td>12/20/2025</td>\n<td>Scheduled</td>\n<td>Peter Adeyemi</td>\n</tr>\n</table>\n\n\nNotes / Additional Information\n\nEstimate includes disassembly and reassembly. OEM parts pricing used where available.\n\n<!-- PageFooter: Estimate Reference: Q-NY-53183 -->\n<!-- PageFooter: Inspection Date: 12/18/2025 -->\n<!-- PageFooter: Repair Status: Scheduled -->\n<!-- PageNumber: Page 1 of 1 -->\n<!-- PageBreak -->\n\n",
+        "fields": {
+          "AmountDue": {
+            "type": "object",
+            "valueObject": {
+              "Amount": {
+                "type": "number",
+                "valueNumber": 3364.16,
+                "spans": [
+                  {
+                    "offset": 2676,
+                    "length": 9
+                  }
+                ],
+                "confidence": 0.663,
+                "source": "D(1,7.0391,8.7012,7.6409,8.7012,7.6409,8.8623,7.0391,8.8623)"
+              },
+              "CurrencyCode": {
+                "type": "string",
+                "valueString": "USD",
+                "spans": [
+                  {
+                    "offset": 2676,
+                    "length": 9
+                  }
+                ],
+                "confidence": 0.793,
+                "source": "D(1,7.0391,8.7012,7.6409,8.7012,7.6409,8.8623,7.0391,8.8623)"
+              }
+            }
+          },
+          "BalanceForward": {
+            "type": "object",
+            "valueObject": {
+              "Amount": {
+                "type": "number",
+                "confidence": 0.929
+              },
+              "CurrencyCode": {
+                "type": "string",
+                "confidence": 0.849
+              }
+            }
+          },
+          "BillingAddress": {
+            "type": "string",
+            "confidence": 0.8
+          },
+          "BillingAddressRecipient": {
+            "type": "string",
+            "confidence": 0.8
+          },
+          "CountryRegion": {
+            "type": "string",
+            "valueString": "US",
+            "spans": [
+              {
+                "offset": 33,
+                "length": 40
+              },
+              {
+                "offset": 2676,
+                "length": 9
+              }
+            ],
+            "confidence": 0.532,
+            "source": "D(1,1.6301,0.9380,3.7130,0.9452,3.7125,1.1045,1.6296,1.0973);D(1,7.0391,8.7012,7.6409,8.7012,7.6409,8.8623,7.0391,8.8623)"
+          },
+          "CustomerAddress": {
+            "type": "string",
+            "valueString": "459 Linden Terrace Maple Crossing, NY 12009",
+            "spans": [
+              {
+                "offset": 477,
+                "length": 18
+              },
+              {
+                "offset": 496,
+                "length": 24
+              }
+            ],
+            "confidence": 0.717,
+            "source": "D(1,1.7316,3.4101,2.6708,3.4088,2.6710,3.5578,1.7318,3.5591);D(1,1.7289,3.5882,3.0568,3.5814,3.0576,3.7445,1.7297,3.7512)"
+          },
+          "CustomerAddressRecipient": {
+            "type": "string",
+            "valueString": "Grace Okafor",
+            "spans": [
+              {
+                "offset": 464,
+                "length": 12
+              }
+            ],
+            "confidence": 0.771,
+            "source": "D(1,1.7338,3.2233,2.4093,3.2233,2.4093,3.3725,1.7338,3.3725)"
+          },
+          "CustomerId": {
+            "type": "string",
+            "confidence": 0.8
+          },
+          "CustomerName": {
+            "type": "string",
+            "valueString": "Grace Okafor",
+            "spans": [
+              {
+                "offset": 464,
+                "length": 12
+              }
+            ],
+            "confidence": 0.771,
+            "source": "D(1,1.7338,3.2233,2.4093,3.2233,2.4093,3.3725,1.7338,3.3725)"
+          },
+          "CustomerTaxId": {
+            "type": "string",
+            "confidence": 0.8
+          },
+          "DueDate": {
+            "type": "date",
+            "confidence": 0.829
+          },
+          "InvoiceDate": {
+            "type": "date",
+            "valueDate": "2025-12-18",
+            "spans": [
+              {
+                "offset": 2837,
+                "length": 10
+              }
+            ],
+            "confidence": 0.896,
+            "source": "D(1,1.3198,9.3565,1.8500,9.3514,1.8500,9.4853,1.3198,9.4853)"
+          },
+          "InvoiceId": {
+            "type": "string",
+            "valueString": "Q-NY-53183",
+            "spans": [
+              {
+                "offset": 291,
+                "length": 10
+              }
+            ],
+            "confidence": 0.763,
+            "source": "D(1,6.8730,1.2236,7.6118,1.2236,7.6118,1.3760,6.8730,1.3760)"
+          },
+          "LineItems": {
+            "type": "array",
+            "valueArray": [
+              {
+                "type": "object",
+                "valueObject": {
+                  "Date": {
+                    "type": "date",
+                    "confidence": 0.972
+                  },
+                  "Description": {
+                    "type": "string",
+                    "valueString": "Front bumper assembly",
+                    "spans": [
+                      {
+                        "offset": 1099,
+                        "length": 21
+                      }
+                    ],
+                    "confidence": 0.823,
+                    "source": "D(1,1.4308,4.9912,2.6340,4.9954,2.6334,5.1667,1.4302,5.1625)"
+                  },
+                  "ProductCode": {
+                    "type": "string",
+                    "confidence": 0.972
+                  },
+                  "Quantity": {
+                    "type": "number",
+                    "valueNumber": 1,
+                    "spans": [
+                      {
+                        "offset": 1130,
+                        "length": 1
+                      }
+                    ],
+                    "confidence": 0.555,
+                    "source": "D(1,3.5527,5.0085,3.6046,5.0085,3.6046,5.1321,3.5527,5.1321)"
+                  },
+                  "QuantityUnit": {
+                    "type": "string",
+                    "confidence": 0.972
+                  },
+                  "TaxAmount": {
+                    "type": "object",
+                    "valueObject": {
+                      "Amount": {
+                        "type": "number",
+                        "confidence": 0.92
+                      },
+                      "CurrencyCode": {
+                        "type": "string",
+                        "confidence": 0.972
+                      }
+                    }
+                  },
+                  "TaxRate": {
+                    "type": "number",
+                    "confidence": 0.92
+                  },
+                  "TotalAmount": {
+                    "type": "object",
+                    "valueObject": {
+                      "Amount": {
+                        "type": "number",
+                        "valueNumber": 988.2,
+                        "spans": [
+                          {
+                            "offset": 1186,
+                            "length": 6
+                          }
+                        ],
+                        "confidence": 0.833,
+                        "source": "D(1,6.9810,4.9958,7.3379,5.0055,7.3379,5.1505,6.9810,5.1408)"
+                      },
+                      "CurrencyCode": {
+                        "type": "string",
+                        "valueString": "USD",
+                        "spans": [
+                          {
+                            "offset": 2558,
+                            "length": 9
+                          }
+                        ],
+                        "confidence": 0.529,
+                        "source": "D(1,7.0973,8.1287,7.6254,8.1326,7.6242,8.2965,7.0961,8.2926)"
+                      }
+                    }
+                  },
+                  "UnitPrice": {
+                    "type": "object",
+                    "valueObject": {
+                      "Amount": {
+                        "type": "number",
+                        "valueNumber": 726,
+                        "spans": [
+                          {
+                            "offset": 1141,
+                            "length": 6
+                          }
+                        ],
+                        "confidence": 0.834,
+                        "source": "D(1,4.2915,5.0001,4.6526,4.9983,4.6526,5.1432,4.2915,5.1417)"
+                      },
+                      "CurrencyCode": {
+                        "type": "string",
+                        "valueString": "USD",
+                        "spans": [
+                          {
+                            "offset": 2558,
+                            "length": 9
+                          }
+                        ],
+                        "confidence": 0.529,
+                        "source": "D(1,7.0973,8.1287,7.6254,8.1326,7.6242,8.2965,7.0961,8.2926)"
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "valueObject": {
+                  "Date": {
+                    "type": "date",
+                    "confidence": 0.972
+                  },
+                  "Description": {
+                    "type": "string",
+                    "valueString": "Grille and brackets",
+                    "spans": [
+                      {
+                        "offset": 1224,
+                        "length": 19
+                      }
+                    ],
+                    "confidence": 0.755,
+                    "source": "D(1,1.4329,5.2224,2.3732,5.2306,2.3719,5.3853,1.4316,5.3771)"
+                  },
+                  "ProductCode": {
+                    "type": "string",
+                    "confidence": 0.972
+                  },
+                  "Quantity": {
+                    "type": "number",
+                    "valueNumber": 1,
+                    "spans": [
+                      {
+                        "offset": 1253,
+                        "length": 1
+                      }
+                    ],
+                    "confidence": 0.552,
+                    "source": "D(1,3.5527,5.2453,3.6108,5.2423,3.6108,5.3701,3.5527,5.3678)"
+                  },
+                  "QuantityUnit": {
+                    "type": "string",
+                    "confidence": 0.972
+                  },
+                  "TaxAmount": {
+                    "type": "object",
+                    "valueObject": {
+                      "Amount": {
+                        "type": "number",
+                        "confidence": 0.92
+                      },
+                      "CurrencyCode": {
+                        "type": "string",
+                        "confidence": 0.972
+                      }
+                    }
+                  },
+                  "TaxRate": {
+                    "type": "number",
+                    "confidence": 0.92
+                  },
+                  "TotalAmount": {
+                    "type": "object",
+                    "valueObject": {
+                      "Amount": {
+                        "type": "number",
+                        "valueNumber": 509.2,
+                        "spans": [
+                          {
+                            "offset": 1309,
+                            "length": 6
+                          }
+                        ],
+                        "confidence": 0.833,
+                        "source": "D(1,6.9810,5.2354,7.3379,5.2338,7.3379,5.3792,6.9810,5.3792)"
+                      },
+                      "CurrencyCode": {
+                        "type": "string",
+                        "valueString": "USD",
+                        "spans": [
+                          {
+                            "offset": 2558,
+                            "length": 9
+                          }
+                        ],
+                        "confidence": 0.529,
+                        "source": "D(1,7.0973,8.1287,7.6254,8.1326,7.6242,8.2965,7.0961,8.2926)"
+                      }
+                    }
+                  },
+                  "UnitPrice": {
+                    "type": "object",
+                    "valueObject": {
+                      "Amount": {
+                        "type": "number",
+                        "valueNumber": 385,
+                        "spans": [
+                          {
+                            "offset": 1264,
+                            "length": 6
+                          }
+                        ],
+                        "confidence": 0.834,
+                        "source": "D(1,4.2874,5.2364,4.6526,5.2340,4.6526,5.3765,4.2874,5.3765)"
+                      },
+                      "CurrencyCode": {
+                        "type": "string",
+                        "valueString": "USD",
+                        "spans": [
+                          {
+                            "offset": 2558,
+                            "length": 9
+                          }
+                        ],
+                        "confidence": 0.529,
+                        "source": "D(1,7.0973,8.1287,7.6254,8.1326,7.6242,8.2965,7.0961,8.2926)"
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "valueObject": {
+                  "Date": {
+                    "type": "date",
+                    "confidence": 0.972
+                  },
+                  "Description": {
+                    "type": "string",
+                    "valueString": "Right headlamp",
+                    "spans": [
+                      {
+                        "offset": 1347,
+                        "length": 14
+                      }
+                    ],
+                    "confidence": 0.844,
+                    "source": "D(1,1.4329,5.4615,2.2151,5.4657,2.2142,5.6379,1.4320,5.6337)"
+                  },
+                  "ProductCode": {
+                    "type": "string",
+                    "confidence": 0.972
+                  },
+                  "Quantity": {
+                    "type": "number",
+                    "valueNumber": 1,
+                    "spans": [
+                      {
+                        "offset": 1371,
+                        "length": 1
+                      }
+                    ],
+                    "confidence": 0.554,
+                    "source": "D(1,3.5569,5.4827,3.6129,5.4893,3.6129,5.6100,3.5569,5.6035)"
+                  },
+                  "QuantityUnit": {
+                    "type": "string",
+                    "confidence": 0.972
+                  },
+                  "TaxAmount": {
+                    "type": "object",
+                    "valueObject": {
+                      "Amount": {
+                        "type": "number",
+                        "confidence": 0.92
+                      },
+                      "CurrencyCode": {
+                        "type": "string",
+                        "confidence": 0.972
+                      }
+                    }
+                  },
+                  "TaxRate": {
+                    "type": "number",
+                    "confidence": 0.92
+                  },
+                  "TotalAmount": {
+                    "type": "object",
+                    "valueObject": {
+                      "Amount": {
+                        "type": "number",
+                        "valueNumber": 739.6,
+                        "spans": [
+                          {
+                            "offset": 1426,
+                            "length": 6
+                          }
+                        ],
+                        "confidence": 0.833,
+                        "source": "D(1,6.9810,5.4765,7.3379,5.4762,7.3379,5.6192,6.9810,5.6191)"
+                      },
+                      "CurrencyCode": {
+                        "type": "string",
+                        "valueString": "USD",
+                        "spans": [
+                          {
+                            "offset": 2558,
+                            "length": 9
+                          }
+                        ],
+                        "confidence": 0.529,
+                        "source": "D(1,7.0973,8.1287,7.6254,8.1326,7.6242,8.2965,7.0961,8.2926)"
+                      }
+                    }
+                  },
+                  "UnitPrice": {
+                    "type": "object",
+                    "valueObject": {
+                      "Amount": {
+                        "type": "number",
+                        "valueNumber": 643,
+                        "spans": [
+                          {
+                            "offset": 1382,
+                            "length": 6
+                          }
+                        ],
+                        "confidence": 0.839,
+                        "source": "D(1,4.2957,5.4731,4.6526,5.4731,4.6526,5.6128,4.2957,5.6128)"
+                      },
+                      "CurrencyCode": {
+                        "type": "string",
+                        "valueString": "USD",
+                        "spans": [
+                          {
+                            "offset": 2558,
+                            "length": 9
+                          }
+                        ],
+                        "confidence": 0.529,
+                        "source": "D(1,7.0973,8.1287,7.6254,8.1326,7.6242,8.2965,7.0961,8.2926)"
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "valueObject": {
+                  "Date": {
+                    "type": "date",
+                    "confidence": 0.972
+                  },
+                  "Description": {
+                    "type": "string",
+                    "valueString": "Hood leading-edge repair",
+                    "spans": [
+                      {
+                        "offset": 1464,
+                        "length": 24
+                      }
+                    ],
+                    "confidence": 0.709,
+                    "source": "D(1,1.4319,5.7054,2.6064,5.7054,2.6064,5.8684,1.4319,5.8684)"
+                  },
+                  "ProductCode": {
+                    "type": "string",
+                    "confidence": 0.972
+                  },
+                  "Quantity": {
+                    "type": "number",
+                    "valueNumber": 1,
+                    "spans": [
+                      {
+                        "offset": 1498,
+                        "length": 1
+                      }
+                    ],
+                    "confidence": 0.554,
+                    "source": "D(1,3.5548,5.7202,3.6129,5.7202,3.6129,5.8491,3.5548,5.8491)"
+                  },
+                  "QuantityUnit": {
+                    "type": "string",
+                    "confidence": 0.972
+                  },
+                  "TaxAmount": {
+                    "type": "object",
+                    "valueObject": {
+                      "Amount": {
+                        "type": "number",
+                        "confidence": 0.92
+                      },
+                      "CurrencyCode": {
+                        "type": "string",
+                        "confidence": 0.972
+                      }
+                    }
+                  },
+                  "TaxRate": {
+                    "type": "number",
+                    "confidence": 0.92
+                  },
+                  "TotalAmount": {
+                    "type": "object",
+                    "valueObject": {
+                      "Amount": {
+                        "type": "number",
+                        "valueNumber": 386.4,
+                        "spans": [
+                          {
+                            "offset": 1552,
+                            "length": 6
+                          }
+                        ],
+                        "confidence": 0.83,
+                        "source": "D(1,6.9810,5.7095,7.3379,5.7095,7.3379,5.8570,6.9810,5.8551)"
+                      },
+                      "CurrencyCode": {
+                        "type": "string",
+                        "valueString": "USD",
+                        "spans": [
+                          {
+                            "offset": 2558,
+                            "length": 9
+                          }
+                        ],
+                        "confidence": 0.529,
+                        "source": "D(1,7.0973,8.1287,7.6254,8.1326,7.6242,8.2965,7.0961,8.2926)"
+                      }
+                    }
+                  },
+                  "UnitPrice": {
+                    "type": "object",
+                    "valueObject": {
+                      "Amount": {
+                        "type": "number",
+                        "valueNumber": 0,
+                        "spans": [
+                          {
+                            "offset": 1509,
+                            "length": 4
+                          }
+                        ],
+                        "confidence": 0.36,
+                        "source": "D(1,4.4243,5.7150,4.6526,5.7158,4.6526,5.8555,4.4243,5.8547)"
+                      },
+                      "CurrencyCode": {
+                        "type": "string",
+                        "valueString": "USD",
+                        "spans": [
+                          {
+                            "offset": 2558,
+                            "length": 9
+                          }
+                        ],
+                        "confidence": 0.529,
+                        "source": "D(1,7.0973,8.1287,7.6254,8.1326,7.6242,8.2965,7.0961,8.2926)"
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "valueObject": {
+                  "Date": {
+                    "type": "date",
+                    "confidence": 0.972
+                  },
+                  "Description": {
+                    "type": "string",
+                    "valueString": "Front-panel refinish",
+                    "spans": [
+                      {
+                        "offset": 1590,
+                        "length": 20
+                      }
+                    ],
+                    "confidence": 0.716,
+                    "source": "D(1,1.4340,5.9390,2.4301,5.9390,2.4301,6.1070,1.4340,6.1070)"
+                  },
+                  "ProductCode": {
+                    "type": "string",
+                    "confidence": 0.972
+                  },
+                  "Quantity": {
+                    "type": "number",
+                    "valueNumber": 1,
+                    "spans": [
+                      {
+                        "offset": 1620,
+                        "length": 1
+                      }
+                    ],
+                    "confidence": 0.528,
+                    "source": "D(1,3.5527,5.9524,3.6129,5.9592,3.6129,6.0881,3.5527,6.0813)"
+                  },
+                  "QuantityUnit": {
+                    "type": "string",
+                    "confidence": 0.972
+                  },
+                  "TaxAmount": {
+                    "type": "object",
+                    "valueObject": {
+                      "Amount": {
+                        "type": "number",
+                        "confidence": 0.92
+                      },
+                      "CurrencyCode": {
+                        "type": "string",
+                        "confidence": 0.972
+                      }
+                    }
+                  },
+                  "TaxRate": {
+                    "type": "number",
+                    "confidence": 0.92
+                  },
+                  "TotalAmount": {
+                    "type": "object",
+                    "valueObject": {
+                      "Amount": {
+                        "type": "number",
+                        "valueNumber": 831.4,
+                        "spans": [
+                          {
+                            "offset": 1676,
+                            "length": 6
+                          }
+                        ],
+                        "confidence": 0.836,
+                        "source": "D(1,6.9768,5.9527,7.3420,5.9473,7.3420,6.0869,6.9768,6.0924)"
+                      },
+                      "CurrencyCode": {
+                        "type": "string",
+                        "valueString": "USD",
+                        "spans": [
+                          {
+                            "offset": 2558,
+                            "length": 9
+                          }
+                        ],
+                        "confidence": 0.529,
+                        "source": "D(1,7.0973,8.1287,7.6254,8.1326,7.6242,8.2965,7.0961,8.2926)"
+                      }
+                    }
+                  },
+                  "UnitPrice": {
+                    "type": "object",
+                    "valueObject": {
+                      "Amount": {
+                        "type": "number",
+                        "valueNumber": 238,
+                        "spans": [
+                          {
+                            "offset": 1631,
+                            "length": 6
+                          }
+                        ],
+                        "confidence": 0.837,
+                        "source": "D(1,4.2915,5.9452,4.6526,5.9433,4.6526,6.0879,4.2915,6.0860)"
+                      },
+                      "CurrencyCode": {
+                        "type": "string",
+                        "valueString": "USD",
+                        "spans": [
+                          {
+                            "offset": 2558,
+                            "length": 9
+                          }
+                        ],
+                        "confidence": 0.529,
+                        "source": "D(1,7.0973,8.1287,7.6254,8.1326,7.6242,8.2965,7.0961,8.2926)"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          "PaymentTerm": {
+            "type": "string",
+            "confidence": 0.8
+          },
+          "PONumber": {
+            "type": "string",
+            "confidence": 0.8
+          },
+          "RemittanceAddress": {
+            "type": "string",
+            "confidence": 0.8
+          },
+          "RemittanceAddressRecipient": {
+            "type": "string",
+            "confidence": 0.8
+          },
+          "ServiceAddress": {
+            "type": "string",
+            "confidence": 0.8
+          },
+          "ServiceAddressRecipient": {
+            "type": "string",
+            "confidence": 0.8
+          },
+          "ShippingAddress": {
+            "type": "string",
+            "confidence": 0.8
+          },
+          "ShippingAddressRecipient": {
+            "type": "string",
+            "confidence": 0.8
+          },
+          "SubtotalAmount": {
+            "type": "object",
+            "valueObject": {
+              "Amount": {
+                "type": "number",
+                "valueNumber": 3454.8,
+                "spans": [
+                  {
+                    "offset": 2498,
+                    "length": 9
+                  }
+                ],
+                "confidence": 0.913,
+                "source": "D(1,7.0884,7.8925,7.6243,7.8908,7.6248,8.0502,7.0889,8.0519)"
+              },
+              "CurrencyCode": {
+                "type": "string",
+                "valueString": "USD",
+                "spans": [
+                  {
+                    "offset": 2498,
+                    "length": 9
+                  }
+                ],
+                "confidence": 0.913,
+                "source": "D(1,7.0884,7.8925,7.6243,7.8908,7.6248,8.0502,7.0889,8.0519)"
+              }
+            }
+          },
+          "TaxDetails": {
+            "type": "array",
+            "valueArray": [
+              {
+                "type": "object",
+                "valueObject": {
+                  "Amount": {
+                    "type": "object",
+                    "valueObject": {
+                      "Amount": {
+                        "type": "number",
+                        "valueNumber": 159.36,
+                        "spans": [
+                          {
+                            "offset": 2432,
+                            "length": 7
+                          }
+                        ],
+                        "confidence": 0.686,
+                        "source": "D(1,7.1885,7.5303,7.6243,7.5303,7.6243,7.6807,7.1885,7.6807)"
+                      },
+                      "CurrencyCode": {
+                        "type": "string",
+                        "valueString": "USD",
+                        "spans": [
+                          {
+                            "offset": 2432,
+                            "length": 7
+                          }
+                        ],
+                        "confidence": 0.536,
+                        "source": "D(1,7.1885,7.5303,7.6243,7.5303,7.6243,7.6807,7.1885,7.6807)"
+                      }
+                    }
+                  },
+                  "Description": {
+                    "type": "string",
+                    "valueString": "Tax on parts",
+                    "spans": [
+                      {
+                        "offset": 2277,
+                        "length": 12
+                      }
+                    ],
+                    "confidence": 0.838,
+                    "source": "D(1,1.1631,8.6636,1.7857,8.6636,1.7857,8.8247,1.1631,8.8247)"
+                  },
+                  "NetAmount": {
+                    "type": "object",
+                    "valueObject": {
+                      "Amount": {
+                        "type": "number",
+                        "valueNumber": 1992,
+                        "spans": [
+                          {
+                            "offset": 2372,
+                            "length": 9
+                          }
+                        ],
+                        "confidence": 0.641,
+                        "source": "D(1,7.0973,7.2728,7.6258,7.2776,7.6242,7.4483,7.0957,7.4435)"
+                      },
+                      "CurrencyCode": {
+                        "type": "string",
+                        "valueString": "USD",
+                        "spans": [
+                          {
+                            "offset": 2372,
+                            "length": 9
+                          }
+                        ],
+                        "confidence": 0.726,
+                        "source": "D(1,7.0973,7.2728,7.6258,7.2776,7.6242,7.4483,7.0957,7.4435)"
+                      }
+                    }
+                  },
+                  "Rate": {
+                    "type": "number",
+                    "valueNumber": 0.08,
+                    "spans": [
+                      {
+                        "offset": 2299,
+                        "length": 5
+                      }
+                    ],
+                    "confidence": 0.844,
+                    "source": "D(1,2.5234,8.6508,2.8609,8.6584,2.8575,8.8098,2.5200,8.8022)"
+                  }
+                }
+              }
+            ]
+          },
+          "TotalAmount": {
+            "type": "object",
+            "valueObject": {
+              "Amount": {
+                "type": "number",
+                "valueNumber": 3614.16,
+                "spans": [
+                  {
+                    "offset": 2558,
+                    "length": 9
+                  }
+                ],
+                "confidence": 0.864,
+                "source": "D(1,7.0973,8.1287,7.6254,8.1326,7.6242,8.2965,7.0961,8.2926)"
+              },
+              "CurrencyCode": {
+                "type": "string",
+                "valueString": "USD",
+                "spans": [
+                  {
+                    "offset": 2558,
+                    "length": 9
+                  }
+                ],
+                "confidence": 0.909,
+                "source": "D(1,7.0973,8.1287,7.6254,8.1326,7.6242,8.2965,7.0961,8.2926)"
+              }
+            }
+          },
+          "TotalDiscountAmount": {
+            "type": "object",
+            "valueObject": {
+              "Amount": {
+                "type": "number",
+                "valueNumber": 250,
+                "spans": [
+                  {
+                    "offset": 2608,
+                    "length": 7
+                  }
+                ],
+                "confidence": 0.356,
+                "source": "D(1,7.1926,8.3843,7.6243,8.3843,7.6243,8.5347,7.1926,8.5347)"
+              },
+              "CurrencyCode": {
+                "type": "string",
+                "valueString": "USD",
+                "spans": [
+                  {
+                    "offset": 2608,
+                    "length": 7
+                  }
+                ],
+                "confidence": 0.54,
+                "source": "D(1,7.1926,8.3843,7.6243,8.3843,7.6243,8.5347,7.1926,8.5347)"
+              }
+            }
+          },
+          "TotalTaxAmount": {
+            "type": "object",
+            "valueObject": {
+              "Amount": {
+                "type": "number",
+                "valueNumber": 159.36,
+                "spans": [
+                  {
+                    "offset": 2432,
+                    "length": 7
+                  }
+                ],
+                "confidence": 0.876,
+                "source": "D(1,7.1885,7.5303,7.6243,7.5303,7.6243,7.6807,7.1885,7.6807)"
+              },
+              "CurrencyCode": {
+                "type": "string",
+                "valueString": "USD",
+                "spans": [
+                  {
+                    "offset": 2432,
+                    "length": 7
+                  }
+                ],
+                "confidence": 0.768,
+                "source": "D(1,7.1885,7.5303,7.6243,7.5303,7.6243,7.6807,7.1885,7.6807)"
+              }
+            }
+          },
+          "VendorAddress": {
+            "type": "string",
+            "valueString": "243 Works Road Maple Crossing, NY 12009",
+            "spans": [
+              {
+                "offset": 614,
+                "length": 14
+              },
+              {
+                "offset": 629,
+                "length": 24
+              }
+            ],
+            "confidence": 0.731,
+            "source": "D(1,4.4492,2.1806,5.3670,2.1837,5.3665,2.3336,4.4487,2.3305);D(1,4.4442,2.3584,5.8770,2.3505,5.8779,2.5129,4.4451,2.5208)"
+          },
+          "VendorAddressRecipient": {
+            "type": "string",
+            "valueString": "Millstone Collision & Recovery",
+            "spans": [
+              {
+                "offset": 583,
+                "length": 30
+              }
+            ],
+            "confidence": 0.72,
+            "source": "D(1,4.4452,1.9770,6.1728,1.9906,6.1716,2.1467,4.4439,2.1331)"
+          },
+          "VendorName": {
+            "type": "string",
+            "valueString": "Millstone Collision & Recovery",
+            "spans": [
+              {
+                "offset": 2,
+                "length": 30
+              }
+            ],
+            "confidence": 0.648,
+            "source": "D(1,1.6302,0.5389,4.7638,0.5777,4.7605,0.8426,1.6269,0.8037)"
+          },
+          "VendorTaxId": {
+            "type": "string",
+            "confidence": 0.8
+          },
+          "vehicle": {
+            "type": "string",
+            "valueString": "2023 Chevrolet Equinox LT",
+            "spans": [
+              {
+                "offset": 705,
+                "length": 25
+              }
+            ],
+            "confidence": 0.94,
+            "source": "D(1,5.2004,3.2240,6.5879,3.2343,6.5867,3.3982,5.1992,3.3879)"
+          },
+          "vin": {
+            "type": "string",
+            "valueString": "3GNAXUEG3PA517029",
+            "spans": [
+              {
+                "offset": 753,
+                "length": 17
+              }
+            ],
+            "confidence": 0.984,
+            "source": "D(1,5.8147,3.5983,6.9561,3.5962,6.9561,3.7414,5.8147,3.7394)"
+          },
+          "odometer": {
+            "type": "number",
+            "valueNumber": 41870,
+            "spans": [
+              {
+                "offset": 830,
+                "length": 6
+              }
+            ],
+            "confidence": 0.976,
+            "source": "D(1,5.8188,4.1513,6.1550,4.1489,6.1550,4.2942,5.8188,4.2942)"
+          }
+        },
+        "kind": "document",
+        "startPageNumber": 1,
+        "endPageNumber": 1,
+        "unit": "inch",
+        "pages": [
+          {
+            "pageNumber": 1,
+            "angle": 0,
+            "width": 8.5,
+            "height": 11
+          }
+        ],
+        "segments": [
+          {
+            "span": {
+              "offset": 0,
+              "length": 3251
+            },
+            "segmentId": "segment1",
+            "startPageNumber": 1,
+            "endPageNumber": 1,
+            "category": "repair_estimate",
+            "confidence": 0.99
+          }
+        ],
+        "metadata": {
+          "contentType": "application/pdf",
+          "pageCount": "11"
+        },
+        "analyzerId": "lab664_cache_20261103_195602_repair"
+      },
+      {
+        "path": "input1/segment2",
+        "category": "id_document",
+        "markdown": "HUDSON\n9W\n\nHudson Route Club\n\nMember Name:\n\nGrace Okafor\n\nMembership No.:\n\nMR-158734\n\nValid From:\n\n05/19/2025\n\nValid Until:\n\n05/19/2026\n\nVEHICLE REFERENCE\n\nVehicle:\n\n2023 Chevrolet Equinox LT\n\nColor:\n\nDark blue\n\nAsset Reference:\n\nNY-35149\n\nMEMBER ASSISTANCE SUMMARY\n\nTOWING COORDINATION\nCoordination with approved\nservice providers.\n\n\\+\n\nBATTERY ASSISTANCE\nJump start coordination\nwhen available.\n\nLOCKOUT ASSISTANCE\nAssistance for vehicle\nlockout situations.\n\nTRIP INTERRUPTION REFERRALS\nReferrals for lodging, travel and\nother services.\n\nIMPORTANT: Keep this card in your vehicle. See reverse for full terms and conditions.\n",
+        "fields": {
+          "CountryRegion": {
+            "type": "string",
+            "valueString": "USA"
+          },
+          "Region": {
+            "type": "string"
+          },
+          "DocumentNumber": {
+            "type": "string",
+            "valueString": "MR-158734",
+            "spans": [
+              {
+                "offset": 75,
+                "length": 9
+              }
+            ],
+            "confidence": 0.923,
+            "source": "D(2,3.0262,3.3819,4.2458,3.3798,4.2462,3.5934,3.0266,3.5955)"
+          },
+          "DocumentDiscriminator": {
+            "type": "string",
+            "confidence": 0.816
+          },
+          "FirstName": {
+            "type": "string",
+            "valueString": "Grace",
+            "spans": [
+              {
+                "offset": 44,
+                "length": 5
+              }
+            ],
+            "confidence": 0.83,
+            "source": "D(2,3.0374,2.8612,3.8807,2.8605,3.8807,3.1379,3.0374,3.1316)"
+          },
+          "LastName": {
+            "type": "string",
+            "valueString": "Okafor",
+            "spans": [
+              {
+                "offset": 50,
+                "length": 6
+              }
+            ],
+            "confidence": 0.825,
+            "source": "D(2,3.9816,2.8603,4.9441,2.8562,4.9441,3.1376,3.9815,3.1382)"
+          },
+          "Address": {
+            "type": "string",
+            "confidence": 0.816
+          },
+          "BirthDate": {
+            "type": "date",
+            "confidence": 0.854
+          },
+          "ExpirationDate": {
+            "type": "date",
+            "valueDate": "2026-05-19",
+            "spans": [
+              {
+                "offset": 125,
+                "length": 10
+              }
+            ],
+            "confidence": 0.895,
+            "source": "D(2,3.0347,4.2278,4.3425,4.2247,4.3425,4.4562,3.0347,4.4558)"
+          },
+          "IssueDate": {
+            "type": "date",
+            "valueDate": "2025-05-19",
+            "spans": [
+              {
+                "offset": 99,
+                "length": 10
+              }
+            ],
+            "confidence": 0.898,
+            "source": "D(2,3.0320,3.8055,4.3264,3.8042,4.3264,4.0300,3.0320,4.0300)"
+          },
+          "EyeColor": {
+            "type": "string",
+            "confidence": 0.816
+          },
+          "HairColor": {
+            "type": "string",
+            "confidence": 0.816
+          },
+          "Height": {
+            "type": "string",
+            "confidence": 0.816
+          },
+          "Weight": {
+            "type": "string",
+            "confidence": 0.816
+          },
+          "Sex": {
+            "type": "string",
+            "confidence": 0.816
+          },
+          "Endorsements": {
+            "type": "string",
+            "confidence": 0.816
+          },
+          "Restrictions": {
+            "type": "string",
+            "confidence": 0.816
+          },
+          "PersonalNumber": {
+            "type": "string",
+            "confidence": 0.816
+          },
+          "PlaceOfBirth": {
+            "type": "string",
+            "confidence": 0.816
+          },
+          "VehicleClass": {
+            "type": "string",
+            "confidence": 0.816
+          },
+          "Category": {
+            "type": "string",
+            "confidence": 0.816
+          }
+        },
+        "kind": "document",
+        "startPageNumber": 2,
+        "endPageNumber": 2,
+        "unit": "inch",
+        "pages": [
+          {
+            "pageNumber": 2,
+            "angle": -0.0298,
+            "width": 11,
+            "height": 8.5
+          }
+        ],
+        "metadata": {
+          "contentType": "application/pdf",
+          "pageCount": "1"
+        },
+        "analyzerId": "prebuilt-idDocument.generic"
+      },
+      {
+        "path": "input1/segment6",
+        "category": "statement",
+        "markdown": "<!-- PageHeader: Claim #: MCM-25-998392 Date Written: 12/16/2025 -->\n\nTo whom it may concern,\n\nI am writing to provide my statement regarding the\nincident that occurred on 12/15/2025.\n\nOn Monday, December 15, 2025, at approximately 6:51 a.m.,\nI was driving my 2023 Chevrolet Equinox LT northbound on\nCounty Route 18 near Mill Lane, Maple Crossing, NY 12009.\nIt was still dark and the roads were clear. As I approached\nthe area near Mill Lane, a deer suddenly entered the roadway\nfrom the right shoulder and ran into the path of my vehicle.\nI had no time to react or stop. The deer made contact with\nthe front of my vehicle, striking the front grille area and\nright front corner.\n\nAfter the impact, I pulled over to the right as much as\npossible and turned on my hazard lights. I inspected the\ndamage and saw that the front bumper, grille, hood edge,\nand right headlamp were damaged. The right headlamp was\nnot working, and parts of the front fascia were loose.\nBecause of the damage and the headlamp being out, I did\nnot feel it was safe to continue driving.\n\nI contacted roadside assistance and had the vehicle towed\nto a repair facility later that morning.\n\nThere were no injuries to myself or any passengers. No\nother vehicles were involved.\n\nThis statement is true and accurate to the best of my\nknowledge.\n\nGrace Okafor (printed name)\n\nG.O.(initials)\n\n<!-- PageBreak -->\n\n",
+        "fields": {
+          "claimant_name": {
+            "type": "string",
+            "valueString": "Grace Okafor",
+            "spans": [
+              {
+                "offset": 1312,
+                "length": 12
+              }
+            ],
+            "confidence": 0.929,
+            "source": "D(7,1.6032,9.4566,2.8845,9.4669,2.8824,9.7255,1.6011,9.7152)"
+          },
+          "incident_date": {
+            "type": "date",
+            "valueDate": "2025-12-15",
+            "spans": [
+              {
+                "offset": 172,
+                "length": 10
+              }
+            ],
+            "confidence": 0.888,
+            "source": "D(7,4.4747,1.8789,5.4612,1.8817,5.4612,2.0673,4.4747,2.0678)"
+          },
+          "incident_location": {
+            "type": "string",
+            "valueString": "County Route 18 near Mill Lane, Maple Crossing, NY 12009",
+            "spans": [
+              {
+                "offset": 300,
+                "length": 57
+              }
+            ],
+            "confidence": 0.889,
+            "source": "D(7,1.8545,2.8548,7.2261,2.8630,7.2258,3.0815,1.8542,3.0734)"
+          },
+          "vehicle": {
+            "type": "string",
+            "valueString": "2023 Chevrolet Equinox LT",
+            "spans": [
+              {
+                "offset": 260,
+                "length": 25
+              }
+            ],
+            "confidence": 0.937,
+            "source": "D(7,3.5900,2.6119,5.9765,2.6188,5.9759,2.8267,3.5894,2.8198)"
+          },
+          "vin": {
+            "type": "string",
+            "confidence": 0.8
+          },
+          "reported_damage": {
+            "type": "string",
+            "valueString": "The claimant reported damage to the front grille area, right front corner, front bumper, grille, hood edge, and right headlamp; the right headlamp was not working and parts of the front fascia were loose.",
+            "spans": [
+              {
+                "offset": 185,
+                "length": 57
+              },
+              {
+                "offset": 243,
+                "length": 56
+              },
+              {
+                "offset": 300,
+                "length": 57
+              },
+              {
+                "offset": 358,
+                "length": 59
+              },
+              {
+                "offset": 418,
+                "length": 60
+              },
+              {
+                "offset": 479,
+                "length": 60
+              },
+              {
+                "offset": 540,
+                "length": 58
+              },
+              {
+                "offset": 599,
+                "length": 59
+              },
+              {
+                "offset": 659,
+                "length": 19
+              },
+              {
+                "offset": 680,
+                "length": 55
+              },
+              {
+                "offset": 736,
+                "length": 56
+              },
+              {
+                "offset": 793,
+                "length": 56
+              },
+              {
+                "offset": 850,
+                "length": 55
+              },
+              {
+                "offset": 906,
+                "length": 54
+              },
+              {
+                "offset": 961,
+                "length": 55
+              },
+              {
+                "offset": 1017,
+                "length": 41
+              }
+            ],
+            "confidence": 0.839,
+            "source": "D(7,1.8860,2.3287,7.2016,2.3454,7.2008,2.5782,1.8852,2.5615);D(7,1.8531,2.5859,7.2848,2.6124,7.2837,2.8370,1.8520,2.8105);D(7,1.8545,2.8548,7.2261,2.8630,7.2258,3.0815,1.8542,3.0734);D(7,1.8569,3.1011,7.3592,3.1190,7.3585,3.3341,1.8562,3.3161);D(7,1.8391,3.3605,7.4214,3.3753,7.4209,3.5862,1.8385,3.5714);D(7,1.8226,3.6104,7.2638,3.6267,7.2631,3.8449,1.8219,3.8286);D(7,1.8214,3.8698,7.4462,3.8825,7.4458,4.0889,1.8210,4.0762);D(7,1.8179,4.1147,7.1352,4.1323,7.1344,4.3559,1.8172,4.3383);D(7,1.8189,4.3812,3.5044,4.3940,3.5028,4.6120,1.8173,4.5992);D(7,1.8013,4.8730,7.0568,4.9025,7.0556,5.1208,1.8001,5.0912);D(7,1.7784,5.1575,7.1222,5.1609,7.1221,5.3729,1.7783,5.3695);D(7,1.7743,5.4020,7.2432,5.4233,7.2424,5.6412,1.7735,5.6199);D(7,1.7650,5.6660,7.2348,5.6849,7.2341,5.8957,1.7643,5.8768);D(7,1.7515,5.9334,6.9895,5.9394,6.9893,6.1454,1.7513,6.1394);D(7,1.7598,6.1746,7.1234,6.2082,7.1221,6.4203,1.7585,6.3867);D(7,1.7494,6.4474,5.3840,6.4636,5.3831,6.6687,1.7485,6.6525)"
+          },
+          "summary": {
+            "type": "string",
+            "valueString": "Grace Okafor stated that on December 15, 2025, at approximately 6:51 a.m., she was driving her 2023 Chevrolet Equinox LT northbound on County Route 18 near Mill Lane in Maple Crossing, NY, when a deer entered from the right shoulder and ran into her vehicle's path. She reported front-end and right-front damage, pulled over, used hazard lights, contacted roadside assistance, and had the vehicle towed; she reported no injuries and no other vehicles involved.",
+            "spans": [
+              {
+                "offset": 95,
+                "length": 50
+              },
+              {
+                "offset": 146,
+                "length": 37
+              },
+              {
+                "offset": 185,
+                "length": 57
+              },
+              {
+                "offset": 243,
+                "length": 56
+              },
+              {
+                "offset": 300,
+                "length": 57
+              },
+              {
+                "offset": 358,
+                "length": 59
+              },
+              {
+                "offset": 418,
+                "length": 60
+              },
+              {
+                "offset": 479,
+                "length": 60
+              },
+              {
+                "offset": 540,
+                "length": 58
+              },
+              {
+                "offset": 599,
+                "length": 59
+              },
+              {
+                "offset": 659,
+                "length": 19
+              },
+              {
+                "offset": 680,
+                "length": 55
+              },
+              {
+                "offset": 736,
+                "length": 56
+              },
+              {
+                "offset": 793,
+                "length": 56
+              },
+              {
+                "offset": 850,
+                "length": 55
+              },
+              {
+                "offset": 906,
+                "length": 54
+              },
+              {
+                "offset": 961,
+                "length": 55
+              },
+              {
+                "offset": 1017,
+                "length": 41
+              },
+              {
+                "offset": 1060,
+                "length": 57
+              },
+              {
+                "offset": 1118,
+                "length": 40
+              },
+              {
+                "offset": 1160,
+                "length": 54
+              },
+              {
+                "offset": 1215,
+                "length": 29
+              },
+              {
+                "offset": 1312,
+                "length": 27
+              }
+            ],
+            "confidence": 0.793,
+            "source": "D(7,1.9284,1.5843,6.9607,1.5952,6.9602,1.8254,1.9279,1.8144);D(7,1.9175,1.8570,5.5378,1.8813,5.5365,2.0763,1.9162,2.0520);D(7,1.8860,2.3287,7.2016,2.3454,7.2008,2.5782,1.8852,2.5615);D(7,1.8531,2.5859,7.2848,2.6124,7.2837,2.8370,1.8520,2.8105);D(7,1.8545,2.8548,7.2261,2.8630,7.2258,3.0815,1.8542,3.0734);D(7,1.8569,3.1011,7.3592,3.1190,7.3585,3.3341,1.8562,3.3161);D(7,1.8391,3.3605,7.4214,3.3753,7.4209,3.5862,1.8385,3.5714);D(7,1.8226,3.6104,7.2638,3.6267,7.2631,3.8449,1.8219,3.8286);D(7,1.8214,3.8698,7.4462,3.8825,7.4458,4.0889,1.8210,4.0762);D(7,1.8179,4.1147,7.1352,4.1323,7.1344,4.3559,1.8172,4.3383);D(7,1.8189,4.3812,3.5044,4.3940,3.5028,4.6120,1.8173,4.5992);D(7,1.8013,4.8730,7.0568,4.9025,7.0556,5.1208,1.8001,5.0912);D(7,1.7784,5.1575,7.1222,5.1609,7.1221,5.3729,1.7783,5.3695);D(7,1.7743,5.4020,7.2432,5.4233,7.2424,5.6412,1.7735,5.6199);D(7,1.7650,5.6660,7.2348,5.6849,7.2341,5.8957,1.7643,5.8768);D(7,1.7515,5.9334,6.9895,5.9394,6.9893,6.1454,1.7513,6.1394);D(7,1.7598,6.1746,7.1234,6.2082,7.1221,6.4203,1.7585,6.3867);D(7,1.7494,6.4474,5.3840,6.4636,5.3831,6.6687,1.7485,6.6525);D(7,1.6985,6.9614,7.0906,7.0056,7.0889,7.2170,1.6968,7.1728);D(7,1.6954,7.2469,5.1724,7.2620,5.1714,7.4843,1.6944,7.4692);D(7,1.6697,7.7707,6.9343,7.8408,6.9312,8.0733,1.6666,8.0032);D(7,1.6900,8.0835,4.3289,8.0810,4.3291,8.2835,1.6902,8.2860);D(7,1.6032,9.4528,4.1303,9.4793,4.1276,9.7386,1.6005,9.7120)"
+          }
+        },
+        "kind": "document",
+        "startPageNumber": 7,
+        "endPageNumber": 7,
+        "unit": "inch",
+        "pages": [
+          {
+            "pageNumber": 7,
+            "angle": 0.1707589,
+            "width": 8.5,
+            "height": 11
+          }
+        ],
+        "segments": [
+          {
+            "span": {
+              "offset": 0,
+              "length": 1377
+            },
+            "segmentId": "segment6",
+            "startPageNumber": 7,
+            "endPageNumber": 7,
+            "category": "statement",
+            "confidence": 0.99
+          }
+        ],
+        "metadata": {
+          "contentType": "application/pdf",
+          "pageCount": "11"
+        },
+        "analyzerId": "lab664_cache_20261103_195602_statement"
+      },
+      {
+        "path": "input1/segment7",
+        "category": "rental_invoice",
+        "markdown": "![MAPLEWAY VEHICLE RENTAL](figures/8.1)\n\n\nMapleway Vehicle Rental\n221 Station Street\nMaple Crossing, NY 12009\n(518) 555-0169\n\n\n# PICKUP AGREEMENT\n\nAgreement No.\nRA-703731\n\nDate / Time\n12/20/2025 09:30\n\nStatus\nOPEN; no payment or\ninsurance authorization\n\n\n<table>\n<tr>\n<td>Renter</td>\n<td>Grace Okafor</td>\n</tr>\n<tr>\n<td>Address</td>\n<td>459 Linden Terrace Maple Crossing, NY 12009</td>\n</tr>\n<tr>\n<td>Phone</td>\n<td>(518) 555-0109</td>\n</tr>\n</table>\n\n\nEmail\n\ngrace.okafor@example.com\n\n\n# RENTAL VEHICLE\n\n\n<table>\n<tr>\n<th>Unit No.</th>\n<th>Year / Make / Model</th>\n<th>Color</th>\n<th>Vehicle Class</th>\n</tr>\n<tr>\n<td>RV-109</td>\n<td>2024 Ford Escape Active</td>\n<td>Blue</td>\n<td>Compact SUV</td>\n</tr>\n</table>\n\n\n# RENTAL PERIOD\n\n\n<table>\n<tr>\n<th>Pickup</th>\n<th>Scheduled Return</th>\n<th>Rental Days</th>\n</tr>\n<tr>\n<td>12/20/2025 09:30</td>\n<td>12/24/2025 09:30</td>\n<td>4</td>\n</tr>\n</table>\n\n\n# MILEAGE & FUEL\n\n\n<table>\n<tr>\n<th></th>\n<th>OUT (at Pickup)</th>\n<th>IN (at Return)</th>\n<th>Total Distance</th>\n<th>Fuel</th>\n</tr>\n<tr>\n<td>Mileage</td>\n<td>20,392</td>\n<td>Pending</td>\n<td>Pending</td>\n<td>-</td>\n</tr>\n<tr>\n<td>Fuel Level</td>\n<td>Full out</td>\n<td>Pending</td>\n<td>-</td>\n<td>Pending</td>\n</tr>\n</table>\n\n\n## CONDITION RECORD\n\n\n<table>\n<tr>\n<th>AT PICKUP</th>\n<th>AT RETURN (PENDING)</th>\n</tr>\n<tr>\n<td>Pre-existing left-rear bumper scuff noted; return inspection Pending.</td>\n<td>☐ No new damage<br>☐ New damage noted<br>☐ Vehicle not returned</td>\n</tr>\n</table>\n\n\n## RENTAL CHARGES (Estimated)\n\n\n<table>\n<tr>\n<th>Description</th>\n<th>Rate</th>\n<th>Days</th>\n<th>Amount</th>\n</tr>\n<tr>\n<td>Daily Rate</td>\n<td>$73.00</td>\n<td>4</td>\n<td>$292.00</td>\n</tr>\n<tr>\n<td>Estimated Total</td>\n<td></td>\n<td></td>\n<td>$292.00</td>\n</tr>\n</table>\n\n\nPAYMENT / INSURANCE AUTHORIZATION\n\nAuthorization Status:\nPENDING\nNo payment or insurance authorization\nhas been received.\n\n\n# AGREEMENT TERMS\n\nRenter agrees to be responsible for all charges and applicable taxes, fees, and surcharges\nincurred during the rental period. Renter is also responsible for any loss or damage to the\nvehicle, subject to the terms and conditions of this agreement.\nThis agreement is governed by the laws of the State of New York.\n\nRenter Signature\n\nDate\n\n<!-- PageFooter: Thank you for renting with Mapleway Vehicle Rental. -->\n<!-- PageNumber: Page 1 of 2 -->\n<!-- PageBreak -->\n\n\n![Mapleway VEHICLE RENTAL](figures/9.1)\n\n\nMapleway Vehicle Rental\n221 Station Street\nMaple Crossing, NY 12009\n(518) 555-0169\n\nRenter\nGrace Okafor\n459 Linden Terrace\nMaple Crossing, NY 12009\n(518) 555-0109\ngrace.okafor@example.com\n\nRental Agreement:\nRA-703731\n\nInvoice #:\n\nR-NY-45735\n\n\n<table>\n<tr>\n<td>Unit Number:</td>\n<td>RV-109</td>\n</tr>\n<tr>\n<td>Vehicle:</td>\n<td>2024 Ford Escape Active</td>\n</tr>\n<tr>\n<td>Color:</td>\n<td>Blue</td>\n</tr>\n<tr>\n<td>Class:</td>\n<td>Compact SUV</td>\n</tr>\n</table>\n\n\n<table>\n<tr>\n<td>Invoice Date:</td>\n<td>12/24/2025</td>\n</tr>\n<tr>\n<td>Due Date:</td>\n<td>01/07/2026</td>\n</tr>\n<tr>\n<td>Days:</td>\n<td>4</td>\n</tr>\n</table>\n\n\n<table>\n<tr>\n<th>Pickup Date/Time</th>\n<th>Return Date/Time</th>\n<th>Miles Out</th>\n<th>Miles In</th>\n<th>Distance</th>\n<th>Fuel Level</th>\n</tr>\n<tr>\n<td>2025-12-20 09:30</td>\n<td>2025-12-24 09:30</td>\n<td>20,392</td>\n<td>20,634</td>\n<td>242</td>\n<td>Full out / Full in</td>\n</tr>\n</table>\n\n\n## RENTAL CHARGES\n\n\n<table>\n<tr>\n<th>Description</th>\n<th>Amount (USD)</th>\n</tr>\n<tr>\n<td>Rental day 2025-12-20</td>\n<td>73.00</td>\n</tr>\n<tr>\n<td>Rental day 2025-12-21</td>\n<td>73.00</td>\n</tr>\n<tr>\n<td>Rental day 2025-12-22</td>\n<td>73.00</td>\n</tr>\n<tr>\n<td>Rental day 2025-12-23</td>\n<td>73.00</td>\n</tr>\n</table>\n\n\n<table>\n<tr>\n<td>Subtotal</td>\n<td>292.00</td>\n</tr>\n<tr>\n<td>Quoted state/local sales tax</td>\n<td>23.36</td>\n</tr>\n<tr>\n<td>State passenger rental tax</td>\n<td>17.52</td>\n</tr>\n<tr>\n<td>Non-MCTD regional rental tax</td>\n<td>17.52</td>\n</tr>\n<tr>\n<td>Total Tax</td>\n<td>58.40</td>\n</tr>\n<tr>\n<td>INVOICE TOTAL (USD)</td>\n<td>350.40</td>\n</tr>\n</table>\n\n\n# NOTES\n\nWinter roadway conditions may include\nsnow, ice, and reduced visibility.\nDrive cautiously and allow extra time.\n\nCustomer acknowledgment:\nOne pre-existing left-rear bumper scuff,\nunchanged; no new damage.\nBy signing the rental agreement, I\nacknowledge the vehicle condition as\nnoted above.\n\n\n## CONDITION RECORD (AT RETURN)\n\nExterior Condition\n\n◉\nNo New Damage\n\n○\nNew Damage Noted\n\nInterior Condition\n\n◉\nClean\n\n○\nSoiling Noted\n\nTire Condition\n\n◉\nNormal Wear\n\n○\nDamage Noted\n\nGlass Condition\n\n◉\nClear\n\n○\nChip/Crack Noted\n\nNotes: One pre-existing left-rear bumper scuff, unchanged; no new damage.\n\nACCOUNT STATUS: OPEN; no payment or insurance authorization\n\n<!-- PageNumber: Page 2 of 2 -->\n",
+        "fields": {
+          "AmountDue": {
+            "type": "object",
+            "valueObject": {
+              "Amount": {
+                "type": "number",
+                "valueNumber": 350.4,
+                "spans": [
+                  {
+                    "offset": 3980,
+                    "length": 6
+                  }
+                ],
+                "confidence": 0.854,
+                "source": "D(9,4.2500,7.6753,4.7273,7.6753,4.7273,7.8472,4.2500,7.8472)"
+              },
+              "CurrencyCode": {
+                "type": "string",
+                "valueString": "USD"
+              }
+            }
+          },
+          "BalanceForward": {
+            "type": "object",
+            "valueObject": {
+              "Amount": {
+                "type": "number",
+                "confidence": 0.966
+              },
+              "CurrencyCode": {
+                "type": "string"
+              }
+            }
+          },
+          "BillingAddress": {
+            "type": "string",
+            "confidence": 0.816
+          },
+          "BillingAddressRecipient": {
+            "type": "string",
+            "confidence": 0.816
+          },
+          "CountryRegion": {
+            "type": "string",
+            "valueString": "USA"
+          },
+          "CustomerAddress": {
+            "type": "string",
+            "valueString": "459 Linden Terrace Maple Crossing, NY 12009",
+            "spans": [
+              {
+                "offset": 338,
+                "length": 18
+              },
+              {
+                "offset": 357,
+                "length": 24
+              }
+            ],
+            "confidence": 0.761,
+            "source": "D(8,6.0532,1.6189,6.8691,1.6592,6.8629,1.7848,6.0470,1.7446);D(8,6.0514,1.7955,7.1823,1.8454,7.1760,1.9880,6.0451,1.9381)"
+          },
+          "CustomerAddressRecipient": {
+            "type": "string",
+            "valueString": "Grace Okafor",
+            "spans": [
+              {
+                "offset": 288,
+                "length": 12
+              }
+            ],
+            "confidence": 0.851,
+            "source": "D(8,6.0587,1.3351,6.6738,1.3714,6.6664,1.4975,6.0512,1.4612)"
+          },
+          "CustomerId": {
+            "type": "string",
+            "confidence": 0.816
+          },
+          "CustomerName": {
+            "type": "string",
+            "valueString": "Grace Okafor",
+            "spans": [
+              {
+                "offset": 288,
+                "length": 12
+              }
+            ],
+            "confidence": 0.851,
+            "source": "D(8,6.0587,1.3351,6.6738,1.3714,6.6664,1.4975,6.0512,1.4612)"
+          },
+          "CustomerTaxId": {
+            "type": "string",
+            "confidence": 0.816
+          },
+          "DueDate": {
+            "type": "date",
+            "valueDate": "2026-01-07",
+            "spans": [
+              {
+                "offset": 2970,
+                "length": 10
+              }
+            ],
+            "confidence": 0.897,
+            "source": "D(9,6.4705,2.7271,6.9976,2.7414,6.9976,2.8690,6.4705,2.8544)"
+          },
+          "InvoiceDate": {
+            "type": "date",
+            "valueDate": "2025-12-24",
+            "spans": [
+              {
+                "offset": 2920,
+                "length": 10
+              }
+            ],
+            "confidence": 0.892,
+            "source": "D(9,6.4746,2.5340,6.9934,2.5450,6.9934,2.6739,6.4746,2.6629)"
+          },
+          "InvoiceId": {
+            "type": "string",
+            "valueString": "R-NY-45735",
+            "spans": [
+              {
+                "offset": 2648,
+                "length": 10
+              }
+            ],
+            "confidence": 0.888,
+            "source": "D(9,6.4580,2.3442,6.9988,2.3495,6.9976,2.4715,6.4568,2.4663)"
+          },
+          "LineItems": {
+            "type": "array",
+            "valueArray": [
+              {
+                "type": "object",
+                "valueObject": {
+                  "Date": {
+                    "type": "date",
+                    "valueDate": "2025-12-20",
+                    "spans": [
+                      {
+                        "offset": 3435,
+                        "length": 10
+                      }
+                    ],
+                    "confidence": 0.852,
+                    "source": "D(9,1.9679,4.6563,2.6376,4.6641,2.6376,4.8170,1.9669,4.8107)"
+                  },
+                  "Description": {
+                    "type": "string",
+                    "valueString": "Rental day 2025-12-20",
+                    "spans": [
+                      {
+                        "offset": 3424,
+                        "length": 21
+                      }
+                    ],
+                    "confidence": 0.746,
+                    "source": "D(9,1.3237,4.6488,2.6394,4.6641,2.6376,4.8185,1.3219,4.8032)"
+                  },
+                  "ProductCode": {
+                    "type": "string",
+                    "confidence": 0.971
+                  },
+                  "Quantity": {
+                    "type": "number",
+                    "confidence": 0.919
+                  },
+                  "QuantityUnit": {
+                    "type": "string",
+                    "confidence": 0.971
+                  },
+                  "TaxAmount": {
+                    "type": "object",
+                    "valueObject": {
+                      "Amount": {
+                        "type": "number",
+                        "confidence": 0.919
+                      },
+                      "CurrencyCode": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "TaxRate": {
+                    "type": "number",
+                    "confidence": 0.919
+                  },
+                  "TotalAmount": {
+                    "type": "object",
+                    "valueObject": {
+                      "Amount": {
+                        "type": "number",
+                        "valueNumber": 73,
+                        "spans": [
+                          {
+                            "offset": 3455,
+                            "length": 5
+                          }
+                        ],
+                        "confidence": 0.562,
+                        "source": "D(9,6.9478,4.7434,7.2424,4.7415,7.2424,4.8765,6.9478,4.8748)"
+                      },
+                      "CurrencyCode": {
+                        "type": "string",
+                        "valueString": "USD"
+                      }
+                    }
+                  },
+                  "UnitPrice": {
+                    "type": "object",
+                    "valueObject": {
+                      "Amount": {
+                        "type": "number",
+                        "confidence": 0.919
+                      },
+                      "CurrencyCode": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "valueObject": {
+                  "Date": {
+                    "type": "date",
+                    "valueDate": "2025-12-21",
+                    "spans": [
+                      {
+                        "offset": 3492,
+                        "length": 10
+                      }
+                    ],
+                    "confidence": 0.843,
+                    "source": "D(9,1.9731,4.9200,2.6334,4.9242,2.6334,5.0736,1.9720,5.0751)"
+                  },
+                  "Description": {
+                    "type": "string",
+                    "valueString": "Rental day 2025-12-21",
+                    "spans": [
+                      {
+                        "offset": 3481,
+                        "length": 21
+                      }
+                    ],
+                    "confidence": 0.745,
+                    "source": "D(9,1.3215,4.9176,2.6340,4.9224,2.6334,5.0776,1.3209,5.0728)"
+                  },
+                  "ProductCode": {
+                    "type": "string",
+                    "confidence": 0.971
+                  },
+                  "Quantity": {
+                    "type": "number",
+                    "confidence": 0.919
+                  },
+                  "QuantityUnit": {
+                    "type": "string",
+                    "confidence": 0.971
+                  },
+                  "TaxAmount": {
+                    "type": "object",
+                    "valueObject": {
+                      "Amount": {
+                        "type": "number",
+                        "confidence": 0.919
+                      },
+                      "CurrencyCode": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "TaxRate": {
+                    "type": "number",
+                    "confidence": 0.919
+                  },
+                  "TotalAmount": {
+                    "type": "object",
+                    "valueObject": {
+                      "Amount": {
+                        "type": "number",
+                        "valueNumber": 73,
+                        "spans": [
+                          {
+                            "offset": 3512,
+                            "length": 5
+                          }
+                        ],
+                        "confidence": 0.554,
+                        "source": "D(9,6.9561,4.9947,7.2424,4.9949,7.2424,5.1271,6.9561,5.1232)"
+                      },
+                      "CurrencyCode": {
+                        "type": "string",
+                        "valueString": "USD"
+                      }
+                    }
+                  },
+                  "UnitPrice": {
+                    "type": "object",
+                    "valueObject": {
+                      "Amount": {
+                        "type": "number",
+                        "confidence": 0.919
+                      },
+                      "CurrencyCode": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "valueObject": {
+                  "Date": {
+                    "type": "date",
+                    "valueDate": "2025-12-22",
+                    "spans": [
+                      {
+                        "offset": 3549,
+                        "length": 10
+                      }
+                    ],
+                    "confidence": 0.852,
+                    "source": "D(9,1.9761,5.1869,2.6479,5.1878,2.6479,5.3383,1.9751,5.3415)"
+                  },
+                  "Description": {
+                    "type": "string",
+                    "valueString": "Rental day 2025-12-22",
+                    "spans": [
+                      {
+                        "offset": 3538,
+                        "length": 21
+                      }
+                    ],
+                    "confidence": 0.753,
+                    "source": "D(9,1.3231,5.1859,2.6481,5.1875,2.6479,5.3425,1.3229,5.3409)"
+                  },
+                  "ProductCode": {
+                    "type": "string",
+                    "confidence": 0.971
+                  },
+                  "Quantity": {
+                    "type": "number",
+                    "confidence": 0.919
+                  },
+                  "QuantityUnit": {
+                    "type": "string",
+                    "confidence": 0.971
+                  },
+                  "TaxAmount": {
+                    "type": "object",
+                    "valueObject": {
+                      "Amount": {
+                        "type": "number",
+                        "confidence": 0.919
+                      },
+                      "CurrencyCode": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "TaxRate": {
+                    "type": "number",
+                    "confidence": 0.919
+                  },
+                  "TotalAmount": {
+                    "type": "object",
+                    "valueObject": {
+                      "Amount": {
+                        "type": "number",
+                        "valueNumber": 73,
+                        "spans": [
+                          {
+                            "offset": 3569,
+                            "length": 5
+                          }
+                        ],
+                        "confidence": 0.555,
+                        "source": "D(9,6.9561,5.2478,7.2424,5.2477,7.2424,5.3820,6.9561,5.3820)"
+                      },
+                      "CurrencyCode": {
+                        "type": "string",
+                        "valueString": "USD"
+                      }
+                    }
+                  },
+                  "UnitPrice": {
+                    "type": "object",
+                    "valueObject": {
+                      "Amount": {
+                        "type": "number",
+                        "confidence": 0.919
+                      },
+                      "CurrencyCode": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "valueObject": {
+                  "Date": {
+                    "type": "date",
+                    "valueDate": "2025-12-23",
+                    "spans": [
+                      {
+                        "offset": 3606,
+                        "length": 10
+                      }
+                    ],
+                    "confidence": 0.83,
+                    "source": "D(9,1.9758,5.4469,2.6479,5.4524,2.6479,5.6084,1.9748,5.6061)"
+                  },
+                  "Description": {
+                    "type": "string",
+                    "valueString": "Rental day 2025-12-23",
+                    "spans": [
+                      {
+                        "offset": 3595,
+                        "length": 21
+                      }
+                    ],
+                    "confidence": 0.73,
+                    "source": "D(9,1.3230,5.4464,2.6480,5.4470,2.6479,5.6084,1.3229,5.6078)"
+                  },
+                  "ProductCode": {
+                    "type": "string",
+                    "confidence": 0.971
+                  },
+                  "Quantity": {
+                    "type": "number",
+                    "confidence": 0.919
+                  },
+                  "QuantityUnit": {
+                    "type": "string",
+                    "confidence": 0.971
+                  },
+                  "TaxAmount": {
+                    "type": "object",
+                    "valueObject": {
+                      "Amount": {
+                        "type": "number",
+                        "confidence": 0.919
+                      },
+                      "CurrencyCode": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "TaxRate": {
+                    "type": "number",
+                    "confidence": 0.919
+                  },
+                  "TotalAmount": {
+                    "type": "object",
+                    "valueObject": {
+                      "Amount": {
+                        "type": "number",
+                        "valueNumber": 73,
+                        "spans": [
+                          {
+                            "offset": 3626,
+                            "length": 5
+                          }
+                        ],
+                        "confidence": 0.53,
+                        "source": "D(9,6.9561,5.4973,7.2424,5.4973,7.2424,5.6343,6.9561,5.6343)"
+                      },
+                      "CurrencyCode": {
+                        "type": "string",
+                        "valueString": "USD"
+                      }
+                    }
+                  },
+                  "UnitPrice": {
+                    "type": "object",
+                    "valueObject": {
+                      "Amount": {
+                        "type": "number",
+                        "confidence": 0.919
+                      },
+                      "CurrencyCode": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          "PaymentTerm": {
+            "type": "string",
+            "confidence": 0.816
+          },
+          "PONumber": {
+            "type": "string",
+            "confidence": 0.816
+          },
+          "RemittanceAddress": {
+            "type": "string",
+            "confidence": 0.816
+          },
+          "RemittanceAddressRecipient": {
+            "type": "string",
+            "confidence": 0.816
+          },
+          "ServiceAddress": {
+            "type": "string",
+            "confidence": 0.816
+          },
+          "ServiceAddressRecipient": {
+            "type": "string",
+            "confidence": 0.816
+          },
+          "ShippingAddress": {
+            "type": "string",
+            "confidence": 0.816
+          },
+          "ShippingAddressRecipient": {
+            "type": "string",
+            "confidence": 0.816
+          },
+          "SubtotalAmount": {
+            "type": "object",
+            "valueObject": {
+              "Amount": {
+                "type": "number",
+                "valueNumber": 292
+              },
+              "CurrencyCode": {
+                "type": "string",
+                "valueString": "USD"
+              }
+            }
+          },
+          "TaxDetails": {
+            "type": "array",
+            "valueArray": [
+              {
+                "type": "object",
+                "valueObject": {
+                  "Amount": {
+                    "type": "object",
+                    "valueObject": {
+                      "Amount": {
+                        "type": "number",
+                        "valueNumber": 23.36,
+                        "spans": [
+                          {
+                            "offset": 3754,
+                            "length": 5
+                          }
+                        ],
+                        "confidence": 0.892,
+                        "source": "D(9,4.3621,6.3441,4.7024,6.3488,4.7024,6.5099,4.3621,6.5052)"
+                      },
+                      "CurrencyCode": {
+                        "type": "string",
+                        "valueString": "USD"
+                      }
+                    }
+                  },
+                  "Description": {
+                    "type": "string",
+                    "valueString": "Quoted state/local sales tax",
+                    "spans": [
+                      {
+                        "offset": 3716,
+                        "length": 28
+                      }
+                    ],
+                    "confidence": 0.715,
+                    "source": "D(9,1.3966,6.3579,2.7069,6.3656,2.7061,6.5060,1.3958,6.4982)"
+                  },
+                  "NetAmount": {
+                    "type": "object",
+                    "valueObject": {
+                      "Amount": {
+                        "type": "number",
+                        "confidence": 0.919
+                      },
+                      "CurrencyCode": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "Rate": {
+                    "type": "number",
+                    "confidence": 0.919
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "valueObject": {
+                  "Amount": {
+                    "type": "object",
+                    "valueObject": {
+                      "Amount": {
+                        "type": "number",
+                        "valueNumber": 17.52,
+                        "spans": [
+                          {
+                            "offset": 3816,
+                            "length": 5
+                          }
+                        ],
+                        "confidence": 0.892,
+                        "source": "D(9,4.3745,6.6758,4.7107,6.6766,4.7107,6.8378,4.3745,6.8370)"
+                      },
+                      "CurrencyCode": {
+                        "type": "string",
+                        "valueString": "USD"
+                      }
+                    }
+                  },
+                  "Description": {
+                    "type": "string",
+                    "valueString": "State passenger rental tax",
+                    "spans": [
+                      {
+                        "offset": 3780,
+                        "length": 26
+                      }
+                    ],
+                    "confidence": 0.721,
+                    "source": "D(9,1.3894,6.6939,2.6263,6.7036,2.6250,6.8676,1.3881,6.8579)"
+                  },
+                  "NetAmount": {
+                    "type": "object",
+                    "valueObject": {
+                      "Amount": {
+                        "type": "number",
+                        "confidence": 0.919
+                      },
+                      "CurrencyCode": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "Rate": {
+                    "type": "number",
+                    "confidence": 0.919
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "valueObject": {
+                  "Amount": {
+                    "type": "object",
+                    "valueObject": {
+                      "Amount": {
+                        "type": "number",
+                        "valueNumber": 17.52,
+                        "spans": [
+                          {
+                            "offset": 3880,
+                            "length": 5
+                          }
+                        ],
+                        "confidence": 0.899,
+                        "source": "D(9,4.3745,7.0093,4.7107,7.0093,4.7107,7.1704,4.3745,7.1704)"
+                      },
+                      "CurrencyCode": {
+                        "type": "string",
+                        "valueString": "USD"
+                      }
+                    }
+                  },
+                  "Description": {
+                    "type": "string",
+                    "valueString": "Non-MCTD regional rental tax",
+                    "spans": [
+                      {
+                        "offset": 3842,
+                        "length": 28
+                      }
+                    ],
+                    "confidence": 0.705,
+                    "source": "D(9,1.3873,7.0308,2.7899,7.0383,2.7891,7.2002,1.3864,7.1927)"
+                  },
+                  "NetAmount": {
+                    "type": "object",
+                    "valueObject": {
+                      "Amount": {
+                        "type": "number",
+                        "confidence": 0.919
+                      },
+                      "CurrencyCode": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "Rate": {
+                    "type": "number",
+                    "confidence": 0.919
+                  }
+                }
+              }
+            ]
+          },
+          "TotalAmount": {
+            "type": "object",
+            "valueObject": {
+              "Amount": {
+                "type": "number",
+                "valueNumber": 350.4,
+                "spans": [
+                  {
+                    "offset": 3980,
+                    "length": 6
+                  }
+                ],
+                "confidence": 0.854,
+                "source": "D(9,4.2500,7.6753,4.7273,7.6753,4.7273,7.8472,4.2500,7.8472)"
+              },
+              "CurrencyCode": {
+                "type": "string",
+                "valueString": "USD"
+              }
+            }
+          },
+          "TotalDiscountAmount": {
+            "type": "object",
+            "valueObject": {
+              "Amount": {
+                "type": "number",
+                "confidence": 0.966
+              },
+              "CurrencyCode": {
+                "type": "string"
+              }
+            }
+          },
+          "TotalTaxAmount": {
+            "type": "object",
+            "valueObject": {
+              "Amount": {
+                "type": "number",
+                "valueNumber": 58.4
+              },
+              "CurrencyCode": {
+                "type": "string",
+                "valueString": "USD"
+              }
+            }
+          },
+          "VendorAddress": {
+            "type": "string",
+            "valueString": "221 Station Street Maple Crossing, NY 12009",
+            "spans": [
+              {
+                "offset": 66,
+                "length": 18
+              },
+              {
+                "offset": 85,
+                "length": 24
+              }
+            ],
+            "confidence": 0.769,
+            "source": "D(8,1.2648,2.0050,2.1825,2.0434,2.1768,2.1786,1.2591,2.1401);D(8,1.2545,2.1870,2.5619,2.2334,2.5566,2.3832,1.2492,2.3368)"
+          },
+          "VendorAddressRecipient": {
+            "type": "string",
+            "valueString": "Mapleway Vehicle Rental",
+            "spans": [
+              {
+                "offset": 42,
+                "length": 23
+              }
+            ],
+            "confidence": 0.836,
+            "source": "D(8,1.2762,1.7683,2.7864,1.8224,2.7806,1.9839,1.2704,1.9298)"
+          },
+          "VendorName": {
+            "type": "string",
+            "valueString": "Mapleway Vehicle Rental",
+            "spans": [
+              {
+                "offset": 42,
+                "length": 23
+              }
+            ],
+            "confidence": 0.836,
+            "source": "D(8,1.2762,1.7683,2.7864,1.8224,2.7806,1.9839,1.2704,1.9298)"
+          },
+          "VendorTaxId": {
+            "type": "string",
+            "confidence": 0.816
+          }
+        },
+        "kind": "document",
+        "startPageNumber": 8,
+        "endPageNumber": 9,
+        "unit": "inch",
+        "pages": [
+          {
+            "pageNumber": 8,
+            "angle": 1.059505,
+            "width": 8.5,
+            "height": 11
+          },
+          {
+            "pageNumber": 9,
+            "angle": 0.2938485,
+            "width": 8.5,
+            "height": 11
+          }
+        ],
+        "metadata": {
+          "contentType": "application/pdf",
+          "pageCount": "2"
+        },
+        "analyzerId": "prebuilt-invoice"
+      },
+      {
+        "path": "input1/segment8/segment1",
+        "category": "tax.us.1099A.2025",
+        "markdown": "☐\nCORRECTED (if checked)\n\nLENDER'S name, street address, city or town, state or province, country, ZIP or\nforeign postal code, and telephone no.\nMaple Crossing Recovery Finance\n875 Hudson Commerce Plaza\nAlbany, NY 12207\n(518) 555-0119\n\nOMB No. 1545-0877\nForm\n1099-A\n(Rev. April 2025)\n\nFor calendar year\n2025\n\n\n# Acquisition or Abandonment of Secured Property\n\nLENDER'S TIN\n\\*\\*-\\*\\**3529\n\nBORROWER'S TIN\n983-64-3529\n\n1 Date of lender's acquisition or\nknowledge of abandonment\n04/04/2025\n\n2 Balance of principal\noutstanding\n$\n17,590.00\n\nBORROWER'S name\nGrace Okafor\nStreet address (including apt. no.)\n459 Linden Terrace\nCity or town, state or province, country, and ZIP or foreign postal code\nMaple Crossing, NY 12009\n\nAccount number (see instructions)\nSYN-NY-1099A-09\n\n3\n\n4 Fair market value of property\n$\n12,425.00\n\n5 If checked, the borrower was personally liable for repayment\nof the debt\n☑\n\n6 Description of property\n2017 Volkswagen Tiguan S, silver\nTraining asset ref: SYN-NY-1099A-09\n\n\n## Copy B For Borrower\n\nThis is important tax\ninformation and is being\nfurnished to the IRS. If\nyou are required to file a\nreturn, a negligence\npenalty or other\nsanction may be\nimposed on you if\ntaxable income results\nfrom this transaction\nand the IRS determines\nthat it has not been\nreported.\n\n<!-- PageFooter: Form 1099-A (Rev. 4-2025) -->\n<!-- PageFooter: (keep for your records) -->\n<!-- PageFooter: www.irs.gov/Form1099A -->\n<!-- PageFooter: Department of the Treasury - Internal Revenue Service -->\n",
+        "fields": {
+          "Form1099ACopies": {
+            "type": "array",
+            "valueArray": [
+              {
+                "type": "object",
+                "valueObject": {
+                  "TaxYear": {
+                    "type": "string",
+                    "valueString": "2025",
+                    "spans": [
+                      {
+                        "offset": 303,
+                        "length": 4
+                      }
+                    ],
+                    "confidence": 0.867,
+                    "source": "D(10,5.7981,1.1619,6.0886,1.1629,6.0886,1.2756,5.7981,1.2768)"
+                  },
+                  "CopyLabel": {
+                    "type": "string",
+                    "valueString": "Copy B For Borrower",
+                    "spans": [
+                      {
+                        "offset": 996,
+                        "length": 6
+                      },
+                      {
+                        "offset": 1003,
+                        "length": 12
+                      }
+                    ],
+                    "confidence": 0.892,
+                    "source": "D(10,7.5164,1.3409,8.0022,1.3415,8.0020,1.4905,7.5162,1.4899);D(10,7.2009,1.5236,8.0071,1.5308,8.0061,1.6477,7.1999,1.6406)"
+                  },
+                  "Lender": {
+                    "type": "object",
+                    "valueObject": {
+                      "TIN": {
+                        "type": "string",
+                        "valueString": "\\*\\*-\\*\\**3529",
+                        "spans": [
+                          {
+                            "offset": 373,
+                            "length": 14
+                          }
+                        ],
+                        "confidence": 0.892,
+                        "source": "D(10,1.2715,1.6500,1.8381,1.6678,1.8343,1.7900,1.2676,1.7721)"
+                      },
+                      "Name": {
+                        "type": "string",
+                        "valueString": "Maple Crossing Recovery Finance",
+                        "spans": [
+                          {
+                            "offset": 145,
+                            "length": 31
+                          }
+                        ],
+                        "confidence": 0.784,
+                        "source": "D(10,0.7523,0.8842,2.3929,0.8877,2.3927,1.0063,0.7521,1.0029)"
+                      },
+                      "Address": {
+                        "type": "string",
+                        "valueString": "875 Hudson Commerce Plaza Albany, NY 12207",
+                        "spans": [
+                          {
+                            "offset": 177,
+                            "length": 25
+                          },
+                          {
+                            "offset": 203,
+                            "length": 16
+                          }
+                        ],
+                        "confidence": 0.849,
+                        "source": "D(10,0.7507,1.0064,2.1916,1.0094,2.1914,1.1178,0.7505,1.1148);D(10,0.7497,1.1322,1.6155,1.1322,1.6155,1.2408,0.7497,1.2408)"
+                      },
+                      "PhoneNumber": {
+                        "type": "string",
+                        "valueString": "(518) 555-0119",
+                        "spans": [
+                          {
+                            "offset": 220,
+                            "length": 14
+                          }
+                        ],
+                        "confidence": 0.863,
+                        "source": "D(10,0.7507,1.2526,1.4921,1.2506,1.4924,1.3649,0.7510,1.3669)"
+                      }
+                    }
+                  },
+                  "Borrower": {
+                    "type": "object",
+                    "valueObject": {
+                      "TIN": {
+                        "type": "string",
+                        "valueString": "983-64-3529",
+                        "spans": [
+                          {
+                            "offset": 404,
+                            "length": 11
+                          }
+                        ],
+                        "confidence": 0.899,
+                        "source": "D(10,2.8907,1.6674,3.6046,1.6677,3.6046,1.7860,2.8907,1.7850)"
+                      },
+                      "Name": {
+                        "type": "string",
+                        "valueString": "Grace Okafor",
+                        "spans": [
+                          {
+                            "offset": 552,
+                            "length": 12
+                          }
+                        ],
+                        "confidence": 0.879,
+                        "source": "D(10,0.7519,2.0739,1.5170,2.0869,1.5148,2.2188,0.7496,2.2057)"
+                      },
+                      "Address": {
+                        "type": "string",
+                        "valueString": "459 Linden Terrace Maple Crossing, NY 12009",
+                        "spans": [
+                          {
+                            "offset": 601,
+                            "length": 18
+                          },
+                          {
+                            "offset": 693,
+                            "length": 24
+                          }
+                        ],
+                        "confidence": 0.875,
+                        "source": "D(10,0.7507,2.5000,1.8453,2.5041,1.8448,2.6243,0.7502,2.6201);D(10,0.7486,2.8306,2.2537,2.8303,2.2537,2.9702,0.7486,2.9705)"
+                      },
+                      "AccountNumber": {
+                        "type": "string",
+                        "valueString": "SYN-NY-1099A-09",
+                        "spans": [
+                          {
+                            "offset": 753,
+                            "length": 15
+                          }
+                        ],
+                        "confidence": 0.856,
+                        "source": "D(10,1.8646,3.1615,2.9302,3.1615,2.9302,3.2906,1.8646,3.2906)"
+                      }
+                    }
+                  },
+                  "Box1": {
+                    "type": "date",
+                    "valueDate": "2025-04-04",
+                    "spans": [
+                      {
+                        "offset": 476,
+                        "length": 10
+                      }
+                    ],
+                    "confidence": 0.931,
+                    "source": "D(10,4.4866,1.6832,5.1174,1.6832,5.1174,1.8007,4.4866,1.7995)"
+                  },
+                  "Box2": {
+                    "type": "number",
+                    "valueNumber": 17590,
+                    "spans": [
+                      {
+                        "offset": 525,
+                        "length": 9
+                      }
+                    ],
+                    "confidence": 0.923,
+                    "source": "D(10,6.3044,1.6821,6.8564,1.6834,6.8564,1.8020,6.3044,1.8018)"
+                  },
+                  "Box4": {
+                    "type": "number",
+                    "valueNumber": 12425,
+                    "spans": [
+                      {
+                        "offset": 807,
+                        "length": 9
+                      }
+                    ],
+                    "confidence": 0.924,
+                    "source": "D(10,6.3044,2.1823,6.8523,2.1830,6.8523,2.3038,6.3044,2.3043)"
+                  },
+                  "Box5": {
+                    "type": "boolean",
+                    "valueBoolean": true,
+                    "spans": [
+                      {
+                        "offset": 893,
+                        "length": 1
+                      }
+                    ],
+                    "confidence": 0.881,
+                    "source": "D(10,6.7278,2.5177,6.8398,2.5177,6.8398,2.6466,6.7278,2.6466)"
+                  },
+                  "Box6": {
+                    "type": "string",
+                    "valueString": "2017 Volkswagen Tiguan S, silver Training asset ref: SYN-NY-1099A-09",
+                    "spans": [
+                      {
+                        "offset": 922,
+                        "length": 32
+                      },
+                      {
+                        "offset": 955,
+                        "length": 35
+                      }
+                    ],
+                    "confidence": 0.876,
+                    "source": "D(10,4.1462,2.8584,5.8316,2.8619,5.8313,2.9858,4.1459,2.9823);D(10,4.1501,2.9898,6.0181,2.9855,6.0184,3.1105,4.1504,3.1148)"
+                  },
+                  "IsCorrected": {
+                    "type": "boolean",
+                    "valueBoolean": false,
+                    "spans": [
+                      {
+                        "offset": 0,
+                        "length": 1
+                      }
+                    ],
+                    "confidence": 0.897,
+                    "source": "D(10,3.3909,0.3387,3.5424,0.3399,3.5424,0.4901,3.3909,0.4915)"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "kind": "document",
+        "startPageNumber": 10,
+        "endPageNumber": 10,
+        "unit": "inch",
+        "pages": [
+          {
+            "pageNumber": 10,
+            "angle": 0.002536179,
+            "width": 8.5,
+            "height": 11
+          }
+        ],
+        "segments": [
+          {
+            "span": {
+              "offset": 0,
+              "length": 1498
+            },
+            "segmentId": "segment1",
+            "startPageNumber": 10,
+            "endPageNumber": 10,
+            "category": "tax.us.1099A.2025"
+          }
+        ],
+        "metadata": {
+          "contentType": "application/pdf",
+          "pageCount": "1"
+        },
+        "analyzerId": "prebuilt-tax.us.1099A.2025"
+      }
+    ]
+  },
+  "usage": {
+    "documentPagesStandard": 11,
+    "contextualizationTokens": 11000,
+    "tokens": {
+      "gpt-5.5-input": 17042,
+      "gpt-5.5-output": 2171,
+      "gpt-5.5-cached-input": 7680,
+      "gpt-5.2-input": 19076,
+      "gpt-5.2-cached-input": 3456,
+      "gpt-5.2-output": 1312
+    }
+  }
+}
