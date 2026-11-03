@@ -152,16 +152,13 @@ the policy index on your existing Search service.
 
 The top-level pivots are **Parse and extract**, **Business rules validation**,
 and **Check policies**. Saved results load automatically and remain shared across
-all three pivots. **Settings** contains the cache reload actions and the
-default-off **Enable live calls** option. Classification and
+all three pivots. Classification and
 document-type views live under **Parse and extract**; policy retrieval controls
 appear only under **Check policies**. Switching pivots preserves the loaded run
 and reuses the same table, document viewer and debugger. Returning to **Parse
 and extract** restores the previously selected document type.
 
-The workbench enables policy **Run live** only when **Enable live calls** is
-selected in **Settings** and **FoundryIQ** is selected. **No policy retrieval**
-remains available to inspect
+**No policy retrieval** remains available to inspect
 previously saved baseline results, but a new baseline run can't be started from
 the app.
 
