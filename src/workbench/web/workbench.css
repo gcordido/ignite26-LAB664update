@@ -416,9 +416,16 @@ nav {
   border-color: var(--line);
   color: var(--text);
 }
-a {
+a,
+#open-settings {
   color: var(--conference-blue);
   text-decoration: none;
+}
+#open-settings {
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  background: none;
 }
 main {
   display: grid;
