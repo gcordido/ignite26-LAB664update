@@ -278,17 +278,13 @@ export function createApp(
   });
   app.get("/api/policy/status", async (req, res) => {
     session(req);
-    const [status, data, demo] = await Promise.all([
+    const [status, demo] = await Promise.all([
       policy.status(),
-      dataset(),
       policyDemo(),
     ]);
     res.json({
       ...status,
-      bundledDemo: {
-        ...demo.info,
-        staleDataset: demo.info.datasetHash !== data.datasetHash,
-      },
+      bundledDemo: demo.info,
     });
   });
   const documentSelection = z
@@ -315,14 +311,35 @@ export function createApp(
     runId: z.string().uuid(),
     check: z.enum(checkNames),
   });
+  async function policySource(s: Session, mode: z.infer<typeof modeSchema>) {
+    const run = s.run;
+    if (!run)
+      throw new LabError(409, "Load Content Understanding results first.");
+    if (s.bundledPolicy && mode === "search") {
+      const demo = await policyDemo();
+      return {
+        run: demo.sourceRun, service: demo.service,
+        readRaw: (id: string) => demo.sourceCache.raw(demo.sourceRun.id, id),
+      };
+    }
+    return {
+      run, service: policy,
+      readRaw: (id: string) => cache.raw(run.id, id),
+    };
+  }
   app.get("/api/policy/claim-evidence", async (req, res) => {
     const s = session(req);
-    const { runId, packetId } = chatSelection.pick({ runId: true, packetId: true }).parse(req.query);
-    const { run, packet } = loadedPacket(s, packetId);
+    const { runId, packetId, mode } = chatSelection
+      .pick({ runId: true, packetId: true, mode: true })
+      .extend({ mode: modeSchema.default("search") }).parse(req.query);
+    const { run } = loadedPacket(s, packetId);
     if (run.id !== runId)
       throw new LabError(409, "The selected extraction run changed. Reload this case.");
-    const selectedPolicy = s.bundledPolicy ? (await policyDemo()).service : policy;
-    res.json(await selectedPolicy.claimEvidence(run, packet, await cache.raw(run.id, packet.id)));
+    const source = await policySource(s, mode);
+    const packet = source.run.source.find((packet) => packet.id === packetId);
+    if (!packet)
+      throw new LabError(404, "No saved policy source exists for this case.");
+    res.json(await source.service.claimEvidence(source.run, packet, await source.readRaw(packet.id)));
   });
   async function chatContext(
     s: Session,
@@ -330,18 +347,9 @@ export function createApp(
     packetId: string,
     check: typeof checkNames[number],
   ) {
-    if (!s.run)
-      throw new LabError(409, "Load Content Understanding results first.");
-    const run = s.run;
-    let selectedPolicy = policy;
-    if (s.bundledPolicy && mode === "search") {
-      const demo = await policyDemo();
-      if (demo.results(run).staleDataset)
-        throw new LabError(409, "The saved policy reviews do not match this extraction run. Load the matching saved results before chatting.");
-      selectedPolicy = demo.service;
-    }
-    const context = await selectedPolicy.chatContext(run, mode, packetId, (id) =>
-      cache.raw(run.id, id), check, policy,
+    const source = await policySource(s, mode);
+    const context = await source.service.chatContext(source.run, mode, packetId,
+      source.readRaw, check, policy,
     );
     s.policyChats ??= new Map();
     let state = s.policyChats.get(context.contextId);

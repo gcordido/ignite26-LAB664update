@@ -19,7 +19,7 @@ export const policyDemoManifestSchema = z.object({
 
 export async function readPolicyDemo(
   folder = cacheFolders().policy,
-  cache = new Cache(),
+  cache = new Cache(path.join(folder, "source")),
 ) {
   const savedManifest = await loadPolicyCache(path.join(folder, "manifest.json"));
   if (!savedManifest)
@@ -44,6 +44,8 @@ export async function readPolicyDemo(
     throw new LabError(422, "The bundled policy reviews do not match the included CU results.");
   return {
     service,
+    sourceRun: run,
+    sourceCache: cache,
     info: {
       runId: manifest.runId,
       mode: manifest.mode,
@@ -55,9 +57,6 @@ export async function readPolicyDemo(
         runId: selectedRun.id, mode: manifest.mode, status: "completed" as const,
         cached: true, source: "bundled" as const,
         cacheFolder: folder,
-        staleDataset: selectedRun.id !== manifest.runId ||
-          selectedRun.analyzer.fingerprint !== run.analyzer.fingerprint ||
-          selectedRun.datasetHash !== run.datasetHash,
         sourceRunId: run.id,
         sourceDatasetHash: run.datasetHash,
         indexName: config.indexName, extractionMode: config.extractionMode, items,

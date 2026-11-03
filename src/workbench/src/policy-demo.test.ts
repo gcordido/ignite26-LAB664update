@@ -10,6 +10,15 @@ import { policyDemo, readPolicyDemo } from "./policy-demo.ts";
 import { frameworkConfigSchema, PolicyService, type PolicyItem } from "./policy-service.ts";
 import { createApp } from "./server.ts";
 
+async function extractionRun() {
+  const data = await dataset();
+  const run = (await new Cache().list()).find(
+    (run) => run.status === "completed" && run.datasetHash === data.datasetHash,
+  );
+  assert.ok(run);
+  return run;
+}
+
 async function appSession(t: TestContext, policy: PolicyService, cache = new Cache()) {
   let cloudCalls = 0;
   const noCloud = async (): Promise<never> => {
@@ -49,28 +58,30 @@ test("a fresh machine loads the current bundled policy reviews without Azure or 
   const { request, cloudCalls } = await appSession(t, policy);
   const status = await (await request("policy/status")).json();
   assert.equal(status.configured, false);
-  assert.equal(status.bundledDemo.staleDataset, false);
   const demo = await policyDemo();
+  assert.equal(status.bundledDemo.runId, demo.info.runId);
   const current = await dataset();
   assert.equal(demo.info.datasetHash, current.datasetHash);
   const runs = await (await request("cache")).json();
   assert.ok(runs.some((run: { datasetHash: string }) =>
     run.datasetHash === current.datasetHash));
-  const load = await request("cache/load", { runId: demo.info.runId });
+  const selected = await extractionRun();
+  const load = await request("cache/load", { runId: selected.id });
   assert.equal(load.status, 200);
   const saved = await request("policy/cache/load", {
-    runId: demo.info.runId, mode: "search", source: "bundled",
+    runId: selected.id, mode: "search", source: "bundled",
   });
   assert.equal(saved.status, 200);
   const payload = await saved.json();
   assert.equal(payload.source, "bundled");
-  assert.equal(payload.staleDataset, false);
+  assert.equal(payload.sourceRunId, demo.info.runId);
+  assert.equal(payload.staleDataset, undefined);
   assert.equal(payload.extractionMode, "standard");
   assert.equal(payload.items.length, 10);
   assert.ok(payload.items.every((item: PolicyItem) =>
     item.status === "completed" && item.result?.Checks.length === 5));
   const chat = await request(`policy/chat?${new URLSearchParams({
-    runId: demo.info.runId, packetId: "packet-01", mode: "search", check: "Amount",
+    runId: selected.id, packetId: "packet-01", mode: "search", check: "Amount",
   })}`);
   assert.equal(chat.status, 409);
   assert.match((await chat.json()).error, /configure Agent Framework/);
@@ -78,10 +89,9 @@ test("a fresh machine loads the current bundled policy reviews without Azure or 
   assert.deepEqual(await readdir(folder), [], "No local config or cache files should be created.");
 });
 
-test("the bundled payload remains internally valid for its original included run", async () => {
+test("the policy bundle preserves its own inputs independently of the selected CU run", async () => {
   const demo = await policyDemo();
-  const cache = new Cache();
-  const run = await cache.load(demo.info.runId);
+  const run = demo.sourceRun;
   const bundled = demo.results(run);
   assert.equal(bundled.items.length, 10);
   assert.ok(bundled.items.every((item: PolicyItem) =>
@@ -89,19 +99,17 @@ test("the bundled payload remains internally valid for its original included run
     item.result?.Checks.length === 5 &&
     item.indexName === demo.info.indexName &&
     item.citations?.flat().every((citation) => citation.href)));
-  const data = await dataset();
-  const current = (await cache.list()).find(
-    (item) => item.status === "completed" &&
-      item.datasetHash === data.datasetHash,
-  );
-  assert.ok(current);
+  const current = await extractionRun();
   const matching = demo.results(current);
-  assert.equal(matching.staleDataset, false);
-  const stale = demo.results({ ...current, datasetHash: "f".repeat(64) });
-  assert.equal(stale.runId, current.id);
-  assert.equal(stale.sourceRunId, run.id);
-  assert.equal(stale.staleDataset, true);
-  assert.equal(stale.items.length, 10);
+  const refreshed = demo.results({
+    ...current, datasetHash: "f".repeat(64),
+    analyzer: { ...current.analyzer, fingerprint: "e".repeat(64) },
+  });
+  assert.equal(refreshed.runId, current.id);
+  assert.equal(refreshed.sourceRunId, run.id);
+  assert.equal(refreshed.sourceDatasetHash, run.datasetHash);
+  assert.ok(!("staleDataset" in refreshed));
+  assert.deepEqual(refreshed.items, matching.items);
 });
 
 test("bundled demo validation rejects duplicate entries and corrupt payloads", async (t) => {
@@ -127,23 +135,30 @@ test("a selected cache root supplies extraction and policy results without falli
     else process.env.WORKBENCH_CACHE_FOLDER = previous;
   });
   t.after(() => rm(folder, { recursive: true, force: true }));
-  await Promise.all(["results", "policy-demo"].map((name) =>
-    cp(path.join(dataRoot, name), path.join(folder, name), { recursive: true })));
+  const selected = await extractionRun();
+  await Promise.all([
+    cp(path.join(dataRoot, "results", selected.id), path.join(folder, "results", selected.id), { recursive: true }),
+    cp(path.join(dataRoot, "policy-demo"), path.join(folder, "policy-demo"), { recursive: true }),
+  ]);
   process.env.WORKBENCH_CACHE_FOLDER = folder;
   const policy = new PolicyService({ config: async () => undefined });
   const { request, cloudCalls } = await appSession(t, policy);
   const status = await (await request("status")).json();
   assert.deepEqual(status.cache, cacheFolders(folder));
   const demo = await policyDemo();
-  assert.equal((await request("cache/load", { runId: demo.info.runId })).status, 200);
+  assert.equal((await request("cache/load", { runId: selected.id })).status, 200);
   const response = await request("policy/cache/load", {
-    runId: demo.info.runId, mode: "search", source: "bundled",
+    runId: selected.id, mode: "search", source: "bundled",
   });
   assert.equal(response.status, 200);
   const loaded = await response.json();
   assert.equal(loaded.cacheFolder, path.join(folder, "policy-demo"));
   assert.equal(loaded.items.length, 10);
+  assert.equal(loaded.sourceRunId, demo.info.runId);
   assert.equal(cloudCalls(), 0);
+
+  const standalone = await readPolicyDemo(path.join(folder, "policy-demo"));
+  assert.equal(standalone.results(selected).items.length, 10);
 
   process.env.WORKBENCH_CACHE_FOLDER = path.join(folder, "missing");
   const missing = await appSession(t, policy);
@@ -184,11 +199,12 @@ test("bundled reviews seed chat using the current lab agent without a live polic
   });
   const { request, cloudCalls } = await appSession(t, policy);
   const demo = await policyDemo();
-  assert.equal((await request("cache/load", { runId: demo.info.runId })).status, 200);
+  const selected = await extractionRun();
+  assert.equal((await request("cache/load", { runId: selected.id })).status, 200);
   assert.equal((await request("policy/cache/load", {
-    runId: demo.info.runId, mode: "search", source: "bundled",
+    runId: selected.id, mode: "search", source: "bundled",
   })).status, 200);
-  const selection = { runId: demo.info.runId, packetId: "packet-01", mode: "search", check: "Amount" };
+  const selection = { runId: selected.id, packetId: "packet-01", mode: "search", check: "Amount" };
   const response = await request(`policy/chat?${new URLSearchParams(selection)}`);
   assert.equal(response.status, 200, await response.clone().text());
   const context = await response.json();
@@ -196,7 +212,7 @@ test("bundled reviews seed chat using the current lab agent without a live polic
   assert.equal(context.agent.modelDeployment, config.modelDeployment);
   assert.equal(context.promptSource, "saved");
   assert.equal(context.messages[0].content, context.prompt);
-  const savedCheck = demo.results(await new Cache().load(demo.info.runId))
+  const savedCheck = demo.results(selected)
     .items.find((item) => item.id === selection.packetId)?.result?.Checks.find((check) => check.Check === selection.check);
   assert.ok(savedCheck);
   assert.deepEqual(context.result.Checks, [savedCheck]);
@@ -210,17 +226,27 @@ test("bundled reviews seed chat using the current lab agent without a live polic
   assert.equal(cloudCalls(), 0);
   assert.deepEqual(await readdir(folder), [], "Chat must not generate claim or review caches.");
 
-  class StaleCache extends Cache {
+  class RefreshedCache extends Cache {
     override async load(id: string) {
       const run = await super.load(id);
       return { ...run, analyzer: { ...run.analyzer, fingerprint: "f".repeat(64) } };
     }
   }
-  const stale = await appSession(t, policy, new StaleCache());
-  await stale.request("cache/load", { runId: demo.info.runId });
-  await stale.request("policy/cache/load", { runId: demo.info.runId, mode: "search", source: "bundled" });
-  const rejected = await stale.request(`policy/chat?${new URLSearchParams(selection)}`);
-  assert.equal(rejected.status, 409);
-  assert.match((await rejected.json()).error, /do not match this extraction run/);
-  assert.equal(calls.length, 1, "Stale reviews must not invoke an agent.");
+  const refreshed = await appSession(t, policy, new RefreshedCache());
+  await refreshed.request("cache/load", { runId: selected.id });
+  await refreshed.request("policy/cache/load", { runId: selected.id, mode: "search", source: "bundled" });
+  const reopened = await refreshed.request(`policy/chat?${new URLSearchParams(selection)}`);
+  assert.equal(reopened.status, 200, await reopened.clone().text());
+  assert.equal((await reopened.json()).contextId, context.contextId);
+  const evidence = await refreshed.request(`policy/claim-evidence?${new URLSearchParams({
+    runId: selected.id, packetId: selection.packetId, mode: "search",
+  })}`);
+  assert.equal(evidence.status, 200);
+  const sourcePacket = demo.sourceRun.source.find((packet) => packet.id === selection.packetId);
+  assert.ok(sourcePacket);
+  assert.deepEqual(await evidence.json(), await demo.service.claimEvidence(
+    demo.sourceRun, sourcePacket, await demo.sourceCache.raw(demo.sourceRun.id, selection.packetId),
+  ));
+  assert.equal(calls.length, 1, "Opening saved chat and evidence must not invoke an agent.");
+  assert.equal(refreshed.cloudCalls(), 0);
 });

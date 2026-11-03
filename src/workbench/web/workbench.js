@@ -210,17 +210,14 @@ function controls() {
     (!policyStatus?.configured && !policyStatus?.bundledDemo);
   const saved = policyResults.get(policyMode);
   get("policy-chat-mode").disabled =
-    !policyStatus?.configured || saved?.staleDataset === true ||
+    !policyStatus?.configured ||
     !saved?.items.some((item) => item.id === selectedPacket && item.status === "completed");
   get("policy-chat-mode").title = !policyStatus?.configured
     ? "Follow-up chat needs the prepared policy-agent connection."
-    : saved?.staleDataset
-      ? "Load policy reviews that match this extraction run before chatting."
-      : "";
+    : "";
   get("load-policy-cache").disabled = busy || policyBusy || policyCacheBusy ||
     (!savedPolicyEntries.some((entry) => entry.mode === policyMode) &&
-      !(!run && policyMode === "search" && policyStatus?.bundledDemo &&
-        savedExtractionRun?.id === policyStatus.bundledDemo.runId));
+      !(!run && policyMode === "search" && policyStatus?.bundledDemo && savedExtractionRun));
 }
 async function policyCaches() {
   const version = ++policyCacheVersion;
@@ -262,8 +259,6 @@ async function policyCaches() {
 async function caches() {
   const savedRuns = await api("cache");
   savedExtractionRun = savedRuns.find((saved) => saved.id === savedExtractionRun?.id) ??
-    savedRuns.find((saved) => saved.id === policyStatus?.bundledDemo?.runId &&
-      saved.status === "completed" && saved.datasetHash === catalog?.datasetHash) ??
     savedRuns.find((saved) => saved.status === "completed" &&
       saved.datasetHash === catalog?.datasetHash) ??
     savedRuns.find((saved) => saved.status === "completed") ?? savedRuns[0];
@@ -1277,7 +1272,7 @@ function policyMessage() {
   get("policy-status").title = policyStatus?.message ?? "";
   get("policy-status").textContent =
     bundled
-      ? `Saved policy results · ${mode.indexName} · ${mode.extractionMode === "standard" ? "Search-managed CU extraction" : "CU Layout"}${mode.staleDataset ? " · Stale policy results from a different extraction dataset" : ""}`
+      ? `Saved policy results · ${mode.indexName} · ${mode.extractionMode === "standard" ? "Search-managed CU extraction" : "CU Layout"}`
     : policyStatus?.batchRunning && !policyBusy
       ? "A policy batch is already running. Waiting for it to finish; no duplicate will be submitted. Reload this tab to reconnect to its progress."
       : mode
@@ -1493,8 +1488,6 @@ function renderPolicyTable() {
   });
   const policyResult = policyResults.get(policyMode);
   const items = policyResult?.items ?? [];
-  const historicalClaims =
-    policyResult?.source === "bundled" && policyResult.staleDataset;
   table.querySelector("tbody").replaceChildren(
     ...run.items.map((packet, index) => {
       const row = element("tr");
@@ -1510,7 +1503,7 @@ function renderPolicyTable() {
       );
       name.onclick = () => openAgentCheck(packet.id, 0);
       label.append(name);
-      if (!historicalClaims && !results.get(packet.id)?.claimSummaryPrepared)
+      if (policyResult?.source !== "bundled" && !results.get(packet.id)?.claimSummaryPrepared)
         label.append(
           element("span", "Claim fields not prepared", "policy-preparation"),
         );
@@ -1808,20 +1801,9 @@ function addPolicyComparisonSources(cell, field, value, citations) {
   } else cell.append(element("span", "No linked rule source", "policy-source-unavailable"));
 }
 function addClaimComparisonSources(cell, field, value, packetId, reviewVersion) {
-  const policyResult = policyResults.get(policyMode);
-  if (policyResult?.source === "bundled" && policyResult.staleDataset) {
-    cell.append(
-      element(
-        "span",
-        "Historical claim value; source highlighting is unavailable for the current dataset.",
-        "policy-source-unavailable",
-      ),
-    );
-    return;
-  }
-  const key = `${run.id}:${packetId}:${reviewVersion}`;
+  const key = `${run.id}:${policyMode}:${packetId}:${reviewVersion}`;
   if (!claimEvidenceRequests.has(key)) {
-    const request = api(`policy/claim-evidence?runId=${encodeURIComponent(run.id)}&packetId=${encodeURIComponent(packetId)}`);
+    const request = api(`policy/claim-evidence?runId=${encodeURIComponent(run.id)}&packetId=${encodeURIComponent(packetId)}&mode=${encodeURIComponent(policyMode)}`);
     claimEvidenceRequests.set(key, request);
     request.catch(() => claimEvidenceRequests.delete(key));
   }
