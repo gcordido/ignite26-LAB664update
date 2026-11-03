@@ -46,7 +46,7 @@ script; images themselves are not modified.
   Workbench App. It does not create cloud resources or submit document analysis
   on launch.
 - [`policy-demo-cache.ps1`](policy-demo-cache.ps1) optionally restores the included synthetic
-  policy reviews, CU claim fields and public resource configuration. It uses
+  policy reviews and public resource configuration alongside the saved Parse run. It uses
   the existing workbench dependencies and makes no Azure calls. The app reads
   the bundled results directly without this command or Azure setup; use it only
   when a local cache copy is needed for maintenance. Different local configuration
