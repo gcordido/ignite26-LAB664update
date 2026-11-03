@@ -23,7 +23,7 @@ In this lab you will use Azure AI Content Understanding to turn synthetic insura
 To get started, let's explore the prebuilt analyzers in CU (Content Understanding) Studio by uploading and analyzing a few sample documents.
 This will help you understand the distinction between layout extraction and schema-based extraction before you move on to customizing your own analyzers.
 
-Open the browser to navigate to CU the Studio Gallery (```https://contentunderstanding.ai.azure.com/discover```).
+Open the browser to navigate to CU the Studio Gallery (`https://contentunderstanding.ai.azure.com/discover`).
 Click **Sign in** on the top right corner of the page and log in with the provided credentials for Azure:
 - Username: +++@lab.CloudPortalCredential(User1).Username+++
 - If prompted for a Temporary Access Pass (TAP): +++@lab.CloudPortalCredential(User1).AccessToken+++
@@ -33,7 +33,7 @@ Once done, follow the steps below to explore the prebuilt analyzers:
 1. Click on **Layout** to test the document layout extraction. When prompted to confirm the details of the subscription, resource group and resource name, confirm default selections and proceed. Click **Next**->**Save**.
 2. You'll get a list of samples for different content types (checklist, financial report, formulas, etc). Select a sample to see the original document scan and how the prebuilt analyzer extracts information from it.
 !IMAGE[chshn4cn.png](instructions359897/chshn4cn.png)
-4. Next click on **Browse for files** to upload your own document for analysis. In the File Explorer window that opens, navigate to ```C:\Users\LabUser\Desktop\ignite26-LAB664\data\step1``` and select **towing-invoice.pdf**. Notice how both the content and the format (tables, lists, headers) are extracted and displayed on the right side panel.
+4. Next click on **Browse for files** to upload your own document for analysis. In the File Explorer window that opens, navigate to `C:\Users\LabUser\Desktop\ignite26-LAB664\data\step1` and select **towing-invoice.pdf**. Notice how both the content and the format (tables, lists, headers) are extracted and displayed on the right side panel.
 !IMAGE[xfe4ei8u.png](instructions359897/xfe4ei8u.png)
 
 Now come back to the previous page - by clicking on the arrow on the top left corner of the page - and let's examine the differences between the prebuilt layout extraction and the schema-based extraction for the same document. 
@@ -44,7 +44,7 @@ Now come back to the previous page - by clicking on the arrow on the top left co
 Feel free to experiment with further pre-built analyzers to understand how CU Studio handles different document types and extraction scenarios. Below you can find a few examples of prebuilt analyzers along with the sample documents provided in the data folder, and the fields they extract.
 
 | Prebuilt in Studio | Upload | Inspect |
-|:---|:---|:---|
+| :--- | :--- | :--- |
 | Identity / Generic ID document | demo-id.pdf | Named holder and available ID-like fields. This fictional membership specimen is not a government ID. |
 | US tax / 1099A | form-1099a.pdf | Tax year, lender, borrower, account, and form boxes. Nested year/copy results are not extra input documents. |
 
@@ -66,12 +66,12 @@ For this step, use the **gpt-5.5** model instance pre-provisioned and mapped by 
 6. Expand the **Advanced settings** section and select **gpt-5.5** as model.
 7. Leave the other parameters as default and confirm by selecting **Create**.
 !IMAGE[qm5a1m18.png](instructions359897/qm5a1m18.png)
-7. Once your project is created, select **Browse for Files** and upload ```C:\Users\LabUser\Desktop\ignite26-LAB664\data\step1\repair-estimate.pdf```. **Run analysis**.
+7. Once your project is created, select **Browse for Files** and upload `C:\Users\LabUser\Desktop\ignite26-LAB664\data\step1\repair-estimate.pdf`. **Run analysis**.
 8. In the **Choose a template window**, select the **Invoice** one. Click on **Save** to proceed.
 9. Add **these three lowercase fields**, with method **Extract**, one by one. For each field, enter the field's **Name** and **Description** from the table below. Complete both cells before selecting **Add field** again, and repeat for all three rows.
 
 | Field | Type / method | Copy this description |
-|:---|:---|:---|
+| :--- | :--- | :--- |
 | `vehicle` | String / Extract | `Printed vehicle name as one string, including year/make/model when present. Do not add color, decode the VIN, or infer missing details.` |
 | `vin` | String / Extract | `Exact value explicitly labeled VIN. Do not correct it or substitute registration, plate, or account numbers. Leave unset if absent.` |
 | `odometer` | Number / Extract | `Printed Odometer or Inspection Mileage as a number. Remove grouping separators; no units. Do not substitute Annual Mileage or infer an absent value.` |
@@ -102,7 +102,7 @@ Instead of entering each field manually, you will import a prepared schema and i
 You should have **seven flat fields: five Extract and two Generate**, with **Source & Confidence** enabled. *Do not add these fields again*.
 
 | Field | Type / method | What to check |
-|:---|:---|:---|
+| :--- | :--- | :--- |
 | `claimant_name` | String / Extract | Identifies the claimant or insured vehicle owner, not a witness, other driver, adjuster, or recipient. |
 | `incident_date` | Date / Extract | Uses the incident date, not the date the statement or email was written or sent. |
 | `incident_location` | String / Extract | Contains only an explicitly reported incident location. |
@@ -154,7 +154,7 @@ You will start with a small three-page packet, then test the same configuration 
 > [!Note] **Do not assign child analyzer IDs yet**; you will add extraction routes in step 4.
 
 | Category key | Copy this description |
-|:---|:---|
+| :--- | :--- |
 | `id_document` | `The lab's identity-like demo card with named holder, portrait and membership identifier. This synthetic membership card demonstrates ID field extraction, not government-ID authenticity. Exclude invoice, tax and repair documents.` |
 | `tax_1099a` | `An IRS Form 1099-A Acquisition or Abandonment of Secured Property, including fictional borrower-copy examples. Exclude other tax forms and prose references.` |
 | `repair_estimate` | `A standalone repair workshop estimate or quote with vehicle details and proposed parts/labor. Keep continuation pages of the same estimate together; split a different estimate even if adjacent. Exclude towing/rental/glass invoices and their supporting inspection supplements even when they mention a proposed repair schedule.` |
@@ -348,19 +348,17 @@ For live policy checks and follow-up chat, complete [Prepare live policy checks]
 
 ===
 
-## Step 7. Check policy compliance using Azure Search (Foundry IQ) Knowledge
-### Compare policy review with and without retrieval
+## Step 7. Check policy compliance using Azure Search (Foundry IQ) knowledge
+### Explore cached policy reviews
 
-Use the top-level tabs to move between **Parse and extract**, **Check consistency**, and **Check policies**. **Check consistency** validates returned fields, arithmetic, and cross-document consistency. **Check policies** uses an agent and retrieved policy evidence for five rental-processing checks. Neither changes the other's results. Selecting a policy check opens its finding and claim-versus-policy values in the right panel. Select a linked value to inspect its source PDF, then **Back to policy check** to return. The loaded CU results remain shared across tabs.
+**Check policies** uses an agent and retrieved policy evidence for five rental-processing checks. Neither changes the other's results. Selecting a policy check opens its finding and claim-versus-policy values in the right panel. Select a linked value to inspect its source PDF, then **Back to policy check** to return. The loaded CU results remain shared across tabs.
 
 The repository includes ten saved agent reviews from the current packet dataset and Search-managed Standard index. These are portable: on another machine, start the app and select **Load cached results** without restoring `.tools` files, signing in to Azure, or deploying Search. The **Bundled demo** label identifies the saved reviews and their source index. Loading makes no Azure calls and does not enable follow-up chat. If you later change the extraction dataset, the app labels unmatched bundled reviews as **Stale policy results from a different extraction dataset** rather than presenting them as current results. Setup above connects the app to Azure for live reviews; it is not required just to view the saved bundle.
 
-1. Start with **Parse and extract** > **Load cached results**, then open **Check policies**, select **FoundryIQ**, and select **Load cached results**. The included bundle loads all ten cases and 50 saved checks as read-only results; no Azure calls are made.
-2. After completing [Prepare live policy checks](#prepare-live-policy-checks), select **Run live** and confirm the operation for all loaded cases. The status banner names the active packet and shows elapsed time. Each uncached packet gets one Search prefetch and five parallel Agent Framework calls, one per check. Missing claim fields can require one additional whole-packet CU extraction. Azure charges apply.
-
-   Keep the tab open; refresh the same tab to resume progress rather than starting another run. Matching current reviews load from cache without another model call. **Run live** isn't a force-refresh button.
-3. Optionally select **No policy retrieval** to inspect a saved baseline if available, then return to **FoundryIQ**. Changing the dropdown alone doesn't submit a new run.
-4. Inspect **Daily cost**, **Rental dates**, and **Active policy**, followed by **Covered charges** and **Payment approval**. A check mark means **Satisfied**; an open circle means **Review required**. The circular-arrow **Waiting for info** status means missing claim evidence or approval, not a model still running. **N/A** identifies a check that doesn't apply.
+1. Open the **Check policies** tab. If you haven't loaded extraction results yet, first select **Parse and extract** > **Load cached results**, then return to **Check policies**.
+2. Select **FoundryIQ**, then **Load cached results**. The included bundle loads all ten cases and 50 saved checks as read-only results; no Azure calls are made.
+3. Select packet **02 / Washington**, then open its **Satisfied** **Daily cost** check. In the right panel, compare the claim's **$61/day** base rate and **five billed days** with the retrieved Washington rental terms: an **$85/day** contractual cap and a **30-day** limit. Notice that the agent identified the terms associated with this claim rather than applying a generic rental rule.
+4. Open the **Source** links to inspect the underlying policy files and cited pages. Follow the Washington rental terms and SOP evidence, then select **Back to policy check** to return to the finding. The SOP's **$60** routine handling authority is separate from the **$85** contractual cap: a satisfied daily-cost check does not authorize payment. Inspect **Rental dates**, **Active policy**, **Covered charges**, and **Payment approval** to see where additional evidence or human review is needed. A check mark means **Satisfied**; an open circle means **Review required**. The circular-arrow **Waiting for info** status means missing claim evidence or approval, not a model still running. **N/A** identifies a check that doesn't apply.
 
 | Case | CU daily base | Contractual daily cap | Retrieved SOP routine authority | Included saved daily-cost result |
 | :--- | ---: | ---: | ---: | :--- |
@@ -371,7 +369,11 @@ In the refreshed saved reviews, both packets show **Waiting for info** for renta
 
 5. [] For packet **01**, select the Texas **Source** link. Inspect **TX-R2** on page 2 and **Schedule A** on page 3 of `tx-rental-review-sop-v2.pdf`. The $75 value is internal routine handling authority, not the $85 contractual cap. Blank cells in the exception table don't grant extra authority. Also inspect the matching revised declarations, rental terms/diagram and issued amendment. The blank optional-code cell must not shift the Honda's deductible or rental limits.
 6. [] In the source viewer, compare **Document**, **CU Search** and **Digital parse**. CU Search uses `prebuilt-documentSearch` and its own analyzer-keyed cache, not relabeled Layout output. Select **Back to policy check** to restore the finding. Optionally inspect Washington's scanned SOP or Arizona's image-based eligibility flowchart. A missing extraction has an explicit billable generation action; switching tabs alone doesn't call CU.
-7. [] Select **Ask agent** in the right panel and ask, "Explain this case's daily-rate result. Cite the SOP and distinguish routine authority from the contractual cap." Chat uses the selected case and mode without replacing its saved checks; each submitted question can incur Azure charges.
+7. [] Optionally explore **Ask agent** in the right panel to ask additional questions about the selected claim. The bundled results are read-only, so this button is disabled for the cached demo. To use it, complete [Prepare live policy checks](#prepare-live-policy-checks), select **Run live**, and confirm the billable operation. Once a live-compatible review is available, select **Ask agent** and ask, "Why is Washington's daily cost satisfied, and what still needs human review? Cite the rental terms and distinguish routine authority from the contractual cap." Chat uses the selected case and mode without replacing its saved checks; each submitted question can incur Azure charges.
+
+   During a live run, the status banner names the active packet and shows elapsed time. Each uncached packet gets one Search prefetch and five parallel Agent Framework calls, one per check. Missing claim fields can require one additional whole-packet CU extraction. Keep the tab open; refresh the same tab to resume progress rather than starting another run. Matching current reviews load from cache without another model call. **Run live** isn't a force-refresh button. You can also select **No policy retrieval** to inspect a saved baseline if available, then return to **FoundryIQ**; changing the dropdown alone doesn't submit a new run.
+
+The agent connects fields extracted from the claim to the business rules and policy evidence associated with that claim. Its findings and linked sources help reviewers understand which checks are satisfied and where humans should spend time reviewing missing evidence, exceptions, or approvals. The agent supports that review; it does not make the final claim or payment decision.
 
 These are source-based examples, not guaranteed model answers. Inspect differing results, missing facts or errors rather than forcing a pass. The SOP cannot supply a missing contractual benefit. Missing actual repair dates or pending insurer approval produce **Waiting for info**; contradictory evidence or unclear controlling rules require review. An issued amendment and its effective time, not a customer signature alone, establish changed terms. **Satisfied** for daily cost doesn't approve the claim or authorize payment.
 
