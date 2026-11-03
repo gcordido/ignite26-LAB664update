@@ -59,6 +59,14 @@ then **Load cached results** to load the included **10/10** CU run and all
 **50** saved policy checks. **Parse and extract** > **Load cached results**
 also loads the included extraction results independently.
 
+The refreshed bundle uses CU run
+`76d80507-e191-4354-81f1-dbfe4fa412f9` and records the Search-managed **Standard**
+index used for these agent reviews. Its extraction manifest and ten native CU
+responses are already tracked under `results/76d80507-e191-4354-81f1-dbfe4fa412f9`.
+Keep that run and the complete `policy-demo` folder together when transferring
+the repository. No machine-local `.tools` configuration, credentials or Azure
+deployment is required to view them. Follow-up chat still requires live setup.
+
 The app validates bundle hashes, claim inputs and citations before loading.
 **Bundled demo** identifies these read-only results and their original Search
 index. Compatible local live caches take precedence; local configuration and

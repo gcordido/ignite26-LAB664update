@@ -38,7 +38,7 @@ async function appSession(t: TestContext, policy: PolicyService) {
   };
 }
 
-test("a customized packet dataset advertises the bundled demo as stale and read-only", async (t) => {
+test("a fresh machine loads the current bundled policy reviews without Azure or local configuration", async (t) => {
   const folder = await mkdtemp(path.join(os.tmpdir(), "lab664-offline-"));
   t.after(() => rm(folder, { recursive: true, force: true }));
   const policy = new PolicyService({
@@ -49,13 +49,26 @@ test("a customized packet dataset advertises the bundled demo as stale and read-
   const { request, cloudCalls } = await appSession(t, policy);
   const status = await (await request("policy/status")).json();
   assert.equal(status.configured, false);
-  assert.equal(status.bundledDemo.staleDataset, true);
+  assert.equal(status.bundledDemo.staleDataset, false);
   const demo = await policyDemo();
   const current = await dataset();
-  assert.notEqual(demo.info.datasetHash, current.datasetHash);
+  assert.equal(demo.info.datasetHash, current.datasetHash);
   const runs = await (await request("cache")).json();
   assert.ok(runs.some((run: { datasetHash: string }) =>
     run.datasetHash === current.datasetHash));
+  const load = await request("cache/load", { runId: demo.info.runId });
+  assert.equal(load.status, 200);
+  const saved = await request("policy/cache/load", {
+    runId: demo.info.runId, mode: "search", source: "bundled",
+  });
+  assert.equal(saved.status, 200);
+  const payload = await saved.json();
+  assert.equal(payload.source, "bundled");
+  assert.equal(payload.staleDataset, false);
+  assert.equal(payload.extractionMode, "standard");
+  assert.equal(payload.items.length, 10);
+  assert.ok(payload.items.every((item: PolicyItem) =>
+    item.status === "completed" && item.result?.Checks.length === 5));
   assert.equal(cloudCalls(), 0);
   assert.deepEqual(await readdir(folder), [], "No local config or cache files should be created.");
 });
@@ -77,7 +90,9 @@ test("the bundled payload remains internally valid for its original included run
       item.datasetHash === data.datasetHash,
   );
   assert.ok(current);
-  const stale = demo.results(current);
+  const matching = demo.results(current);
+  assert.equal(matching.staleDataset, false);
+  const stale = demo.results({ ...current, datasetHash: "f".repeat(64) });
   assert.equal(stale.runId, current.id);
   assert.equal(stale.sourceRunId, run.id);
   assert.equal(stale.staleDataset, true);
