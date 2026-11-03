@@ -38,6 +38,13 @@
         <input id="policy-cache-folder" readonly />
       </label>
       <div class="actions">
+        <button id="load-cache" class="secondary" disabled>Reload saved results</button>
+        <button id="load-policy-cache" class="secondary" aria-describedby="policy-cache-status" disabled>Reload policy reviews</button>
+      </div>
+      <p id="policy-cache-status" class="muted" role="status">
+        Saved checks for the loaded CU run. Loading makes no Azure calls.
+      </p>
+      <div class="actions">
         <button id="close-settings" class="secondary">Close</button>
       </div>
     </dialog>
@@ -71,7 +78,6 @@
           <label for="analyzer" data-live-control hidden>Analyzer:</label>
           <select id="analyzer" aria-label="Analyzer" data-live-control hidden disabled></select>
           <button id="analyze" data-live-control hidden disabled>Run live</button>
-          <button id="load-cache" class="secondary" disabled>Load cached results</button>
         </div>
       </div>
       <p id="cache-loading" class="cache-loading" role="status" hidden>
@@ -132,11 +138,7 @@
               <option value="">Loading policy configuration...</option>
             </select>
             <button id="policy-run" data-live-control hidden disabled>Run live</button>
-            <button id="load-policy-cache" class="secondary" aria-describedby="policy-cache-status" disabled>Load cached results</button>
           </div>
-          <p id="policy-cache-status" class="muted" role="status">
-            Saved checks for the loaded CU run. Loading makes no Azure calls.
-          </p>
           <p id="policy-status" class="muted" role="status"></p>
           <div id="policy-run-status" class="policy-run-status" role="status" hidden>
             <div class="policy-run-details">

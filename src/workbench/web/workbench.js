@@ -152,9 +152,13 @@ function updateElapsed() {
 setInterval(updateElapsed, 1000);
 setInterval(updatePolicyActivity, 1000);
 function fail(error) {
+  const message = error instanceof Error ? error.message : String(error);
   get("error").hidden = false;
-  get("error").textContent =
-    error instanceof Error ? error.message : String(error);
+  get("error").textContent = message;
+  if (get("app-settings").open) {
+    get("settings-error").textContent = message;
+    get("settings-error").hidden = false;
+  }
 }
 function element(tag, text, className) {
   const node = document.createElement(tag);
@@ -1116,8 +1120,6 @@ get("enable-live-calls").onchange = async () => {
     try {
       await analyzers();
     } catch (error) {
-      get("settings-error").textContent = error.message;
-      get("settings-error").hidden = false;
       fail(error);
     }
   }
@@ -1174,6 +1176,7 @@ async function loadExtractionCache() {
   const current = ++watcherVersion;
   busy = true;
   get("error").hidden = true;
+  get("settings-error").hidden = true;
   get("cache-loading").hidden = false;
   get("batch").setAttribute("aria-busy", "true");
   controls();
@@ -1946,6 +1949,7 @@ async function loadPolicyCache() {
   const mode = policyMode;
   busy = true;
   get("error").hidden = true;
+  get("settings-error").hidden = true;
   get("cache-loading").hidden = false;
   get("policy-cache-status").textContent = "Loading saved policy checks and verifying their sources…";
   controls();

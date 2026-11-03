@@ -834,6 +834,34 @@ test("startup loads both saved result sets without listing live analyzers", asyn
   }
 });
 
+test("cache reload controls are present only inside app settings", async () => {
+  const html = await readFile(new URL("../web/workbench.html", import.meta.url), "utf8");
+  const settings = html.match(/<dialog id="app-settings"[\s\S]*?<\/dialog>/);
+  assert.ok(settings);
+  for (const id of ["load-cache", "load-policy-cache"]) {
+    const selector = new RegExp(`id="${id}"`);
+    assert.match(settings[0], selector);
+    assert.doesNotMatch(html.replace(settings[0], ""), selector);
+  }
+});
+
+test("cache reload failures remain visible inside the open settings dialog", async () => {
+  const source = await readFile(new URL("../web/workbench.js", import.meta.url), "utf8");
+  const nodes = new Map<string, { hidden: boolean; open?: boolean; textContent: string }>([
+    ["app-settings", { open: true, hidden: false, textContent: "" }],
+    ["settings-error", { hidden: true, textContent: "" }],
+    ["error", { hidden: true, textContent: "" }],
+  ]);
+  const context = vm.createContext({ get: (id: string) => nodes.get(id) });
+  vm.runInContext(source.slice(
+    source.indexOf("function fail("), source.indexOf("function element("),
+  ), context);
+  vm.runInContext('fail(new Error("The selected cache has a checksum mismatch."))', context);
+  assert.equal(nodes.get("settings-error")!.hidden, false);
+  assert.equal(nodes.get("settings-error")!.textContent, "The selected cache has a checksum mismatch.");
+  assert.equal(nodes.get("error")!.hidden, false);
+});
+
 test("settings show loaded cache paths and list analyzers only after live-call opt-in", async () => {
   const source = await readFile(new URL("../web/workbench.js", import.meta.url), "utf8");
   const nodes = new Map<string, {
