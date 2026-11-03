@@ -69,17 +69,6 @@
       </button>
     </nav>
     <main>
-      <div id="extraction-toolbar" class="toolbar">
-        <p class="toolbar-intro">
-          Explore saved extraction results for 10 different customers.
-          Select a value to inspect its source document.
-        </p>
-        <div class="toolbar-group analyzer-group">
-          <label for="analyzer" data-live-control hidden>Analyzer:</label>
-          <select id="analyzer" aria-label="Analyzer" data-live-control hidden disabled></select>
-          <button id="analyze" data-live-control hidden disabled>Run live</button>
-        </div>
-      </div>
       <p id="cache-loading" class="cache-loading" role="status" hidden>
         <span class="spinner" aria-hidden="true"></span>
         Loading saved results and reviews...
@@ -100,6 +89,17 @@
       <section id="batch" hidden>
         <div class="results-toolbar">
           <h2 id="results-heading" class="results-heading">Parse and extract</h2>
+          <div id="extraction-toolbar" class="toolbar">
+            <p class="toolbar-intro">
+              Explore saved extraction results for 10 different customers.
+              Select a value to inspect its source document.
+            </p>
+            <div class="toolbar-group analyzer-group">
+              <label for="analyzer" data-live-control hidden>Analyzer:</label>
+              <select id="analyzer" aria-label="Analyzer" data-live-control hidden disabled></select>
+              <button id="analyze" data-live-control hidden disabled>Run live</button>
+            </div>
+          </div>
           <div id="view-types" class="actions" aria-label="Result type">
             <button data-view="classification" aria-pressed="true">
               Classification

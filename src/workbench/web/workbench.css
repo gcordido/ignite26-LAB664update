@@ -765,9 +765,13 @@ body.resizing-column * {
 .results-toolbar > #origin {
   margin-left: auto;
 }
+.results-toolbar > #extraction-toolbar,
 .results-toolbar > #view-types:not([hidden]) {
   flex-basis: 100%;
   order: 1;
+}
+.results-toolbar > #extraction-toolbar {
+  margin-bottom: 0;
 }
 .results-heading {
   margin: 0;
