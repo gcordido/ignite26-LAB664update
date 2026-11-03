@@ -445,7 +445,7 @@ test("top-level pivots preserve the selected extraction type and share the exist
   vm.runInContext(source.slice(source.indexOf("function renderWorkflowNavigation()"),
     source.indexOf('for (const button of document.querySelectorAll("[data-view]"))')), context);
   vm.runInContext('activateView("policies")', context);
-  assert.equal(nodes["results-heading"].textContent, "Check consistency");
+  assert.equal(nodes["results-heading"].textContent, "Business rules validation");
   assert.equal(nodes["view-types"].hidden, true);
   assert.equal(nodes["extraction-toolbar"].hidden, true);
   assert.equal(buttons[1].attributes["aria-pressed"], "true");

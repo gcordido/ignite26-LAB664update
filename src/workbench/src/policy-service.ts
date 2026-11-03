@@ -193,7 +193,7 @@ type Dependencies = {
 export class PolicyService {
   private running = false;
   private configPath: string;
-  private cacheFolder: string;
+  readonly cacheFolder: string;
   constructor(private frameworkDependencies: Dependencies = {}) {
     this.cacheFolder = frameworkDependencies.cacheFolder ?? path.join(repositoryRoot, ".tools", "policy-cache");
     this.configPath = frameworkDependencies.configPath ?? process.env.POLICY_FRAMEWORK_CONFIG ??
@@ -517,7 +517,7 @@ export class PolicyService {
     await savePolicyCache(path.join(this.cacheFolder, `framework-job-${job.id}.json`), job);
   }
   async chatContext(run: Run, mode: PolicyMode, packetId: string, readRaw: (id: string) => Promise<unknown>,
-    check: typeof checkNames[number] = checkNames[0]) {
+    check: typeof checkNames[number] = checkNames[0], runtime: PolicyService = this) {
     const config = await this.required();
     const packet = run.source.find((p) => p.id === packetId);
     if (!packet || !run.items.some((item) => item.id === packetId && item.rawSaved))
@@ -527,13 +527,14 @@ export class PolicyService {
     if (!saved) throw new LabError(409, "Run policy checks for this case and mode before chatting.");
     const key = saved.key;
     const parsed = await frameworkReview(saved.raw, mode, config);
-    const agent = { ...this.agent(config, mode), ...this.chatOptions(config),
+    const runtimeConfig = runtime === this ? config : await runtime.required();
+    const agent = { ...runtime.agent(runtimeConfig, mode), ...runtime.chatOptions(runtimeConfig),
       lossState: input.lossState, policyScope: input.policyScope };
     const savedPrompt = parseFrameworkResult(saved.raw, mode, config).checkPrompts?.[check];
     const prompt = savedPrompt ?? z.object({ prompt: z.string().min(1) }).parse(
-      await (this.frameworkDependencies.invoke ?? invokeFramework)({
+      await (runtime.frameworkDependencies.invoke ?? invokeFramework)({
         mode, prompt: input.reviewQuestion, prepareCheck: check,
-        claimAnalysis: input.claimAnalysis, configPath: this.configPath,
+        claimAnalysis: input.claimAnalysis, configPath: runtime.configPath,
       }),
     ).prompt;
     const index = checkNames.indexOf(check);

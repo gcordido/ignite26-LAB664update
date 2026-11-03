@@ -416,9 +416,16 @@ nav {
   border-color: var(--line);
   color: var(--text);
 }
-a {
+a,
+#open-settings {
   color: var(--conference-blue);
   text-decoration: none;
+}
+#open-settings {
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  background: none;
 }
 main {
   display: grid;
@@ -765,9 +772,13 @@ body.resizing-column * {
 .results-toolbar > #origin {
   margin-left: auto;
 }
+.results-toolbar > #extraction-toolbar,
 .results-toolbar > #view-types:not([hidden]) {
   flex-basis: 100%;
   order: 1;
+}
+.results-toolbar > #extraction-toolbar {
+  margin-bottom: 0;
 }
 .results-heading {
   margin: 0;
@@ -1503,6 +1514,20 @@ dialog::backdrop {
 dialog h2 {
   font-size: 17px;
   margin: 0;
+}
+#app-settings {
+  width: min(640px, calc(100vw - 32px));
+  padding: 24px;
+  color: var(--text);
+}
+#app-settings .cache-path {
+  display: grid;
+  gap: 6px;
+  margin-top: 16px;
+}
+#app-settings .actions {
+  justify-content: flex-end;
+  margin-top: 20px;
 }
 #policy-confirmation {
   width: min(520px, calc(100vw - 32px));

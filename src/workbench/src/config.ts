@@ -3,6 +3,14 @@ import path from "node:path";
 export const root = path.resolve(import.meta.dirname, "..");
 export const repositoryRoot = path.resolve(root, "..", "..");
 export const dataRoot = path.join(repositoryRoot, "data");
+export function cacheFolders(folder = process.env.WORKBENCH_CACHE_FOLDER) {
+  const selected = path.resolve(repositoryRoot, folder?.trim() || dataRoot);
+  return {
+    root: selected,
+    extraction: path.join(selected, "results"),
+    policy: path.join(selected, "policy-demo"),
+  };
+}
 export const apiVersion = "2026-06-01-preview";
 export const categories = [
   "id_document",

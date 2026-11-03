@@ -4,11 +4,24 @@ param(
     [ValidateSet('2025-11-01', '2026-06-01-preview')]
     [string]$ApiVersion = '2026-06-01-preview',
     [ValidateRange(1, 65535)]
-    [int]$Port = 8791
+    [int]$Port = 8791,
+    [string]$CacheFolder
 )
 
 $ErrorActionPreference = 'Stop'
 $repositoryRoot = Split-Path -Parent $PSScriptRoot
+if ([string]::IsNullOrWhiteSpace($CacheFolder)) {
+    $cacheRoot = Join-Path $repositoryRoot 'data'
+} else {
+    $selectedFolder = Get-Item -LiteralPath $CacheFolder
+    if (-not $selectedFolder.PSIsContainer) { throw 'CacheFolder must be a directory containing results and policy-demo.' }
+    $cacheRoot = $selectedFolder.FullName
+}
+if (-not (Test-Path -LiteralPath (Join-Path $cacheRoot 'results') -PathType Container) -or
+    -not (Test-Path -LiteralPath (Join-Path $cacheRoot 'policy-demo\manifest.json') -PathType Leaf)) {
+    throw "Incomplete cache folder: $cacheRoot. Expected results\<run-id>\manifest.json and policy-demo\manifest.json. No other cache folder will be used."
+}
+$env:WORKBENCH_CACHE_FOLDER = $cacheRoot
 if (-not $Endpoint) {
     $runtimeConfig = Join-Path $repositoryRoot '.tools\policy-agent-framework.json'
     if (Test-Path -LiteralPath $runtimeConfig) {
@@ -26,8 +39,6 @@ if (-not $env:POLICY_PYTHON) {
     $policyPython = Join-Path $repositoryRoot '.tools\policy-venv\Scripts\python.exe'
     if (Test-Path -LiteralPath $policyPython) {
         $env:POLICY_PYTHON = $policyPython
-    } elseif ($Endpoint) {
-        throw 'Run .\infra\setup.ps1 first to install the Python policy agent, or set POLICY_PYTHON to your prepared python.exe.'
     }
 }
 if ($Endpoint) {
@@ -48,10 +59,9 @@ if (-not $env:CU_DIAGNOSTICS_LOG) {
     $env:CU_DIAGNOSTICS_LOG = Join-Path $logDirectory 'cu-requests.jsonl'
 }
 Write-Host "Starting the separate Insurance Workbench App at http://127.0.0.1:$Port/"
+Write-Host "Saved results folder: $cacheRoot"
 Write-Host "CU request diagnostics: $env:CU_DIAGNOSTICS_LOG"
-if (-not $Endpoint) {
-    Write-Host 'Cache-only mode: load the included CU results, then the bundled policy demo. No Azure setup or calls are needed for cached results.'
-}
+Write-Host 'Saved extraction results and policy reviews load automatically. Viewing them makes no Azure calls.'
 Write-Host 'Keep this terminal open. Press Ctrl+C to stop. No document analysis is submitted on launch.'
 Push-Location (Join-Path $repositoryRoot 'src\workbench')
 try {

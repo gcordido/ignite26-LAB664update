@@ -4,6 +4,7 @@ import path from "node:path";
 import { z } from "zod";
 import {
   categories,
+  cacheFolders,
   configuration,
   dataRoot,
   LabError,
@@ -74,7 +75,7 @@ export type Run = {
 };
 const runIdSchema = z.string().uuid();
 export class Cache {
-  constructor(public folder = path.join(dataRoot, "results")) {}
+  constructor(public folder = cacheFolders().extraction) {}
   private directory(id: string) {
     return path.join(this.folder, runIdSchema.parse(id));
   }

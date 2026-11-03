@@ -28,6 +28,7 @@ const get = (id) => document.getElementById(id);
 const results = new Map();
 let sessionId = "";
 let busy = false;
+let liveCallsEnabled = false;
 let run;
 let origin = "cached";
 let view = "classification";
@@ -118,7 +119,9 @@ const policyChat = createPolicyChat({
   onSource: openPolicySource,
   onError: fail,
 });
-const policyDocument = createPolicyDocument({ api, previewPdf, get });
+const policyDocument = createPolicyDocument({
+  api, previewPdf, get, liveCallsEnabled: () => liveCallsEnabled,
+});
 const packetReview = packetReviewer({
   api,
   select(id) {
@@ -149,9 +152,13 @@ function updateElapsed() {
 setInterval(updateElapsed, 1000);
 setInterval(updatePolicyActivity, 1000);
 function fail(error) {
+  const message = error instanceof Error ? error.message : String(error);
   get("error").hidden = false;
-  get("error").textContent =
-    error instanceof Error ? error.message : String(error);
+  get("error").textContent = message;
+  if (get("app-settings").open) {
+    get("settings-error").textContent = message;
+    get("settings-error").hidden = false;
+  }
 }
 function element(tag, text, className) {
   const node = document.createElement(tag);
@@ -170,14 +177,19 @@ function arrayLabel(field) {
   return `${field.count} items${sum ? ` \u00b7 ${formatCurrency(sum.amount, sum.currency)}` : ""}`;
 }
 function controls() {
+  for (const control of document.querySelectorAll("[data-live-control]"))
+    control.hidden = !liveCallsEnabled;
+  get("enable-live-calls").disabled = busy || policyBusy;
   get("analyze").disabled =
-    busy || !sessionId || !catalog || !get("analyzer").value.trim();
+    !liveCallsEnabled || busy || policyBusy ||
+    !sessionId || !catalog || !get("analyzer").value.trim();
   get("load-cache").disabled = busy || policyBusy || !savedExtractionRun;
   for (const button of get("packet-table").querySelectorAll(
     ".policy-matrix-button",
   ))
     button.disabled = busy || policyBusy;
   get("policy-run").disabled =
+    !liveCallsEnabled ||
     policyMode !== "search" ||
     busy ||
     policyBusy ||
@@ -196,12 +208,16 @@ function controls() {
   }
   get("policy-mode").disabled = busy || policyBusy ||
     (!policyStatus?.configured && !policyStatus?.bundledDemo);
-  get("policy-chat-mode").disabled = policyResults.get(policyMode)?.source === "bundled";
-  get("policy-chat-mode").title = get("policy-chat-mode").disabled
-    ? "Bundled demo results are read-only. Configure Azure and run live checks to ask follow-up questions."
-    : "";
+  const saved = policyResults.get(policyMode);
+  get("policy-chat-mode").disabled =
+    !policyStatus?.configured || saved?.staleDataset === true ||
+    !saved?.items.some((item) => item.id === selectedPacket && item.status === "completed");
+  get("policy-chat-mode").title = !policyStatus?.configured
+    ? "Follow-up chat needs the prepared policy-agent connection."
+    : saved?.staleDataset
+      ? "Load policy reviews that match this extraction run before chatting."
+      : "";
   get("load-policy-cache").disabled = busy || policyBusy || policyCacheBusy ||
-    policyStatus?.batchRunning ||
     (!savedPolicyEntries.some((entry) => entry.mode === policyMode) &&
       !(!run && policyMode === "search" && policyStatus?.bundledDemo &&
         savedExtractionRun?.id === policyStatus.bundledDemo.runId));
@@ -228,7 +244,7 @@ async function policyCaches() {
     get("policy-cache-status").textContent = saved.message ??
       (entry
         ? `${entry.count}/${entry.total} ${entry.source === "bundled" ? "bundled demo" : "saved"} cases available. Loading makes no Azure calls.`
-        : "No saved checks match this CU run and current policy configuration. Run policy checks to save results.");
+        : "No saved policy checks are available for this retrieval option.");
     policyMessage();
   } catch (error) {
     if (version === policyCacheVersion && run?.id === runId) {
@@ -246,6 +262,10 @@ async function policyCaches() {
 async function caches() {
   const savedRuns = await api("cache");
   savedExtractionRun = savedRuns.find((saved) => saved.id === savedExtractionRun?.id) ??
+    savedRuns.find((saved) => saved.id === policyStatus?.bundledDemo?.runId &&
+      saved.status === "completed" && saved.datasetHash === catalog?.datasetHash) ??
+    savedRuns.find((saved) => saved.status === "completed" &&
+      saved.datasetHash === catalog?.datasetHash) ??
     savedRuns.find((saved) => saved.status === "completed") ?? savedRuns[0];
   get("load-cache").title = savedExtractionRun
     ? `${savedExtractionRun.analyzer.id} · ${new Date(savedExtractionRun.startedAt).toLocaleString()}`
@@ -350,7 +370,9 @@ function warning(message) {
   return icon;
 }
 async function analyzers() {
+  if (!liveCallsEnabled) return;
   const status = await api("status");
+  if (!liveCallsEnabled) return;
   if (!status.endpointConfigured) {
     const option = element("option", "Cache only - no Azure endpoint");
     option.value = "";
@@ -371,7 +393,8 @@ async function analyzers() {
     return option;
   });
   get("analyzer").replaceChildren(...options);
-  const preferred = items.find((item) => item.compatible);
+  const preferred = items.find((item) => item.id === (run ?? savedExtractionRun)?.analyzer.id) ??
+    items.find((item) => item.compatible);
   get("analyzer").value = preferred?.id ?? "";
   get("analyzer").disabled = !preferred;
   if (!preferred)
@@ -1035,7 +1058,7 @@ function renderWorkflowNavigation() {
   get("results-heading").hidden = workflow === "policy";
   get("policy-table-intro").hidden = workflow !== "policy";
   get("results-heading").textContent = {
-    extract: "Parse and extract", policies: "Check consistency", policy: "Check Policies: Rental Car",
+    extract: "Parse and extract", policies: "Business rules validation", policy: "Check Policies: Rental Car",
   }[workflow];
 }
 function activateView(next) {
@@ -1073,9 +1096,37 @@ get("show-confidence").onchange = () => {
     confidence(cell, Number(cell.dataset.confidence));
 };
 get("close-array").onclick = collapseDetails;
+get("open-settings").onclick = async () => {
+  try {
+    const status = await api("status");
+    get("cache-folder").value = status.cache.root;
+    get("extraction-cache-folder").value = status.cache.extraction;
+    get("policy-cache-folder").value =
+      policyResults.get(policyMode)?.cacheFolder ?? status.cache.policy;
+    get("enable-live-calls").checked = liveCallsEnabled;
+    get("settings-error").hidden = true;
+    controls();
+    get("app-settings").showModal();
+  } catch (error) {
+    fail(error);
+  }
+};
+get("close-settings").onclick = () => get("app-settings").close();
+get("enable-live-calls").onchange = async () => {
+  liveCallsEnabled = get("enable-live-calls").checked;
+  get("settings-error").hidden = true;
+  controls();
+  if (liveCallsEnabled) {
+    try {
+      await analyzers();
+    } catch (error) {
+      fail(error);
+    }
+  }
+};
 get("analyzer").onchange = controls;
 get("analyze").onclick = () => {
-  if (busy || !catalog) return;
+  if (get("analyze").disabled) return;
   const dialog = get("run-confirmation");
   get("confirm-summary").textContent =
     `${catalog.packets.length} packets \u00b7 ${catalog.packets.reduce((sum, packet) => sum + packet.pages, 0)} pages \u00b7 up to 5 at once`;
@@ -1086,7 +1137,7 @@ get("analyze").onclick = () => {
 };
 get("cancel-run").onclick = () => get("run-confirmation").close();
 get("confirm-run").onclick = async () => {
-  if (busy) return;
+  if (get("analyze").disabled) return;
   get("run-confirmation").close();
   ++watcherVersion;
   busy = true;
@@ -1119,10 +1170,13 @@ get("confirm-run").onclick = async () => {
     controls();
   }
 };
-get("load-cache").onclick = async () => {
+async function loadExtractionCache() {
+  if (!savedExtractionRun)
+    throw new Error("No saved extraction results are available in the selected cache folder.");
   const current = ++watcherVersion;
   busy = true;
   get("error").hidden = true;
+  get("settings-error").hidden = true;
   get("cache-loading").hidden = false;
   get("batch").setAttribute("aria-busy", "true");
   controls();
@@ -1143,15 +1197,18 @@ get("load-cache").onclick = async () => {
         if (current === watcherVersion) await caches();
       })().catch(fail);
     }
-  } catch (error) {
-    fail(error);
   } finally {
     busy = false;
     get("cache-loading").hidden = true;
     get("batch").removeAttribute("aria-busy");
     controls();
   }
-};
+}
+async function loadSavedResults() {
+  await loadExtractionCache();
+  if (!policyBusy) await loadPolicyCache();
+}
+get("load-cache").onclick = () => loadSavedResults().catch(fail);
 async function downloadNative(route, filename) {
   const response = await api(route);
   const url = URL.createObjectURL(
@@ -1179,20 +1236,17 @@ api("session", {})
       view = "policy";
     }
     await Promise.all([
-      caches(),
-      analyzers().catch(fail),
       api("packets").then((data) => (catalog = data)),
       updatePolicyAvailability(),
     ]);
-    const cachedAnalyzer = savedExtractionRun?.analyzer.id;
-    if (
-      [...get("analyzer").options].some(
-        (option) => option.value === cachedAnalyzer,
-      )
-    )
-      get("analyzer").value = cachedAnalyzer;
+    await caches();
     if (value.runId) {
       await renderRun(await api("cache/current"), "cached");
+      if (!policyBusy) await loadPolicyCache();
+    } else await loadSavedResults();
+    if (view !== "policy" && !selectedPacket) {
+      const first = run.items.find((item) => results.has(item.id));
+      if (first) await showCustomer(first.id);
     }
     controls();
   })
@@ -1223,13 +1277,13 @@ function policyMessage() {
   get("policy-status").title = policyStatus?.message ?? "";
   get("policy-status").textContent =
     bundled
-      ? `Bundled demo · ${mode.indexName} · ${mode.extractionMode === "standard" ? "Search-managed CU extraction" : "CU Layout"} · ${mode.staleDataset ? "Stale policy results from a different extraction dataset; " : ""}Read-only; no Azure calls`
+      ? `Saved policy results · ${mode.indexName} · ${mode.extractionMode === "standard" ? "Search-managed CU extraction" : "CU Layout"}${mode.staleDataset ? " · Stale policy results from a different extraction dataset" : ""}`
     : policyStatus?.batchRunning && !policyBusy
       ? "A policy batch is already running. Waiting for it to finish; no duplicate will be submitted. Reload this tab to reconnect to its progress."
       : mode
         ? `${mode.indexName ?? "No policy retrieval"} · ${mode.extractionMode === "standard" ? "Search-managed CU extraction" : "CU Layout"}`
         : policyStatus?.bundledDemo
-          ? "Bundled demo available. Load cached results; no Azure setup needed. Live runs require Azure configuration."
+          ? "Saved policy reviews are available. Loading makes no Azure calls."
           : (policyStatus?.message ?? "Policy configuration is loading.");
 }
 function policyModeLabel(mode = policyMode) {
@@ -1585,16 +1639,18 @@ function renderPolicyOutput(focused) {
         item?.error ??
           (item && item.status !== "not run"
             ? `Status: ${item.status}`
-            : "Not run for this mode and packet. Select Run policy checks to evaluate."),
+            : "No saved policy checks are available for this case and retrieval option."),
         item?.error ? "error" : "muted",
       ),
     );
     if (item?.status === "failed" && policyMode === "search") {
       const packetId = selectedPacket;
       const retry = element("button", "Retry this case", "policy-retry secondary");
+      retry.dataset.liveControl = "";
       retry.onclick = () => confirmPolicyRun([packetId]);
-      panel.append(retry,
-        element("p", "Retries all five checks for this case only. Matching saved claim fields and results are reused; Azure charges may apply.", "muted"));
+      const notice = element("p", "Retries all five checks for this case only. Matching saved claim fields and results are reused; Azure charges may apply.", "muted");
+      notice.dataset.liveControl = "";
+      panel.append(retry, notice);
       controls();
     }
     return;
@@ -1868,7 +1924,7 @@ function selectPolicyPane(mode) {
     button.setAttribute("aria-pressed", String(value === mode));
     button.classList.toggle("secondary", value !== mode);
   }
-  showPolicyPanel(true);
+  showPolicyPanel(view === "policy");
   renderPolicyOutput();
   if (mode === "result")
     get("policy-review-pane").scrollTop = policyResultScroll.get(key) ?? 0;
@@ -1892,11 +1948,13 @@ get("policy-mode").onchange = async () => {
     fail(error);
   }
 };
-get("load-policy-cache").onclick = async () => {
+async function loadPolicyCache() {
   if (get("load-policy-cache").disabled) return;
   const mode = policyMode;
   busy = true;
   get("error").hidden = true;
+  get("settings-error").hidden = true;
+  get("cache-loading").hidden = false;
   get("policy-cache-status").textContent = "Loading saved policy checks and verifying their sources…";
   controls();
   try {
@@ -1915,22 +1973,28 @@ get("load-policy-cache").onclick = async () => {
     policyResults.set(mode, value);
     policyChat.reset();
     if (value.source === "bundled") {
-      await renderRun(await api("cache/current"), "cached");
+      const current = await api("cache/current");
+      const packetId = selectedPacket;
+      await renderRun(current, "cached");
+      if (packetId && !selectedPacket && view !== "policy" && results.has(packetId))
+        await showCustomer(packetId);
       selectPolicyPane("result");
     }
     renderTable();
     renderPolicyOutput();
     const count = value.items.filter((item) => item.status === "completed").length;
-    get("policy-cache-status").textContent = `Loaded ${count}/${value.items.length} ${value.source === "bundled" ? "bundled demo" : "saved"} cases. No Azure calls were made.`;
+    get("policy-cache-status").textContent = `Loaded saved policy checks for ${count}/${value.items.length} cases. No Azure calls were made.`;
     policyMessage();
   } catch (error) {
     get("policy-cache-status").textContent = `Could not load saved policy results: ${error.message}. Return to Check policies to reload the list.`;
-    fail(error);
+    throw error;
   } finally {
     busy = false;
+    get("cache-loading").hidden = true;
     controls();
   }
-};
+}
+get("load-policy-cache").onclick = () => loadPolicyCache().catch(fail);
 function confirmPolicyRun(packetIds) {
   if (get("policy-run").disabled) return;
   pendingPolicyRun = { runId: run.id, mode: policyMode, packetIds };

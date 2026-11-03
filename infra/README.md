@@ -69,14 +69,53 @@ powershell -ExecutionPolicy Bypass -File .\infra\launch-workbench.ps1
 
 The launcher selects the local Python environment automatically. For a
 separately managed environment, set `POLICY_PYTHON` to its `python.exe`.
-Cache-only viewing needs the existing Node dependencies, not Python or Azure
-credentials. In **Parse and extract**, load the included CU results, then in
-**Check policies**, load the cached results. The **Bundled demo** label identifies
-the ten included read-only reviews and their original index. Live-compatible
-local caches take precedence; no configuration or cache files are overwritten.
+Viewing saved results needs the existing Node dependencies, not Python or Azure
+credentials. The app automatically loads extraction results and compatible saved
+policy reviews. No analyzer listing, document analysis or policy batch is
+submitted during startup. Local compatible policy caches take precedence over
+the included bundle; no configuration or cache files are overwritten.
+With the prepared policy-agent connection, **Ask agent** can start from an
+included review without first running a policy batch. It uses the saved claim,
+check and original prompt, but sends follow-ups through the current lab's
+configured model and Search index, not the bundle's original Azure resources.
 Rerun setup after pulling updates to restore both npm and Python dependencies.
 Stop the app first, and restart it afterward. No manual `npm install deep-chat`
 or global Python package installation is required.
+
+### Developer viewer settings
+
+**Settings** shows the resolved cache root, extraction-results folder and the
+folder supplying the loaded policy reviews. The developer-only **Reload saved
+results** and **Reload policy reviews** buttons also live here, not in the main
+review toolbars; neither requires enabling live calls. **Enable live calls** is
+off on every page load. Turning it on reveals the analyzer selector, bulk **Run live**
+buttons, policy retries and explicit policy-document generation. Only then does
+the app request the live analyzer list. The individual repair **Rerun** and
+**Ask agent** chat are independent of this developer option; their existing
+explicit actions and Azure charges still apply.
+
+The launcher automatically uses the repository's `data` folder. To select a
+different saved-results bundle:
+
+```powershell
+.\infra\launch-workbench.ps1 -CacheFolder "D:\LabCache"
+```
+
+The selected directory must contain `results\<run-id>\manifest.json` and the
+matching native CU JSON files, plus `policy-demo\manifest.json` and its complete
+checksum-verified policy bundle. Copy these existing directories without
+renaming run IDs or editing manifests. Source PDFs and `packets.json` still come
+from the repository's `data` folder, and dataset compatibility checks remain
+active. Missing, corrupt or incompatible selected caches fail visibly; the app
+does not fall back to another folder. Policy results that belong to a different
+run remain labeled stale and cannot seed chat.
+
+For direct Node launches, `WORKBENCH_CACHE_FOLDER` selects the same cache root.
+The PowerShell launcher always sets it from `-CacheFolder`, or from the automatic
+repository default when the parameter is omitted. Live policy execution caches
+remain in `.tools\policy-cache`; settings reports that actual folder if one of
+those compatible reviews is loaded. These controls are for lab developers, not
+part of the attendee instructions.
 
 ## Lab machines with package mirrors
 

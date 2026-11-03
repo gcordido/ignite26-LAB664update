@@ -115,8 +115,8 @@ The policy workflow does not automatically open claim packets. Its right panel
 contains the selected check's **Result** and **Ask agent** views and identifies
 the customer and packet. The left table stays in place without an expanded row.
 Select a policy source to inspect it in the right panel, then **Back to policy
-check** to return to the finding or chat. Parse and extract and Check consistency
-retain their packet viewer and inline details.
+check** to return to the finding or chat. **Parse and extract** and
+**Business rules validation** retain their packet viewer and inline details.
 
 ### Non-rental claims
 
@@ -150,16 +150,15 @@ the policy index on your existing Search service.
 
 ## Compare packets 01 and 02
 
-The top-level pivots are **Parse and extract**, **Check consistency**, and
-**Check policies**. Cache/analyzer controls appear only in **Parse and extract**;
-the loaded results remain shared across all three pivots. Classification and
+The top-level pivots are **Parse and extract**, **Business rules validation**,
+and **Check policies**. Saved results load automatically and remain shared across
+all three pivots. Classification and
 document-type views live under **Parse and extract**; policy retrieval controls
 appear only under **Check policies**. Switching pivots preserves the loaded run
 and reuses the same table, document viewer and debugger. Returning to **Parse
 and extract** restores the previously selected document type.
 
-The workbench enables policy **Run live** only when **FoundryIQ**
-is selected. **No policy retrieval** remains available to inspect
+**No policy retrieval** remains available to inspect
 previously saved baseline results, but a new baseline run can't be started from
 the app.
 
