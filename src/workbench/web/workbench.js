@@ -1058,7 +1058,7 @@ function renderWorkflowNavigation() {
   get("results-heading").hidden = workflow === "policy";
   get("policy-table-intro").hidden = workflow !== "policy";
   get("results-heading").textContent = {
-    extract: "Parse and extract", policies: "Check consistency", policy: "Check Policies: Rental Car",
+    extract: "Parse and extract", policies: "Business rules validation", policy: "Check Policies: Rental Car",
   }[workflow];
 }
 function activateView(next) {

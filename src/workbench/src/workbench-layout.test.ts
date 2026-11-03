@@ -5,7 +5,7 @@ import vm from "node:vm";
 import { fieldRegions } from "../web/result-model.js";
 import { claimFieldSources, policyRuleSources } from "../web/policy-evidence-links.js";
 
-test("Check consistency navigation stays enabled before loading results and while busy", async () => {
+test("Business rules validation navigation stays enabled before loading results and while busy", async () => {
   const [html, source] = await Promise.all([
     readFile(new URL("../web/workbench.html", import.meta.url), "utf8"),
     readFile(new URL("../web/workbench.js", import.meta.url), "utf8"),

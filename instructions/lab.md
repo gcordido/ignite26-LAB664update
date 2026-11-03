@@ -309,11 +309,11 @@ Wait for the cached results to load. Opening the app or switching review tabs do
 4. Turn on **Confidence** to inspect returned scores. Blank means the service omitted a score, not zero. Click line items for source boxes or their table icon to expand item rows below the customer.
 
 ===
-## Step 6. Investigate consistency checks and agent reviews
+## Step 6. Business rules validation
 
-**Check consistency** uses fixed extraction and arithmetic rules to validate extraction accuracy. In this exercise, use the fixed repair error to identify issue with analyzer, improve it in CU Studio and compare results.
+**Business rules validation** uses fixed extraction and arithmetic rules to validate extraction accuracy. In this exercise, use the fixed repair error to identify issue with analyzer, improve it in CU Studio and compare results.
 
-1. Select **Check consistency**. The matrix contains exactly three fixed extraction checks:
+1. Select **Business rules validation**. The matrix contains exactly three fixed extraction checks:
     - **Total Amount, SubTotal, Tax verification** asks whether SubTotal plus tax equals Total Amount.
     - **Repair line items, SubTotal verification** asks whether repair line-item amounts sum to the explicit SubTotal.
     - **Multiple Estimates Warning** warns when repair-estimate totals differ. It shows each shop and quote amount with a source link. This is a review warning, not proof of an extraction error.
