@@ -16,8 +16,31 @@
       <nav>
         <a href="/lab.html">Lab</a
         ><a href="https://contentunderstanding.ai.azure.com/">Studio</a>
+        <button id="open-settings" class="secondary" aria-haspopup="dialog">Settings</button>
       </nav>
     </header>
+    <dialog id="app-settings" aria-labelledby="settings-title">
+      <h2 id="settings-title">App settings</h2>
+      <p class="muted">Developer options. Saved results load automatically without Azure calls.</p>
+      <label class="toggle">
+        <input id="enable-live-calls" type="checkbox" />
+        Enable live calls
+      </label>
+      <p class="muted">Show bulk analyzer runs, policy runs and policy-document generation. Repair reruns and policy-agent chat remain available independently.</p>
+      <p id="settings-error" class="error" role="alert" hidden></p>
+      <label class="cache-path" for="cache-folder">Cache folder
+        <input id="cache-folder" readonly />
+      </label>
+      <label class="cache-path" for="extraction-cache-folder">Extraction results
+        <input id="extraction-cache-folder" readonly />
+      </label>
+      <label class="cache-path" for="policy-cache-folder">Loaded policy reviews
+        <input id="policy-cache-folder" readonly />
+      </label>
+      <div class="actions">
+        <button id="close-settings" class="secondary">Close</button>
+      </div>
+    </dialog>
     <nav id="workflow-pivots" aria-label="Workbench sections">
       <button data-workflow="extract" aria-pressed="true">Parse and extract</button>
       <button
@@ -41,13 +64,13 @@
     <main>
       <div id="extraction-toolbar" class="toolbar">
         <p class="toolbar-intro">
-          Load cached results for 10 different customers, or run your live
-          analyzer (it will take a few minutes).
+          Explore saved extraction results for 10 different customers.
+          Select a value to inspect its source document.
         </p>
         <div class="toolbar-group analyzer-group">
-          <label for="analyzer">Analyzer:</label>
-          <select id="analyzer" aria-label="Analyzer" disabled></select>
-          <button id="analyze" disabled>Run live</button>
+          <label for="analyzer" data-live-control hidden>Analyzer:</label>
+          <select id="analyzer" aria-label="Analyzer" data-live-control hidden disabled></select>
+          <button id="analyze" data-live-control hidden disabled>Run live</button>
           <button id="load-cache" class="secondary" disabled>Load cached results</button>
         </div>
       </div>
@@ -108,7 +131,7 @@
             <select id="policy-mode" disabled>
               <option value="">Loading policy configuration...</option>
             </select>
-            <button id="policy-run" disabled>Run live</button>
+            <button id="policy-run" data-live-control hidden disabled>Run live</button>
             <button id="load-policy-cache" class="secondary" aria-describedby="policy-cache-status" disabled>Load cached results</button>
           </div>
           <p id="policy-cache-status" class="muted" role="status">

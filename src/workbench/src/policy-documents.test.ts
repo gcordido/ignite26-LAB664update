@@ -176,14 +176,22 @@ test("document tabs use cache-only reads, retain PDF page, ignore stale extracti
   get("policy-document-tabs").children = buttons;
   const calls: { route: string; body: unknown }[] = [];
   const previews: unknown[] = [];
+  let cacheAvailable = true;
+  let allowLiveCalls = false;
   let finish!: (value: unknown) => void;
   const pending = new Promise((resolve) => { finish = resolve; });
   const source = await readFile(new URL("../web/policy-document.js", import.meta.url), "utf8");
   const context = vm.createContext({
     document: { createElement: () => new Node() },
     get, previews,
+    liveCallsEnabled: () => allowLiveCalls,
     api: async (route: string, body?: unknown) => {
       calls.push({ route, body });
+      if (!cacheAvailable && body === undefined) return { available: false };
+      if (body !== undefined) return {
+        markdown: "Generated policy text", analyzer: "prebuilt-documentSearch",
+        apiVersion: "2026-06-01-preview", cached: false, createdAt: "2026-01-01",
+      };
       if (route.endsWith("mode=search")) return pending;
       return { markdown: "![](figures/1.1)", analyzer: "prebuilt-digitalParse",
         apiVersion: "2026-06-01-preview", cached: true, createdAt: "2026-01-01" };
@@ -192,7 +200,7 @@ test("document tabs use cache-only reads, retain PDF page, ignore stale extracti
     previewPdf: async (...args: unknown[]) => { previews.push(args); },
   });
   vm.runInContext(`${source.slice(source.indexOf("export function createPolicyDocument")).replace("export function", "function")}
-    const controller = createPolicyDocument({api, previewPdf, get});`, context);
+    const controller = createPolicyDocument({api, previewPdf, get, liveCallsEnabled});`, context);
   await vm.runInContext("controller.open('/data/policies/rental/ocr-comparison-v2/tx-rental-review-sop-v2.pdf', 2)", context);
   const search = buttons[1].onclick!();
   await buttons[2].onclick!();
@@ -204,6 +212,22 @@ test("document tabs use cache-only reads, retain PDF page, ignore stale extracti
   assert.equal(get("pdf-controls").hidden, true);
   await buttons[0].onclick!();
   assert.deepEqual(previews.at(-1), ["/data/policies/rental/ocr-comparison-v2/tx-rental-review-sop-v2.pdf", 3]);
+  cacheAvailable = false;
+  await buttons[1].onclick!();
+  const generationButton = get("policy-document-content").children[1];
+  assert.equal(generationButton.hidden, true);
+  const before = calls.length;
+  await generationButton.onclick!();
+  assert.equal(calls.length, before, "A hidden generation control must not submit a live request.");
+  assert.match(get("policy-document-content").children[0].textContent, /Live policy-document extraction is disabled/);
+  allowLiveCalls = true;
+  await buttons[1].onclick!();
+  assert.equal(get("policy-document-content").children[1].hidden, false);
+  await get("policy-document-content").children[1].onclick!();
+  assert.deepEqual(JSON.parse(JSON.stringify(calls.filter((call) => call.body !== undefined))), [{
+    route: "policy/document",
+    body: { file: "policies/rental/ocr-comparison-v2/tx-rental-review-sop-v2.pdf", mode: "search", live: true },
+  }]);
   vm.runInContext("controller.close()", context);
   assert.equal(get("policy-document-tabs").hidden, true);
   assert.equal(get("policy-document-content").hidden, true);

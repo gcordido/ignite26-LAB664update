@@ -1,22 +1,22 @@
 import assert from "node:assert/strict";
 import { once } from "node:events";
-import { mkdtemp, readFile, readdir, rm, writeFile } from "node:fs/promises";
+import { cp, mkdtemp, readFile, readdir, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { test, type TestContext } from "node:test";
 import { Cache, dataset } from "./batch.ts";
-import { repositoryRoot } from "./config.ts";
+import { cacheFolders, dataRoot, repositoryRoot } from "./config.ts";
 import { policyDemo, readPolicyDemo } from "./policy-demo.ts";
-import { PolicyService, type PolicyItem } from "./policy-service.ts";
+import { frameworkConfigSchema, PolicyService, type PolicyItem } from "./policy-service.ts";
 import { createApp } from "./server.ts";
 
-async function appSession(t: TestContext, policy: PolicyService) {
+async function appSession(t: TestContext, policy: PolicyService, cache = new Cache()) {
   let cloudCalls = 0;
   const noCloud = async (): Promise<never> => {
     cloudCalls++;
     throw new Error("Offline cached results must not call Azure.");
   };
-  const server = createApp({ detail: noCloud, analyze: noCloud }, { policy })
+  const server = createApp({ detail: noCloud, analyze: noCloud }, { policy, cache })
     .listen(0, "127.0.0.1");
   await once(server, "listening");
   t.after(() => new Promise<void>((resolve) => server.close(() => resolve())));
@@ -69,6 +69,11 @@ test("a fresh machine loads the current bundled policy reviews without Azure or 
   assert.equal(payload.items.length, 10);
   assert.ok(payload.items.every((item: PolicyItem) =>
     item.status === "completed" && item.result?.Checks.length === 5));
+  const chat = await request(`policy/chat?${new URLSearchParams({
+    runId: demo.info.runId, packetId: "packet-01", mode: "search", check: "Amount",
+  })}`);
+  assert.equal(chat.status, 409);
+  assert.match((await chat.json()).error, /configure Agent Framework/);
   assert.equal(cloudCalls(), 0);
   assert.deepEqual(await readdir(folder), [], "No local config or cache files should be created.");
 });
@@ -112,4 +117,110 @@ test("bundled demo validation rejects duplicate entries and corrupt payloads", a
   await writeFile(path.join(folder, "manifest.json"), JSON.stringify(manifest));
   await writeFile(path.join(folder, first.name), "{}");
   await assert.rejects(readPolicyDemo(folder), /checksum mismatch/);
+});
+
+test("a selected cache root supplies extraction and policy results without falling back", async (t) => {
+  const folder = await mkdtemp(path.join(os.tmpdir(), "lab664-selected-cache-"));
+  const previous = process.env.WORKBENCH_CACHE_FOLDER;
+  t.after(() => {
+    if (previous === undefined) delete process.env.WORKBENCH_CACHE_FOLDER;
+    else process.env.WORKBENCH_CACHE_FOLDER = previous;
+  });
+  t.after(() => rm(folder, { recursive: true, force: true }));
+  await Promise.all(["results", "policy-demo"].map((name) =>
+    cp(path.join(dataRoot, name), path.join(folder, name), { recursive: true })));
+  process.env.WORKBENCH_CACHE_FOLDER = folder;
+  const policy = new PolicyService({ config: async () => undefined });
+  const { request, cloudCalls } = await appSession(t, policy);
+  const status = await (await request("status")).json();
+  assert.deepEqual(status.cache, cacheFolders(folder));
+  const demo = await policyDemo();
+  assert.equal((await request("cache/load", { runId: demo.info.runId })).status, 200);
+  const response = await request("policy/cache/load", {
+    runId: demo.info.runId, mode: "search", source: "bundled",
+  });
+  assert.equal(response.status, 200);
+  const loaded = await response.json();
+  assert.equal(loaded.cacheFolder, path.join(folder, "policy-demo"));
+  assert.equal(loaded.items.length, 10);
+  assert.equal(cloudCalls(), 0);
+
+  process.env.WORKBENCH_CACHE_FOLDER = path.join(folder, "missing");
+  const missing = await appSession(t, policy);
+  assert.deepEqual(await (await missing.request("cache")).json(), []);
+  const failure = await missing.request("policy/status");
+  assert.equal(failure.status, 404);
+  assert.match((await failure.json()).error, /No saved policy manifest/);
+  assert.equal(missing.cloudCalls(), 0);
+});
+
+test("bundled reviews seed chat using the current lab agent without a live policy batch", async (t) => {
+  const folder = await mkdtemp(path.join(os.tmpdir(), "lab664-cached-chat-"));
+  t.after(() => rm(folder, { recursive: true, force: true }));
+  const bundledConfig = frameworkConfigSchema.parse(JSON.parse(await readFile(
+    path.join(dataRoot, "policy-demo", "policy-agent-framework.json"), "utf8")));
+  const config = {
+    ...bundledConfig,
+    azureOpenAIEndpoint: "https://current-lab.services.ai.azure.com",
+    modelDeployment: "current-lab-model",
+    indexName: "current-lab-index",
+    indexFingerprint: "a".repeat(64),
+  };
+  const calls: unknown[] = [];
+  const configPath = path.join(folder, "current-config.json");
+  const policy = new PolicyService({
+    config: async () => config, configPath, cacheFolder: folder,
+    invoke: async (request) => {
+      calls.push(request);
+      assert.ok(request && typeof request === "object" && "chat" in request && "configPath" in request);
+      assert.equal(request.chat, true);
+      assert.equal(request.configPath, configPath);
+      return {
+        provider: "agent-framework", status: "completed", mode: "search",
+        retrievalCalls: 1, retrieved: [],
+        result: { Answer: "Follow-up from the configured lab agent.", Citation: [] },
+      };
+    },
+  });
+  const { request, cloudCalls } = await appSession(t, policy);
+  const demo = await policyDemo();
+  assert.equal((await request("cache/load", { runId: demo.info.runId })).status, 200);
+  assert.equal((await request("policy/cache/load", {
+    runId: demo.info.runId, mode: "search", source: "bundled",
+  })).status, 200);
+  const selection = { runId: demo.info.runId, packetId: "packet-01", mode: "search", check: "Amount" };
+  const response = await request(`policy/chat?${new URLSearchParams(selection)}`);
+  assert.equal(response.status, 200, await response.clone().text());
+  const context = await response.json();
+  assert.equal(context.agent.indexName, config.indexName);
+  assert.equal(context.agent.modelDeployment, config.modelDeployment);
+  assert.equal(context.promptSource, "saved");
+  assert.equal(context.messages[0].content, context.prompt);
+  const savedCheck = demo.results(await new Cache().load(demo.info.runId))
+    .items.find((item) => item.id === selection.packetId)?.result?.Checks.find((check) => check.Check === selection.check);
+  assert.ok(savedCheck);
+  assert.deepEqual(context.result.Checks, [savedCheck]);
+  assert.equal(calls.length, 0, "Opening a cached chat must not start an agent.");
+  const reply = await request("policy/chat", {
+    ...selection, contextId: context.contextId, message: "Explain the saved finding.", live: true,
+  });
+  assert.equal(reply.status, 200, await reply.clone().text());
+  assert.equal((await reply.json()).text, "Follow-up from the configured lab agent.");
+  assert.equal(calls.length, 1);
+  assert.equal(cloudCalls(), 0);
+  assert.deepEqual(await readdir(folder), [], "Chat must not generate claim or review caches.");
+
+  class StaleCache extends Cache {
+    override async load(id: string) {
+      const run = await super.load(id);
+      return { ...run, analyzer: { ...run.analyzer, fingerprint: "f".repeat(64) } };
+    }
+  }
+  const stale = await appSession(t, policy, new StaleCache());
+  await stale.request("cache/load", { runId: demo.info.runId });
+  await stale.request("policy/cache/load", { runId: demo.info.runId, mode: "search", source: "bundled" });
+  const rejected = await stale.request(`policy/chat?${new URLSearchParams(selection)}`);
+  assert.equal(rejected.status, 409);
+  assert.match((await rejected.json()).error, /do not match this extraction run/);
+  assert.equal(calls.length, 1, "Stale reviews must not invoke an agent.");
 });

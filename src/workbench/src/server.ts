@@ -3,6 +3,7 @@ import { randomUUID } from "node:crypto";
 import path from "node:path";
 import { z } from "zod";
 import {
+  cacheFolders,
   configuration,
   dataRoot,
   LabError,
@@ -196,6 +197,7 @@ export function createApp(
       endpointConfigured: Boolean(configuration().endpoint),
       noClaimDecisions: true,
       endpoint: configuration().endpoint,
+      cache: { ...cacheFolders(), extraction: cache.folder },
     }),
   );
   app.post("/api/session", (req, res) => {
@@ -330,11 +332,16 @@ export function createApp(
   ) {
     if (!s.run)
       throw new LabError(409, "Load Content Understanding results first.");
-    if (s.bundledPolicy)
-      throw new LabError(409, "Bundled demo results are read-only. Configure Azure and run live checks before starting a chat.");
     const run = s.run;
-    const context = await policy.chatContext(run, mode, packetId, (id) =>
-      cache.raw(run.id, id), check,
+    let selectedPolicy = policy;
+    if (s.bundledPolicy && mode === "search") {
+      const demo = await policyDemo();
+      if (demo.results(run).staleDataset)
+        throw new LabError(409, "The saved policy reviews do not match this extraction run. Load the matching saved results before chatting.");
+      selectedPolicy = demo.service;
+    }
+    const context = await selectedPolicy.chatContext(run, mode, packetId, (id) =>
+      cache.raw(run.id, id), check, policy,
     );
     s.policyChats ??= new Map();
     let state = s.policyChats.get(context.contextId);
@@ -523,7 +530,8 @@ export function createApp(
     if (!items.some((item) => item.status === "completed"))
       throw new LabError(404, "No compatible saved policy results. Run policy checks first.");
     s.bundledPolicy = false;
-    res.json({ runId: run.id, mode, status: "completed", items, cached: true });
+    res.json({ runId: run.id, mode, status: "completed", items, cached: true,
+      cacheFolder: policy.cacheFolder });
   });
   app.post("/api/policy/batch", async (req, res) => {
     const s = session(req);

@@ -732,7 +732,7 @@ test("policy status helper is callable from module scope during startup and mode
     policyResults.set("search", { source: "bundled", indexName: "original-demo-index" });
     policyMessage();`, context);
   assert.equal(status.textContent,
-    "Bundled demo · original-demo-index · CU Layout · Read-only; no Azure calls");
+    "Saved policy results · original-demo-index · CU Layout");
   vm.runInContext(`policyResults.set("search", {
     source: "bundled", indexName: "original-demo-index", staleDataset: true
   }); policyMessage();`, context);
@@ -764,7 +764,7 @@ test("retrieval choices are disabled placeholders until verified configuration l
   assert.ok(!select[1].includes('value="minimal"'));
 });
 
-test("policy choices survive unrelated startup failures and missing classifiers do not block saved runs", async () => {
+test("startup loads both saved result sets without listing live analyzers", async () => {
   const source = await readFile(
     new URL("../web/workbench.js", import.meta.url),
     "utf8",
@@ -777,9 +777,10 @@ test("policy choices survive unrelated startup failures and missing classifiers 
     source.indexOf('api("session", {})'),
     source.indexOf("function showPolicyPanel("),
   );
-  for (const failedRoute of ["analyzers", "cache"]) {
+  for (const resumed of [false, true]) {
     const errors: Error[] = [];
     let restored = false;
+    const calls: string[] = [];
     const select = {
       value: "",
       options: [] as { value: string; textContent: string }[],
@@ -791,16 +792,23 @@ test("policy choices survive unrelated startup failures and missing classifiers 
       get: (id: string) => id === "policy-mode" ? select : { options: [] },
       element: (_tag: string, textContent: string) => ({ value: "", textContent }),
       api: async (route: string) => {
-        if (route === failedRoute) throw new Error(`${route} unavailable`);
-        if (route === "session") return { sessionId: "session", runId: "saved-run" };
+        calls.push(route);
+        if (route === "session") return {
+          sessionId: "session", ...(resumed ? { runId: "saved-run" } : {}),
+        };
         if (route === "policy/status") return {
           configured: true, batchRunning: false,
           modes: { ungrounded: {}, search: { indexName: "policy-index" } },
         };
         return {};
       },
-      analyzers: async () => context.api("analyzers"),
+      analyzers: async () => { throw new Error("Startup must not list live analyzers."); },
       caches: async () => context.api("cache"),
+      loadSavedResults: async () => {
+        calls.push("load-extraction", "load-policy");
+        restored = true;
+      },
+      loadPolicyCache: async () => { calls.push("load-policy"); },
       renderRun: async () => { restored = true; },
       controls: () => {},
       fail: (error: Error) => errors.push(error),
@@ -816,10 +824,59 @@ test("policy choices survive unrelated startup failures and missing classifiers 
     await vm.runInContext(startup, context);
     assert.deepEqual(select.options.map((option) => option.value), ["ungrounded", "search"]);
     assert.equal(select.value, "search");
-    assert.equal(errors.length, 1);
-    assert.equal(errors[0].message, `${failedRoute} unavailable`);
-    assert.equal(restored, failedRoute === "analyzers");
+    assert.deepEqual(errors, []);
+    assert.equal(restored, true);
+    assert.ok(calls.includes("load-policy"));
+    assert.equal(calls.includes("load-extraction"), !resumed);
+    assert.equal(calls.includes("analyzers"), false);
+    assert.equal(calls.includes("batch"), false);
+    assert.equal(calls.includes("policy/batch"), false);
   }
+});
+
+test("settings show loaded cache paths and list analyzers only after live-call opt-in", async () => {
+  const source = await readFile(new URL("../web/workbench.js", import.meta.url), "utf8");
+  const nodes = new Map<string, {
+    value: string; checked: boolean; hidden: boolean; textContent: string;
+    onclick?: () => Promise<void>; onchange?: () => Promise<void>;
+    showModal: () => void; close: () => void;
+  }>();
+  let opened = 0;
+  let analyzerLists = 0;
+  const get = (id: string) => {
+    if (!nodes.has(id)) nodes.set(id, {
+      value: "", checked: false, hidden: true, textContent: "",
+      showModal: () => { opened++; }, close: () => {},
+    });
+    return nodes.get(id)!;
+  };
+  const folders = { root: "C:\\LabCache", extraction: "C:\\LabCache\\results", policy: "C:\\LabCache\\policy-demo" };
+  const context = vm.createContext({
+    get, liveCallsEnabled: false, policyMode: "search",
+    policyResults: new Map([["search", { cacheFolder: "C:\\CurrentLab\\policy-cache" }]]),
+    api: async (route: string) => { assert.equal(route, "status"); return { cache: folders }; },
+    controls: () => {}, fail: (error: unknown) => { throw error; },
+    analyzers: async () => { analyzerLists++; },
+  });
+  vm.runInContext(source.slice(
+    source.indexOf('get("open-settings").onclick'),
+    source.indexOf('get("analyzer").onchange'),
+  ), context);
+  await get("open-settings").onclick!();
+  assert.equal(opened, 1);
+  assert.equal(get("enable-live-calls").checked, false);
+  assert.equal(get("cache-folder").value, folders.root);
+  assert.equal(get("extraction-cache-folder").value, folders.extraction);
+  assert.equal(get("policy-cache-folder").value, "C:\\CurrentLab\\policy-cache");
+  assert.equal(analyzerLists, 0);
+  get("enable-live-calls").checked = true;
+  await get("enable-live-calls").onchange!();
+  assert.equal(vm.runInContext("liveCallsEnabled", context), true);
+  assert.equal(analyzerLists, 1);
+  get("enable-live-calls").checked = false;
+  await get("enable-live-calls").onchange!();
+  assert.equal(vm.runInContext("liveCallsEnabled", context), false);
+  assert.equal(analyzerLists, 1);
 });
 
 test("policy availability refresh restores choices and explains configuration failures", async () => {
@@ -875,7 +932,7 @@ test("policy availability refresh restores choices and explains configuration fa
   response = { configured: false, bundledDemo: { indexName: "original-demo-index" } };
   await vm.runInContext("updatePolicyAvailability()", context);
   assert.deepEqual(select.options.map((option) => option.value), ["search"]);
-  assert.match(status.textContent, /Bundled demo available/);
+  assert.match(status.textContent, /Saved policy reviews are available/);
   response = new Error("Status request failed");
   await assert.rejects(vm.runInContext("updatePolicyAvailability()", context), /Status request failed/);
   assert.equal(vm.runInContext("policyStatus.configured", context), false);
@@ -990,6 +1047,7 @@ test("policy Run requires Search and only this session's busy work disables the 
     {
       value: string;
       disabled?: boolean;
+      hidden?: boolean;
       title?: string;
       querySelectorAll?: () => never[];
     }
@@ -1001,6 +1059,8 @@ test("policy Run requires Search and only this session's busy work disables the 
       return nodes.get(id);
     },
     busy: false,
+    liveCallsEnabled: true,
+    document: { querySelectorAll: () => [context.get("analyze"), context.get("policy-run")] },
     sessionId: "session",
     catalog: {},
     run: { id: "saved-run" },
@@ -1008,6 +1068,7 @@ test("policy Run requires Search and only this session's busy work disables the 
     policyBusy: false,
     policyStatus: { configured: true, batchRunning: false },
     policyResults: new Map(),
+    selectedPacket: "packet-01",
     savedExtractionRun: undefined,
     savedPolicyEntries: [],
     policyCacheBusy: false,
@@ -1041,9 +1102,19 @@ test("policy Run requires Search and only this session's busy work disables the 
   assert.equal(nodes.get("policy-mode")!.disabled, false);
   assert.equal(nodes.get("load-policy-cache")!.disabled, false);
   assert.equal(nodes.get("policy-run")!.disabled, true);
-  vm.runInContext(`policyResults.set("search", { source: "bundled" }); controls()`, context);
+  vm.runInContext(`policyResults.set("search", {
+    source: "bundled", items: [{ id: "packet-01", status: "completed" }]
+  }); controls()`, context);
   assert.equal(nodes.get("policy-chat-mode")!.disabled, true);
-  assert.match(nodes.get("policy-chat-mode")!.title!, /read-only/);
+  assert.match(nodes.get("policy-chat-mode")!.title!, /prepared policy-agent connection/);
+  vm.runInContext("policyStatus.configured = true; liveCallsEnabled = false; controls()", context);
+  assert.equal(nodes.get("policy-chat-mode")!.disabled, false);
+  assert.equal(nodes.get("policy-run")!.disabled, true);
+  assert.equal(nodes.get("policy-run")!.hidden, true);
+  assert.equal(nodes.get("analyze")!.hidden, true);
+  vm.runInContext('policyResults.get("search").staleDataset = true; controls()', context);
+  assert.equal(nodes.get("policy-chat-mode")!.disabled, true);
+  assert.match(nodes.get("policy-chat-mode")!.title!, /match this extraction run/);
   vm.runInContext(`run = undefined; savedPolicyEntries = [];
     policyStatus.bundledDemo.runId = "included-run";
     savedExtractionRun = { id: "included-run" }; controls()`, context);
@@ -1125,7 +1196,7 @@ test("first-run policy cache loading opens CU results before selecting bundled o
       },
     });
     vm.runInContext(source.slice(
-      source.indexOf('get("load-policy-cache").onclick'),
+      source.indexOf("async function loadPolicyCache("),
       source.indexOf("function confirmPolicyRun("),
     ), context);
     await vm.runInContext('get("load-policy-cache").onclick()', context);
@@ -1134,7 +1205,7 @@ test("first-run policy cache loading opens CU results before selecting bundled o
     assert.equal(calls[0].body?.runId, "included-run");
     assert.equal(calls[1].body?.runId, "included-run");
     assert.equal(calls[1].body?.source, bundled ? "bundled" : undefined);
-    assert.match(get("policy-cache-status").textContent, /Loaded 10\/10/);
+    assert.match(get("policy-cache-status").textContent, /Loaded saved policy checks for 10\/10/);
     assert.equal(context.busy, false);
   });
 });

@@ -2,7 +2,7 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { z } from "zod";
 import { Cache, type Run } from "./batch.ts";
-import { LabError, repositoryRoot } from "./config.ts";
+import { cacheFolders, LabError } from "./config.ts";
 import { digest } from "./policy-core.ts";
 import { frameworkConfigSchema, loadPolicyCache, PolicyService } from "./policy-service.ts";
 
@@ -18,12 +18,13 @@ export const policyDemoManifestSchema = z.object({
 }).strict();
 
 export async function readPolicyDemo(
-  folder = path.join(repositoryRoot, "data", "policy-demo"),
+  folder = cacheFolders().policy,
   cache = new Cache(),
 ) {
-  const manifest = policyDemoManifestSchema.parse(
-    await loadPolicyCache(path.join(folder, "manifest.json")),
-  );
+  const savedManifest = await loadPolicyCache(path.join(folder, "manifest.json"));
+  if (!savedManifest)
+    throw new LabError(404, `No saved policy manifest was found in ${folder}.`);
+  const manifest = policyDemoManifestSchema.parse(savedManifest);
   if (new Set(manifest.files.map(({ name }) => name)).size !== manifest.files.length)
     throw new LabError(422, "The bundled policy demo contains duplicate files.");
   if (!manifest.files.some(({ name }) => name === "policy-agent-framework.json") ||
@@ -53,6 +54,7 @@ export async function readPolicyDemo(
       return {
         runId: selectedRun.id, mode: manifest.mode, status: "completed" as const,
         cached: true, source: "bundled" as const,
+        cacheFolder: folder,
         staleDataset: selectedRun.id !== manifest.runId ||
           selectedRun.analyzer.fingerprint !== run.analyzer.fingerprint ||
           selectedRun.datasetHash !== run.datasetHash,
@@ -64,7 +66,10 @@ export async function readPolicyDemo(
   };
 }
 
-let demo: ReturnType<typeof readPolicyDemo> | undefined;
+let demo: { folder: string; value: ReturnType<typeof readPolicyDemo> } | undefined;
 export function policyDemo() {
-  return demo ??= readPolicyDemo();
+  const folder = cacheFolders().policy;
+  if (demo?.folder !== folder)
+    demo = { folder, value: readPolicyDemo(folder) };
+  return demo.value;
 }

@@ -1504,6 +1504,20 @@ dialog h2 {
   font-size: 17px;
   margin: 0;
 }
+#app-settings {
+  width: min(640px, calc(100vw - 32px));
+  padding: 24px;
+  color: var(--text);
+}
+#app-settings .cache-path {
+  display: grid;
+  gap: 6px;
+  margin-top: 16px;
+}
+#app-settings .actions {
+  justify-content: flex-end;
+  margin-top: 20px;
+}
 #policy-confirmation {
   width: min(520px, calc(100vw - 32px));
   padding: 28px;

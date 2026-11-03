@@ -22,7 +22,7 @@ export function renderedMarkdown(markdown) {
   return template.content;
 }
 
-export function createPolicyDocument({ api, previewPdf, get }) {
+export function createPolicyDocument({ api, previewPdf, get, liveCallsEnabled = () => false }) {
   let selection;
   let mode = "pdf";
   let generation = 0;
@@ -81,6 +81,8 @@ export function createPolicyDocument({ api, previewPdf, get }) {
         const notice = document.createElement("p");
         notice.textContent = "No cached extraction exists for these document bytes and this analyzer.";
         const generate = document.createElement("button");
+        generate.dataset.liveControl = "";
+        generate.hidden = !liveCallsEnabled();
         generate.textContent = generating ? "An extraction is running…" : "Generate with CU (Azure charges)";
         generate.disabled = generating;
         generate.onclick = () => show(requested, true);
@@ -105,6 +107,8 @@ export function createPolicyDocument({ api, previewPdf, get }) {
       panel.scrollTop = scrolls.get(`${source.file}:${requested}`) ?? 0;
     };
     try {
+      if (live && !liveCallsEnabled())
+        throw new Error("Live policy-document extraction is disabled.");
       if (live) generating = true;
       const value = live
         ? await api("policy/document", { file: source.file, mode: requested, live: true })
