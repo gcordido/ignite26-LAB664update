@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdir, readFile, rename } from "node:fs/promises";
+import { mkdir, readFile, rename, rm } from "node:fs/promises";
 import path from "node:path";
 import { z } from "zod";
 import { Cache } from "./batch.ts";
@@ -52,6 +52,7 @@ if (action === "export") {
     files: [...files].map(([name, value]) => ({ name, sha256: digest(JSON.stringify(value, null, 2)) })),
   });
   const previous = await loadPolicyCache(path.join(bundle, "manifest.json"));
+  let obsolete: string[] = [];
   await mkdir(bundle, { recursive: true });
   const legacy = z.object({
     schemaVersion: z.literal(1), runId: z.string().uuid(),
@@ -65,11 +66,12 @@ if (action === "export") {
     await rename(path.join(bundle, "source", legacy.data.runId), path.join(history, "source", legacy.data.runId));
     await rename(path.join(bundle, "manifest.json"), path.join(history, "manifest.json"));
   } else if (previous !== undefined) {
-    manifestSchema.parse(previous);
+    obsolete = manifestSchema.parse(previous).files.map((file) => file.name).filter((name) => !files.has(name));
   }
   for (const [name, value] of files) await savePolicyCache(path.join(bundle, name), value);
   await savePolicyCache(path.join(bundle, "manifest.json"), manifest);
   await readPolicyDemo(bundle);
+  for (const name of obsolete) await rm(path.join(bundle, name), { force: true });
   console.log("Exported ten current three-comparison reviews reusing the committed Parse results. No claim summaries, restore step or Azure calls are needed to view them. Earlier five-check results remain in history.");
 } else {
   const manifest = manifestSchema.parse(await loadPolicyCache(path.join(bundle, "manifest.json")));

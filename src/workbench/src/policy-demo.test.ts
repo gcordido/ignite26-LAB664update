@@ -42,6 +42,23 @@ test("three-check bundle uses hash-verified first-pass Parse without a summary c
   assert.equal(demo.results(demo.sourceRun).items.length, 10);
 });
 
+test("bundled comparisons use Texas 75, Washington 85 and the original Illinois policy VIN", async () => {
+  const demo = await readPolicyDemo(path.join(repositoryRoot, "data", "policy-demo"));
+  const items = demo.results(demo.sourceRun).items;
+  for (const [id, rate, cap] of [["packet-01", "54", "75"], ["packet-02", "61", "85"]]) {
+    const check = items.find((item) => item.id === id)?.result?.Checks[0];
+    assert.equal(check?.Check, "Daily rate");
+    assert.equal(check.Outcome, "Satisfied");
+    assert.ok(check.Comparisons?.some((pair) => pair.ClaimValue.includes(rate) && pair.PolicyValue.includes(cap)));
+  }
+  const terms = items.find((item) => item.id === "packet-06")?.result?.Checks[2];
+  assert.equal(terms?.Check, "Effective terms");
+  assert.equal(terms.Outcome, "Satisfied");
+  assert.ok(terms.Comparisons?.some((pair) =>
+    pair.ClaimValue === "1FMCU0G63MA514686" && pair.PolicyValue === pair.ClaimValue));
+  assert.ok(terms.Citation.some((citation) => citation.File === "effective-date-il-packet-06.pdf"));
+});
+
 async function extractionRun() {
   const data = await dataset();
   const run = (await new Cache().list()).find(

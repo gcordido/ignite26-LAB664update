@@ -54,6 +54,20 @@ class PolicyEvidenceTests(unittest.TestCase):
                 self.assertIn(config["corpusHash"], scoped)
                 self.assertIn(config["indexFingerprint"], scoped)
 
+    def test_scanned_illinois_zero_does_not_waive_a_genuinely_different_valid_vin(self):
+        source = {
+            "states": ["IL"], "documentType": "policy_contract",
+            "policyScope": {"policyId": "PMM-A4329240", "vin": "1FMCU0G63MA514686"},
+        }
+        self.assertTrue(runtime.applicable_source(source, "IL", runtime.PolicyScope(
+            policyId="PMM-A4329240", vin="1FMCU0G63MA514686",
+        )))
+        for vin in ("1FMCU0G61MA514687", "1FMCUOG63MA514686"):
+            with self.subTest(vin=vin):
+                self.assertFalse(runtime.applicable_source(source, "IL", runtime.PolicyScope(
+                    policyId="PMM-A4329240", vin=vin,
+                )))
+
     def test_returned_evidence_is_checked_against_scope(self):
         config = dict(extractionMode="layout", corpusHash="a" * 64, indexFingerprint="b" * 64)
         source = {**self.sources["contract.pdf"], "version": "2026-02-01",

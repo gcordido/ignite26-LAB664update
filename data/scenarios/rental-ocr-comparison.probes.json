@@ -14,11 +14,11 @@
       "source": "tx-rental-review-sop-v2.pdf",
       "page": 3,
       "ruleId": "TX-R2",
-      "question": "What routine daily base limit applies in TX, and does equality pass? Distinguish that internal limit from the supplied $85/day contractual cap.",
+      "question": "What routine daily base limit applies in TX, and does equality pass? Distinguish that internal limit from the supplied $75/day contractual cap.",
       "expected": {
         "routineUsdPerDay": "75.00",
         "inclusive": true,
-        "policyCapUsdPerDay": "85.00",
+        "policyCapUsdPerDay": "75.00",
         "atRoutineBoundary": "Satisfied"
       },
       "score": "One point only if value, inclusivity and independent contractual cap all match."
@@ -398,12 +398,13 @@
       "source": "tx-rental-review-sop-v2.pdf",
       "page": 3,
       "ruleId": "TX-R3",
-      "question": "TX has a documented rate-only exception for $80/day within an $85 cap. Its Schedule A Days and approver cell is blank. Does that also authorize 9 days within a 14-day remaining policy benefit?",
+      "question": "TX has a documented rate-only exception for $80/day exceeding its $75 contractual cap. Its Schedule A Days and approver cell is blank. Does that also authorize 9 days within a 14-day remaining policy benefit?",
       "expected": {
         "Outcome": "ReviewRequired",
         "blankMeansUnlimitedDays": false,
         "routineDaysStillApply": 7,
-        "durationApprovalRequired": true
+        "durationApprovalRequired": true,
+        "contractualRateExcessStillRequiresReview": true
       }
     },
     {
@@ -411,12 +412,13 @@
       "source": "tx-rental-review-sop-v2.pdf",
       "page": 3,
       "ruleId": "TX-R2",
-      "question": "TX has a documented duration-only exception for 9 days. That Schedule A row has a blank Daily base rate cell. Does that also authorize $80/day below an $85/day contractual cap, without rate approval?",
+      "question": "TX has a documented duration-only exception for 9 days. That Schedule A row has a blank Daily base rate cell. Does that also authorize $80/day above its $75/day contractual cap, without rate approval?",
       "expected": {
         "Outcome": "ReviewRequired",
         "blankMeansUnlimitedRate": false,
         "routineUsdPerDayStillApply": "75.00",
-        "rateApprovalRequired": true
+        "rateApprovalRequired": true,
+        "contractualRateExcessStillRequiresReview": true
       }
     }
   ]

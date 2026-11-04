@@ -68,7 +68,7 @@ test("each source claim has three scoped, hash-verified evidence PDFs", async ()
       scenarios.questions.map((item: { source: string }) => item.source),
       ["sparse_table", "diagram", "scanned_document"],
     );
-    assert.equal(scenarios.questions[0].answer, "$85 per day.");
+    assert.equal(scenarios.questions[0].answer, packet.region === "TX" ? "$75 per day." : "$85 per day.");
     assert.equal(
       scenarios.questions[1].answer,
       "When it is actually delivered for covered repairs.",

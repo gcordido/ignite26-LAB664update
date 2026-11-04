@@ -458,7 +458,7 @@ def expected_fixture() -> dict:
     reasons = {
         "packet-01": [
             "Drivable; actual shop intake/release not established.",
-            "$54/day <= TX $75 routine and supplied $85 contract cap.",
+            "$54/day <= TX $75 routine and supplied $75 contract cap; these are distinct authorities.",
             "4 billed days <= 7 routine; prior usage and actual downtime still unknown.",
             "4 x $54 + $21.60 named rental tax = $237.60; policy allows mandatory tax additional.",
             "Final return/bill does not establish insurer authorization.",
@@ -527,14 +527,15 @@ def comparison_probes() -> dict:
     probes = []
     for code, _, rate, days, _, _ in STATES:
         stem = f"{code.lower()}-rental-review-sop-v2.pdf"
+        policy_cap = "75" if code == "TX" else "85"
         probes.extend([
             {
                 "id": f"{code}-routine-boundary",
                 "source": stem, "page": 3, "ruleId": f"{code}-R2",
                 "question": f"What routine daily base limit applies in {code}, and does equality pass? "
-                "Distinguish that internal limit from the supplied $85/day contractual cap.",
+                f"Distinguish that internal limit from the supplied ${policy_cap}/day contractual cap.",
                 "expected": {"routineUsdPerDay": rate, "inclusive": True,
-                             "policyCapUsdPerDay": "85.00", "atRoutineBoundary": "Satisfied"},
+                             "policyCapUsdPerDay": f"{policy_cap}.00", "atRoutineBoundary": "Satisfied"},
                 "score": "One point only if value, inclusivity and independent contractual cap all match.",
             },
             {
@@ -626,20 +627,22 @@ def comparison_probes() -> dict:
         {
             "id": "TX-blank-duration-cell", "source": "tx-rental-review-sop-v2.pdf", "page": 3,
             "ruleId": "TX-R3",
-            "question": "TX has a documented rate-only exception for $80/day within an $85 cap. "
+            "question": "TX has a documented rate-only exception for $80/day exceeding its $75 contractual cap. "
             "Its Schedule A Days and approver cell is blank. Does that also authorize 9 days "
             "within a 14-day remaining policy benefit?",
             "expected": {"Outcome": "ReviewRequired", "blankMeansUnlimitedDays": False,
-                         "routineDaysStillApply": 7, "durationApprovalRequired": True},
+                         "routineDaysStillApply": 7, "durationApprovalRequired": True,
+                         "contractualRateExcessStillRequiresReview": True},
         },
         {
             "id": "TX-blank-rate-cell", "source": "tx-rental-review-sop-v2.pdf", "page": 3,
             "ruleId": "TX-R2",
             "question": "TX has a documented duration-only exception for 9 days. That Schedule A "
-            "row has a blank Daily base rate cell. Does that also authorize $80/day below an "
-            "$85/day contractual cap, without rate approval?",
+            "row has a blank Daily base rate cell. Does that also authorize $80/day above its "
+            "$75/day contractual cap, without rate approval?",
             "expected": {"Outcome": "ReviewRequired", "blankMeansUnlimitedRate": False,
-                         "routineUsdPerDayStillApply": "75.00", "rateApprovalRequired": True},
+                         "routineUsdPerDayStillApply": "75.00", "rateApprovalRequired": True,
+                         "contractualRateExcessStillRequiresReview": True},
         },
     ])
     return {
@@ -723,7 +726,8 @@ def main() -> None:
     manifest["documents"].extend(preserved)
     citations.extend(preserved_citations)
     for name, value in [("manifest.json", manifest), ("citations.json", citations)]:
-        (OUT / name).write_text(json.dumps(value, indent=2) + "\n", encoding="utf-8")
+        (OUT / name).write_text(json.dumps(value, indent=2) + "\n", encoding="utf-8",
+                               newline="\r\n" if name == "manifest.json" else "\n")
     (ROOT / "data" / "scenarios" / "rental-review-v2.expected.json").write_text(
         json.dumps(fixture, indent=2) + "\n", encoding="utf-8")
     (ROOT / "data" / "scenarios" / "rental-ocr-comparison.probes.json").write_text(

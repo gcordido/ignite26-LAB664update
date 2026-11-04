@@ -441,6 +441,19 @@ registered source page, uploads and reads back the new chunks, and updates the
 machine-local configuration only after verification. It never changes or
 deletes the source index. New extracted content is labeled CU Layout, not
 Standard; diagram text remains OCR evidence, not a guaranteed interpretation.
+Revised registered policy PDFs are re-extracted into the new generation;
+unchanged policy pages and SOPs are reused. Other source metadata drift fails
+verification rather than silently replacing shared evidence.
+
+If Layout produces an invalid VIN in a labeled policy field, setup asks the
+existing vision-capable model deployment to transcribe that field from the
+original PDF page image. The prompt receives no expected claim or manifest VIN.
+Only a legible, valid reading is accepted; uncertainty stops setup. The original
+CU response and the independent model response remain in separate local caches.
+The indexed page identifies the image-verified transcription. Valid but different
+VINs are never normalized or forced to match, and remain identity conflicts
+during review. This policy-only verification can incur an additional model call;
+it never re-extracts a claim.
 
 For Texas and Washington, the matching rental-terms PDF explicitly makes Figure
 R-1 controlling for eligibility timing; the prompt applies this only to the
@@ -450,6 +463,8 @@ and other written terms remain governed by their own clauses.
 The Layout extraction cache under `.tools/policy-layout-cache/` is keyed by
 source bytes, endpoint, API version and analyzer. A changed PDF cannot reuse an
 old extraction. Don't index the local scenario HTML or its expected answers.
+Image verification is additionally keyed by source hash, page, model deployment,
+endpoint and prompt hash. Changing its prompt cannot reuse an old reading.
 The SOP generator preserves separately registered `policy_contract` documents
 and their citation maps when regenerating its state/shared sources.
 

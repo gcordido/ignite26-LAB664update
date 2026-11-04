@@ -47,6 +47,17 @@ Keep claim packets and expected evaluation outcomes separate from policy knowled
 The new CU Layout Search generation includes these contract PDFs alongside the
 existing state and shared SOP evidence; the source index remains unchanged.
 
+Texas's declaration now prints a **$75/day base** contractual cap; Washington
+remains **$85/day base**. Their claim invoices remain $54/day and $61/day.
+Texas END-02 references the declaration limit rather than printing a separate
+amount, so its original scan and effective dates are unchanged. The internal
+routine-authority limits remain separate rules even where the amounts coincide.
+`infra/revise-rental-policy-cap.py` reproduces this Texas-only PDF revision using
+the corpus-authoring environment, preserving the sparse table and other sources.
+Packet 06's original Illinois scan is also unchanged: policy ingestion now
+verifies an invalid native OCR VIN against the original page image instead of
+asking the reviewer to ignore an identity mismatch.
+
 ## Saved policy demo
 
 `policy-demo` contains ten real Agent Framework policy reviews of these synthetic
@@ -70,6 +81,8 @@ deployment is required to view them. Follow-up chat still requires live setup.
 The app validates bundle hashes, claim inputs and citations before loading.
 Parse JSON hashes normalize only Git's LF/CRLF line endings so the same committed
 evidence loads on Windows and Linux; original extraction files aren't rewritten.
+The exact-byte policy corpus hash retains the registry's CRLF serialization,
+enforced by `.gitattributes` on fresh checkouts.
 **Bundled demo** identifies these read-only results and their original Search
 index. Compatible local live caches take precedence; local configuration and
 caches aren't overwritten. `.\infra\policy-demo-cache.ps1` remains optional

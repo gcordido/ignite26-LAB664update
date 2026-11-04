@@ -10,7 +10,7 @@
       {
         "source": "sparse_table",
         "question": "What is the 2022 Honda CR-V EX's daily rental limit?",
-        "answer": "$85 per day.",
+        "answer": "$75 per day.",
         "citation": {
           "File": "01-revised-declarations.pdf",
           "DocumentId": "DEC-TX-01",

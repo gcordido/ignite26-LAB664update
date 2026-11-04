@@ -81,6 +81,10 @@ Each is a narrow claim-versus-policy comparison, not benefit or payment approval
 > date, policy start and expiration, revised declarations and genuine carrier-issued
 > amendments. A supported loss within the applicable term means Satisfied for
 > this date/terms fit, even on a confirmed nonrental claim.
+> A policy-ingestion note may explicitly identify a VIN transcribed from the
+> original page image after invalid native OCR. Use that verified transcription,
+> not an inferred character substitution. A genuinely different insured VIN
+> remains ReviewRequired; never globally normalize O/0 or waive identity matching.
 > Term start doesn't itself amend coverage. A request, customer signature or
 > file creation date isn't a carrier amendment. Apply a genuine issued amendment
 > only to its changed provision, insured vehicle and stated effective instant.

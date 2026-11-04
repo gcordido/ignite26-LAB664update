@@ -406,6 +406,8 @@ async def run(turn: Turn) -> dict:
         "Never turn an appointment into actual delivery. Unknown/conflicting drivability stays explicit. "
         "Effective terms always evaluates policy/VIN and loss date versus term start/expiry independently "
         "of rental applicability. Never blanket NotApplicable this check. "
+        "Use an explicitly image-verified policy VIN transcription when retrieval includes that ingestion note; "
+        "it corrects invalid native OCR, not identity. Never normalize O/0 yourself or ignore a genuinely different VIN. "
         "Only genuine carrier-issued amendments change terms. Don't invent an amendment, time or timezone; "
         "missing loss time only matters when a real effective-boundary ambiguity exists. "
         "Keep known contradictions ReviewRequired, even alongside missing data. "
