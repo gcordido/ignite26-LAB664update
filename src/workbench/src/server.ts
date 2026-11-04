@@ -20,6 +20,8 @@ import { policyDemo } from "./policy-demo.ts";
 import { checkNames, modeSchema } from "./policy-core.ts";
 import { type PolicyChatState } from "./policy-chat.ts";
 import { PolicyDocuments, representationSchema } from "./policy-documents.ts";
+import { policySourcePrefix, verifiedPolicySource } from "./policy-sources.ts";
+import { launchPolicyFolder, policyDatasetId, policyDatasets } from "./policy-datasets.ts";
 import {
   Cache,
   dataset,
@@ -38,6 +40,7 @@ export function createApp(
     cache?: Cache;
     policy?: PolicyService;
     documents?: PolicyDocuments;
+    openPolicyFolder?: (directory: string) => Promise<void>;
   } = {},
 ) {
   const app = express();
@@ -62,6 +65,24 @@ export function createApp(
       res.sendFile(filename, { root: path.join(repositoryRoot, folder) }),
     );
   }
+  app.use("/data/policies", async (req, res, next) => {
+    let logicalPath: string;
+    try { logicalPath = decodeURIComponent(req.path); }
+    catch { return res.sendStatus(404); }
+    if (!logicalPath.toLowerCase().endsWith(".pdf")) return next();
+    try {
+      const source = await verifiedPolicySource(logicalPath.startsWith("/rental/ocr-comparison-v2/")
+        ? `${policySourcePrefix}${logicalPath.slice("/rental/ocr-comparison-v2/".length)}`
+        : "", { includeArchived: true });
+      if (!source) return res.sendStatus(404);
+      res.setHeader("Cache-Control", "no-store");
+      return res.sendFile(path.basename(source.path), {
+        root: path.dirname(source.path), dotfiles: "deny",
+      });
+    } catch {
+      return res.sendStatus(404);
+    }
+  });
   app.use(
     "/data",
     express.static(dataRoot, { dotfiles: "deny", index: false }),
@@ -132,11 +153,9 @@ export function createApp(
       let exportValue: ReturnType<typeof packetJson> | null = null;
       let packetJsonError: string | undefined;
       let markdown: string | null = null;
-      let claimSummaryPrepared = false;
       try {
         exportValue = packetJson(response, packet, run, review);
         markdown = await selectedPolicy.markdown(run, packet, response);
-        claimSummaryPrepared = await selectedPolicy.summaryPrepared(packet);
       } catch (error) {
         packetJsonError =
           error instanceof Error ? error.message : String(error);
@@ -156,7 +175,6 @@ export function createApp(
         policyReview: report,
         packetJson: exportValue,
         packetMarkdown: markdown,
-        claimSummaryPrepared,
         packetJsonError,
       };
     } catch (error) {
@@ -293,6 +311,29 @@ export function createApp(
       mode: representationSchema,
     })
     .strict();
+  app.get("/api/policy/documents", async (req, res) => {
+    session(req);
+    res.json({ files: await policyDocuments.files() });
+  });
+  app.get("/api/policy/datasets", async (req, res) => {
+    session(req);
+    if (!["127.0.0.1", "localhost", "::1", "[::1]"].includes(req.hostname) ||
+        req.header("sec-fetch-site") === "cross-site" ||
+        (req.header("origin") && req.header("origin") !== `${req.protocol}://${req.get("host")}`))
+      throw new LabError(403, "View dataset folders from this local workbench only.");
+    res.set("Cache-Control", "no-store").json({ datasets: await policyDatasets() });
+  });
+  app.post("/api/policy/datasets/open", async (req, res) => {
+    session(req);
+    if (req.header("origin") !== `${req.protocol}://${req.get("host")}` ||
+        req.header("sec-fetch-site") === "cross-site" ||
+        !["127.0.0.1", "localhost", "::1", "[::1]"].includes(req.hostname))
+      throw new LabError(403, "Open dataset folders from this local workbench only.");
+    const { id } = z.object({ id: policyDatasetId }).strict().parse(req.body);
+    const dataset = (await policyDatasets()).find((dataset) => dataset.id === id)!;
+    await (options.openPolicyFolder ?? launchPolicyFolder)(dataset.path);
+    res.json({ requested: true, id: dataset.id });
+  });
   app.get("/api/policy/document", async (req, res) => {
     session(req);
     const { file, mode } = documentSelection.parse(req.query);

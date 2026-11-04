@@ -14,10 +14,13 @@ in your browser; GitHub's file view does not run the HTML guide.
 The guide identifies every input under `data\step1` through `data\step4`
 and explains when to run the setup and launch scripts in `infra`.
 The Insurance Workbench App is launched separately in step 5. That step also
-includes the [policy-check comparison](lab.html#policy-checks): run with and
-without Search retrieval, inspect Amount, Timing, and Effective terms starting
-with packet 01, compare the amount checks for packets 01 and 02,
-and open the cited policy documents. Azure Search, Blob Storage and the Python
+includes the [policy-check comparison](lab.html#policy-checks): inspect all **30**
+saved results without Azure setup under **Claim policy checks**, in the order
+**Daily rate**, **Effective terms**, and **Repair estimate**.
+Start with packet 01, compare the rental rates for packets 01 and 02,
+and open the cited policy documents and synthetic repair-authority diagram.
+Repair review authority isn't a contractual rental limit or payment approval.
+Azure Search, Blob Storage and the Python
 agent are optional under-the-hood explorations after the app comparison.
 
 The lab owner should restore dependencies with `infra\setup.ps1` after pulling

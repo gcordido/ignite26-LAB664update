@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 import io
 import json
+import sys
 from pathlib import Path
 from xml.sax.saxutils import escape
 
@@ -458,7 +459,7 @@ def expected_fixture() -> dict:
     reasons = {
         "packet-01": [
             "Drivable; actual shop intake/release not established.",
-            "$54/day <= TX $75 routine and supplied $85 contract cap.",
+            "$54/day <= TX $75 routine and supplied $75 contract cap; these are distinct authorities.",
             "4 billed days <= 7 routine; prior usage and actual downtime still unknown.",
             "4 x $54 + $21.60 named rental tax = $237.60; policy allows mandatory tax additional.",
             "Final return/bill does not establish insurer authorization.",
@@ -527,14 +528,15 @@ def comparison_probes() -> dict:
     probes = []
     for code, _, rate, days, _, _ in STATES:
         stem = f"{code.lower()}-rental-review-sop-v2.pdf"
+        policy_cap = "75" if code == "TX" else "85"
         probes.extend([
             {
                 "id": f"{code}-routine-boundary",
                 "source": stem, "page": 3, "ruleId": f"{code}-R2",
                 "question": f"What routine daily base limit applies in {code}, and does equality pass? "
-                "Distinguish that internal limit from the supplied $85/day contractual cap.",
+                f"Distinguish that internal limit from the supplied ${policy_cap}/day contractual cap.",
                 "expected": {"routineUsdPerDay": rate, "inclusive": True,
-                             "policyCapUsdPerDay": "85.00", "atRoutineBoundary": "Satisfied"},
+                             "policyCapUsdPerDay": f"{policy_cap}.00", "atRoutineBoundary": "Satisfied"},
                 "score": "One point only if value, inclusivity and independent contractual cap all match.",
             },
             {
@@ -626,20 +628,22 @@ def comparison_probes() -> dict:
         {
             "id": "TX-blank-duration-cell", "source": "tx-rental-review-sop-v2.pdf", "page": 3,
             "ruleId": "TX-R3",
-            "question": "TX has a documented rate-only exception for $80/day within an $85 cap. "
+            "question": "TX has a documented rate-only exception for $80/day exceeding its $75 contractual cap. "
             "Its Schedule A Days and approver cell is blank. Does that also authorize 9 days "
             "within a 14-day remaining policy benefit?",
             "expected": {"Outcome": "ReviewRequired", "blankMeansUnlimitedDays": False,
-                         "routineDaysStillApply": 7, "durationApprovalRequired": True},
+                         "routineDaysStillApply": 7, "durationApprovalRequired": True,
+                         "contractualRateExcessStillRequiresReview": True},
         },
         {
             "id": "TX-blank-rate-cell", "source": "tx-rental-review-sop-v2.pdf", "page": 3,
             "ruleId": "TX-R2",
             "question": "TX has a documented duration-only exception for 9 days. That Schedule A "
-            "row has a blank Daily base rate cell. Does that also authorize $80/day below an "
-            "$85/day contractual cap, without rate approval?",
+            "row has a blank Daily base rate cell. Does that also authorize $80/day above its "
+            "$75/day contractual cap, without rate approval?",
             "expected": {"Outcome": "ReviewRequired", "blankMeansUnlimitedRate": False,
-                         "routineUsdPerDayStillApply": "75.00", "rateApprovalRequired": True},
+                         "routineUsdPerDayStillApply": "75.00", "rateApprovalRequired": True,
+                         "contractualRateExcessStillRequiresReview": True},
         },
     ])
     return {
@@ -656,7 +660,37 @@ def comparison_probes() -> dict:
     }
 
 
-def main() -> None:
+def main(*, legacy_archive: bool = False) -> None:
+    global OUT
+    archive = ROOT / "data" / "policies" / "archive" / "legacy-rental-review-v2"
+    registry_path = archive / "registry.json"
+    scenario_folder = ROOT / "data" / "scenarios"
+    if registry_path.exists():
+        registry = json.loads(registry_path.read_text(encoding="utf-8"))
+        active = json.loads((OUT / "manifest.json").read_text(encoding="utf-8"))
+        active_citations = json.loads((OUT / "citations.json").read_text(encoding="utf-8"))
+        retired_ids = {d["documentId"] for d in registry["documents"]}
+        if retired_ids & {d["documentId"] for d in active["documents"]}:
+            raise ValueError("Archived rental sources must not return to the active manifest.")
+        for doc in active["documents"]:
+            if digest((OUT / doc["pdf"]).read_bytes()) != doc["sha256"]:
+                raise ValueError(f"Active PDF changed: {doc['pdf']}")
+            matches = [c for c in active_citations if c["documentId"] == doc["documentId"]]
+            if len(matches) != 1 or any(matches[0][key] != doc[key] for key in
+                                       ("version", "pdf", "sha256", "ruleIds")):
+                raise ValueError(f"Active citation registration differs: {doc['documentId']}")
+        for doc in registry["documents"]:
+            if digest((ROOT / doc["archivePath"]).read_bytes()) != doc["sha256"]:
+                raise ValueError(f"Archived PDF changed: {doc['pdf']}")
+        if not legacy_archive:
+            print(f"Validated {len(active['documents'])} active and "
+                  f"{len(registry['documents'])} archived PDFs; no files rewritten.")
+            print("Use --rebuild-legacy-archive to reproduce legacy material under the archive only.")
+            return
+        OUT = archive / "reproduced"
+        scenario_folder = OUT
+    elif legacy_archive:
+        raise ValueError("Archive the legacy sources before requesting a legacy-only rebuild.")
     manifest_path, citations_path = OUT / "manifest.json", OUT / "citations.json"
     preserved = []
     preserved_citations = []
@@ -723,10 +757,11 @@ def main() -> None:
     manifest["documents"].extend(preserved)
     citations.extend(preserved_citations)
     for name, value in [("manifest.json", manifest), ("citations.json", citations)]:
-        (OUT / name).write_text(json.dumps(value, indent=2) + "\n", encoding="utf-8")
-    (ROOT / "data" / "scenarios" / "rental-review-v2.expected.json").write_text(
+        (OUT / name).write_text(json.dumps(value, indent=2) + "\n", encoding="utf-8",
+                               newline="\r\n" if name == "manifest.json" else "\n")
+    (scenario_folder / "rental-review-v2.expected.json").write_text(
         json.dumps(fixture, indent=2) + "\n", encoding="utf-8")
-    (ROOT / "data" / "scenarios" / "rental-ocr-comparison.probes.json").write_text(
+    (scenario_folder / "rental-ocr-comparison.probes.json").write_text(
         json.dumps(comparison_probes(), indent=2) + "\n", encoding="utf-8")
 
 
@@ -789,4 +824,6 @@ def validate(manifest: dict, fixture: dict) -> None:
 
 
 if __name__ == "__main__":
-    main()
+    if any(arg != "--rebuild-legacy-archive" for arg in sys.argv[1:]):
+        raise SystemExit("Usage: generate-rental-sop-corpus.py [--rebuild-legacy-archive]")
+    main(legacy_archive="--rebuild-legacy-archive" in sys.argv[1:])

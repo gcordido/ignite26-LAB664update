@@ -53,7 +53,7 @@ const detailPanels = {
 let policyStatus;
 let policyBusy = false;
 let policyAvailabilityTimer;
-let policyMode = "search";
+const policyMode = "search";
 let policySource;
 const claimEvidenceRequests = new Map();
 let policyPaneMode = "result";
@@ -65,25 +65,15 @@ let policyCacheBusy = false;
 let policyCacheVersion = 0;
 const policyResultScroll = new Map();
 const policyCheckNames = [
-  "Amount",
-  "Timing",
+  "Daily rate",
   "Effective terms",
-  "Charges and reimbursement calculation",
-  "Authorization and payment readiness",
+  "Repair estimate",
 ];
-const policyShortNames = [
-  "Daily cost",
-  "Rental dates",
-  "Active policy",
-  "Covered charges",
-  "Payment approval",
-];
+const policyShortNames = [...policyCheckNames];
 const policyCheckDescriptions = [
-  "Is the daily price within the rental limit?",
-  "Do rental dates match the covered repair period?",
-  "Which terms applied on the accident date?",
-  "Which fees and taxes can be reimbursed?",
-  "Is the required insurer approval documented?",
+  "Is the claimed daily base rate within the effective insured-vehicle cap?",
+  "Were the matched policy and genuine amendment in force on the actual loss date?",
+  "Is each supplied repair-estimate total within this state's routine review authority?",
 ];
 let focusedPolicyCheck = 0;
 const columnWidths = new Map();
@@ -196,18 +186,12 @@ function controls() {
     policyStatus?.batchRunning ||
     !run ||
     !policyStatus?.configured;
-  get("policy-run").title =
-    policyMode === "search"
-      ? ""
-      : "Select FoundryIQ to run policy checks.";
   for (const button of get("policy-output").querySelectorAll(".policy-retry")) {
     button.disabled = get("policy-run").disabled;
     button.title = button.disabled
       ? "Wait for the current operation to finish before retrying."
       : "Retry this case only. Azure charges may apply.";
   }
-  get("policy-mode").disabled = busy || policyBusy ||
-    (!policyStatus?.configured && !policyStatus?.bundledDemo);
   const saved = policyResults.get(policyMode);
   get("policy-chat-mode").disabled =
     !policyStatus?.configured ||
@@ -224,9 +208,7 @@ async function policyCaches() {
   const runId = run?.id;
   if (!runId) {
     get("policy-cache-status").textContent =
-      policyMode === "search"
-        ? "Load cached results to open the included CU run and saved policy checks. Loading makes no Azure calls."
-        : "Select FoundryIQ to load the included policy demo, or load a saved CU run in Parse and extract.";
+      "Load cached results to open the included CU run and saved policy checks. Loading makes no Azure calls.";
     controls();
     return;
   }
@@ -1048,7 +1030,7 @@ function renderWorkflowNavigation() {
     button.setAttribute("aria-pressed", String(button.dataset.workflow === workflow));
   get("view-types").hidden = workflow !== "extract";
   get("extraction-toolbar").hidden = workflow !== "extract";
-  get("policy-toolbar").hidden = workflow !== "policy";
+  get("policy-resources").hidden = workflow !== "policy";
   get("show-confidence").closest("label").hidden = workflow === "policy";
   get("results-heading").hidden = workflow === "policy";
   get("policy-table-intro").hidden = workflow !== "policy";
@@ -1227,7 +1209,6 @@ api("session", {})
   .then(async (value) => {
     sessionId = value.sessionId;
     if (value.policyMode) {
-      policyMode = value.policyMode;
       view = "policy";
     }
     await Promise.all([
@@ -1244,6 +1225,7 @@ api("session", {})
       if (first) await showCustomer(first.id);
     }
     controls();
+    if (globalThis.location?.hash === "#policy-documents") await openPolicyDocuments();
   })
   .catch(fail);
 
@@ -1280,29 +1262,118 @@ function policyMessage() {
         : policyStatus?.bundledDemo
           ? "Saved policy reviews are available. Loading makes no Azure calls."
           : (policyStatus?.message ?? "Policy configuration is loading.");
+  renderPolicyResources();
 }
 function policyModeLabel(mode = policyMode) {
   return mode === "search" ? "FoundryIQ" : "No policy retrieval";
 }
-function renderPolicyModes() {
-  const modes = policyStatus?.configured ? Object.keys(policyStatus.modes) : [];
-  if (policyStatus?.bundledDemo && !modes.includes("search")) modes.push("search");
-  const options = modes.map((mode) => {
-    const option = element("option", policyModeLabel(mode));
-    option.value = mode;
-    return option;
-  });
-  if (!options.length) {
-    const option = element("option", "Policy retrieval unavailable - see status below");
-    option.value = "";
-    options.push(option);
-  }
-  get("policy-mode").replaceChildren(...options);
-  if (modes.length) {
-    if (!modes.includes(policyMode)) policyMode = modes[0];
-    get("policy-mode").value = policyMode;
+function renderPolicyResources() {
+  const saved = policyResults.get(policyMode);
+  const names = [...new Set((saved?.items ?? [])
+    .filter((item) => item.status === "completed" && item.indexName)
+    .map((item) => item.indexName))];
+  const name = saved?.indexName ?? (names.length === 1 ? names[0] : undefined);
+  const candidate = saved?.resources ?? (saved?.source === "bundled"
+    ? policyStatus?.bundledDemo?.resources
+    : name && name !== policyStatus?.resources?.index?.name
+      ? undefined
+      : policyStatus?.resources ?? (!saved ? policyStatus?.bundledDemo?.resources : undefined));
+  const resources = names.length > 1 || (name && candidate?.index?.name !== name) ? undefined : candidate;
+  const render = (id, label, href, message) => {
+    const node = get(id);
+    node.title = message ?? "";
+    if (href && new URL(href).origin === "https://portal.azure.com") {
+      node.replaceChildren();
+      const link = element("a", label);
+      link.href = href;
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      node.append(link);
+    } else node.textContent = label;
+  };
+  const unavailable = "Verified resource metadata is unavailable for these policy results.";
+  render("policy-index-resource", names.length > 1 ? "Multiple saved index generations" :
+    name ?? resources?.index?.name ?? "Unavailable",
+    resources?.index?.href, resources?.index?.message ?? (!resources ? unavailable : ""));
+  const active = policyStatus?.resources?.index?.name;
+  const context = get("policy-resource-context");
+  context.hidden = !name || !active || name === active;
+  context.textContent = context.hidden ? "" : `Showing saved result sources. Live checks use index ${active}.`;
+}
+async function openPolicyDocuments() {
+  const dialog = get("policy-document-list");
+  if (!dialog.open) dialog.showModal();
+  const status = get("policy-document-list-status");
+  status.textContent = "Resolving local dataset folders...";
+  get("policy-document-list-files").replaceChildren();
+  try {
+    const { datasets } = await api("policy/datasets");
+    const ids = ["original", "search", "digital"];
+    if (!Array.isArray(datasets) || datasets.length !== 3 ||
+        datasets.some((dataset, index) => dataset.id !== ids[index] ||
+          typeof dataset.label !== "string" || typeof dataset.path !== "string" ||
+          !/^(?:[a-z]:[\\/]|\/|\\\\)/i.test(dataset.path) ||
+          new URL(dataset.href).protocol !== "file:"))
+      throw new Error("The local policy dataset folders are invalid.");
+    for (const dataset of datasets) {
+      const row = element("li");
+      const link = element("a", dataset.path);
+      link.href = dataset.href;
+      link.dataset.datasetId = dataset.id;
+      let opening = false;
+      link.onclick = async (event) => {
+        event.preventDefault();
+        if (opening) return;
+        opening = true;
+        link.setAttribute("aria-disabled", "true");
+        status.textContent = `Requesting Windows Explorer for ${dataset.label}...`;
+        try {
+          await api("policy/datasets/open", { id: dataset.id });
+          status.textContent = `Folder requested in Windows Explorer: ${dataset.path}`;
+        } catch (error) {
+          status.textContent = `Could not open folder: ${error.message} Use Copy path instead.`;
+        } finally {
+          opening = false;
+          link.removeAttribute("aria-disabled");
+        }
+      };
+      const fallback = element("input");
+      fallback.value = dataset.path;
+      fallback.readOnly = true;
+      fallback.hidden = true;
+      fallback.setAttribute("aria-label", `${dataset.label} path to copy manually`);
+      const copy = element("button", "Copy path");
+      copy.className = "secondary";
+      copy.onclick = async () => {
+        try {
+          if (!navigator.clipboard?.writeText) throw new Error("Clipboard access is unavailable.");
+          await navigator.clipboard.writeText(dataset.path);
+          status.textContent = `Copied path: ${dataset.path}`;
+        } catch (error) {
+          fallback.hidden = false;
+          fallback.focus();
+          fallback.select();
+          status.textContent = `Could not copy automatically: ${error.message} Copy the selected path manually.`;
+        }
+      };
+      row.append(element("strong", dataset.label), link, copy, fallback);
+      get("policy-document-list-files").append(row);
+    }
+    status.textContent = "Three local datasets. The source folder may also contain supporting metadata.";
+  } catch (error) {
+    status.textContent = `Policy documents unavailable: ${error.message}`;
+    throw error;
   }
 }
+get("policy-local-documents").onclick = (event) => {
+  event.preventDefault();
+  void openPolicyDocuments().catch(fail);
+};
+get("policy-document-list-close").onclick = () => get("policy-document-list").close();
+globalThis.addEventListener?.("hashchange", () => {
+  if (globalThis.location?.hash === "#policy-documents")
+    void openPolicyDocuments().catch(fail);
+});
 async function updatePolicyAvailability() {
   clearTimeout(policyAvailabilityTimer);
   try {
@@ -1312,12 +1383,10 @@ async function updatePolicyAvailability() {
       configured: false,
       message: `Could not load policy configuration: ${error.message}`,
     };
-    renderPolicyModes();
     policyMessage();
     controls();
     throw error;
   }
-  renderPolicyModes();
   controls();
   if (policyStatus.batchRunning && !policyBusy) {
     policyMessage();
@@ -1347,11 +1416,11 @@ async function refreshPolicy(mode = policyMode) {
   if (run?.id !== id || value.runId !== id) return;
   if (value.configurationMessage) {
     policyStatus = { ...policyStatus, configured: false, message: value.configurationMessage };
-    renderPolicyModes();
     policyMessage();
     controls();
   }
   storePolicyResults(mode, value);
+  policyMessage();
   policyPolls.set(mode, Date.now());
   policyProgressErrors.delete(mode);
   if (view === "policy" && mode === policyMode) {
@@ -1407,7 +1476,7 @@ function renderPolicyRunStatus() {
     if (node.textContent !== value) node.textContent = value;
   };
   const active = job.items.find((item) =>
-    ["extracting", "reviewing"].includes(item.status),
+    item.status === "reviewing",
   );
   const completed = job.items.filter((item) =>
     ["completed", "failed"].includes(item.status),
@@ -1415,7 +1484,7 @@ function renderPolicyRunStatus() {
   const interrupted = policyProgressErrors.has(policyMode);
   setText("policy-run-label", interrupted
     ? "Progress connection interrupted"
-    : active?.status === "extracting" ? "Preparing claim evidence" : "Agent running");
+    : "Agent checking three comparisons");
   get("policy-run-status").querySelector(".spinner").hidden = interrupted;
   const customer = active ? customerName(results.get(active.id)) : "";
   setText("policy-run-packet", active
@@ -1424,8 +1493,7 @@ function renderPolicyRunStatus() {
   setText("policy-run-detail", interrupted
     ? "The server may still be running. Reload to reconnect; do not start a duplicate review."
     : `${completed}/${job.items.length} packets finished · ${policyModeLabel()} · ${
-      active?.status === "extracting" ? "CU extracting claim fields"
-        : active ? "Checking policy rules and citations" : "Preparing next case"
+      active ? "Checking three comparisons and citations" : "Preparing next case from saved Parse evidence"
     }`);
   const elapsed = Math.max(0, Math.floor((Date.now() - Date.parse(job.startedAt)) / 1000));
   get("policy-run-elapsed").textContent = Number.isFinite(elapsed)
@@ -1459,8 +1527,10 @@ function renderPolicyTable() {
     "customer",
     ...policyCheckNames.map((check) => `policy:${check}`),
   ];
+  const availableWidth = Math.max(360, table.parentElement?.clientWidth || 640);
   const widths = keys.map(
-    (key, index) => columnWidths.get(key) ?? (index ? 185 : 190),
+    (key, index) => columnWidths.get(key) ??
+      Math.floor(availableWidth * (index ? 0.76 / policyCheckNames.length : 0.24)),
   );
   table.style.width = `${widths.reduce((sum, width) => sum + width, 0)}px`;
   table.querySelector("colgroup").replaceChildren(
@@ -1503,14 +1573,10 @@ function renderPolicyTable() {
       );
       name.onclick = () => openAgentCheck(packet.id, 0);
       label.append(name);
-      if (policyResult?.source !== "bundled" && !results.get(packet.id)?.claimSummaryPrepared)
-        label.append(
-          element("span", "Claim fields not prepared", "policy-preparation"),
-        );
       row.append(label);
       for (let column = 0; column < policyCheckNames.length; column++) {
         const cell = element("td");
-        const check = item?.result?.Checks[column];
+        const check = item?.result?.Checks.find((check) => check.Check === policyCheckNames[column]);
         const text = check
           ? check.Outcome === "NotApplicable"
             ? "N/A"
@@ -1523,8 +1589,7 @@ function renderPolicyTable() {
             ? "Run error"
             : ({
                 pending: "Queued",
-                extracting: "Extracting claim",
-                reviewing: "Checking rules",
+                reviewing: "Checking three comparisons",
               }[item?.status] ?? "Not run");
         const button = element("button", text, "cell-content");
         const state = element(
@@ -1600,7 +1665,7 @@ function renderPolicyOutput(focused) {
     .get(policyMode)
     ?.items.find((item) => item.id === selectedPacket);
   if (!item?.result) {
-    if (item && ["pending", "extracting", "reviewing"].includes(item.status)) {
+    if (item && ["pending", "reviewing"].includes(item.status)) {
       const activity = element("div", undefined, "policy-activity");
       const heading = element("p", undefined, "policy-activity-heading");
       const paused = policyProgressErrors.has(policyMode);
@@ -1609,17 +1674,14 @@ function renderPolicyOutput(focused) {
       heading.querySelector(".spinner")?.setAttribute("aria-hidden", "true");
       const title = element("span", paused ? "Progress connection interrupted" : ({
         pending: "Queued for policy review",
-        extracting: "Extracting claim evidence",
-        reviewing: "Agent checking policy rules",
+        reviewing: "Agent checking three comparisons",
       }[item.status]));
       title.setAttribute("role", "status");
       heading.append(title);
       activity.append(heading,
         element("p", item.status === "pending"
           ? "Cases run sequentially. This case will start after the cases ahead of it."
-          : item.status === "extracting"
-            ? "Content Understanding is preparing the claim facts used by all five checks."
-            : "The agent is evaluating all five checks. Search and model calls can take several minutes; results appear after the response and source citations are verified."),
+          : "The agent is evaluating three comparisons using saved Parse fields and selected first-pass page text. No claim CU reanalysis is run. Search and model calls can take several minutes; results appear after the response and source citations are verified."),
         element("p", "", "policy-activity-time"),
         element("p", "", "policy-activity-connection muted"));
       panel.append(activity);
@@ -1641,7 +1703,7 @@ function renderPolicyOutput(focused) {
       const retry = element("button", "Retry this case", "policy-retry secondary");
       retry.dataset.liveControl = "";
       retry.onclick = () => confirmPolicyRun([packetId]);
-      const notice = element("p", "Retries all five checks for this case only. Matching saved claim fields and results are reused; Azure charges may apply.", "muted");
+      const notice = element("p", "Retries the three checks for this case only, using saved Parse fields and selected first-pass page text. No claim CU reanalysis is run; Azure charges may apply.", "muted");
       notice.dataset.liveControl = "";
       panel.append(retry, notice);
       controls();
@@ -1649,7 +1711,7 @@ function renderPolicyOutput(focused) {
     return;
   }
   for (const [index, check] of item.result.Checks.entries()) {
-    if (index !== focusedPolicyCheck) continue;
+    if (check.Check !== policyCheckNames[focusedPolicyCheck]) continue;
     const section = element("section", undefined, "policy-check");
     section.id = `policy-check-${index}`;
     section.append(
@@ -1666,7 +1728,7 @@ function renderPolicyOutput(focused) {
       ),
     );
     if (check.Outcome === "InProgress")
-      section.append(element("p", "Review complete. Waiting for claim information or approval; add it, then rerun.", "policy-waiting-note"));
+      section.append(element("p", "Review complete. Waiting for claim evidence needed by this comparison; add it, then rerun. Unrelated repair completion or payment approval isn't required.", "policy-waiting-note"));
     if (check.Headline) section.append(element("h4", check.Headline, "policy-finding"));
     else section.append(element("p",
       "Saved review uses the earlier format. Run again for a short headline and field comparison.",
@@ -1814,26 +1876,41 @@ function addClaimComparisonSources(cell, field, value, packetId, reviewVersion) 
     notice.remove();
     const matches = claimFieldSources(evidence.fields, field);
     const pages = new Map();
-    for (const fact of matches)
+    for (const fact of matches) {
+      if (!fact.regions.length && fact.pages) {
+        const key = `${fact.href}:${fact.pages.start}-${fact.pages.end}`;
+        if (!pages.has(key)) pages.set(key, { ...fact, page: fact.pages.start });
+        continue;
+      }
       for (const region of fact.regions) {
         const key = `${fact.href}:${region.page}`;
         if (!pages.has(key)) pages.set(key, { ...fact, page: region.page, regions: [] });
         pages.get(key).regions.push(region);
       }
+    }
     const sources = [...pages.values()];
+    const pageLabel = (source) => source.pages && !source.regions.length
+      ? source.pages.start === source.pages.end
+        ? `page ${source.pages.start}` : `pages ${source.pages.start}–${source.pages.end}`
+      : `page ${source.page}`;
+    const sourceTitle = (source) => source.pages && !source.regions.length
+      ? `First-pass parsed page text · ${pageLabel(source)} · derived interpretation, not a typed CU fact`
+      : `View extracted ${field} · claim ${pageLabel(source)}`;
     if (sources.length === 1) {
       const source = sources[0];
       cell.replaceChildren(element("strong"));
       cell.firstChild.append(comparisonLink(value, `${source.href}#page=${source.page}`,
-        `View extracted ${field} · claim page ${source.page}`, (link) => openClaimSource(source, field, link)));
+        sourceTitle(source), (link) => openClaimSource(source, field, link)));
     } else if (sources.length > 1) {
       for (const source of sources) {
-        const link = comparisonLink(`Claim · page ${source.page}`, `${source.href}#page=${source.page}`,
-          `View extracted ${field}`, (link) => openClaimSource(source, field, link));
+        const link = comparisonLink(`Claim · ${pageLabel(source)}`, `${source.href}#page=${source.page}`,
+          sourceTitle(source), (link) => openClaimSource(source, field, link));
         link.classList.add("policy-value-source");
         cell.append(link);
       }
-    } else cell.append(element("span", "No extracted source location", "policy-source-unavailable"));
+    } else cell.append(element("span", "No supplied source location", "policy-source-unavailable"));
+    if (sources.some((source) => source.pages && !source.regions.length))
+      cell.append(element("span", "First-pass parsed page text · derived interpretation, not a typed CU fact", "policy-source-unavailable"));
   }).catch((error) => {
     if (!cell.isConnected) return;
     notice.textContent = `Claim source unavailable: ${error.message}`;
@@ -1860,7 +1937,12 @@ async function openClaimSource(source, field, link) {
   if (source.href !== `/data/packets/${selectedPacket}.pdf` ||
       !Number.isInteger(source.page) || source.page < 1)
     throw new Error("The claim source is not from the selected packet.");
-  const selected = beginPolicySource(link, `${field} · Claim ${selectedPacket} · page ${source.page}`);
+  const textSource = source.pages && !source.regions.length;
+  const pageRange = textSource && source.pages.end !== source.pages.start
+    ? `pages ${source.pages.start}–${source.pages.end}` : `page ${source.page}`;
+  const selected = beginPolicySource(link, textSource
+    ? `First-pass parsed page text · Claim ${selectedPacket} · ${pageRange} · derived interpretation, not a typed CU fact`
+    : `${field} · Claim ${selectedPacket} · ${pageRange}`);
   get("pdf-status").hidden = false;
   try {
     await previewPdf(source.href, source.page, source.regions);
@@ -1888,6 +1970,10 @@ async function openPolicySource(citation, link) {
 get("policy-source-back").onclick = () => {
   const previous = policySource;
   showPolicyPanel(true);
+  if (previous?.listing) {
+    void openPolicyDocuments().catch(fail);
+    return;
+  }
   get("policy-review-pane").scrollTop = previous?.scrollTop ?? 0;
   previous?.link.focus({ preventScroll: true });
 };
@@ -1913,23 +1999,6 @@ function selectPolicyPane(mode) {
 }
 for (const mode of ["result", "chat"])
   get(`policy-${mode}-mode`).onclick = () => selectPolicyPane(mode);
-get("policy-mode").onchange = async () => {
-  policyMode = get("policy-mode").value;
-  controls();
-  showPolicyPanel(true);
-  policyMessage();
-  if (run) {
-    renderTable();
-    renderPolicyOutput();
-    if (selectedPacket) void showAgentClaim(selectedPacket).catch(fail);
-  }
-  try {
-    await refreshPolicy();
-    await policyCaches();
-  } catch (error) {
-    fail(error);
-  }
-};
 async function loadPolicyCache() {
   if (get("load-policy-cache").disabled) return;
   const mode = policyMode;
@@ -1950,8 +2019,6 @@ async function loadPolicyCache() {
     const value = await api("policy/cache/load", { runId, mode,
       ...(entry?.source ? { source: entry.source } : {}) });
     if (run?.id !== runId || value.runId !== runId) return;
-    policyMode = mode;
-    get("policy-mode").value = mode;
     policyResults.set(mode, value);
     policyChat.reset();
     if (value.source === "bundled") {
@@ -1979,12 +2046,13 @@ async function loadPolicyCache() {
 get("load-policy-cache").onclick = () => loadPolicyCache().catch(fail);
 function confirmPolicyRun(packetIds) {
   if (get("policy-run").disabled) return;
+  get("app-settings").close();
   pendingPolicyRun = { runId: run.id, mode: policyMode, packetIds };
   const packetId = packetIds?.[0];
   get("policy-confirm-summary").textContent =
     (packetId
-      ? `1 case: ${customerName(results.get(packetId)) || packetId} · ${policyModeLabel()}. Only this case will be retried. `
-      : `${run.items.filter((item) => item.rawSaved).length} cases · ${policyModeLabel()}.`);
+      ? `1 case: ${customerName(results.get(packetId)) || packetId} · ${policyModeLabel()}. Only this case's three checks will be retried. `
+      : `${run.items.filter((item) => item.rawSaved).length} cases · three checks per case · ${policyModeLabel()}.`);
   get("policy-confirmation").showModal();
 }
 get("policy-run").onclick = () => confirmPolicyRun();

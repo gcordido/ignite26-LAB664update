@@ -40,7 +40,7 @@
           "Check": "Daily rate",
           "Outcome": "Satisfied",
           "ReviewRequired": false,
-          "Reason": "$54/day <= TX $75 routine and supplied $85 contract cap.",
+          "Reason": "$54/day <= TX $75 routine and supplied $75 contract cap; these are distinct authorities.",
           "RuleId": "TX-R2"
         },
         {

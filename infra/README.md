@@ -46,7 +46,7 @@ script; images themselves are not modified.
   Workbench App. It does not create cloud resources or submit document analysis
   on launch.
 - [`policy-demo-cache.ps1`](policy-demo-cache.ps1) optionally restores the included synthetic
-  policy reviews, CU claim fields and public resource configuration. It uses
+  policy reviews and public resource configuration alongside the saved Parse run. It uses
   the existing workbench dependencies and makes no Azure calls. The app reads
   the bundled results directly without this command or Azure setup; use it only
   when a local cache copy is needed for maintenance. Different local configuration
@@ -268,9 +268,11 @@ still make no cloud changes. Standard ingestion uses Blob Storage and an ordinar
 Search index, not a Foundry IQ knowledge base. CU extraction and live policy/model calls incur
 Azure charges.
 
-The **FoundryIQ** UI label is the lab's umbrella name; the initial five-check
+The **FoundryIQ** UI label is the lab's umbrella name; the three-comparison
 review uses scoped evidence prefetched from Azure AI Search, not a Foundry IQ
-knowledge base. Each uncached packet gets five parallel Agent Framework calls.
+knowledge base. Each uncached packet interprets rental applicability once, then
+runs three parallel comparisons using saved Parse fields and relevant page text.
+Policy review and chat do not submit another claim CU extraction.
 Matched execution caches skip those calls. Follow-up chat can use the Search tool.
 
 To refresh the synthetic demo bundle, complete all ten policy reviews using
@@ -281,8 +283,9 @@ the current prompts, then run:
 ```
 
 Export verifies all ten reviews against the current prompts, claim facts and
-policy sources. It includes only those reviews, their claim fields and the
-public runtime configuration under `data\policy-demo`; credentials and request
+policy sources. It includes only those reviews and the
+public runtime configuration under `data\policy-demo`, with hashes referencing
+the committed Parse run in `data\results`; credentials and request
 logs aren't exported. Review that synthetic bundle with the source changes.
 
 `deploy.ps1 -ResourceGroup` discovers and saves `.tools\policy-deployment.json`

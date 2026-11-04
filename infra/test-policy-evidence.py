@@ -4,6 +4,7 @@ import importlib.util
 from pathlib import Path
 import sys
 import unittest
+from policy_check_inputs import check_evidence
 
 spec = importlib.util.spec_from_file_location(
     "policy_evidence_runtime", Path(__file__).with_name("policy-framework-agent.py"),
@@ -53,6 +54,20 @@ class PolicyEvidenceTests(unittest.TestCase):
                 self.assertIn(config["corpusHash"], scoped)
                 self.assertIn(config["indexFingerprint"], scoped)
 
+    def test_scanned_illinois_zero_does_not_waive_a_genuinely_different_valid_vin(self):
+        source = {
+            "states": ["IL"], "documentType": "policy_contract",
+            "policyScope": {"policyId": "PMM-A4329240", "vin": "1FMCU0G63MA514686"},
+        }
+        self.assertTrue(runtime.applicable_source(source, "IL", runtime.PolicyScope(
+            policyId="PMM-A4329240", vin="1FMCU0G63MA514686",
+        )))
+        for vin in ("1FMCU0G61MA514687", "1FMCUOG63MA514686"):
+            with self.subTest(vin=vin):
+                self.assertFalse(runtime.applicable_source(source, "IL", runtime.PolicyScope(
+                    policyId="PMM-A4329240", vin=vin,
+                )))
+
     def test_returned_evidence_is_checked_against_scope(self):
         config = dict(extractionMode="layout", corpusHash="a" * 64, indexFingerprint="b" * 64)
         source = {**self.sources["contract.pdf"], "version": "2026-02-01",
@@ -69,10 +84,40 @@ class PolicyEvidenceTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             runtime.source_evidence(row, config, sources, citations, "TX")
 
-    def test_first_three_check_names_are_the_evidence_scenarios(self):
-        self.assertEqual(runtime.CHECKS[:3], ["Amount", "Timing", "Effective terms"])
-        self.assertEqual(len(runtime.CHECKS), 5)
+    def test_three_check_names_are_the_evidence_scenarios(self):
+        self.assertEqual(runtime.CHECKS, ["Daily rate", "Effective terms", "Repair estimate"])
+        self.assertEqual(len(runtime.CHECKS), 3)
         self.assertIn("policyScope", runtime.Turn.model_fields)
+
+    def test_check_projections_keep_whole_controlling_pages_and_metadata(self):
+        sources = {
+            "terms.pdf": {"documentType": "policy_contract", "role": "rental_terms"},
+            "declarations.pdf": {"documentType": "policy_contract", "role": "declarations"},
+            "amendment.pdf": {"documentType": "policy_contract", "role": "effective_terms"},
+            "sop.pdf": {"documentType": "state_sop"},
+        }
+        whole = "<table><tr><th></th><th>Start</th></tr></table>\nFigure R-1\nBoth branches"
+        evidence = [
+            dict(id=f"page-{index}", file=file, documentId=f"doc-{index}", version="2.0",
+                 content=whole, page=page, pageTo=page, ruleIds=["R.6"],
+                 citationSections=["Figure R-1"], sha256="a" * 64, stateCodes=["TX"])
+            for index, (file, page) in enumerate([
+                ("terms.pdf", 1), ("terms.pdf", 2), ("declarations.pdf", 3),
+                ("amendment.pdf", 2), ("sop.pdf", 5),
+            ])
+        ]
+        with self.assertRaisesRegex(ValueError, "Unknown policy check"):
+            check_evidence(evidence, sources, "Rental start")
+        rate = check_evidence(evidence, sources, "Daily rate")
+        self.assertEqual([doc["file"] for doc in rate],
+                         ["declarations.pdf", "amendment.pdf"])
+        effective = check_evidence(evidence, sources, "Effective terms")
+        self.assertEqual([doc["file"] for doc in effective], ["declarations.pdf", "amendment.pdf"])
+        for doc in rate:
+            self.assertEqual(doc["content"], whole)
+            self.assertEqual(doc["sha256"], "a" * 64)
+        rate[0]["content"] = "changed copy"
+        self.assertEqual(evidence[0]["content"], whole)
 
     def test_flat_claim_schema_uses_literal_facts_without_boolean_defaults(self):
         definition = setup.claim_evidence_analyzer_definition()

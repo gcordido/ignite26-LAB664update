@@ -9,7 +9,7 @@ No knowledge base, hosted agent or new Search service is needed.
 
 ```text
 Policy PDFs -> Blob Storage -> Search indexer + Content Understanding skill
-           -> Policy index -> Agent Framework -> Five checks and chat
+           -> Policy index -> Agent Framework -> Four comparisons and chat
 ```
 
 ## Prerequisites
@@ -18,8 +18,9 @@ Policy PDFs -> Blob Storage -> Search indexer + Content Understanding skill
   `infra/requirements-policy-agent-framework.txt` installed.
 - Azure CLI sign-in for the identity running setup and the local workbench.
 - The existing Search, Blob Storage, Content Understanding and model resources.
-- An existing chat model deployment for figure descriptions. The claim analyzer
-  is required only when preparing live claim reviews, not for policy indexing.
+- An existing chat model deployment for figure descriptions. A claim analyzer
+  is needed only for a new **Parse and extract** run, not for policy indexing
+  or reviewing an already parsed claim.
   Supply resource IDs and model names through resource-group discovery or the
   deployment settings below.
 - Policy PDFs registered in the
@@ -57,14 +58,13 @@ to access the npm registry.
 The launcher automatically uses this environment. Stop the app and rerun setup
 after pulling dependency updates.
 
-The current claim-summary definition includes explicit rental-request/use
-answers and their wording (`RentalRequested`, `RentalUsed`,
-`RequestTypeEvidence`). An older registered analyzer is not overwritten
-automatically. To adopt a schema update, provision the definition under a new
-analyzer ID using the documented `--create-claim-analyzer` setup option, activate
-that configuration and prepare fresh claim summaries. Their definition hash
-isolates earlier extraction/review caches. The Search policy index does not
-need different source PDFs for this extraction-only change.
+The three comparisons reuse the original Parse fields and selected whole
+first-pass page text; they don't require a claim summary or another claim CU call.
+The optional legacy claim-summary definition includes rental-request/use wording
+(`RentalRequested`, `RentalUsed`, `RequestTypeEvidence`). If a separate experiment
+needs that analyzer, provision a changed definition under a new ID with
+`--create-claim-analyzer`; setup never overwrites an older definition.
+Don't prepare fresh claim summaries merely to run the three comparisons.
 
 Open the [Python setup notebook](../infra/policy-agent-framework-setup.ipynb)
 for a step-by-step walkthrough. The notebook calls the same Python functions
@@ -150,12 +150,14 @@ aren't deleted.
 On a fresh clone, `.tools\policy-agent-framework.json` is absent because it is
 machine-local and git-ignored. After dependencies are provisioned, launch the app
 and load the included CU run, then select **Check policies** > **Load cached
-results**. The app reads all ten synthetic reviews and their claim fields directly
-from `data\policy-demo` when compatible local reviews aren't available. No restore,
+results**. The app reads all ten synthetic reviews (30 comparisons) from
+`data\policy-demo`, reusing the committed Parse evidence in `data\results`,
+when compatible local reviews aren't available. No claim summary, restore,
 Azure configuration, credentials or Azure calls are involved. The **Bundled demo**
 label preserves the original index provenance. Existing configuration and caches
 aren't overwritten, and live-compatible cached results take precedence.
-Bundled results are read-only; follow-up chat isn't available.
+Bundled results are read-only. Follow-up chat requires a compatible live
+model/Search configuration and retains the bundled review's source provenance.
 
 The optional `.\infra\policy-demo-cache.ps1` command still restores a local copy
 for cache-maintenance workflows. It refuses to overwrite different existing
@@ -167,7 +169,42 @@ the setup workflow before attendees arrive. Installing packages alone doesn't
 provision Azure resources. After intentionally refreshing all ten reviews,
 export a new bundle with `.\infra\policy-demo-cache.ps1 -Action export -RunId RUN-ID`.
 Export rejects missing or earlier-prompt results and includes only the selected
-run's claim fields, review files and public configuration, not logs or credentials.
+run's review files, public configuration and hashes of the existing Parse files,
+not logs, credentials or duplicate claim extractions. Earlier three-, four- and five-check
+results remain history-only; they aren't reinterpreted as the current checks.
+Contract version 5 distinguishes the pruned set from the earlier three-check set
+containing Rental start. Export preserves the prior four-check bundle unchanged
+under `data\policy-demo\history\four-checks`.
+
+The active policy manifest has 21 PDFs. Legacy rental-terms/state-SOP/shared-standard
+PDFs remain in `data\policies\archive\legacy-rental-review-v2\` with verified
+historical aliases; they don't enter active ingestion or preview warming.
+The **Policy documents** link opens three dataset-folder links: the original policy
+PDFs, saved Search outputs, and saved Digital Parse outputs. Each displays its
+actual absolute directory on the workbench host. On the local Windows workbench,
+select a link to request Windows Explorer through a private-session, same-origin
+endpoint restricted to these three dataset IDs. If opening or clipboard access
+is unavailable, use **Copy path** or copy the selected fallback field manually.
+There is no arbitrary path execution, directory browsing, or Blob upload.
+
+Native document representations are committed separately under
+`data\policy-document-demo\search\` and `data\policy-document-demo\digital\`.
+Bundle manifest version 2 records their mode-specific payload paths; the original
+response/Markdown bytes and provenance hashes are unchanged.
+The viewer validates the source hash, analyzer/API identity, raw native response,
+derived Markdown and payload hashes before reading live settings or credentials.
+Opening tabs makes no Azure calls. A successful empty Digital parse result on a
+scan stays empty and is explained, never replaced with OCR or Layout output.
+After an approved corpus change, the maintenance command is:
+
+```powershell
+Set-Location src\workbench
+node --import tsx src\policy-document-warm.ts --approve-azure --export-bundle --expected-files=21 --max-analyses=42
+```
+
+This explicit command can incur Azure charges for missing native representations.
+It serializes requests, preserves genuine responses/errors and doesn't analyze
+claim packets, change Search ingestion or rerun policy reviews.
 
 ## Prepare live policy checks on a lab machine
 
@@ -417,11 +454,11 @@ New setup defaults to Search-managed Standard ingestion; the following is an
 explicit legacy option for maintaining a Layout generation.
 Search-managed Standard ingestion builds on CU layout extraction with figure
 understanding optimized for search; the current Layout-only path doesn't add
-those figure descriptions. The declarations, rental terms/diagram,
-and issued amendment are registered alongside the existing SOPs. They apply
+those figure descriptions. Declarations, scanned effective-date records
+and the issued amendment are registered alongside the repair SOP. They apply
 only when both the CU policy ID and insured VIN match their `policyScope`.
 Missing or contradictory identifiers exclude these contract documents, not
-the state SOP or shared standard.
+the independently scoped synthetic repair SOP.
 
 Use the existing signed-in Azure CLI identity, model deployment and claim
 analyzer. First run the read-only check:
@@ -437,17 +474,44 @@ registered source page, uploads and reads back the new chunks, and updates the
 machine-local configuration only after verification. It never changes or
 deletes the source index. New extracted content is labeled CU Layout, not
 Standard; diagram text remains OCR evidence, not a guaranteed interpretation.
+Revised registered policy PDFs are re-extracted into the new generation;
+unchanged policy pages and SOPs are reused. A newly registered independent
+`repair_review_sop` is extracted into the new generation as well; its exact
+state-rule/page mapping must agree with the citation map. Other source metadata drift fails
+verification rather than silently replacing shared evidence.
 
-For Texas and Washington, the matching rental-terms PDF explicitly makes Figure
-R-1 controlling for eligibility timing; the prompt applies this only to the
-exact policy and VIN. Other state diagrams remain illustrative. Limits, charges
-and other written terms remain governed by their own clauses.
+The Repair estimate comparison uses the versioned, two-page synthetic repair-review
+diagram in the manifest, not the rental daily-rate SOP. Reproduce this authored
+source with `python .\infra\generate-repair-review-corpus.py` in the
+corpus-authoring environment before provisioning a fresh generation.
+The thresholds and decision branches are inside the diagram itself. They are
+fictional internal gross-USD review authority, not state law, a contractual
+coverage limit, denial, or payment authorization. Inspect the newly indexed
+figure text before regenerating saved reviews: a successful ingestion does not
+prove that OCR transcribed numeric thresholds accurately.
+
+If Layout produces an invalid VIN in a labeled policy field, setup asks the
+existing vision-capable model deployment to transcribe that field from the
+original PDF page image. The prompt receives no expected claim or manifest VIN.
+Only a legible, valid reading is accepted; uncertainty stops setup. The original
+CU response and the independent model response remain in separate local caches.
+The indexed page identifies the image-verified transcription. Valid but different
+VINs are never normalized or forced to match, and remain identity conflicts
+during review. This policy-only verification can incur an additional model call;
+it never re-extracts a claim.
+
+Rental-start timing is no longer an active comparison. Its rental-terms
+diagrams and legacy rental SOPs remain in the archive for historical citations.
+Daily rate uses the unchanged declarations and genuine issued amendment for
+the narrow contractual base-cap comparison, not the archived routine-SOP cap.
 
 The Layout extraction cache under `.tools/policy-layout-cache/` is keyed by
 source bytes, endpoint, API version and analyzer. A changed PDF cannot reuse an
 old extraction. Don't index the local scenario HTML or its expected answers.
-The SOP generator preserves separately registered `policy_contract` documents
-and their citation maps when regenerating its state/shared sources.
+Image verification is additionally keyed by source hash, page, model deployment,
+endpoint and prompt hash. Changing its prompt cannot reuse an old reading.
+The historical SOP generator retains its reproduction workflow. For a pruned
+active manifest, it verifies sources without recreating archived documents.
 
 For claim-extractor authoring, `claim_evidence_analyzer_definition()` in
 `infra/setup-policy-index.py` defines a flat, literal fact schema for this

@@ -69,35 +69,71 @@ the index configuration only to run live analysis or policy checks.
 
 #### Try the policy-check comparison
 
-On first launch, open **Check policies**, select **FoundryIQ**, then select
-**Load cached results**. The app loads the included **10/10** CU run and all
-**50** saved policy checks together; no separate extraction step is needed.
-**Parse and extract** > **Load cached results** also loads the included CU run
+On first launch, the app automatically loads the included **10/10** CU run and
+all **30** saved policy checks. Open **Check policies**; grounded Search retrieval
+is the default, with no retrieval selector. **Settings** > **Reload policy reviews**
+reloads them; no separate extraction step is needed.
+**Settings** > **Reload saved results** also loads the included CU run
 independently. Without compatible local reviews,
 the app reads all ten synthetic reviews directly from the checked-in demo bundle.
 No restore command, Azure configuration or credentials are needed. **Bundled demo**
 identifies these read-only results and their original Search index; they aren't
 presented as results from a newly configured index. Existing local configuration
 and caches aren't overwritten. Live-compatible cached results take precedence.
-Loading makes no Azure calls. Follow-up chat requires live Azure configuration
-and a live policy review.
+Loading makes no Azure calls. Follow-up chat requires live Azure configuration, but viewing the saved checks doesn't.
 FoundryIQ is the lab's umbrella label; this implementation retrieves evidence
 directly from Azure AI Search, not a Foundry IQ knowledge base.
+The index name above the grid links directly to its Azure portal index view.
+Resource links describe the displayed results' generation, not a different live
+configuration. **Policy documents** shows exactly three full-path dataset links:
+original policy PDFs, saved Search outputs, and saved Digital Parse outputs.
+On the local Windows workbench, a link requests its folder in Explorer; copy-path
+and manual-copy fallbacks are available. No files are uploaded to Blob Storage.
+Select a policy check's source link to view its **Original**, **CU Search**, or **Digital parse** tabs.
+Both native analyzer outputs are included for every active PDF; viewing them
+needs no Azure sign-in or calls. Digital parse can legitimately contain no text
+on a scanned PDF; the viewer explains that result without substituting OCR.
 
-The five columns are **Daily cost**, **Rental dates**, **Active policy**,
-**Covered charges**, and **Payment approval**. Compare the claim and policy
+Under **Claim policy checks**, the three columns are **Daily rate**,
+**Effective terms**, and **Repair estimate**, in that order.
+Compare the claimed daily rental base rate with the effective cap for the matched
+insured vehicle, and the applicable policy and genuine amendment with the actual loss date.
+Match the policy ID and insured VIN, not just a similar vehicle.
+**Repair estimate** independently compares each relevant distinct quote's gross total,
+including stated tax and before deductible or payments, with the synthetic internal
+state-specific routine review threshold retrieved from the repair-authority diagram.
+This threshold isn't law, a contractual coverage cap or payment approval.
+Different quote amounts alone don't require review here; **Business rules validation**
+retains its separate multiple-estimates warning.
+Compare the claim and policy
 values in the right panel, then follow a value's source link to its PDF.
 A check mark means **Satisfied**, an open circle means **Review required**,
 and a circular-arrow icon means **Waiting for info**, not an agent still running.
-**N/A** identifies checks that don't apply to a non-rental claim.
-Packet **01** illustrates a daily rate within its contractual limit while
-repair dates and insurer approval can still be missing. Packet **02** illustrates
-why charge classification and payment authority are separate from daily price.
+**N/A** can apply to **Daily rate** for a confirmed non-rental
+claim; **Effective terms** still compares the matched terms with the loss date,
+and **Repair estimate** remains independent of rental applicability.
+Packet **01** illustrates why a numerical rate fit is conditional on rental
+eligibility, not payment approval. Packet **02** compares $61/day with its
+$85 contractual cap. Missing unrelated repair completion
+or insurer payment authorization doesn't create a wait for these narrow checks.
+Linked page text is labeled as first-pass parsed evidence: its interpretation
+isn't a typed CU fact, and no source boxes are invented.
 These are evidence-based reviews, not coverage or payment approval.
+Keep Texas's **$75/day** and Washington's **$85/day** contractual rental limits
+separate from repair review authority; inspect the matched policy evidence for each.
 
-Select **Run live** and confirm only to request policy work. Matching current
-reviews are reused; uncached packets use five parallel Agent Framework calls,
-one per check, plus any missing CU claim-summary extraction. Azure charges apply.
+In **Settings**, enable live calls, then select **Run live policy checks** and
+confirm only to request policy work. Matching current
+reviews are reused; uncached packets use saved Parse fields and selected first-pass
+page text, without claim-summary preparation or claim CU reanalysis. The agent
+interprets rental applicability for Daily rate before three parallel comparison calls. Azure charges apply.
+The previous three-, four-, and five-check bundles remain history; the new bundle replaces
+the active results without editing extracted facts or inventing outcomes.
+The active corpus contains 10 declarations, nine scanned effective-date records,
+the issued Texas amendment and the two-page synthetic repair-review diagram.
+The 21 legacy rental-terms/SOP PDFs remain under
+`data\policies\archive\legacy-rental-review-v2\` with verified historical source aliases;
+they aren't ingested or used by the current checks.
 See [policy checks](docs/policy-checks.md) for the walkthrough and cache details.
 
 For guided and self-paced sessions, follow

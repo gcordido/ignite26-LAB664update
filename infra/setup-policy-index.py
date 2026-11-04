@@ -333,6 +333,15 @@ def load_sources(root: Path = ROOT) -> dict[str, Any]:
             raise SetupError(f"{doc_id}: ruleIds must be a non-empty list.")
         if cite.get("ruleIds") != rule_ids:
             raise SetupError(f"{doc_id}: citation ruleIds differ from the manifest.")
+        if doc.get("documentType") == "repair_review_sop":
+            state_rules = doc.get("stateRules")
+            if (doc.get("role") != "repair_review" or "REPAIR-SCOPE-01" not in rule_ids
+                    or not isinstance(state_rules, dict) or set(state_rules) != set(doc.get("states", []))
+                    or cite.get("stateRules") != state_rules
+                    or any(not isinstance(rule, dict) or set(rule) != {"page", "ruleId"}
+                           or type(rule["page"]) is not int or rule["page"] not in sections.values()
+                           or rule["ruleId"] not in rule_ids for rule in state_rules.values())):
+                raise SetupError(f"{doc_id}: repair diagram needs verified state-specific page/rule mappings.")
         states = doc.get("states")
         if not isinstance(states, list) or not states or not all(
                 isinstance(s, str) and re.fullmatch(r"[A-Z]{2}", s) for s in states):
@@ -354,8 +363,28 @@ def load_sources(root: Path = ROOT) -> dict[str, Any]:
             "stateCodes": state_codes, "ruleIds": list(rule_ids),
             "sections": dict(sections), "path": str(pdf),
             "documentType": doc.get("documentType"),
+            **({"role": doc["role"], "stateRules": doc["stateRules"]}
+               if doc.get("documentType") == "repair_review_sop" else {}),
             **({"policyScope": policy_scope} if policy_scope is not None else {}),
         })
+    if "activeChecks" in manifest:
+        expected_states = {"TX", "WA", "AZ", "CO", "FL", "IL", "LA", "CA", "NY", "OH"}
+        declarations = [d for d in docs_in if d.get("role") == "revised_declarations"]
+        effective = [d for d in docs_in
+                     if d.get("role") in ("policy_effective_date", "issued_amendment")]
+        repair = [d for d in docs_in if d.get("role") == "repair_review"]
+        if (manifest["activeChecks"] != ["Daily rate", "Effective terms", "Repair estimate"]
+                or len(docs_in) != 21 or len(declarations) != 10 or len(effective) != 10
+                or len(repair) != 1
+                or any(d.get("documentType") != "policy_contract" or len(d["states"]) != 1
+                       for d in declarations + effective)
+                or {d["states"][0] for d in declarations} != expected_states
+                or {d["states"][0] for d in effective} != expected_states
+                or {d["states"][0] for d in effective if d.get("role") == "issued_amendment"} != {"TX"}
+                or repair[0].get("documentType") != "repair_review_sop"
+                or set(repair[0]["states"]) != expected_states):
+            raise SetupError("The three-check corpus requires all ten declarations, ten effective-date "
+                             "sources (including the Texas issued amendment), and one repair diagram.")
     documents.sort(key=lambda d: d["documentId"])
     return {"corpusHash": sha256_hex(raw), "documents": documents}
 

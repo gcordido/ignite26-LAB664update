@@ -248,9 +248,13 @@
   height: 88px;
   white-space: normal;
   line-height: 1.25;
+  overflow-wrap: anywhere;
 }
 body:has(#review-packet[aria-pressed="true"]) #packet-table {
   min-width: 560px;
+}
+body:has(#workflow-pivots [data-workflow="policy"][aria-pressed="true"]) #packet-table {
+  min-width: 360px;
 }
 .policy-column-title,
 .policy-column-description {
@@ -488,8 +492,7 @@ input,
 select {
   font: inherit;
 }
-.toolbar select,
-#policy-toolbar select {
+.toolbar select {
   appearance: none;
   -webkit-appearance: none;
   padding-right: 36px;
@@ -501,12 +504,10 @@ select {
     border-color 120ms,
     box-shadow 120ms;
 }
-.toolbar select:hover,
-#policy-toolbar select:hover {
+.toolbar select:hover {
   border-color: #8ca8bd;
 }
-.toolbar select:focus,
-#policy-toolbar select:focus {
+.toolbar select:focus {
   outline: none;
   border-color: var(--conference-blue);
   box-shadow: 0 0 0 3px #0a6bba1c;
@@ -787,12 +788,32 @@ body.resizing-column * {
   font-weight: 600;
   color: var(--text);
 }
-#policy-toolbar {
+#policy-resources {
   padding: 4px 0;
 }
-#policy-toolbar p {
+#policy-resources p {
   margin: 3px 0;
   font-size: 12px;
+  overflow-wrap: anywhere;
+}
+#policy-document-list {
+  width: min(940px, calc(100vw - 48px));
+  max-height: calc(100vh - 48px);
+  padding: 24px;
+  overflow: auto;
+}
+#policy-document-list-files li {
+  margin-block: 8px;
+  overflow-wrap: anywhere;
+}
+#policy-document-list-files strong,
+#policy-document-list-files a {
+  display: block;
+  margin-bottom: 8px;
+}
+#policy-document-list-files input {
+  width: 100%;
+  margin-top: 8px;
 }
 .policy-run-status {
   display: flex;
@@ -1194,9 +1215,11 @@ tr:last-child td {
   display: flex;
   width: 100%;
   height: 100%;
-  padding: 0 10px;
+  padding: 0 6px;
   border-radius: 0;
   line-height: normal;
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 #packet-table.policy-grid .cell-content[data-agent-check]:focus-visible {
   outline-offset: -2px;

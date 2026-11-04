@@ -155,7 +155,7 @@ test("Framework output enforces honest no-retrieval and real per-turn indexed ci
   waiting.result.Checks[1].Outcome = "InProgress";
   waiting.result.Checks[1].ReviewRequired = false;
   assert.equal((await frameworkReview(waiting, "search", value)).result.Checks[1].Outcome, "InProgress");
-  assert.match(resultChatText(waiting.result), /Waiting for info - missing claim information or approval/);
+  assert.match(resultChatText(waiting.result), /Waiting for info/);
   waiting.result.Checks[1].ReviewRequired = true;
   await assert.rejects(frameworkReview(waiting, "search", value), /Inconsistent/);
   baseline.result.Checks[0].Outcome = "Satisfied";
@@ -319,10 +319,10 @@ test("Framework modes share prepared claim inputs but isolate review caches, cha
     const oldChat = await reloaded.chatContext(run, "search", packet.id, readRaw);
     assert.deepEqual(oldChat.result.Checks, [historical[0].result!.Checks[0]]);
     assert.equal(oldChat.promptSource, "saved");
-    const timingChat = await reloaded.chatContext(run, "search", packet.id, readRaw, "Timing");
+    const timingChat = await reloaded.chatContext(run, "search", packet.id, readRaw, "Effective terms");
     assert.deepEqual(timingChat.result.Checks, [historical[0].result!.Checks[1]]);
     assert.notEqual(timingChat.contextId, oldChat.contextId);
-    assert.equal(timingChat.prompt, "Question for Timing\nSelected CU fields");
+    assert.equal(timingChat.prompt, "Question for Effective terms\nSelected CU fields");
     assert.deepEqual(timingChat.citations, [historical[0].citations![1]]);
     await savePolicyCache(path.join(folder, archive.name), { ...archive.value, inputHash: "0".repeat(64) });
     assert.equal((await reloaded.snapshot(run, "search", readRaw))[0].status, "not run");
@@ -340,7 +340,7 @@ test("Framework modes share prepared claim inputs but isolate review caches, cha
     try {
       process.env.POLICY_CHAT_MODEL_DEPLOYMENT = "gpt-4.1-mini";
       delete process.env.POLICY_CHAT_REASONING_EFFORT;
-      const fasterChat = await service.chatContext(run, "ungrounded", packet.id, readRaw, "Timing");
+      const fasterChat = await service.chatContext(run, "ungrounded", packet.id, readRaw, "Effective terms");
       assert.equal(fasterChat.agent.modelDeployment, "gpt-4.1-mini");
       assert.equal(fasterChat.agent.reasoningEffort, undefined);
       assert.notEqual(fasterChat.contextId, context.contextId);
@@ -400,6 +400,7 @@ test("policy claim facts preserve extracted values without OCR, prose or source 
   const analysis = policyClaimAnalysis(enriched, raw, summary);
   assert.deepEqual(analysis.contents.at(-1), {
     kind: "document", category: "claim_summary",
+    contentPath: "input1", pages: { start: 1, end: packet.pages },
     fields: {
       RentalRequested: { type: "boolean", valueBoolean: false },
       PriorDays: { type: "number", valueNumber: 0 },
@@ -484,7 +485,7 @@ test("one question and two retrieval modes reject legacy or malformed contracts"
   }
 });
 
-test("claim preparation preserves zero/false/unknowns and reuses extraction across modes", async (t) => {
+test("review, snapshot, evidence and chat reuse Parse with zero additional claim CU calls", async (t) => {
   const folder = await mkdtemp(path.join(os.tmpdir(), "policy-claims-"));
   t.after(() => rm(folder, { recursive: true, force: true }));
   const cache = new Cache();
@@ -547,7 +548,7 @@ test("claim preparation preserves zero/false/unknowns and reuses extraction acro
     },
   });
   const readRaw = (id: string) => cache.raw(run.id, id);
-  assert.equal(await service.summaryPrepared(packet), false);
+  const raw = await readRaw(packet.id);
   await service.markdown(run, packet, await readRaw(packet.id));
   assert.equal(extractions + invocations, 0);
   const first = await service.start(run, "ungrounded", readRaw);
@@ -566,21 +567,17 @@ test("claim preparation preserves zero/false/unknowns and reuses extraction acro
     packet,
     await readRaw(packet.id),
   );
-  assert.match(markdown, /"Authorized": false/);
-  assert.match(markdown, /"PriorDays": 0/);
-  assert.ok(!markdown.includes('"Unknown"'));
-  assert.ok(!markdown.includes("confidence"));
-  assert.equal(await service.summaryPrepared(packet), true);
+  assert.equal(markdown, packetMarkdown(packetJson(raw, packet, run,
+    summarize(raw, packet, run.analyzer.mode))));
   const evidence = await service.claimEvidence(run, packet, await readRaw(packet.id));
   assert.equal(evidence.packetId, packet.id);
-  assert.equal(evidence.fields.find((field) => field.field === "Authorization.Authorized")?.value, false);
-  assert.equal(evidence.fields.find((field) => field.field === "Authorization.PriorDays")?.value, 0);
+  assert.ok(evidence.fields.some((field) => field.field.startsWith("parse.")));
   assert.ok(evidence.fields.every((field) => field.href === `/data/packets/${packet.id}.pdf`));
   assert.ok(evidence.fields.every((field) => field.regions.every((region) =>
     region.page >= 1 && region.page <= packet.pages)));
   const again = await service.start(run, "ungrounded", readRaw);
   await again.task;
-  assert.equal(extractions, 1);
+  assert.equal(extractions, 0);
   assert.equal(invocations, 1);
   const exported = packetJson(
     await readRaw(packet.id),
@@ -588,7 +585,11 @@ test("claim preparation preserves zero/false/unknowns and reuses extraction acro
     run,
     summarize(await readRaw(packet.id), packet, run.analyzer.mode),
   );
-  assert.equal(packetMarkdown(withClaimSummary(exported, summary)), markdown);
+  assert.equal(packetMarkdown(exported), markdown);
+  assert.ok((await service.snapshot(run, "ungrounded", readRaw))[0].status === "completed");
+  await service.chatContext(run, "ungrounded", packet.id, readRaw);
+  assert.equal(extractions, 0);
+  assert.ok(!(await readdir(folder)).some((name) => name.startsWith("claim-")));
   assert.throws(() =>
     withClaimSummary(exported, { ...summary, status: "Failed" }),
   );
@@ -740,7 +741,7 @@ test("private API chats preserve history, isolate cases and never replay failed 
     return headers;
   }
   const headers = await privateSession();
-  const query = `policy/chat?mode=search&packetId=packet-01&runId=${runId}&check=Amount`;
+  const query = `policy/chat?mode=search&packetId=packet-01&runId=${runId}&check=Daily%20rate`;
   assert.equal((await fetch(base + query)).status, 401);
   const read = async () => (await fetch(base + query, { headers })).json();
   const context = await read();
@@ -750,7 +751,7 @@ test("private API chats preserve history, isolate cases and never replay failed 
   const body = {
     mode: "search",
     packetId: "packet-01",
-    check: "Amount",
+    check: "Daily rate",
     runId,
     contextId: context.contextId,
     message: "Explain the rate",
@@ -773,12 +774,13 @@ test("private API chats preserve history, isolate cases and never replay failed 
   assert.match(reply.citations[0].href, /#page=3$/);
   assert.deepEqual(histories[0], context.messages);
   assert.equal((await read()).messages.length, 4);
-  const timing = await (await fetch(base + query.replace("check=Amount", "check=Timing"), { headers })).json();
+  const timing = await (await fetch(base + query.replace("check=Daily%20rate", "check=Effective%20terms"), { headers })).json();
   assert.notEqual(timing.contextId, context.contextId);
   assert.equal(timing.messages.length, 2);
-  assert.deepEqual(timing.result.Checks.map((check: { Check: string }) => check.Check), ["Timing"]);
-  assert.equal((await send({ ...body, check: "Timing" })).status, 409);
-  assert.equal((await fetch(base + query.replace("&check=Amount", ""), { headers })).status, 400);
+  assert.deepEqual(timing.result.Checks.map((check: { Check: string }) => check.Check), ["Effective terms"]);
+  assert.equal((await send({ ...body, check: "Effective terms" })).status, 409);
+  assert.equal((await send({ ...body, check: "Rental start" })).status, 400);
+  assert.equal((await fetch(base + query.replace("&check=Daily%20rate", ""), { headers })).status, 400);
   const other = await privateSession();
   assert.equal(
     (await (await fetch(base + query, { headers: other })).json()).messages
@@ -840,7 +842,6 @@ test("missing configuration leaves claim views usable and exposes an actionable 
     await cache.raw(run.id, run.source[0].id),
   );
   assert.ok(markdown.length > 0);
-  assert.equal(await service.summaryPrepared(run.source[0]), false);
   await assert.rejects(
     service.start(run, "search", (id) => cache.raw(run.id, id)),
     /setup-policy-index/,

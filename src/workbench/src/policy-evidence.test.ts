@@ -5,22 +5,38 @@ import path from "node:path";
 import { repositoryRoot } from "./config.ts";
 import { checkNames, question, resolveCitations } from "./policy-core.ts";
 
-test("the evidence scenarios lead the five-check contract and retain eligibility safeguards", async () => {
+test("three claim-versus-policy comparisons retain scoped evidence safeguards", async () => {
   assert.deepEqual(checkNames, [
-    "Amount", "Timing", "Effective terms",
-    "Charges and reimbursement calculation", "Authorization and payment readiness",
+    "Daily rate", "Effective terms", "Repair estimate",
   ]);
   const prompt = await question();
-  assert.match(prompt, /1\. Amount\.\n2\. Timing\.\n3\. Effective terms\./);
-  assert.match(prompt, /policy ID AND insured VIN/);
-  assert.match(prompt, /blank optional-code cell stays missing\/null/);
-  assert.match(prompt, /actual delivery\s+for covered repairs, not an appointment/);
-  assert.match(prompt, /Texas RNT-TX-01 and Washington RNT-WA-P02/);
-  assert.match(prompt, /the figure controls rental-eligibility branches/);
-  assert.match(prompt, /Use the actual CU loss date/);
+  assert.match(prompt, /Daily rate/);
+  assert.doesNotMatch(prompt, /Rental start/);
+  assert.match(prompt, /policy ID and insured VIN/i);
+  assert.match(prompt, /blank/i);
+  assert.match(prompt, /genuine carrier-issued\s+amendments/i);
+  assert.match(prompt, /applicable loss-state diagram/i);
+  assert.match(prompt, /loss date/i);
 });
 
-test("each source claim has three scoped, hash-verified evidence PDFs", async () => {
+test("repair diagram citations resolve the exact state page and reject another state's page", async () => {
+  const citation = {
+    File: "synthetic-repair-review-authority-v1.pdf",
+    DocumentId: "SYNTHETIC-REPAIR-REVIEW-001",
+    Version: "1.0", RuleId: "REPAIR-TX-01",
+    Section: "Figure RE-1: TX WA AZ CO FL",
+  };
+  const [links] = await resolveCitations({ Checks: [{ Citation: [
+    citation,
+    { ...citation, RuleId: "REPAIR-IL-01", Section: "Figure RE-2: IL LA CA NY OH" },
+    { ...citation, Section: "Figure RE-2: IL LA CA NY OH" },
+  ] }] });
+  assert.match(links[0].href ?? "", /synthetic-repair-review-authority-v1\.pdf#page=1$/);
+  assert.match(links[1].href ?? "", /synthetic-repair-review-authority-v1\.pdf#page=2$/);
+  assert.equal(links[2].href, null);
+});
+
+test("each source claim retains two scoped contractual PDFs and historical scenario citations", async () => {
   const folder = path.join(repositoryRoot, "data", "policies", "rental", "ocr-comparison-v2");
   const [manifest, packetData, citationMaps, scenarioData] = await Promise.all([
     readFile(path.join(folder, "manifest.json"), "utf8").then(JSON.parse),
@@ -30,7 +46,12 @@ test("each source claim has three scoped, hash-verified evidence PDFs", async ()
   ]);
   const contracts = manifest.documents.filter((doc: { documentType: string }) =>
     doc.documentType === "policy_contract");
-  assert.equal(contracts.length, packetData.packets.length * 3);
+  const archive = JSON.parse(await readFile(path.join(repositoryRoot, "data", "policies", "archive",
+    "legacy-rental-review-v2", "registry.json"), "utf8"));
+  const archivedSources = archive.documents.map((entry: { source: Record<string, unknown> }) => entry.source);
+  const allContracts = [...contracts, ...archivedSources.filter((doc: { documentType: string }) =>
+    doc.documentType === "policy_contract")];
+  assert.equal(contracts.length, packetData.packets.length * 2);
   assert.equal(scenarioData.length, packetData.packets.length);
 
   for (const packet of packetData.packets) {
@@ -38,13 +59,14 @@ test("each source claim has three scoped, hash-verified evidence PDFs", async ()
       states: string[];
       policyScope: { vin: string };
     }) => doc.states.includes(packet.region) && doc.policyScope.vin === packet.expectedRepair.vin);
-    assert.equal(docs.length, 3, `${packet.id} should have three scoped evidence documents`);
+    assert.equal(docs.length, 2, `${packet.id} should retain two scoped contractual documents`);
     const roles = new Set(docs.map((doc: { role: string }) => doc.role));
-    assert.equal(roles.size, 3);
+    assert.equal(roles.size, 2);
     assert.ok(roles.has("revised_declarations"));
-    assert.ok(roles.has("rental_terms"));
+    assert.ok(!roles.has("rental_terms"));
     assert.ok(roles.has("issued_amendment") || roles.has("policy_effective_date"));
-    const rentalTerms = docs.find((doc: { role: string }) => doc.role === "rental_terms");
+    const rentalTerms = allContracts.find((doc: { role: string; states: string[] }) =>
+      doc.role === "rental_terms" && doc.states.includes(packet.region));
     assert.deepEqual(rentalTerms.ruleIds, [
       "R.1", "R.2", "R.3", "R.4", "R.5", "R.6", "Figure R-1",
     ]);
@@ -68,7 +90,7 @@ test("each source claim has three scoped, hash-verified evidence PDFs", async ()
       scenarios.questions.map((item: { source: string }) => item.source),
       ["sparse_table", "diagram", "scanned_document"],
     );
-    assert.equal(scenarios.questions[0].answer, "$85 per day.");
+    assert.equal(scenarios.questions[0].answer, packet.region === "TX" ? "$75 per day." : "$85 per day.");
     assert.equal(
       scenarios.questions[1].answer,
       "When it is actually delivered for covered repairs.",
@@ -77,7 +99,7 @@ test("each source claim has three scoped, hash-verified evidence PDFs", async ()
       (item: { citation: { DocumentId: string } }) => item.citation.DocumentId,
     )).size, 3);
     for (const item of scenarios.questions) {
-      const source = contracts.find((doc: {
+      const source = allContracts.find((doc: {
         documentId: string;
         states: string[];
         policyScope: { vin: string };
@@ -95,7 +117,7 @@ test("each source claim has three scoped, hash-verified evidence PDFs", async ()
   assert.equal(resolved.length, inputs.length);
   for (const [index, citation] of resolved.entries()) {
     const input = inputs[index];
-    const map = citationMaps.find((item: { documentId: string }) =>
+    const map = [...citationMaps, ...archive.documents.map((entry: { citation: unknown }) => entry.citation)].find((item: { documentId: string }) =>
       item.documentId === input.DocumentId);
     assert.ok(map, `${input.DocumentId} should have a citation map`);
     assert.equal(

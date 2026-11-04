@@ -2,6 +2,7 @@
 
 import copy
 import importlib.util
+import json
 from pathlib import Path
 import shutil
 import unittest
@@ -132,6 +133,190 @@ class LayoutTests(unittest.TestCase):
         self.assertTrue(all(method in ("GET", "POST") and "/docs/index?" not in url
                             for method, url in self.http.calls if "/indexes/source-index" in url))
 
+    def archived_source(self):
+        self.source()
+        corpus = self.root / layout.setup.CORPUS
+        folder = self.root / "data" / "policies" / "archive" / "legacy-rental-review-v2"
+        folder.mkdir(parents=True)
+        manifest_raw = (corpus / "manifest.json").read_bytes()
+        citations_raw = (corpus / "citations.json").read_bytes()
+        manifest, citations = json.loads(manifest_raw), json.loads(citations_raw)
+        retired = manifest["documents"].pop(0)
+        citation = next(c for c in citations if c["documentId"] == retired["documentId"])
+        fingerprint = layout.layout_generation(
+            self.http.rows["source-index"], self.sources["corpusHash"],
+            {"searchEndpoint": fixtures.SEARCH_ENDPOINT})
+        for row in self.http.rows["source-index"]:
+            row["indexFingerprint"] = fingerprint
+            row["corpusHash"] = self.sources["corpusHash"]
+        registry = {
+            "schemaVersion": 1, "archiveId": "legacy-rental-review-v2", "includeInKnowledgeIndex": False,
+            "sourceGeneration": {
+                "manifestSha256": layout.setup.sha256_hex(manifest_raw),
+                "citationsSha256": layout.setup.sha256_hex(citations_raw),
+                "nativeLayoutIndexFingerprint": fingerprint,
+                "originalManifest": "original-manifest.json", "originalCitations": "original-citations.json",
+            },
+            "documents": [{
+                **{k: retired[k] for k in ("documentId", "version", "pdf", "sha256")},
+                "originalLogicalPath": f"data/policies/rental/ocr-comparison-v2/{retired['pdf']}",
+                "archivePath": f"data/policies/archive/legacy-rental-review-v2/{retired['pdf']}",
+                "rationale": "Unselected legacy source.", "source": retired, "citation": citation,
+            }],
+        }
+        (folder / "original-manifest.json").write_bytes(manifest_raw)
+        (folder / "original-citations.json").write_bytes(citations_raw)
+        layout.setup.atomic_json(folder / "registry.json", registry)
+        (corpus / retired["pdf"]).rename(folder / retired["pdf"])
+        layout.setup.atomic_json(corpus / "manifest.json", manifest)
+        layout.setup.atomic_json(corpus / "citations.json",
+                                [c for c in citations if c["documentId"] != retired["documentId"]])
+        self.sources = layout.setup.load_sources(self.root)
+        return folder, registry
+
+    def test_registered_archive_preflight_prunes_only_verified_rows_without_extraction(self):
+        self.archived_source()
+        original = copy.deepcopy(self.http.rows["source-index"])
+        result = self.run_setup("--source-index", "source-index", "--index-name", "isolated-index")
+        self.assertEqual(result["prunedArchivedChunks"], 3)
+        self.assertEqual(result["prunedArchivedDocumentCount"], 1)
+        self.assertEqual(result["prunedArchivedDocuments"], ["TX-RENTAL-002"])
+        self.assertEqual(result["reusedChunks"], 6)
+        self.assertEqual(result["newDocuments"], [])
+        self.extract.assert_not_called()
+        self.assertEqual(self.http.rows["source-index"], original)
+        self.assertEqual((self.root / layout.setup.CONFIG_PATH).read_bytes(), self.before)
+        self.assertTrue(all(method == "GET" or "/docs/search?" in url for method, url in self.http.calls))
+
+    def test_registered_archive_apply_preserves_old_index_and_writes_only_active_rows(self):
+        self.archived_source()
+        original = copy.deepcopy(self.http.rows["source-index"])
+        result = self.run_setup("--apply", "--source-index", "source-index", "--index-name", "isolated-index")
+        self.assertEqual(result["prunedArchivedChunks"], 3)
+        self.assertEqual(result["chunks"], 6)
+        self.assertEqual(result["documents"], 2)
+        self.extract.assert_not_called()
+        self.assertEqual(self.http.rows["source-index"], original)
+        self.assertEqual({row["documentId"] for row in self.http.rows["isolated-index"]},
+                         {doc["documentId"] for doc in self.sources["documents"]})
+
+    def test_archive_pruning_rejects_unknown_metadata_generation_and_content_drift(self):
+        self.archived_source()
+        original = copy.deepcopy(self.http.rows["source-index"])
+        mutations = [
+            {"documentId": "UNKNOWN"}, {"version": "wrong"}, {"file": "foreign.pdf"},
+            {"sha256": "c" * 64}, {"stateCodes": ["WA"]}, {"ruleIds": ["WRONG"]},
+            {"page": 99}, {"section": "wrong"}, {"corpusHash": "c" * 64},
+            {"indexFingerprint": "c" * 64}, {"content": "Altered archived extraction"},
+            {"id": "altered-chunk-key"}, {"extra": "unexpected"},
+        ]
+        for mutation in mutations:
+            self.http.rows["source-index"] = copy.deepcopy(original)
+            self.http.rows["source-index"][0].update(mutation)
+            with self.subTest(mutation=mutation), self.assertRaises(layout.setup.SetupError):
+                self.run_setup("--source-index", "source-index", "--index-name", "isolated-index")
+        self.http.rows["source-index"] = copy.deepcopy(original)
+        self.http.rows["source-index"][-1]["content"] = "Altered retained extraction"
+        with self.assertRaisesRegex(layout.setup.SetupError, "content fingerprint"):
+            self.run_setup("--source-index", "source-index", "--index-name", "isolated-index")
+        self.extract.assert_not_called()
+        self.assertEqual((self.root / layout.setup.CONFIG_PATH).read_bytes(), self.before)
+
+    def test_archive_pruning_rejects_registry_original_metadata_and_pdf_drift(self):
+        folder, registry = self.archived_source()
+        for mutation in [
+            {"archivePath": "../doc0.pdf"}, {"originalLogicalPath": "foreign/doc0.pdf"},
+            {"sha256": "c" * 64}, {"version": "wrong"},
+            {"citation": {**registry["documents"][0]["citation"], "sections": {"wrong": 1}}},
+            {"source": {**registry["documents"][0]["source"], "states": ["WA"]}},
+        ]:
+            changed = copy.deepcopy(registry)
+            changed["documents"][0].update(mutation)
+            layout.setup.atomic_json(folder / "registry.json", changed)
+            with self.subTest(mutation=mutation), self.assertRaises(layout.setup.SetupError):
+                self.run_setup("--source-index", "source-index", "--index-name", "isolated-index")
+        layout.setup.atomic_json(folder / "registry.json", registry)
+        old_citations = (folder / "original-citations.json").read_bytes()
+        (folder / "original-citations.json").write_bytes(b"[]")
+        with self.assertRaisesRegex(layout.setup.SetupError, "metadata hash"):
+            self.run_setup("--source-index", "source-index", "--index-name", "isolated-index")
+        (folder / "original-citations.json").write_bytes(old_citations)
+        (folder / registry["documents"][0]["pdf"]).write_bytes(b"tampered archived PDF")
+        with self.assertRaisesRegex(layout.setup.SetupError, "archived PDF hash"):
+            self.run_setup("--source-index", "source-index", "--index-name", "isolated-index")
+        self.extract.assert_not_called()
+
+    def test_archive_pruning_preserves_active_invalid_vin_reread(self):
+        folder, registry = self.archived_source()
+        for row in self.http.rows["source-index"]:
+            if row["documentId"] == "WA-RENTAL-002":
+                row["content"] = "VEHICLE IDENTIFICATION NUMBER\n1FMCUOG63MA514686"
+        fingerprint = layout.layout_generation(
+            self.http.rows["source-index"], registry["sourceGeneration"]["manifestSha256"],
+            {"searchEndpoint": fixtures.SEARCH_ENDPOINT})
+        registry["sourceGeneration"]["nativeLayoutIndexFingerprint"] = fingerprint
+        for row in self.http.rows["source-index"]:
+            row["indexFingerprint"] = fingerprint
+        layout.setup.atomic_json(folder / "registry.json", registry)
+        current = copy.deepcopy(self.sources)
+        next(doc for doc in current["documents"] if doc["documentId"] == "WA-RENTAL-002")[
+            "documentType"] = "policy_contract"
+        with patch.object(layout.setup, "load_sources", return_value=current):
+            report = self.run_setup("--source-index", "source-index", "--index-name", "isolated-index")
+        self.assertEqual(report["prunedArchivedChunks"], 3)
+        self.assertEqual(report["reusedChunks"], 3)
+        self.assertEqual(report["vinVerificationDocuments"], ["WA-RENTAL-002"])
+        self.assertEqual(report["newDocuments"], ["doc1.pdf"])
+        self.extract.assert_not_called()
+
+    def test_changed_registered_policy_is_reextracted_without_changing_source(self):
+        self.sources["documents"][0]["documentType"] = "policy_contract"
+        self.source()
+        original = copy.deepcopy(self.http.rows["source-index"])
+        revised = copy.deepcopy(self.sources)
+        revised["documents"][0]["sha256"] = "c" * 64
+        revised["corpusHash"] = "d" * 64
+        with patch.object(layout.setup, "load_sources", return_value=revised):
+            report = self.run_setup("--source-index", "source-index", "--index-name", "isolated-index")
+            self.extract.assert_not_called()
+            self.assertEqual(report["revisedDocuments"], [revised["documents"][0]["documentId"]])
+            self.assertEqual(report["reusedChunks"], 6)
+            self.run_setup("--apply", "--source-index", "source-index", "--index-name", "isolated-index")
+        self.assertEqual(self.extract.call_count, 1)
+        self.assertEqual(self.extract.call_args.args[1], revised["documents"][0])
+        self.assertEqual(self.http.rows["source-index"], original)
+        self.assertEqual(len(self.http.rows["isolated-index"]), 9)
+
+    def test_policy_revision_does_not_allow_unrelated_metadata_drift(self):
+        self.sources["documents"][0]["documentType"] = "policy_contract"
+        self.source()
+        for row in self.http.rows["source-index"]:
+            if row["documentId"] == self.sources["documents"][0]["documentId"]:
+                row["sha256"] = "c" * 64
+        self.http.rows["source-index"][0]["file"] = "foreign-policy.pdf"
+        with patch.object(layout.setup, "load_sources", return_value=self.sources):
+            with self.assertRaisesRegex(layout.setup.SetupError, "inconsistent file"):
+                self.run_setup("--apply", "--source-index", "source-index", "--index-name", "isolated-index")
+        self.extract.assert_not_called()
+
+    def test_sop_hash_drift_is_not_silently_replaced(self):
+        self.source()
+        self.http.rows["source-index"][0]["sha256"] = "c" * 64
+        with self.assertRaisesRegex(layout.setup.SetupError, "inconsistent sha256"):
+            self.run_setup("--apply", "--source-index", "source-index", "--index-name", "isolated-index")
+        self.extract.assert_not_called()
+
+    def test_invalid_policy_vin_triggers_only_that_document_reread(self):
+        self.sources["documents"][0]["documentType"] = "policy_contract"
+        self.source()
+        self.http.rows["source-index"][0]["content"] = "VEHICLE IDENTIFICATION NUMBER\n1FMCUOG63MA514686"
+        original = copy.deepcopy(self.http.rows["source-index"])
+        with patch.object(layout.setup, "load_sources", return_value=self.sources):
+            result = self.run_setup("--apply", "--source-index", "source-index", "--index-name", "isolated-index")
+        self.assertEqual(result["vinVerificationDocuments"], [self.sources["documents"][0]["documentId"]])
+        self.assertEqual(self.extract.call_count, 1)
+        self.assertEqual(self.http.rows["source-index"], original)
+
     def test_source_cannot_be_target(self):
         with self.assertRaisesRegex(layout.setup.SetupError, "cannot be overwritten"):
             self.run_setup("--apply", "--source-index", "source-index", "--index-name", "source-index")
@@ -202,6 +387,62 @@ class LayoutTests(unittest.TestCase):
             result = self.run_setup("--apply", "--create-claim-analyzer", "--index-name", "isolated-index")
         self.assertEqual(result["status"], "verified")
         self.assertEqual(self.http.analyzer["status"], "ready")
+
+
+class VinImageTests(unittest.TestCase):
+    def setUp(self):
+        self.root = fixtures.make_root()
+        self.addCleanup(shutil.rmtree, self.root)
+        self.doc = layout.setup.load_sources(self.root)["documents"][0]
+        self.settings = {
+            "azureOpenAIEndpoint": fixtures.FOUNDRY_ROOT, "modelDeployment": "gpt-5",
+        }
+        self.text = "VEHICLE IDENTIFICATION NUMBER\n1FMCUOG63MA514686\nPolicy term: 2025-10-06"
+
+    def response(self, vin, legible=True):
+        return {"status": "completed", "model": "gpt-5", "output": [{
+            "type": "message", "content": [{"type": "output_text",
+                                          "text": json.dumps({"legible": legible, "vin": vin})}],
+        }]}
+
+    def test_scanned_zero_is_read_from_original_pdf_not_scope_or_replacement(self):
+        self.doc["policyScope"] = {"policyId": "NEVER-SEND", "vin": "1FMCU0G61MA514687"}
+        with patch.object(layout, "request", return_value=(self.response("1FMCU0G63MA514686"), {})) as call:
+            result = layout.verify_policy_vin(None, self.doc, 1, self.text, self.settings, self.root)
+            again = layout.verify_policy_vin(None, self.doc, 1, self.text, self.settings, self.root)
+        self.assertEqual(call.call_count, 1, "The original source-image response is reused on an identical rerun.")
+        self.assertEqual(result, again)
+        self.assertIn("1FMCU0G63MA514686", result)
+        self.assertNotIn("1FMCUOG63MA514686", result)
+        self.assertIn("Policy term: 2025-10-06", result)
+        self.assertIn("Policy VIN image verification v1", result)
+        body = call.call_args.kwargs["body"]
+        self.assertFalse(body["store"])
+        self.assertEqual(body["input"][0]["content"][1]["type"], "input_file")
+        self.assertNotIn("NEVER-SEND", json.dumps(body))
+        self.assertNotIn("1FMCU0G61MA514687", json.dumps(body))
+        self.assertNotIn("1FMCUOG63MA514686", json.dumps(body))
+
+    def test_valid_different_vin_is_not_normalized_or_reread(self):
+        text = self.text.replace("1FMCUOG63MA514686", "1FMCU0G61MA514687")
+        with patch.object(layout, "request") as call:
+            self.assertEqual(layout.verify_policy_vin(None, self.doc, 1, text, self.settings, self.root), text)
+        call.assert_not_called()
+
+    def test_image_reading_is_not_forced_to_the_registered_or_claim_identity(self):
+        with patch.object(layout, "request", return_value=(self.response("1FMCU0G61MA514687"), {})):
+            result = layout.verify_policy_vin(None, self.doc, 1, self.text, self.settings, self.root)
+        self.assertIn("1FMCU0G61MA514687", result)
+        self.assertNotIn("1FMCU0G63MA514686", result)
+
+    def test_uncertain_or_invalid_original_vin_stops_instead_of_waiving_mismatch(self):
+        for vin, legible in ((None, False), ("1FMCUOG63MA514686", True)):
+            with self.subTest(vin=vin), patch.object(
+                    layout, "request", return_value=(self.response(vin, legible), {})):
+                with self.assertRaisesRegex(layout.setup.SetupError, "no OCR substitution"):
+                    layout.verify_policy_vin(None, self.doc, 1, self.text, self.settings, self.root)
+            for cache in (self.root / ".tools" / "policy-layout-cache").glob("vin-*.json"):
+                cache.unlink()
 
 
 if __name__ == "__main__":

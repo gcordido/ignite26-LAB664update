@@ -4,17 +4,17 @@ This corpus supports a five-check rental reimbursement review using Content
 Understanding claim facts and retrieved SOP knowledge. All state differences
 are **fictional internal procedures**, not state law or insurer contract terms.
 This historical reference describes the original v1 scenarios; their policy
-files and ZIP archive have been removed. For the current
-all-state corpus and application, use the [v2 corpus guide](rental-ocr-comparison.md)
-and [policy checks workflow](policy-checks.md).
+files and ZIP archive have been removed. The v2 rental material is now archived;
+use the [historical v2 guide](rental-ocr-comparison.md) for it and
+the [policy checks workflow](policy-checks.md) for the active three-check corpus.
 
 ## Documents
 
-| Retired source | Current replacement |
+| Retired source | Archived v2 replacement |
 |---|---|
-| Texas SOP: TX-RENTAL-001 v1.0 | [TX-RENTAL-002 v2.0](../data/policies/rental/ocr-comparison-v2/tx-rental-review-sop-v2.pdf) |
-| Washington SOP: WA-RENTAL-001 v1.0 | [WA-RENTAL-002 v2.0](../data/policies/rental/ocr-comparison-v2/wa-rental-review-sop-v2.pdf) |
-| Shared standard: SHARED-EVIDENCE-001 v1.0 | [SHARED-EVIDENCE-002 v2.0](../data/policies/rental/ocr-comparison-v2/shared-rental-evidence-standard-v2.pdf) |
+| Texas SOP: TX-RENTAL-001 v1.0 | [TX-RENTAL-002 v2.0](../data/policies/archive/legacy-rental-review-v2/tx-rental-review-sop-v2.pdf) |
+| Washington SOP: WA-RENTAL-001 v1.0 | [WA-RENTAL-002 v2.0](../data/policies/archive/legacy-rental-review-v2/wa-rental-review-sop-v2.pdf) |
+| Shared standard: SHARED-EVIDENCE-001 v1.0 | [SHARED-EVIDENCE-002 v2.0](../data/policies/archive/legacy-rental-review-v2/shared-rental-evidence-standard-v2.pdf) |
 
 The documents contain decision tables with merged title/exception rows,
 multi-level headers, checkbox worksheets and checked illustrations, stable

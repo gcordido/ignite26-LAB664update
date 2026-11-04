@@ -9,6 +9,101 @@ import { cacheFolders, dataRoot, repositoryRoot } from "./config.ts";
 import { policyDemo, readPolicyDemo } from "./policy-demo.ts";
 import { frameworkConfigSchema, PolicyService, type PolicyItem } from "./policy-service.ts";
 import { createApp } from "./server.ts";
+import { parseSourceDigest } from "./policy-core.ts";
+
+test("Parse source integrity survives Git LF/CRLF checkout conversion without accepting content changes", () => {
+  const source = '{\n  "lossDate": "2026-02-12"\n}\n';
+  assert.equal(parseSourceDigest(source), parseSourceDigest(source.replace(/\n/g, "\r\n")));
+  assert.notEqual(parseSourceDigest(source), parseSourceDigest(source.replace("2026-02-12", "2026-02-13")));
+});
+
+test("earlier three, four and five-check bundles are history-only, not reinterpreted", async () => {
+  const root = await mkdtemp(path.join(os.tmpdir(), "policy-five-check-history-"));
+  try {
+    await writeFile(path.join(root, "manifest.json"), JSON.stringify({ schemaVersion: 1 }));
+    await assert.rejects(readPolicyDemo(root), /three\/four\/five-check.*history-only/);
+    for (const checkContractVersion of [3, 4]) {
+      await writeFile(path.join(root, "manifest.json"), JSON.stringify({ schemaVersion: 2, checkContractVersion }));
+      await assert.rejects(readPolicyDemo(root), /history-only.*pruned three-comparison/);
+    }
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
+test("pruned three-check bundle uses hash-verified first-pass Parse without a summary cache", async () => {
+  const folder = path.join(repositoryRoot, "data", "policy-demo");
+  const demo = await readPolicyDemo(folder);
+  const manifest = JSON.parse(await readFile(path.join(folder, "manifest.json"), "utf8"));
+  assert.equal(manifest.schemaVersion, 2);
+  assert.equal(manifest.checkContractVersion, 5);
+  assert.deepEqual(manifest.checks, ["Daily rate", "Effective terms", "Repair estimate"]);
+  assert.equal(manifest.files.length, 21);
+  assert.equal(manifest.sourceFiles.length, 11);
+  assert.equal(manifest.sourceHashFormat, "utf8-lf");
+  assert.ok(manifest.files.every(({ name }: { name: string }) => !name.startsWith("claim-")));
+  assert.equal(demo.sourceCache.folder, path.join(repositoryRoot, "data", "results"));
+  assert.equal(demo.results(demo.sourceRun).items.length, 10);
+  assert.equal(demo.results(demo.sourceRun).items.flatMap(item => item.result?.Checks ?? []).length, 30);
+  assert.ok(demo.results(demo.sourceRun).items.every(item => !item.historical),
+    "A fresh checkout must keep the exact current runtime/question identity.");
+});
+
+test("bundled comparisons use Texas 75, Washington 85 and the original Illinois policy VIN", async () => {
+  const demo = await readPolicyDemo(path.join(repositoryRoot, "data", "policy-demo"));
+  const items = demo.results(demo.sourceRun).items;
+  for (const [id, rate, cap] of [["packet-01", "54", "75"], ["packet-02", "61", "85"]]) {
+    const check = items.find((item) => item.id === id)?.result?.Checks[0];
+    assert.equal(check?.Check, "Daily rate");
+    assert.equal(check.Outcome, "Satisfied");
+    assert.ok(check.Comparisons?.some((pair) => pair.ClaimValue.includes(rate) && pair.PolicyValue.includes(cap)));
+  }
+  const terms = items.find((item) => item.id === "packet-06")?.result?.Checks[1];
+  assert.equal(terms?.Check, "Effective terms");
+  assert.equal(terms.Outcome, "Satisfied");
+  assert.ok(terms.Comparisons?.some((pair) =>
+    pair.ClaimValue === "1FMCU0G63MA514686" && pair.PolicyValue === pair.ClaimValue));
+  assert.ok(terms.Citation.some((citation) => citation.File === "effective-date-il-packet-06.pdf"));
+});
+
+test("all eleven original repair quotes use their loss-state diagram, independently of rental", async () => {
+  const demo = await readPolicyDemo(path.join(repositoryRoot, "data", "policy-demo"));
+  const items = demo.results(demo.sourceRun).items;
+  const expected = [
+    { state: "TX", gross: [2233.8], threshold: 2500 },
+    { state: "WA", gross: [1842], threshold: 1750 },
+    { state: "AZ", gross: [1699.04, 1827.24], threshold: 2500 },
+    { state: "CO", gross: [2002.38], threshold: 2500 },
+    { state: "FL", gross: [1310.13], threshold: 2000 },
+    { state: "IL", gross: [2728.13], threshold: 3000 },
+    { state: "LA", gross: [13219.35], threshold: 10000 },
+    { state: "CA", gross: [1691.08], threshold: 2000 },
+    { state: "NY", gross: [3614.16], threshold: 4000 },
+    { state: "OH", gross: [3711.7], threshold: 4000 },
+  ];
+  for (const [index, source] of expected.entries()) {
+    const item = items.find(item => item.id === `packet-${String(index + 1).padStart(2, "0")}`);
+    const check = item?.result?.Checks[2];
+    assert.equal(check?.Check, "Repair estimate");
+    assert.equal(check.Outcome, source.gross.some(amount => amount > source.threshold)
+      ? "ReviewRequired" : "Satisfied", item?.id ?? `packet index ${index}`);
+    const values = check.Comparisons?.map(pair => pair.ClaimValue.replaceAll(",", "")) ?? [];
+    for (const amount of source.gross)
+      assert.ok(values.some(value => value.includes(String(amount))), `${item?.id}: gross ${amount}`);
+    assert.ok(check.Comparisons?.some(pair => pair.PolicyValue.replaceAll(",", "").includes(String(source.threshold))));
+    assert.ok(check.Citation.some(citation => citation.RuleId === `REPAIR-${source.state}-01`));
+    const page = index < 5 ? 1 : 2;
+    assert.ok(item?.citations?.[2].some(citation =>
+      citation.File === "synthetic-repair-review-authority-v1.pdf" && citation.href?.endsWith(`#page=${page}`)));
+  }
+  const arizona = items.find(item => item.id === "packet-03")?.result?.Checks[2];
+  assert.ok((arizona?.Comparisons?.length ?? 0) >= 2, "Distinct Arizona quotes are compared separately, never summed.");
+  for (const id of ["packet-04", "packet-06", "packet-08", "packet-10"]) {
+    const item = items.find(item => item.id === id);
+    assert.equal(item?.result?.Checks[0].Outcome, "NotApplicable");
+    assert.equal(item?.result?.Checks[2].Outcome, "Satisfied");
+  }
+});
 
 async function extractionRun() {
   const data = await dataset();
@@ -76,12 +171,12 @@ test("a fresh machine loads the current bundled policy reviews without Azure or 
   assert.equal(payload.source, "bundled");
   assert.equal(payload.sourceRunId, demo.info.runId);
   assert.equal(payload.staleDataset, undefined);
-  assert.equal(payload.extractionMode, "standard");
+  assert.equal(payload.extractionMode, "layout");
   assert.equal(payload.items.length, 10);
   assert.ok(payload.items.every((item: PolicyItem) =>
-    item.status === "completed" && item.result?.Checks.length === 5));
+    item.status === "completed" && item.result?.Checks.length === 3));
   const chat = await request(`policy/chat?${new URLSearchParams({
-    runId: selected.id, packetId: "packet-01", mode: "search", check: "Amount",
+    runId: selected.id, packetId: "packet-01", mode: "search", check: "Daily rate",
   })}`);
   assert.equal(chat.status, 409);
   assert.match((await chat.json()).error, /configure Agent Framework/);
@@ -96,7 +191,7 @@ test("the policy bundle preserves its own inputs independently of the selected C
   assert.equal(bundled.items.length, 10);
   assert.ok(bundled.items.every((item: PolicyItem) =>
     item.status === "completed" &&
-    item.result?.Checks.length === 5 &&
+    item.result?.Checks.length === 3 &&
     item.indexName === demo.info.indexName &&
     item.citations?.flat().every((citation) => citation.href)));
   const current = await extractionRun();
@@ -204,7 +299,7 @@ test("bundled reviews seed chat using the current lab agent without a live polic
   assert.equal((await request("policy/cache/load", {
     runId: selected.id, mode: "search", source: "bundled",
   })).status, 200);
-  const selection = { runId: selected.id, packetId: "packet-01", mode: "search", check: "Amount" };
+  const selection = { runId: selected.id, packetId: "packet-01", mode: "search", check: "Daily rate" };
   const response = await request(`policy/chat?${new URLSearchParams(selection)}`);
   assert.equal(response.status, 200, await response.clone().text());
   const context = await response.json();

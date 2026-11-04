@@ -6,12 +6,13 @@ import hashlib
 import json
 from pathlib import Path
 import sys
-import tempfile
 from types import SimpleNamespace
 import unittest
 from unittest.mock import MagicMock, patch
 from pydantic import ValidationError
-from policy_check_inputs import check_analysis, check_prompt, check_questions, fields_frontmatter
+from policy_check_inputs import (
+    check_analysis, check_prompt, check_questions, fields_frontmatter, claim_references,
+)
 
 spec = importlib.util.spec_from_file_location(
     "policy_framework", Path(__file__).with_name("policy-framework-agent.py"),
@@ -26,7 +27,7 @@ class FrameworkTests(unittest.TestCase):
         source = {"contents": [
             {"category": "claim_summary", "fields": {
                 "RentalRequested": {"type": "boolean", "valueBoolean": False},
-                "RentalTaxes": {"type": "number", "valueNumber": 0},
+                "RentalDailyBaseRate": {"type": "number", "valueNumber": 0},
                 "ActualRepairCompletion": {"type": "date"},
                 "PolicyDailyBaseCap": {"type": "number", "valueNumber": 54},
                 "Rental": {"type": "object", "valueObject": {
@@ -46,27 +47,29 @@ class FrameworkTests(unittest.TestCase):
                 "FullName": {"type": "string", "valueString": "Irrelevant ID"},
             }},
         ]}
-        timing = check_analysis(source, "Timing")
-        self.assertEqual(len(timing["contents"]), 1)
-        fields = timing["contents"][0]["fields"]
-        self.assertNotIn("RentalTaxes", fields)
-        self.assertNotIn("PolicyDailyBaseCap", fields)
+        amount = check_analysis(source, "Daily rate")
+        self.assertEqual(len(amount["contents"]), 1)
+        fields = amount["contents"][0]["fields"]
+        self.assertEqual(fields["RentalDailyBaseRate"]["valueNumber"], 0)
+        self.assertEqual(fields["PolicyDailyBaseCap"]["valueNumber"], 54)
         rows = fields["Rental"]["valueObject"]["DailyRates"]["valueArray"]
         self.assertEqual(len(rows), 2)
-        self.assertEqual(rows[1]["valueObject"], {"StartDate": {"type": "date"}})
-        text = fields_frontmatter(timing)
+        self.assertEqual(rows[1]["valueObject"]["StartDate"], {"type": "date"})
+        text = fields_frontmatter(amount)
         self.assertIn("RentalRequested: false", text)
-        self.assertIn("ActualRepairCompletion", text)
+        self.assertNotIn("ActualRepairCompletion", text)
         self.assertIn("Rental.DailyRates[1].StartDate", text)
         self.assertNotIn("Irrelevant ID", text)
-        amount = fields_frontmatter(check_analysis(source, "Amount"))
-        self.assertIn("RentalTaxes: 0", amount)
+        amount = fields_frontmatter(check_analysis(source, "Daily rate"))
+        self.assertIn("RentalDailyBaseRate: 0", amount)
         self.assertNotIn("ActualRepairCompletion", amount)
         questions = check_questions(runtime.ROOT / "docs" / "rental-review-agent-question-v2.md", runtime.CHECKS)
-        prompt = check_prompt(source, "Amount", questions)
-        self.assertIn(questions["Amount"], prompt)
-        self.assertNotIn(questions["Timing"], prompt)
-        self.assertIn("RentalTaxes: 0", prompt)
+        prompt = check_prompt(source, "Daily rate", questions)
+        self.assertIn(questions["Daily rate"], prompt)
+        self.assertNotIn("Rental start", questions)
+        with self.assertRaisesRegex(ValueError, "Unknown policy check"):
+            check_analysis(source, "Rental start")
+        self.assertIn("RentalDailyBaseRate: 0", prompt)
         self.assertNotIn("ActualRepairCompletion", prompt)
 
     def test_per_check_questions_are_complete_and_independent(self):
@@ -76,13 +79,228 @@ class FrameworkTests(unittest.TestCase):
         self.assertEqual(set(questions), {"Shared", *runtime.CHECKS})
         for name in runtime.CHECKS:
             self.assertIn(name, questions[name])
-        self.assertIn("Decide applicability BEFORE", questions["Shared"])
+        self.assertIn("shared rental applicability decision", " ".join(questions["Shared"].split()))
         self.assertIn("NotApplicable with ReviewRequired=false", questions["Shared"])
-        self.assertIn("A false RentalUsed alone", questions["Shared"])
-        self.assertIn("three-branch gate", questions["Shared"])
-        self.assertIn("Neither established: immediately return InProgress", questions["Shared"])
-        self.assertIn("This includes Effective", questions["Shared"])
-        self.assertIn("towing question is not a rental request", questions["Shared"])
+        self.assertIn("RentalUsed=false alone", questions["Shared"])
+        self.assertIn("Effective terms is independent", questions["Shared"])
+        self.assertIn("A towing Yes isn't rental Yes", questions["Shared"])
+        self.assertIn("prior usage", questions["Daily rate"])
+        self.assertIn("effective-boundary ambiguity", questions["Effective terms"])
+
+    def test_original_parse_segments_and_typed_provenance_need_no_summary(self):
+        table = "<table><tr><th>Drivable</th><th>Start basis</th></tr>" \
+                "<tr><td></td><td>Appointment isn't delivery</td></tr></table>"
+        source = {"context": {"packetId": "packet"}, "contents": [{
+            "kind": "document", "category": "intake_notes", "path": "/contents/3",
+            "content_path": "/contents/3", "pages": {"start": 7, "end": 9},
+            "fields": {
+                "LossDate": {"type": "date", "valueDate": None, "source": "D(7,1,2,3,4)",
+                             "confidence": 0.8},
+                "RentalRequested": {"type": "boolean", "valueBoolean": False},
+                "Rental": {"type": "object", "source": "D(8,1,2,3,4)", "valueObject": {
+                    "Pickup": {"type": "date", "valueDate": "2026-03-01"},
+                }},
+            },
+        }], "textEvidence": [{
+            "id": "parse./contents/3", "category": "intake_notes",
+            "contentPath": "/contents/3", "pages": {"start": 7, "end": 9}, "text": table,
+        }, {"id": "parse./contents/4", "category": "id_document", "text": "Unrelated ID OCR"}]}
+        questions = check_questions(
+            runtime.ROOT / "docs" / "rental-review-agent-question-v2.md", runtime.CHECKS,
+        )
+        for check in runtime.CHECKS:
+            projected = check_analysis(source, check)
+            doc = projected["contents"][0]
+            self.assertEqual(doc["pages"], {"start": 7, "end": 9})
+            self.assertEqual(doc["path"], "/contents/3")
+            self.assertEqual(doc["fields"]["LossDate"], source["contents"][0]["fields"]["LossDate"])
+            self.assertEqual(projected["context"], source["context"])
+            self.assertEqual(projected["textEvidence"], source["textEvidence"][:1])
+            prompt = check_prompt(source, check, questions, {
+                "status": "conflicting", "reason": "Supplied evidence conflicts",
+                "sourceReferences": ["RentalRequested", "parse./contents/3"],
+            })
+            self.assertIn(table, prompt)
+            self.assertIn("UNTRUSTED first-pass parsed page text with provenance", prompt)
+            if check != "Daily rate":
+                self.assertNotIn("Shared rental applicability (derived interpretation", prompt)
+            else:
+                self.assertIn("NOT a new extracted CU field", prompt)
+            self.assertNotIn("Unrelated ID OCR", prompt)
+        self.assertEqual(source["textEvidence"][0]["text"], table)
+        refs = claim_references(source)
+        self.assertTrue({"LossDate", "Rental.Pickup", "parse./contents/3"} <= refs)
+        self.assertNotIn("Packet OCR", refs)
+
+    def test_empty_null_false_zero_are_not_conflated(self):
+        source = {"contents": [{"category": "statement", "fields": {
+            "LossDate": {"type": "string", "valueString": ""},
+            "LossTime": {"type": "string", "valueString": None},
+            "RentalRequested": {"type": "boolean", "valueBoolean": False},
+            "RentalTotal": {"type": "number", "valueNumber": 0},
+        }}]}
+        text = fields_frontmatter(check_analysis(source, "Daily rate"))
+        self.assertIn("LossDate", text)
+        self.assertIn("LossTime", text)
+        self.assertIn("RentalRequested: false", text)
+        self.assertIn("RentalTotal: 0", text)
+
+    def test_applicability_references_only_supplied_parse_fields_or_page_ids(self):
+        analysis = {"contents": [{"fields": {
+            "RentalRequested": {"type": "boolean", "valueBoolean": True},
+        }}], "textEvidence": [{"id": "parse./contents/1", "text": "Rental agreement"}]}
+        for references in (["RentalRequested"], ["parse./contents/1"]):
+            runtime.validate_applicability(runtime.RentalApplicability(
+                status="rental", reason="Supplied rental evidence", sourceReferences=references,
+            ), analysis)
+        runtime.validate_applicability(runtime.RentalApplicability(
+            status="unknown", reason="No request established", sourceReferences=[],
+        ), analysis)
+        for references in ([], ["Packet OCR"], ["parse.invented"], ["Rental.Amount"]):
+            with self.subTest(references=references), self.assertRaises(ValueError):
+                runtime.validate_applicability(runtime.RentalApplicability(
+                    status="rental", reason="Unsupported reference", sourceReferences=references,
+                ), analysis)
+
+    def test_dynamic_applicability_schema_constrains_exact_input_ids_and_aliases(self):
+        analysis = {"contents": [{
+            "category": "rental_invoice", "contentPath": "/contents/1", "pages": {"start": 2, "end": 2},
+            "fields": {"LineItems": {"type": "array", "valueArray": [{
+                "type": "object", "valueObject": {
+                    "UnitPrice": {"type": "number", "valueNumber": 50},
+                },
+            }]}},
+        }], "textEvidence": [{
+            "id": "parse.input1/contents/1", "contentPath": "/contents/1",
+            "pages": {"start": 2, "end": 2}, "text": "Rental base daily price: 50",
+        }]}
+        permitted = claim_references(analysis)
+        self.assertIn("LineItems[0].UnitPrice", permitted)
+        self.assertIn("rental_invoice.LineItems[0].UnitPrice", permitted)
+        self.assertIn("parse.input1/contents/1", permitted)
+        self.assertNotIn("rental_invoice.parse.input1/contents/1", permitted)
+        self.assertNotIn("parse./contents/1", permitted)
+        schema = runtime.applicability_schema(analysis)
+        items = schema.model_json_schema()["properties"]["sourceReferences"]["items"]
+        self.assertEqual(items["enum"], sorted(permitted))
+        for reference in permitted:
+            value = schema.model_validate({
+                "status": "rental", "reason": "Supplied reference", "sourceReferences": [reference],
+            })
+            runtime.validate_applicability(value, analysis)
+        for reference in ("parse./contents/1", "rental_invoice.UnitPrice", "Packet OCR"):
+            with self.subTest(reference=reference), self.assertRaises(ValidationError):
+                schema.model_validate({
+                    "status": "rental", "reason": "Invented reference", "sourceReferences": [reference],
+                })
+            with self.assertRaisesRegex(ValueError, reference.replace(".", r"\.")):
+                runtime.validate_applicability(runtime.RentalApplicability(
+                    status="rental", reason="Invented reference", sourceReferences=[reference],
+                ), analysis)
+        # Every input gets its own schema; prior turn IDs aren't retained.
+        next_schema = runtime.applicability_schema({"textEvidence": [{"id": "parse.input2/contents/0"}]})
+        with self.assertRaises(ValidationError):
+            next_schema.model_validate({
+                "status": "rental", "reason": "Prior turn", "sourceReferences": ["parse.input1/contents/1"],
+            })
+
+    def test_empty_applicability_schema_allows_only_empty_references(self):
+        schema = runtime.applicability_schema({"contents": [], "textEvidence": []})
+        self.assertEqual(schema.model_json_schema()["properties"]["sourceReferences"]["maxItems"], 0)
+        value = schema.model_validate({"status": "unknown", "reason": "Missing evidence", "sourceReferences": []})
+        runtime.validate_applicability(value, {})
+        with self.assertRaises(ValidationError):
+            schema.model_validate({"status": "unknown", "reason": "Missing evidence",
+                                   "sourceReferences": ["parse.invented"]})
+
+    def test_check_prompt_lists_projected_exact_references_not_guessed_content_paths(self):
+        analysis = {"contents": [{
+            "kind": "document", "category": "statement", "contentPath": "/contents/1",
+            "pages": {"start": 2, "end": 3},
+            "fields": {"RentalRequested": {"type": "boolean", "valueBoolean": True},
+                       "RentalDailyBaseRate": {"type": "number", "valueNumber": 50}},
+        }], "textEvidence": [{
+            "id": "parse.input1/contents/1", "category": "statement",
+            "contentPath": "/contents/1", "pages": {"start": 2, "end": 3}, "text": "Rental requested: Yes",
+        }]}
+        questions = check_questions(
+            runtime.ROOT / "docs" / "rental-review-agent-question-v2.md", runtime.CHECKS,
+        )
+        for check in runtime.CHECKS:
+            prompt = check_prompt(analysis, check, questions)
+            self.assertIn("Permitted exact claim references for sourceReferences and ClaimField", prompt)
+            self.assertIn(json.dumps(sorted(claim_references(check_analysis(analysis, check)))), prompt)
+            self.assertIn('"parse.input1/contents/1"', prompt)
+            self.assertIn('"statement.RentalRequested"', prompt)
+            self.assertNotIn('"parse./contents/1"', prompt)
+
+    def test_compact_comparison_accepts_exact_typed_or_parse_references_only(self):
+        analysis = {"contents": [{"fields": {
+            "Rental": {"type": "object", "valueObject": {
+                "DailyRates": {"type": "array", "valueArray": [
+                    {"type": "number", "valueNumber": 50},
+                ]},
+            }},
+        }}], "textEvidence": [{"id": "parse./contents/2", "text": "Base price 50 per day"}]}
+        check = runtime.CompactCheck(
+            **self.review().Checks[0].model_dump(), Headline="Daily price is within the limit",
+            Comparisons=[runtime.Comparison(
+                ClaimField="Rental.DailyRates[0]", ClaimLabel="Base daily price", ClaimValue="$50/day",
+                PolicyField="Not retrieved", PolicyLabel="Policy cap", PolicyValue="Not established",
+            )],
+        )
+        runtime.check_claim_references(check, analysis)
+        check.Comparisons[0].ClaimField = "parse./contents/2"
+        runtime.check_claim_references(check, analysis)
+        for reference in ("Packet OCR", "InventedRentalRate", "parse./contents/9"):
+            check.Comparisons[0].ClaimField = reference
+            with self.subTest(reference=reference), self.assertRaises(ValueError):
+                runtime.check_claim_references(check, analysis)
+
+    def test_nonrental_gate_does_not_block_effective_terms(self):
+        value = self.review()
+        citation = runtime.Citation(
+            File="tx.pdf", DocumentId="TX", Version="2.0", RuleId="TX-R2", Section="Schedule",
+        )
+        evidence = [dict(file="tx.pdf", documentId="TX", version="2.0",
+                         ruleIds=["TX-R2"], citationSections=["Schedule"])]
+        for check in value.Checks[:1]:
+            check.Outcome = "NotApplicable"
+            check.ReviewRequired = False
+            check.Citation = [citation]
+        value.Checks[1].Outcome = "Satisfied"
+        value.Checks[1].ReviewRequired = False
+        value.Checks[1].Citation = [citation]
+        decision = runtime.RentalApplicability(
+            status="nonrental", reason="Explicit no request", sourceReferences=["RentalRequested"],
+        )
+        runtime.check_shared_applicability(value, decision, "search")
+        runtime.check_citations(value, evidence, "search")
+        value.Checks[1].Outcome = "NotApplicable"
+        with self.assertRaisesRegex(ValueError, "independent"):
+            runtime.check_citations(value, evidence, "search")
+
+    def test_shared_applicability_rejects_inconsistent_rental_outcomes(self):
+        cases = {
+            "rental": ("Satisfied", "InProgress"),
+            "unknown": ("InProgress", "ReviewRequired"),
+            "conflicting": ("ReviewRequired", "ReviewRequired"),
+            "nonrental": ("NotApplicable", "NotApplicable"),
+        }
+        for status, outcomes in cases.items():
+            value = self.review()
+            decision = runtime.RentalApplicability(
+                status=status, reason="Supplied source interpretation", sourceReferences=[],
+            )
+            for check, outcome in zip(value.Checks, outcomes):
+                check.Outcome = outcome
+                check.ReviewRequired = outcome == "ReviewRequired"
+            runtime.check_shared_applicability(value, decision, "search")
+            value.Checks[0].Outcome = "Satisfied" if status != "rental" else "NotApplicable"
+            with self.subTest(status=status), self.assertRaises(ValueError):
+                runtime.check_shared_applicability(value, decision, "search")
+        # No-retrieval still cannot establish policy rules, even for nonrental.
+        runtime.check_shared_applicability(self.review(), decision, "ungrounded")
 
     def test_explicit_no_rental_evidence_is_shared_with_every_check(self):
         source = {"contents": [{"category": "claim_summary", "fields": {
@@ -102,11 +320,11 @@ class FrameworkTests(unittest.TestCase):
                 self.assertIn("RentalPickup:", text)
                 self.assertIn("RentalTotal: 120", text)
 
-    def test_model_schema_requires_exact_check_names_and_five_results(self):
+    def test_model_schema_requires_exact_check_names_and_three_results(self):
         schema = runtime.Review.model_json_schema()
         self.assertEqual(schema["$defs"]["Check"]["properties"]["Check"]["enum"], runtime.CHECKS)
-        self.assertEqual(schema["properties"]["Checks"]["minItems"], 5)
-        self.assertEqual(schema["properties"]["Checks"]["maxItems"], 5)
+        self.assertEqual(schema["properties"]["Checks"]["minItems"], 3)
+        self.assertEqual(schema["properties"]["Checks"]["maxItems"], 3)
         value = self.review().model_dump()
         value["Checks"][0]["Check"] += "."
         with self.assertRaises(ValidationError):
@@ -264,13 +482,17 @@ class ParallelFrameworkTests(unittest.IsolatedAsyncioTestCase):
         )
         analysis = {"contents": [{"category": "claim_summary", "fields": {
             "RentalRequested": {"type": "boolean", "valueBoolean": True},
-            "RentalTaxes": {"type": "number", "valueNumber": 0},
+            "RentalDailyBaseRate": {"type": "number", "valueNumber": 0},
             "ActualRepairCompletion": {"type": "date"},
         }}]}
-        with tempfile.TemporaryDirectory() as folder:
-            config_file = Path(folder) / "config.json"
-            config_file.write_text(json.dumps(config), encoding="utf-8")
-            for fail in (False, True):
+        config_file = runtime.ROOT / "offline-policy-framework-config.json"
+        read_text = Path.read_text
+
+        def read_config(path, *args, **kwargs):
+            return json.dumps(config) if path == config_file else read_text(path, *args, **kwargs)
+
+        with patch.object(Path, "read_text", read_config):
+            for fail in (False, True, "reference"):
                 with self.subTest(failing_call=fail):
                     active = maximum = 0
                     cancelled, prompts = [], {}
@@ -279,6 +501,18 @@ class ParallelFrameworkTests(unittest.IsolatedAsyncioTestCase):
                     async def respond(messages, options):
                         nonlocal active, maximum
                         prompt = messages[-1].text
+                        if "Resolve rental applicability ONCE" in prompt:
+                            self.assertIn("Permitted exact claim references", prompt)
+                            schema = options["response_format"].model_json_schema()
+                            self.assertEqual(
+                                schema["properties"]["sourceReferences"]["items"]["enum"],
+                                sorted(claim_references(analysis)),
+                            )
+                            return SimpleNamespace(text=json.dumps({
+                                "status": "rental", "reason": "Explicit rental request",
+                                "sourceReferences": ["parse.invented-input1"] if fail == "reference"
+                                    else ["RentalRequested"],
+                            }), usage_details={})
                         name = next(n for n in runtime.CHECKS if questions[n] in prompt)
                         prompts[name] = prompt
                         self.assertEqual(options["reasoning"], {"effort": "low"})
@@ -286,14 +520,14 @@ class ParallelFrameworkTests(unittest.IsolatedAsyncioTestCase):
                         active += 1
                         maximum = max(maximum, active)
                         try:
-                            if active == 5:
+                            if active == 3:
                                 barrier.set()
                             await asyncio.wait_for(barrier.wait(), 2)
                             if fail:
-                                if name == "Amount":
+                                if name == "Daily rate":
                                     raise RuntimeError("offline model failure")
                                 await asyncio.sleep(10)
-                            await asyncio.sleep((5 - runtime.CHECKS.index(name)) * 0.002)
+                            await asyncio.sleep((3 - runtime.CHECKS.index(name)) * 0.002)
                             value = dict(
                                 Check=name, Outcome="ReviewRequired", ReviewRequired=True,
                                 ExpectedValue="Not retrieved", ActualValue="Not provided",
@@ -317,21 +551,36 @@ class ParallelFrameworkTests(unittest.IsolatedAsyncioTestCase):
                             mode="ungrounded", prompt="Offline review", configPath=str(config_file),
                             claimAnalysis=analysis, reviewStrategy="parallel", reasoningEffort="low",
                         )
-                        if fail:
-                            with self.assertRaisesRegex(ValueError, "Amount failed: offline model failure"):
+                        if fail == "reference":
+                            with self.assertRaisesRegex(
+                                ValueError,
+                                r"Rental applicability failed: .*unsupplied Parse evidence:.*parse\.invented-input1",
+                            ):
                                 await runtime.run(turn)
-                            self.assertEqual(len(cancelled), 4)
+                            self.assertEqual(prompts, {})
+                            self.assertEqual(cancelled, [])
+                        elif fail:
+                            with self.assertRaisesRegex(ValueError, "Daily rate failed: offline model failure"):
+                                await runtime.run(turn)
+                            self.assertEqual(len(cancelled), 2)
                         else:
                             value = await runtime.run(turn)
                             self.assertEqual([c["Check"] for c in value["result"]["Checks"]], runtime.CHECKS)
-                            self.assertEqual(value["timings"]["modelRequests"], 5)
-                            self.assertNotIn("RentalTaxes", prompts["Timing"])
-                            self.assertIn("RentalTaxes: 0", prompts["Amount"])
+                            self.assertEqual(value["timings"]["modelRequests"], 4)
+                            self.assertEqual(value["rentalApplicability"]["status"], "rental")
+                            self.assertEqual(value["timings"]["applicability"]["modelDeployment"], "gpt-5")
+                            self.assertNotIn("RentalDailyBaseRate", prompts["Repair estimate"])
+                            self.assertIn("RentalDailyBaseRate: 0", prompts["Daily rate"])
+                            for name, prompt in prompts.items():
+                                if name != "Daily rate":
+                                    self.assertNotIn("Shared rental applicability (derived interpretation", prompt)
+                                else:
+                                    self.assertIn("Shared rental applicability (derived interpretation", prompt)
                             for name, prompt in prompts.items():
                                 for other in runtime.CHECKS:
                                     if other != name:
                                         self.assertNotIn(questions[other], prompt)
-                        self.assertEqual(maximum, 5)
+                        self.assertEqual(maximum, 0 if fail == "reference" else 3)
                         self.assertEqual(active, 0)
                         token.assert_called_once_with()
 
