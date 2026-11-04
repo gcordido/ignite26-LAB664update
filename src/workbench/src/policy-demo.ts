@@ -9,7 +9,7 @@ import { frameworkConfigSchema, loadPolicyCache, PolicyService } from "./policy-
 export const policyDemoManifestSchema = z.object({
   schemaVersion: z.literal(2),
   checkContractVersion: z.literal(checkContractVersion),
-  checks: z.tuple([z.literal("Daily rate"), z.literal("Rental start"), z.literal("Effective terms")]),
+  checks: z.tuple([z.literal("Daily rate"), z.literal("Rental start"), z.literal("Effective terms"), z.literal("Repair estimate")]),
   runId: z.string().uuid(),
   mode: z.literal("search"),
   packetCount: z.literal(10),
@@ -33,15 +33,16 @@ export async function readPolicyDemo(
   if (!savedManifest)
     throw new LabError(404, `No saved policy manifest was found in ${folder}.`);
   if (typeof savedManifest === "object" && savedManifest !== null &&
-      "schemaVersion" in savedManifest && savedManifest.schemaVersion === 1)
-    throw new LabError(422, "Earlier five-check policy results are history-only. Load a version-2 three-comparison bundle.");
+      (("schemaVersion" in savedManifest && savedManifest.schemaVersion === 1) ||
+       ("checkContractVersion" in savedManifest && savedManifest.checkContractVersion === 3)))
+    throw new LabError(422, "Earlier three/five-check policy results are history-only. Load the current four-comparison bundle.");
   const manifest = policyDemoManifestSchema.parse(savedManifest);
   if (new Set(manifest.files.map(({ name }) => name)).size !== manifest.files.length)
     throw new LabError(422, "The bundled policy demo contains duplicate files.");
   if (!manifest.files.some(({ name }) => name === "policy-agent-framework.json") ||
       ["framework-review-", "framework-saved-"].some((prefix) =>
         manifest.files.filter(({ name }) => name.startsWith(prefix)).length !== manifest.packetCount))
-    throw new LabError(422, "The bundled policy demo must include configuration and ten three-check review caches; claim summaries aren't required.");
+    throw new LabError(422, "The bundled policy demo must include configuration and ten four-check review caches; claim summaries aren't required.");
   for (const { name, sha256 } of manifest.files)
     if (digest(await readFile(path.join(folder, name))) !== sha256)
       throw new LabError(422, `Bundled policy demo checksum mismatch: ${name}`);

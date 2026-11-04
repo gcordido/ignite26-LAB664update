@@ -77,7 +77,7 @@ class FrameworkTests(unittest.TestCase):
         self.assertEqual(set(questions), {"Shared", *runtime.CHECKS})
         for name in runtime.CHECKS:
             self.assertIn(name, questions[name])
-        self.assertIn("shared rental applicability decision", questions["Shared"])
+        self.assertIn("shared rental applicability decision", " ".join(questions["Shared"].split()))
         self.assertIn("NotApplicable with ReviewRequired=false", questions["Shared"])
         self.assertIn("RentalUsed=false alone", questions["Shared"])
         self.assertIn("Effective terms is independent", questions["Shared"])
@@ -121,7 +121,10 @@ class FrameworkTests(unittest.TestCase):
             })
             self.assertIn(table, prompt)
             self.assertIn("UNTRUSTED first-pass parsed page text with provenance", prompt)
-            self.assertIn("NOT a new extracted CU field", prompt)
+            if check == "Repair estimate":
+                self.assertNotIn("Shared rental applicability (derived interpretation", prompt)
+            else:
+                self.assertIn("NOT a new extracted CU field", prompt)
             self.assertNotIn("Unrelated ID OCR", prompt)
         self.assertEqual(source["textEvidence"][0]["text"], table)
         refs = claim_references(source)
@@ -316,11 +319,11 @@ class FrameworkTests(unittest.TestCase):
                 self.assertIn("RentalPickup:", text)
                 self.assertIn("RentalTotal: 120", text)
 
-    def test_model_schema_requires_exact_check_names_and_three_results(self):
+    def test_model_schema_requires_exact_check_names_and_four_results(self):
         schema = runtime.Review.model_json_schema()
         self.assertEqual(schema["$defs"]["Check"]["properties"]["Check"]["enum"], runtime.CHECKS)
-        self.assertEqual(schema["properties"]["Checks"]["minItems"], 3)
-        self.assertEqual(schema["properties"]["Checks"]["maxItems"], 3)
+        self.assertEqual(schema["properties"]["Checks"]["minItems"], 4)
+        self.assertEqual(schema["properties"]["Checks"]["maxItems"], 4)
         value = self.review().model_dump()
         value["Checks"][0]["Check"] += "."
         with self.assertRaises(ValidationError):
@@ -558,22 +561,25 @@ class ParallelFrameworkTests(unittest.IsolatedAsyncioTestCase):
                         elif fail:
                             with self.assertRaisesRegex(ValueError, "Daily rate failed: offline model failure"):
                                 await runtime.run(turn)
-                            self.assertEqual(len(cancelled), 2)
+                            self.assertEqual(len(cancelled), 3)
                         else:
                             value = await runtime.run(turn)
                             self.assertEqual([c["Check"] for c in value["result"]["Checks"]], runtime.CHECKS)
-                            self.assertEqual(value["timings"]["modelRequests"], 4)
+                            self.assertEqual(value["timings"]["modelRequests"], 5)
                             self.assertEqual(value["rentalApplicability"]["status"], "rental")
                             self.assertEqual(value["timings"]["applicability"]["modelDeployment"], "gpt-5")
                             self.assertNotIn("RentalDailyBaseRate", prompts["Rental start"])
                             self.assertIn("RentalDailyBaseRate: 0", prompts["Daily rate"])
-                            for prompt in prompts.values():
-                                self.assertIn("Shared rental applicability (derived interpretation", prompt)
+                            for name, prompt in prompts.items():
+                                if name == "Repair estimate":
+                                    self.assertNotIn("Shared rental applicability (derived interpretation", prompt)
+                                else:
+                                    self.assertIn("Shared rental applicability (derived interpretation", prompt)
                             for name, prompt in prompts.items():
                                 for other in runtime.CHECKS:
                                     if other != name:
                                         self.assertNotIn(questions[other], prompt)
-                        self.assertEqual(maximum, 0 if fail == "reference" else 3)
+                        self.assertEqual(maximum, 0 if fail == "reference" else 4)
                         self.assertEqual(active, 0)
                         token.assert_called_once_with()
 

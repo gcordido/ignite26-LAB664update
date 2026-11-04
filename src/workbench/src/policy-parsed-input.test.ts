@@ -24,7 +24,7 @@ test("all ten saved Parse packets resolve explicit policy and insured vehicle sc
       assert.ok(source.pages.start > 0 && source.pages.end <= packet.pages);
     }
   }
-  assert.deepEqual(checkNames, ["Daily rate", "Rental start", "Effective terms"]);
+  assert.deepEqual(checkNames, ["Daily rate", "Rental start", "Effective terms", "Repair estimate"]);
 });
 
 test("scope preserves conflicting identities and excludes rented-vehicle and supplier routing", async () => {
@@ -46,6 +46,10 @@ test("scope preserves conflicting identities and excludes rented-vehicle and sup
   invoice.extractions[0].fields = { ...invoice.extractions[0].fields,
     PolicyId: "SUPPLIER-A98765", InsuredVIN: "4S4BTACC1LA511562", LossState: "NY" };
   invoice.extracted_text += "\nPolicy Number: SUPPLIER-A98765\nInsured VIN: 4S4BTACC1LA511562\nLoss State: NY";
+  const repair = exported.documents.find((document) => document.category === "repair_estimate")!;
+  repair.extractions[0].fields = { ...repair.extractions[0].fields,
+    VendorAddress: { City: "Seattle", State: "WA" } };
+  repair.extracted_text += "\nRepair shop address: Seattle, WA";
   assert.equal(parsedPolicyScope(exported).policyScope.vin, packet.expectedRepair.vin);
   assert.equal(parsedPolicyScope(exported).lossState, "TX");
 });

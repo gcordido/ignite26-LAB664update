@@ -1238,6 +1238,93 @@
         4
       ],
       "pdfTextLayer": "routing-cover-only"
+    },
+    {
+      "documentId": "SYNTHETIC-REPAIR-REVIEW-001",
+      "version": "1.0",
+      "pdf": "synthetic-repair-review-authority-v1.pdf",
+      "sha256": "9bbefcf9f360758fa94abdac6a39a56731ac5151740de3f83b5958ac43597afd",
+      "ruleIds": [
+        "REPAIR-SCOPE-01",
+        "REPAIR-TX-01",
+        "REPAIR-WA-01",
+        "REPAIR-AZ-01",
+        "REPAIR-CO-01",
+        "REPAIR-FL-01",
+        "REPAIR-IL-01",
+        "REPAIR-LA-01",
+        "REPAIR-CA-01",
+        "REPAIR-NY-01",
+        "REPAIR-OH-01"
+      ],
+      "stateRules": {
+        "TX": {
+          "page": 1,
+          "ruleId": "REPAIR-TX-01"
+        },
+        "WA": {
+          "page": 1,
+          "ruleId": "REPAIR-WA-01"
+        },
+        "AZ": {
+          "page": 1,
+          "ruleId": "REPAIR-AZ-01"
+        },
+        "CO": {
+          "page": 1,
+          "ruleId": "REPAIR-CO-01"
+        },
+        "FL": {
+          "page": 1,
+          "ruleId": "REPAIR-FL-01"
+        },
+        "IL": {
+          "page": 2,
+          "ruleId": "REPAIR-IL-01"
+        },
+        "LA": {
+          "page": 2,
+          "ruleId": "REPAIR-LA-01"
+        },
+        "CA": {
+          "page": 2,
+          "ruleId": "REPAIR-CA-01"
+        },
+        "NY": {
+          "page": 2,
+          "ruleId": "REPAIR-NY-01"
+        },
+        "OH": {
+          "page": 2,
+          "ruleId": "REPAIR-OH-01"
+        }
+      },
+      "documentType": "repair_review_sop",
+      "role": "repair_review",
+      "states": [
+        "TX",
+        "WA",
+        "AZ",
+        "CO",
+        "FL",
+        "IL",
+        "LA",
+        "CA",
+        "NY",
+        "OH"
+      ],
+      "effectiveFrom": "2024-01-01",
+      "effectiveThrough": "2026-12-31",
+      "effectiveDateBounds": "inclusive",
+      "applicabilityDateField": "loss_date",
+      "authorityBasis": "fictional_internal_gross_usd_routine_handling",
+      "diagramAuthority": "controlling",
+      "rulePages": [
+        1,
+        2
+      ],
+      "pdfTextLayer": "complete-vector-diagram",
+      "extractionRequirement": "Retain each complete page diagram, all state values, labels and decision branches in extraction/projection; partial rule evidence requires review."
     }
   ]
 }

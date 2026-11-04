@@ -37,7 +37,7 @@ if (action === "export") {
       .parse(await loadPolicyCache(path.join(cacheFolder, savedName)));
     const reviewName = `framework-review-${saved.reviewKey}.json`;
     const review = await loadPolicyCache(path.join(cacheFolder, reviewName));
-    assert.ok(review, `Missing validated three-check review for ${packet.id}.`);
+    assert.ok(review, `Missing validated four-check review for ${packet.id}.`);
     files.set(savedName, saved);
     files.set(reviewName, review);
   }
@@ -65,6 +65,23 @@ if (action === "export") {
       await rename(path.join(bundle, name), path.join(history, name));
     await rename(path.join(bundle, "source", legacy.data.runId), path.join(history, "source", legacy.data.runId));
     await rename(path.join(bundle, "manifest.json"), path.join(history, "manifest.json"));
+  } else if (previous !== undefined && z.object({ checkContractVersion: z.literal(3) }).safeParse(previous).success) {
+    const prior = manifestSchema.extend({
+      checkContractVersion: z.literal(3),
+      checks: z.tuple([z.literal("Daily rate"), z.literal("Rental start"), z.literal("Effective terms")]),
+    }).parse(previous);
+    const history = path.join(bundle, "history", "three-checks");
+    await mkdir(history, { recursive: true });
+    assert.equal(await loadPolicyCache(path.join(history, "manifest.json")), undefined,
+      "Three-check history already exists; preserve it before exporting.");
+    for (const { name, sha256 } of prior.files) {
+      const source = path.join(bundle, name), target = path.join(history, name);
+      assert.equal(digest(await readFile(source)), sha256, `Prior bundle checksum mismatch: ${name}`);
+      assert.equal(await loadPolicyCache(target), undefined, `Three-check history already exists: ${name}`);
+    }
+    for (const { name } of prior.files)
+      await rename(path.join(bundle, name), path.join(history, name));
+    await rename(path.join(bundle, "manifest.json"), path.join(history, "manifest.json"));
   } else if (previous !== undefined) {
     obsolete = manifestSchema.parse(previous).files.map((file) => file.name).filter((name) => !files.has(name));
   }
@@ -72,7 +89,7 @@ if (action === "export") {
   await savePolicyCache(path.join(bundle, "manifest.json"), manifest);
   await readPolicyDemo(bundle);
   for (const name of obsolete) await rm(path.join(bundle, name), { force: true });
-  console.log("Exported ten current three-comparison reviews reusing the committed Parse results. No claim summaries, restore step or Azure calls are needed to view them. Earlier five-check results remain in history.");
+  console.log("Exported ten current four-comparison reviews reusing the committed Parse results. No claim summaries, restore step or Azure calls are needed to view them. Earlier three/five-check results remain in history.");
 } else {
   const manifest = manifestSchema.parse(await loadPolicyCache(path.join(bundle, "manifest.json")));
   assert.equal(new Set(manifest.files.map((file) => file.name)).size, manifest.files.length,

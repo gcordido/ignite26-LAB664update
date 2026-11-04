@@ -5,9 +5,9 @@ import path from "node:path";
 import { repositoryRoot } from "./config.ts";
 import { checkNames, question, resolveCitations } from "./policy-core.ts";
 
-test("three claim-versus-policy comparisons retain scoped evidence safeguards", async () => {
+test("four claim-versus-policy comparisons retain scoped evidence safeguards", async () => {
   assert.deepEqual(checkNames, [
-    "Daily rate", "Rental start", "Effective terms",
+    "Daily rate", "Rental start", "Effective terms", "Repair estimate",
   ]);
   const prompt = await question();
   assert.match(prompt, /Daily rate/);
@@ -18,6 +18,23 @@ test("three claim-versus-policy comparisons retain scoped evidence safeguards", 
   assert.match(prompt, /appointment/i);
   assert.match(prompt, /Figure R-1/i);
   assert.match(prompt, /loss date/i);
+});
+
+test("repair diagram citations resolve the exact state page and reject another state's page", async () => {
+  const citation = {
+    File: "synthetic-repair-review-authority-v1.pdf",
+    DocumentId: "SYNTHETIC-REPAIR-REVIEW-001",
+    Version: "1.0", RuleId: "REPAIR-TX-01",
+    Section: "Figure RE-1: TX WA AZ CO FL",
+  };
+  const [links] = await resolveCitations({ Checks: [{ Citation: [
+    citation,
+    { ...citation, RuleId: "REPAIR-IL-01", Section: "Figure RE-2: IL LA CA NY OH" },
+    { ...citation, Section: "Figure RE-2: IL LA CA NY OH" },
+  ] }] });
+  assert.match(links[0].href ?? "", /synthetic-repair-review-authority-v1\.pdf#page=1$/);
+  assert.match(links[1].href ?? "", /synthetic-repair-review-authority-v1\.pdf#page=2$/);
+  assert.equal(links[2].href, null);
 });
 
 test("each source claim has three scoped, hash-verified evidence PDFs", async () => {

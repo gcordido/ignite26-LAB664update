@@ -509,11 +509,15 @@ test("activity reports actual stage elapsed time and last poll, including interr
 test("policy review and confirmation use saved Parse evidence with no summary preparation stage", async () => {
   const html = await readFile(new URL("../web/workbench.html", import.meta.url), "utf8");
   assert.doesNotMatch(source, /claimSummaryPrepared|Claim fields not prepared|extracting:|status === "extracting"|all five checks/);
-  assert.match(source, /Retries the three checks for this case only, using saved Parse fields and selected first-pass page text/);
+  assert.match(source, /Retries the four checks for this case only, using saved Parse fields and selected first-pass page text/);
+  assert.match(source, /Only this case's four checks will be retried/);
+  assert.match(source, /four checks per case/);
   assert.match(source, /No claim CU reanalysis is run/);
   const confirmation = html.slice(html.indexOf('<dialog id="policy-confirmation"'));
   assert.match(confirmation, /saved Parse fields and selected first-pass page text; no claim CU reanalysis/);
-  assert.match(confirmation, /three comparisons for each remaining case/);
+  assert.match(confirmation, /four comparisons for each remaining case/);
+  assert.match(html, /<h2 class="results-heading">Claim policy checks<\/h2>/);
+  assert.match(html, /synthetic internal review threshold, not law, a coverage cap or payment approval/);
   assert.doesNotMatch(confirmation, /Prepare any missing claim fields|new extraction and agent calls/);
 });
 

@@ -68,12 +68,14 @@ const policyCheckNames = [
   "Daily rate",
   "Rental start",
   "Effective terms",
+  "Repair estimate",
 ];
 const policyShortNames = [...policyCheckNames];
 const policyCheckDescriptions = [
   "Is the claimed daily base rate within the effective insured-vehicle cap?",
   "Does the stated rental start basis match the documented drivability rule?",
   "Were the matched policy and genuine amendment in force on the actual loss date?",
+  "Is each supplied repair-estimate total within this state's routine review authority?",
 ];
 let focusedPolicyCheck = 0;
 const columnWidths = new Map();
@@ -1405,7 +1407,7 @@ function renderPolicyRunStatus() {
   const interrupted = policyProgressErrors.has(policyMode);
   setText("policy-run-label", interrupted
     ? "Progress connection interrupted"
-    : "Agent checking three comparisons");
+    : "Agent checking four comparisons");
   get("policy-run-status").querySelector(".spinner").hidden = interrupted;
   const customer = active ? customerName(results.get(active.id)) : "";
   setText("policy-run-packet", active
@@ -1414,7 +1416,7 @@ function renderPolicyRunStatus() {
   setText("policy-run-detail", interrupted
     ? "The server may still be running. Reload to reconnect; do not start a duplicate review."
     : `${completed}/${job.items.length} packets finished · ${policyModeLabel()} · ${
-      active ? "Checking three comparisons and citations" : "Preparing next case from saved Parse evidence"
+      active ? "Checking four comparisons and citations" : "Preparing next case from saved Parse evidence"
     }`);
   const elapsed = Math.max(0, Math.floor((Date.now() - Date.parse(job.startedAt)) / 1000));
   get("policy-run-elapsed").textContent = Number.isFinite(elapsed)
@@ -1448,8 +1450,10 @@ function renderPolicyTable() {
     "customer",
     ...policyCheckNames.map((check) => `policy:${check}`),
   ];
+  const availableWidth = Math.max(360, table.parentElement?.clientWidth || 640);
   const widths = keys.map(
-    (key, index) => columnWidths.get(key) ?? (index ? 160 : 190),
+    (key, index) => columnWidths.get(key) ??
+      Math.floor(availableWidth * (index ? 0.19 : 0.24)),
   );
   table.style.width = `${widths.reduce((sum, width) => sum + width, 0)}px`;
   table.querySelector("colgroup").replaceChildren(
@@ -1508,7 +1512,7 @@ function renderPolicyTable() {
             ? "Run error"
             : ({
                 pending: "Queued",
-                reviewing: "Checking three comparisons",
+                reviewing: "Checking four comparisons",
               }[item?.status] ?? "Not run");
         const button = element("button", text, "cell-content");
         const state = element(
@@ -1593,14 +1597,14 @@ function renderPolicyOutput(focused) {
       heading.querySelector(".spinner")?.setAttribute("aria-hidden", "true");
       const title = element("span", paused ? "Progress connection interrupted" : ({
         pending: "Queued for policy review",
-        reviewing: "Agent checking three comparisons",
+        reviewing: "Agent checking four comparisons",
       }[item.status]));
       title.setAttribute("role", "status");
       heading.append(title);
       activity.append(heading,
         element("p", item.status === "pending"
           ? "Cases run sequentially. This case will start after the cases ahead of it."
-          : "The agent is evaluating three comparisons using saved Parse fields and selected first-pass page text. No claim CU reanalysis is run. Search and model calls can take several minutes; results appear after the response and source citations are verified."),
+          : "The agent is evaluating four comparisons using saved Parse fields and selected first-pass page text. No claim CU reanalysis is run. Search and model calls can take several minutes; results appear after the response and source citations are verified."),
         element("p", "", "policy-activity-time"),
         element("p", "", "policy-activity-connection muted"));
       panel.append(activity);
@@ -1622,7 +1626,7 @@ function renderPolicyOutput(focused) {
       const retry = element("button", "Retry this case", "policy-retry secondary");
       retry.dataset.liveControl = "";
       retry.onclick = () => confirmPolicyRun([packetId]);
-      const notice = element("p", "Retries the three checks for this case only, using saved Parse fields and selected first-pass page text. No claim CU reanalysis is run; Azure charges may apply.", "muted");
+      const notice = element("p", "Retries the four checks for this case only, using saved Parse fields and selected first-pass page text. No claim CU reanalysis is run; Azure charges may apply.", "muted");
       notice.dataset.liveControl = "";
       panel.append(retry, notice);
       controls();
@@ -1984,8 +1988,8 @@ function confirmPolicyRun(packetIds) {
   const packetId = packetIds?.[0];
   get("policy-confirm-summary").textContent =
     (packetId
-      ? `1 case: ${customerName(results.get(packetId)) || packetId} · ${policyModeLabel()}. Only this case's three checks will be retried. `
-      : `${run.items.filter((item) => item.rawSaved).length} cases · three checks per case · ${policyModeLabel()}.`);
+      ? `1 case: ${customerName(results.get(packetId)) || packetId} · ${policyModeLabel()}. Only this case's four checks will be retried. `
+      : `${run.items.filter((item) => item.rawSaved).length} cases · four checks per case · ${policyModeLabel()}.`);
   get("policy-confirmation").showModal();
 }
 get("policy-run").onclick = () => confirmPolicyRun();

@@ -5,6 +5,7 @@ const checkLabels = {
   "Daily rate": "Daily rate",
   "Rental start": "Rental start",
   "Effective terms": "Effective terms",
+  "Repair estimate": "Repair estimate",
 };
 
 export function chatMessageHtml(text, citations = []) {

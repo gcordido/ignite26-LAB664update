@@ -333,6 +333,15 @@ def load_sources(root: Path = ROOT) -> dict[str, Any]:
             raise SetupError(f"{doc_id}: ruleIds must be a non-empty list.")
         if cite.get("ruleIds") != rule_ids:
             raise SetupError(f"{doc_id}: citation ruleIds differ from the manifest.")
+        if doc.get("documentType") == "repair_review_sop":
+            state_rules = doc.get("stateRules")
+            if (doc.get("role") != "repair_review" or "REPAIR-SCOPE-01" not in rule_ids
+                    or not isinstance(state_rules, dict) or set(state_rules) != set(doc.get("states", []))
+                    or cite.get("stateRules") != state_rules
+                    or any(not isinstance(rule, dict) or set(rule) != {"page", "ruleId"}
+                           or type(rule["page"]) is not int or rule["page"] not in sections.values()
+                           or rule["ruleId"] not in rule_ids for rule in state_rules.values())):
+                raise SetupError(f"{doc_id}: repair diagram needs verified state-specific page/rule mappings.")
         states = doc.get("states")
         if not isinstance(states, list) or not states or not all(
                 isinstance(s, str) and re.fullmatch(r"[A-Z]{2}", s) for s in states):
@@ -354,6 +363,8 @@ def load_sources(root: Path = ROOT) -> dict[str, Any]:
             "stateCodes": state_codes, "ruleIds": list(rule_ids),
             "sections": dict(sections), "path": str(pdf),
             "documentType": doc.get("documentType"),
+            **({"role": doc["role"], "stateRules": doc["stateRules"]}
+               if doc.get("documentType") == "repair_review_sop" else {}),
             **({"policyScope": policy_scope} if policy_scope is not None else {}),
         })
     documents.sort(key=lambda d: d["documentId"])

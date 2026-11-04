@@ -301,7 +301,7 @@ def run(args, http=None, root=None):
         rows, changed, reread = reusable_rows(rows, sources)
     present = {r["documentId"] for r in rows}
     missing = [d for d in sources["documents"] if d["documentId"] not in present]
-    if source_index and any(d.get("documentType") != "policy_contract" for d in missing):
+    if source_index and any(d.get("documentType") not in ("policy_contract", "repair_review_sop") for d in missing):
         raise setup.SetupError("Source index is missing existing SOP evidence; refusing partial migration.")
     report = {"sourceIndex": source_index, "targetIndex": target_index, "extractionMode": "layout",
               "reusedChunks": len(rows), "newDocuments": [d["file"] for d in missing],

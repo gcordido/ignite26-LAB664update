@@ -1,15 +1,16 @@
-# Rental review agent question for the v2 extraction corpus
+# Claim policy review question for the v2 extraction corpus
 
 Use this question with the
 [v2 corpus](../data/policies/rental/ocr-comparison-v2/manifest.json).
-The workbench reads the Recommended question for each review. The three
-ordered checks are **Daily rate**, **Rental start**, and **Effective terms**.
+The workbench reads the Recommended question for each review. The four
+ordered checks are **Daily rate**, **Rental start**, **Effective terms**,
+and **Repair estimate**.
 Each is a narrow claim-versus-policy comparison, not benefit or payment approval.
 
 ## Recommended question
 
-> Evaluate exactly three checks in this order: Daily rate, Rental start, Effective terms.
-> Return only the requested JSON schema with three ordered check objects.
+> Evaluate exactly four checks in this order: Daily rate, Rental start, Effective terms, Repair estimate.
+> Return only the requested JSON schema with four ordered check objects.
 > Use original typed Content Understanding Parse fields and supplied textEvidence
 > as claim evidence. These aren't summaries or new extractions. Don't run CU,
 > reread PDFs, request polygons, or invent missing fields, identifiers or values.
@@ -45,7 +46,7 @@ Each is a narrow claim-versus-policy comparison, not benefit or payment approval
 > Unknown applicability remains explicit; contradictory positive/negative
 > evidence requires ReviewRequired, never a silent extraction correction.
 > Confirmed nonrental may make Daily rate and Rental start NotApplicable.
-> NEVER blanket NotApplicable Effective terms: evaluate it independently.
+> NEVER blanket NotApplicable Effective terms or Repair estimate: evaluate them independently.
 >
 > Daily rate compares the actual rental BASE daily price against the effective
 > contract cap for the exact policy ID and insured VIN on the actual loss date.
@@ -94,6 +95,31 @@ Each is a narrow claim-versus-policy comparison, not benefit or payment approval
 > dates, contradictory dates/versions, or missing/ambiguous policy term evidence
 > require ReviewRequired. Never hide a known contradiction behind waiting status.
 >
+> Repair estimate independently compares EACH distinct relevant repair quote's
+> stated GROSS total with the applicable loss-state diagram's routine authority.
+> This is fictional internal handling, NOT state law, a contractual coverage cap,
+> denial or payment authority. Use the actual claim LOSS state, not supplier address.
+> Do not apply rental applicability or rental daily limits to repair estimates.
+> Use each stated gross total INCLUDING stated tax BEFORE deductible, payments
+> or insurer contribution; never substitute AmountDue or sum subtotal/tax/total.
+> Require established USD and preserve exact cents without conversions/rounding.
+> Compare alternative quotes separately, never cheapest-only or summed. Quote
+> differences alone belong to Business rules validation. Count duplicate pages
+> of one quote once; follow explicit supplement/continuation relationships and
+> stated combined totals, never assume additive/superseding relationships.
+> Preserve shop, quote, claim/policy and insured VIN linkage. Whitespace-only
+> VIN formatting may be removed when 17 valid characters then exactly match;
+> never substitute characters or waive real conflicts. Pending authorization
+> or total-loss assessment doesn't invalidate a genuine supplied repair quote.
+> Any established relevant excess above the INCLUSIVE diagram threshold or
+> contradictory identity/amount requires ReviewRequired, even with other missing
+> facts. All complete valid quotes <= threshold mean Satisfied. Missing necessary
+> gross amount, currency, loss state/date or linkage means InProgress; missing
+> state may cite REPAIR-SCOPE-01 but must not apply any state's threshold.
+> Unsupported state, outside-SOP effective dates, missing/ambiguous diagram
+> authority or invalid contradictory amounts means ReviewRequired. NotApplicable
+> requires affirmative no-repair evidence, not absent fields or rental status.
+>
 > Each check has exactly Check, Outcome, ReviewRequired, ExpectedValue,
 > ActualValue, Reason and Citation. Outcome is Satisfied, ReviewRequired,
 > NotApplicable or InProgress. ReviewRequired is true exactly when Outcome is
@@ -102,7 +128,7 @@ Each is a narrow claim-versus-policy comparison, not benefit or payment approval
 > contradictions and known rule violations remain ReviewRequired, even when
 > some claim facts are also missing. Neither Satisfied nor NotApplicable approves
 > benefits, coverage or payment. Non-review outcomes require retrieved citations.
-> With no retrieval, return three ReviewRequired checks with empty citations;
+> With no retrieval, return four ReviewRequired checks with empty citations;
 > never quote limits from memory or prior turns.
 >
 > Compact responses additionally contain Headline and Comparisons. Headline
@@ -145,9 +171,9 @@ and its timing, model deployment and source references remain in the result.
 > ClaimField must be an exact supplied typed path or textEvidence.id, never
 > an invented OCR/source label. Interpretation of page text is derived reasoning,
 > NOT a new CU field. Preserve source provenance and name unknowns explicitly.
-> Use the supplied shared rental applicability decision when present; don't
-> independently gate this check. Without that context resolve rental request/use
-> once from supplied evidence, not policy limits or category labels.
+> For Daily rate and Rental start, use the supplied shared rental applicability
+> decision when present. Without that context resolve rental request/use once
+> from supplied evidence, not policy limits or category labels.
 > A real matched rental invoice establishes rental even without RentalRequested.
 > A towing/glass/repair bill isn't rental. A towing Yes isn't rental Yes.
 > RentalUsed=false alone doesn't exclude a pending request; blank/unchecked
@@ -156,6 +182,8 @@ and its timing, model deployment and source references remain in the result.
 > Unknown necessary applicability means InProgress; contradictory applicability
 > requires ReviewRequired for those two checks. Effective terms is independent:
 > never make it NotApplicable or wait merely because rental is absent/unknown.
+> Repair estimate is also independent: actual relevant repair quotes remain
+> applicable even on a confirmed nonrental claim or pending total-loss assessment.
 > Known check-specific violations/contradictions must remain ReviewRequired,
 > even when other claim facts are missing. Missing/ambiguous policy rules also
 > require review. Non-review outcomes need retrieved rule citations.
@@ -214,3 +242,66 @@ and its timing, model deployment and source references remain in the result.
 > claim dates means InProgress; known outside-term dates, contradictory
 > dates/versions or missing/ambiguous effective policy evidence means
 > ReviewRequired. Apply issued changes only to their provision and vehicle.
+
+### Repair estimate
+
+> Check: Repair estimate. Is each supplied repair-estimate total within this
+> state's routine review authority? Evaluate independently of rental applicability.
+> Use the verified synthetic repair-review diagram for the actual CLAIM LOSS STATE,
+> never shop, claimant or insurer addresses, rental rules, memory, or a global limit.
+> The two diagram pages are self-contained; use the relevant state's registered
+> page, rule ID, effective dates and branches. This fictional internal SOP is NOT
+> state law, a contractual repair coverage cap, denial, repair selection, or payment
+> authorization. Threshold-fit alone does not establish coverage or authorization.
+>
+> Identify EACH distinct relevant repair quote using supplied original document
+> category, quote/reference, shop, claim/policy and insured vehicle, contentPath
+> and page evidence. Preserve exact original reference spellings. A whitespace-only
+> VIN formatting difference may be compared without spaces if all 17 valid characters
+> then match; do not change characters, normalize O/0, or waive a genuinely different VIN.
+> Conflicting identities require ReviewRequired. Unknown necessary linkage waits.
+> Do not substitute rental, towing, tax forms, settlement valuations or other bills.
+> A genuine provisional repair estimate is still a quote even when authorization,
+> payment or a total-loss assessment is pending; these aren't extra prerequisites.
+>
+> Compare the stated GROSS repair total INCLUDING stated tax, BEFORE deductible,
+> customer/insurer contribution or payments. Use original TotalAmount amount and
+> currency plus whole relevant first-pass quote text; text interpretation is derived
+> evidence, not a new CU field. Never substitute AmountDue/net responsibility or a
+> deductible mistakenly extracted as TotalDiscountAmount. Do not add subtotal,
+> tax, line totals or a total summary to the already complete gross total. Currency
+> must be established as USD; missing currency is unknown, not implicit USD.
+> A known non-USD currency requires ReviewRequired; this SOP authorizes no conversion.
+> No conversions, invented taxes, default zero, NaN, negative or inconsistent totals.
+> Preserve exact decimal cents; never round an excess down to the inclusive boundary.
+>
+> Evaluate alternate quotes SEPARATELY; never choose the cheapest or sum them.
+> Different amounts alone are NOT a failure here: quote differences stay in the
+> existing Business rules validation pivot. Duplicate pages/representations of the
+> same quote count once. A clearly linked continuation or supplement already
+> included in a stated combined gross total is not an extra quote or extra charge.
+> Do not assume an unlinked supplement is additive, superseding or an alternative;
+> unresolved necessary relationships wait, while contradictory source facts require review.
+> A document explicitly labeled a SUPPLEMENT is not automatically another complete
+> alternative quote. If its base-quote or additive/replacement relationship is
+> unresolved, return InProgress even when each visible amount separately fits.
+> Do not recast that supplement as an independent alternative just to pass.
+> An established excess or contradiction still takes precedence and requires review.
+>
+> Any known relevant quote ABOVE the inclusive state threshold requires
+> ReviewRequired and must be named with its gross total and threshold, even if
+> other quotes have missing facts. Known contradictory identities/amounts also
+> require review. ALL distinct complete valid relevant quotes <= threshold mean
+> Satisfied for this comparison even when they differ. Name both quotes when two
+> are supplied; prefer two comparisons with precise per-quote page-text references
+> when a generic typed field path would match multiple documents.
+> Missing necessary total, currency, loss state, date or linkage means InProgress,
+> unless a known excess/contradiction already requires review. A missing state
+> may cite the common REPAIR-SCOPE-01 branch but must not apply any state's amount.
+> Unsupported state, outside-SOP effective dates, or missing/ambiguous controlling
+> diagram/rule evidence requires ReviewRequired, never a fallback threshold.
+> NotApplicable requires affirmative source support for no relevant repair
+> evidence; absent fields, nonrental status or a category label alone do not prove it.
+> Retain 1-3 decisive comparisons, concise headline/reason, exact supplied claim
+> references and this turn's verified diagram citations. No retrieved rules means
+> ReviewRequired with empty citations; a service/retrieval failure is Run error.

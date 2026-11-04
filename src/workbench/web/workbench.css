@@ -248,12 +248,13 @@
   height: 88px;
   white-space: normal;
   line-height: 1.25;
+  overflow-wrap: anywhere;
 }
 body:has(#review-packet[aria-pressed="true"]) #packet-table {
   min-width: 560px;
 }
 body:has(#workflow-pivots [data-workflow="policy"][aria-pressed="true"]) #packet-table {
-  min-width: 640px;
+  min-width: 360px;
 }
 .policy-column-title,
 .policy-column-description {
@@ -1197,9 +1198,11 @@ tr:last-child td {
   display: flex;
   width: 100%;
   height: 100%;
-  padding: 0 10px;
+  padding: 0 6px;
   border-radius: 0;
   line-height: normal;
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 #packet-table.policy-grid .cell-content[data-agent-check]:focus-visible {
   outline-offset: -2px;

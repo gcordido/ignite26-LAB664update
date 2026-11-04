@@ -34,14 +34,22 @@ CHECK_FIELDS = {
     "Effective terms": {
         "Policy", "PolicyDailyBaseCap", "PolicyEndorsement",
     },
+    "Repair estimate": {"Policy"},
 }
 INVOICE_FIELDS = {
     "Daily rate": {"InvoiceId", "InvoiceDate", "LineItems", "TotalAmount"},
     "Rental start": {"InvoiceId", "InvoiceDate", "LineItems.Description", "LineItems.ServiceStartDate",
                "LineItems.ServiceEndDate", "LineItems.Quantity", "PaymentTerm"},
     "Effective terms": {"InvoiceId", "LineItems.Description"},
+    "Repair estimate": set(),
 }
-EXCLUDED_CATEGORIES = {"id_document", "identity_document", "tax_document", "tax_form"}
+REPAIR_FIELDS = {
+    "TotalAmount", "SubtotalAmount", "TotalTaxAmount", "TaxDetails",
+    "AmountDue", "TotalDiscountAmount", "InvoiceId", "InvoiceDate",
+    "VendorName", "VendorAddress", "CustomerName", "PaymentTerm",
+    "vehicle", "vin", "LineItems",
+}
+EXCLUDED_CATEGORIES = {"id_document", "identity_document", "tax_document", "tax_form", "tax_1099a"}
 
 
 def project_field(field: dict, path: str, selected: set[str]) -> dict | None:
@@ -71,7 +79,9 @@ def check_analysis(analysis: dict, check: str) -> dict:
     documents = []
     for content in analysis.get("contents", []):
         category = content.get("category", "")
-        if category in EXCLUDED_CATEGORIES:
+        excluded = EXCLUDED_CATEGORIES | (
+            {"rental_invoice", "towing_invoice"} if check == "Repair estimate" else set())
+        if category in excluded:
             continue
         if category == "rental_invoice":
             selected = COMMON_FIELDS | INVOICE_FIELDS[check]
@@ -80,6 +90,8 @@ def check_analysis(analysis: dict, check: str) -> dict:
                 "vehicle", "vin", "incident_date", "incident_location", "reported_damage", "summary",
                 "LineItems.Description", "InvoiceId", "InvoiceDate",
             }
+            if check == "Repair estimate" and category == "repair_estimate":
+                selected |= REPAIR_FIELDS
         fields = {
             name: value for name, field in content.get("fields", {}).items()
             if (value := project_field(field, name, selected)) is not None
@@ -88,7 +100,9 @@ def check_analysis(analysis: dict, check: str) -> dict:
         documents.append({**deepcopy(content), "fields": fields})
     return {**deepcopy(analysis), "contents": documents,
             "textEvidence": [deepcopy(item) for item in analysis.get("textEvidence", [])
-                             if item.get("category") not in EXCLUDED_CATEGORIES]}
+                             if item.get("category") not in (
+                                 EXCLUDED_CATEGORIES | (
+                                     {"rental_invoice", "towing_invoice"} if check == "Repair estimate" else set()))]}
 
 
 def missing_fields(fields: dict, prefix: str = "") -> list[str]:
@@ -164,13 +178,23 @@ def claim_references(analysis: dict) -> set[str]:
     return references
 
 
-def check_evidence(evidence: list[dict], sources: dict, check: str) -> list[dict]:
+def check_evidence(evidence: list[dict], sources: dict, check: str, state: str | None = None) -> list[dict]:
     """Trim by verified role/page metadata; never cut a table, figure or clause."""
     if check not in CHECK_FIELDS:
         raise ValueError(f"Unknown policy check: {check}")
     result = []
     for doc in evidence:
         source = sources[doc["file"]]
+        if check == "Repair estimate":
+            if source.get("role") != "repair_review":
+                continue
+            rule = source.get("stateRules", {}).get(state)
+            if state is not None and (not rule or not doc["page"] <= rule["page"] <= doc["pageTo"]):
+                continue
+            result.append(deepcopy(doc))
+            continue
+        if source.get("role") == "repair_review":
+            continue
         # Effective-date checks need declarations and issued changes, not rental
         # timing diagrams. Other checks retain whole relevant contract pages.
         if check == "Effective terms" and source.get("role") == "rental_terms":
@@ -203,7 +227,7 @@ def check_questions(file: Path, checks: list[str]) -> dict[str, str]:
             raise ValueError(f"Empty per-check question: {name}")
         sections[name.strip()] = question
     if set(sections) != {"Shared", *checks}:
-        raise ValueError("Per-check questions must contain Shared and exactly the three check names.")
+        raise ValueError("Per-check questions must contain Shared and exactly the four check names.")
     return sections
 
 
@@ -211,6 +235,6 @@ def check_prompt(analysis: dict, check: str, questions: dict[str, str],
                  applicability: dict | None = None) -> str:
     shared = ("\n\nShared rental applicability (derived interpretation of supplied Parse evidence, "
               "NOT a new extracted CU field):\n" + json.dumps(applicability, ensure_ascii=False)
-              if applicability is not None else "")
+              if applicability is not None and check != "Repair estimate" else "")
     return (questions["Shared"] + "\n\n" + questions[check]
             + shared + "\n\n" + claim_input(check_analysis(analysis, check)))

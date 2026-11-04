@@ -28,11 +28,12 @@ claim packets and individual PDFs. All names and claim details are fictional.
 
 Select the image to open the sample PDF.
 
-## Rental review policy corpus
+## Claim policy corpus
 
 The [v2 Search corpus](policies/rental/ocr-comparison-v2/manifest.json) has
-41 manifest-listed PDFs: three claim-scoped evidence documents for each of the
-ten available packets, plus ten state SOPs and one shared evidence standard.
+42 manifest-listed PDFs: three claim-scoped evidence documents for each of the
+ten available packets, plus ten state SOPs, one shared evidence standard and
+one synthetic repair-review diagram.
 Each claim set contains a sparse declarations table, rental terms with an
 eligibility diagram, and a scanned effective-date document. In the Texas and
 Washington contracts, Figure R-1 controls eligibility timing; in the other
@@ -58,6 +59,17 @@ Packet 06's original Illinois scan is also unchanged: policy ingestion now
 verifies an invalid native OCR VIN against the original page image instead of
 asking the reviewer to ignore an identity mismatch.
 
+The two-page `synthetic-repair-review-authority-v1.pdf` adds a separate,
+fictional internal repair-review SOP, not state law or contractual coverage.
+Its diagram compares each relevant quote's stated gross USD total, including
+stated tax and before deductible or payments, against an inclusive state
+threshold. It uses the claim's loss state and covers loss dates from
+2024-01-01 through 2026-12-31, inclusive. Excess means referral, not denial
+or payment authorization; quote differences remain in Business rules validation.
+`infra/generate-repair-review-corpus.py` reproduces the PDF and registrations
+without changing the original claim or policy PDFs. Each state's registered
+rule and page appear in both the manifest and citation map.
+
 ## Saved policy demo
 
 `policy-demo` contains ten real Agent Framework policy reviews of these synthetic
@@ -66,7 +78,7 @@ and public resource configuration. It contains no
 credentials and isn't policy knowledge or a set of scripted runtime answers.
 The results are available on first launch without Azure configuration,
 credentials or a restore script. The app automatically loads saved CU results
-from `results` and all **30** saved policy comparisons from `policy-demo`.
+from `results` and all **40** saved policy comparisons from `policy-demo`.
 
 The refreshed bundle uses CU run
 `c12569eb-cf4b-479a-9f57-d6bf57fb5732` and records the verified **CU Layout**
@@ -74,7 +86,9 @@ index used for these agent reviews. It reuses the committed extraction manifest
 and ten native CU responses in `results` without another claim extraction or
 mandatory claim-summary cache. Transfer `results` and `policy-demo` together.
 Earlier five-check results and their original Standard-index provenance are
-preserved under `policy-demo/history/five-checks`. No
+preserved under `policy-demo/history/five-checks`; the previous three-comparison
+bundle retains its provenance under `policy-demo/history/three-checks`.
+Neither is reinterpreted as a four-check result. No
 machine-local `.tools` configuration, credentials or Azure
 deployment is required to view them. Follow-up chat still requires live setup.
 

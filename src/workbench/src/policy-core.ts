@@ -10,8 +10,9 @@ export const checkNames = [
   "Daily rate",
   "Rental start",
   "Effective terms",
+  "Repair estimate",
 ] as const;
-export const checkContractVersion = 3;
+export const checkContractVersion = 4;
 export const modeSchema = z.enum(["ungrounded", "search"]);
 export type PolicyMode = z.infer<typeof modeSchema>;
 const hash = z.string().regex(/^[a-f0-9]{64}$/);
@@ -252,6 +253,9 @@ const citationMapSchema = z.array(
     sha256: hash,
     ruleIds: z.array(z.string()),
     sections: z.record(z.string(), z.number().int().positive()),
+    stateRules: z.record(z.string(), z.object({
+      page: z.number().int().positive(), ruleId: z.string(),
+    })).optional(),
   }),
 );
 export async function resolveCitations(output: {
@@ -287,10 +291,11 @@ export async function resolveCitations(output: {
         }
       }
       const page = map?.sections[citation.Section];
+      const stateRule = Object.values(map?.stateRules ?? {}).find((rule) => rule.ruleId === citation.RuleId);
       return {
         ...citation,
         href:
-          map && filename === map.pdf && page
+          map && filename === map.pdf && page && (!stateRule || stateRule.page === page)
             ? `/data/${relative}/${map.pdf}#page=${page}`
             : null,
       };

@@ -84,9 +84,9 @@ class PolicyEvidenceTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             runtime.source_evidence(row, config, sources, citations, "TX")
 
-    def test_three_check_names_are_the_evidence_scenarios(self):
-        self.assertEqual(runtime.CHECKS, ["Daily rate", "Rental start", "Effective terms"])
-        self.assertEqual(len(runtime.CHECKS), 3)
+    def test_four_check_names_are_the_evidence_scenarios(self):
+        self.assertEqual(runtime.CHECKS, ["Daily rate", "Rental start", "Effective terms", "Repair estimate"])
+        self.assertEqual(len(runtime.CHECKS), 4)
         self.assertIn("policyScope", runtime.Turn.model_fields)
 
     def test_check_projections_keep_whole_controlling_pages_and_metadata(self):

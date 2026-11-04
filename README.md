@@ -70,7 +70,7 @@ the index configuration only to run live analysis or policy checks.
 #### Try the policy-check comparison
 
 On first launch, the app automatically loads the included **10/10** CU run and
-all **30** saved policy checks. Open **Check policies** with **FoundryIQ**
+all **40** saved policy checks. Open **Check policies** with **FoundryIQ**
 selected. **Load cached results** reloads them; no separate extraction step is needed.
 **Parse and extract** > **Load cached results** also loads the included CU run
 independently. Without compatible local reviews,
@@ -83,17 +83,25 @@ Loading makes no Azure calls. Follow-up chat requires live Azure configuration, 
 FoundryIQ is the lab's umbrella label; this implementation retrieves evidence
 directly from Azure AI Search, not a Foundry IQ knowledge base.
 
-The three columns are **Daily rate**, **Rental start**, and **Effective terms**.
+Under **Claim policy checks**, the four columns are **Daily rate**, **Rental start**,
+**Effective terms**, and **Repair estimate**, in that order.
 Compare the claimed daily rental base rate with the effective cap for the matched
 insured vehicle, the stated rental start basis with the documented drivability rule,
 and the applicable policy and genuine amendment with the actual loss date.
 Match the policy ID and insured VIN, not just a similar vehicle.
+**Repair estimate** independently compares each relevant distinct quote's gross total,
+including stated tax and before deductible or payments, with the synthetic internal
+state-specific routine review threshold retrieved from the repair-authority diagram.
+This threshold isn't law, a contractual coverage cap or payment approval.
+Different quote amounts alone don't require review here; **Business rules validation**
+retains its separate multiple-estimates warning.
 Compare the claim and policy
 values in the right panel, then follow a value's source link to its PDF.
 A check mark means **Satisfied**, an open circle means **Review required**,
 and a circular-arrow icon means **Waiting for info**, not an agent still running.
 **N/A** can apply to **Daily rate** and **Rental start** for a confirmed non-rental
-claim; **Effective terms** still compares the matched terms with the loss date.
+claim; **Effective terms** still compares the matched terms with the loss date,
+and **Repair estimate** remains independent of rental applicability.
 Packet **01** illustrates why a numerical rate fit is conditional on rental
 eligibility, not payment approval. Packet **02** separates the contractual cap
 from the SOP's routine handling authority. Missing unrelated repair completion
@@ -101,11 +109,13 @@ or insurer payment authorization doesn't create a wait for these narrow checks.
 Linked page text is labeled as first-pass parsed evidence: its interpretation
 isn't a typed CU fact, and no source boxes are invented.
 These are evidence-based reviews, not coverage or payment approval.
+Keep Texas's **$75/day** and Washington's **$85/day** contractual rental limits
+separate from repair review authority; inspect the matched policy evidence for each.
 
 Select **Run live** and confirm only to request policy work. Matching current
 reviews are reused; uncached packets use saved Parse fields and selected first-pass
 page text, without claim-summary preparation or claim CU reanalysis. The agent
-interprets rental applicability before three parallel comparison calls. Azure charges apply.
+interprets rental applicability before four parallel comparison calls. Azure charges apply.
 The previous five-check bundle remains legacy history; the new bundle replaces
 the active results without editing extracted facts or inventing outcomes.
 See [policy checks](docs/policy-checks.md) for the walkthrough and cache details.

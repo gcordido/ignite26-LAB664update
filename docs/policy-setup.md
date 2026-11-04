@@ -9,7 +9,7 @@ No knowledge base, hosted agent or new Search service is needed.
 
 ```text
 Policy PDFs -> Blob Storage -> Search indexer + Content Understanding skill
-           -> Policy index -> Agent Framework -> Five checks and chat
+           -> Policy index -> Agent Framework -> Four comparisons and chat
 ```
 
 ## Prerequisites
@@ -18,8 +18,9 @@ Policy PDFs -> Blob Storage -> Search indexer + Content Understanding skill
   `infra/requirements-policy-agent-framework.txt` installed.
 - Azure CLI sign-in for the identity running setup and the local workbench.
 - The existing Search, Blob Storage, Content Understanding and model resources.
-- An existing chat model deployment for figure descriptions. The claim analyzer
-  is required only when preparing live claim reviews, not for policy indexing.
+- An existing chat model deployment for figure descriptions. A claim analyzer
+  is needed only for a new **Parse and extract** run, not for policy indexing
+  or reviewing an already parsed claim.
   Supply resource IDs and model names through resource-group discovery or the
   deployment settings below.
 - Policy PDFs registered in the
@@ -57,14 +58,13 @@ to access the npm registry.
 The launcher automatically uses this environment. Stop the app and rerun setup
 after pulling dependency updates.
 
-The current claim-summary definition includes explicit rental-request/use
-answers and their wording (`RentalRequested`, `RentalUsed`,
-`RequestTypeEvidence`). An older registered analyzer is not overwritten
-automatically. To adopt a schema update, provision the definition under a new
-analyzer ID using the documented `--create-claim-analyzer` setup option, activate
-that configuration and prepare fresh claim summaries. Their definition hash
-isolates earlier extraction/review caches. The Search policy index does not
-need different source PDFs for this extraction-only change.
+The four comparisons reuse the original Parse fields and selected whole
+first-pass page text; they don't require a claim summary or another claim CU call.
+The optional legacy claim-summary definition includes rental-request/use wording
+(`RentalRequested`, `RentalUsed`, `RequestTypeEvidence`). If a separate experiment
+needs that analyzer, provision a changed definition under a new ID with
+`--create-claim-analyzer`; setup never overwrites an older definition.
+Don't prepare fresh claim summaries merely to run the four comparisons.
 
 Open the [Python setup notebook](../infra/policy-agent-framework-setup.ipynb)
 for a step-by-step walkthrough. The notebook calls the same Python functions
@@ -150,7 +150,7 @@ aren't deleted.
 On a fresh clone, `.tools\policy-agent-framework.json` is absent because it is
 machine-local and git-ignored. After dependencies are provisioned, launch the app
 and load the included CU run, then select **Check policies** > **Load cached
-results**. The app reads all ten synthetic reviews (30 comparisons) from
+results**. The app reads all ten synthetic reviews (40 comparisons) from
 `data\policy-demo`, reusing the committed Parse evidence in `data\results`,
 when compatible local reviews aren't available. No claim summary, restore,
 Azure configuration, credentials or Azure calls are involved. The **Bundled demo**
@@ -170,8 +170,10 @@ provision Azure resources. After intentionally refreshing all ten reviews,
 export a new bundle with `.\infra\policy-demo-cache.ps1 -Action export -RunId RUN-ID`.
 Export rejects missing or earlier-prompt results and includes only the selected
 run's review files, public configuration and hashes of the existing Parse files,
-not logs, credentials or duplicate claim extractions. Earlier five-check results
-remain history-only; they aren't reinterpreted as the three new comparisons.
+not logs, credentials or duplicate claim extractions. Earlier three- and five-check
+results remain history-only; they aren't reinterpreted as four-check reviews.
+Export preserves the previous three-check bundle under
+`data\policy-demo\history\three-checks` before replacing the current bundle.
 
 ## Prepare live policy checks on a lab machine
 
@@ -442,8 +444,20 @@ machine-local configuration only after verification. It never changes or
 deletes the source index. New extracted content is labeled CU Layout, not
 Standard; diagram text remains OCR evidence, not a guaranteed interpretation.
 Revised registered policy PDFs are re-extracted into the new generation;
-unchanged policy pages and SOPs are reused. Other source metadata drift fails
+unchanged policy pages and SOPs are reused. A newly registered independent
+`repair_review_sop` is extracted into the new generation as well; its exact
+state-rule/page mapping must agree with the citation map. Other source metadata drift fails
 verification rather than silently replacing shared evidence.
+
+The fourth comparison uses the versioned, two-page synthetic repair-review
+diagram in the manifest, not the rental daily-rate SOP. Reproduce this authored
+source with `python .\infra\generate-repair-review-corpus.py` in the
+corpus-authoring environment before provisioning a fresh generation.
+The thresholds and decision branches are inside the diagram itself. They are
+fictional internal gross-USD review authority, not state law, a contractual
+coverage limit, denial, or payment authorization. Inspect the newly indexed
+figure text before regenerating saved reviews: a successful ingestion does not
+prove that OCR transcribed numeric thresholds accurately.
 
 If Layout produces an invalid VIN in a labeled policy field, setup asks the
 existing vision-capable model deployment to transcribe that field from the

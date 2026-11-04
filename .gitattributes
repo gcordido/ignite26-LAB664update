@@ -3,3 +3,4 @@
 data/policies/rental/ocr-comparison-v2/manifest.json text eol=crlf
 data/policy-demo/*.json text eol=lf
 data/policy-demo/history/five-checks/*.json text eol=lf
+data/policy-demo/history/three-checks/*.json text eol=lf
