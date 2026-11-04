@@ -11,7 +11,7 @@ The workflow has three parts:
    SOP PDFs and policy-scoped contractual PDFs. The active configuration
    identifies the index and extraction mode.
 3. **Review:** A Python Microsoft Agent Framework agent evaluates four comparisons
-   and answers follow-up questions using the selected retrieval mode.
+   and answers follow-up questions using grounded Search retrieval.
 
 Reviews use only saved **Parse and extract** fields and selected first-pass page
 text from that same run. There is no claim-summary prerequisite or claim CU
@@ -156,23 +156,23 @@ the policy index on your existing Search service.
 The top-level pivots are **Parse and extract**, **Business rules validation**,
 and **Check policies**. Saved results load automatically and remain shared across
 all three pivots. Classification and
-document-type views live under **Parse and extract**; policy retrieval controls
+document-type views live under **Parse and extract**; policy resource links
 appear only under **Check policies**. Switching pivots preserves the loaded run
 and reuses the same table, document viewer and debugger. Returning to **Parse
 and extract** restores the previously selected document type.
 
-**No policy retrieval** remains available to inspect
-previously saved baseline results, but a new baseline run can't be started from
-the app.
-
-The dropdown loads from the policy configuration independently of the packet
-classifier. A missing live classifier does not prevent using cached claim
-results with the configured policy index. The choices are **No policy retrieval**
-and **FoundryIQ**. FoundryIQ is the lab's umbrella label for grounded policy
+Grounded Search retrieval is the default; the app has no retrieval-mode dropdown.
+Earlier no-retrieval baselines remain in cache history, not a selectable app mode.
+A missing live classifier does not prevent using cached claim
+results with the configured policy index. FoundryIQ is the lab's umbrella label for grounded policy
 retrieval; this implementation queries an ordinary Azure AI Search index directly,
-not a Foundry IQ knowledge base. If the policy configuration cannot
-be loaded, the dropdown shows an unavailable message and the status below it
-explains why.
+not a Foundry IQ knowledge base. Two plain labels identify the Search index and
+policy document storage. The index name opens that exact index in the Azure portal.
+A verified Blob container, when registered for the same source generation, opens
+its container view. The current Layout generation reads local PDFs and has no
+matching Azure container, so its storage label says so without a misleading link.
+**Settings** retains live-run controls, configuration status and cache reloads;
+active runs still have a visible progress banner.
 
 If a case shows **Run error**, open its **Result** and select **Retry this case**
 under the error. The confirmation names that one case; it does not rerun other
@@ -196,9 +196,9 @@ For live checks, complete [policy setup](policy-setup.md) and sign in with the
 approved lab identity. For a first-run walkthrough without Azure setup or
 charges, use [Load saved policy results](#load-saved-policy-results) instead.
 
-1. In **Parse and extract**, select **Load cached results** to load the
+1. In **Settings**, select **Reload saved results** to load the
    included completed **10/10** CU run. Select **Check policies**.
-2. In **Policy retrieval**, select **FoundryIQ**. Select **Run live**
+2. In **Settings**, enable live calls and select **Run live policy checks**
    and confirm. This runs the Agent Framework agent against saved CU
    fields and selected first-pass text, not just a local rules engine. Azure charges apply;
    no claim CU reanalysis is submitted. The confirmation covers all loaded
@@ -215,11 +215,7 @@ charges, use [Load saved policy results](#load-saved-policy-results) instead.
    and the age of the last successful workbench response. This confirms the
    progress connection, not individual Search/model-call completion. If updates
    stop, reconnect rather than starting another batch.
-4. Optionally select **No policy retrieval** to inspect a previously saved
-   baseline. Without an SOP, the agent must not invent a rate threshold.
-   Return to **FoundryIQ** to inspect this run. Changing the
-   dropdown doesn't submit another batch.
-5. Compare **Daily rate** for packets **01** and **02**, using the source
+4. Compare **Daily rate** for packets **01** and **02**, using the source
    evidence below. Select each check to inspect its headline, claim and policy
    values, and sources in the right panel.
    Open **Review details** for the fuller explanation.
@@ -270,7 +266,8 @@ steps.
 
 ### Inspect the deployed Search index
 
-1. Note the active index name shown below **Policy retrieval**, or read
+1. Select the index name beside **Azure Search (FoundryIQ) Index for policy documents**,
+   or read
    `.tools\policy-agent-framework.json` locally. Its `searchEndpoint`,
    `indexName` and `extractionMode` are the source of truth; don't assume a name
    copied from another machine.
@@ -285,8 +282,8 @@ steps.
    use page ranges. The agent restricts retrieval to the loss state and verified
    corpus generation rather than searching every policy indiscriminately.
 
-At the time this walkthrough was updated, the shared environment used
-`lab664-rental-v2-agent-framework-3428a1feb437`, labeled **CU Layout**.
+The current four-check bundle records
+`lab664-claim-policy-v4b-1728bee05009`, with **CU Layout** extraction.
 Don't describe it as Standard extraction. The
 [managed CU ingestion setup](policy-setup.md) activates a replacement only
 after ingestion and source verification succeed.
@@ -315,6 +312,20 @@ the repository PDFs for this optional inspection. Ask the lab owner about the
 reported ingestion prerequisites; don't assign roles or create resources during
 the attendee walkthrough.
 
+The current generation has no matching container in `mmiusw3bbstore`. Its
+**Azure Storage documents here** label explicitly identifies local corpus storage.
+No upload is implied by the configured storage-account resource ID.
+Public portal metadata lives in `data\policy-demo\resources.json`, separate from
+model inputs and review-cache identity. It must match the exact index name,
+corpus hash, index fingerprint and Search endpoint before any links are shown.
+Missing, invalid or stale metadata produces an explicit unavailable label and
+doesn't prevent loading offline reviews. After a different deployment, register
+only verified resource metadata for that generation; a Blob entry requires its
+actual account resource ID and populated policy container, not a name inferred
+from a hash. Rendering the labels makes no Azure calls. Opening a portal link
+requires the viewer's Azure sign-in and resource permissions. If saved results
+and live configuration use different indexes, the page identifies both.
+
 ### Inspect the agent
 
 Open [`infra/policy-framework-agent.py`](../infra/policy-framework-agent.py).
@@ -329,25 +340,21 @@ Framework implementation or a hosted Foundry agent.
 
 1. Launch the workbench with `.\infra\launch-workbench.ps1`.
 2. Load saved CU results, or explicitly run your connected analyzer.
-3. In **Check policies**, select **FoundryIQ**.
-4. Select **Run live** and confirm the Azure operation.
+3. Open **Check policies**, which always uses grounded Search retrieval.
+4. In **Settings**, enable live calls, select **Run live policy checks** and confirm the Azure operation.
 5. Select a check in the grid to inspect its review in the right panel.
-6. Optionally switch to **No policy retrieval** to inspect saved baseline
-   results. The app doesn't start new runs in this mode.
 
 ### Load saved policy results
 
-Both **Parse and extract** and **Check policies** have a single selector with
-**Run live** and **Load cached results** beside it. There is no cache dropdown
-or Refresh button. The extraction button loads the saved CU run (preferring a
+Open **Settings** for **Reload saved results** and **Reload policy reviews**.
+There is no policy retrieval selector. The extraction button loads the saved CU run (preferring a
 completed run); its tooltip identifies the analyzer and saved time.
 
-Select the retrieval mode in **Check policies**, then
-select **Load cached results**. The button loads the compatible saved checks for
-that mode and loaded CU run. On first launch, **FoundryIQ** can load the included
+Select **Reload policy reviews**. The button loads the compatible grounded checks for
+the loaded CU run. On first launch, it can load the included
 CU run and policy results together; loading extraction results separately isn't
 required. Availability updates when entering **Check
-policies**, changing retrieval mode, or completing a policy batch.
+policies** or completing a policy batch.
 Listing or loading saved policy results makes no Azure calls.
 
 Exact execution caches match the CU run, claim input, prompt, runtime and policy
@@ -360,8 +367,8 @@ remaining cases stay **Not run**. Live runs still save successful cases
 automatically. Loading is disabled while this session is processing a batch.
 
 On first launch, the app automatically loads the included **10/10** CU run and
-**40** saved comparison cells. Open **Check policies** with **FoundryIQ**
-selected; **Load cached results** reloads them.
+**40** saved comparison cells. Open **Check policies**;
+**Settings** > **Reload policy reviews** reloads them.
 Without compatible local reviews, the app
 reads ten policy reviews and their claim fields directly from `data\policy-demo`.
 No Azure configuration, credentials or manual restore command is required.
@@ -376,13 +383,13 @@ attendee prerequisite. Earlier five-check and three-check reviews remain history
 not relabeled or converted into four-check outcomes. The new bundle replaces
 the active results without altering saved Parse facts.
 
-Both modes use the same model, saved Parse evidence and
-[review question](rental-review-agent-question-v2.md). Selecting a mode, case,
+The grounded workflow uses the saved Parse evidence and
+[review question](rental-review-agent-question-v2.md). Selecting a case,
 tab or source link doesn't submit an agent request or start ingestion.
 
 | Mode | What the agent receives |
 |---|---|
-| No policy retrieval | Saved claim evidence only. Missing governing policy evidence remains explicit, with no invented citations or benefit limits. |
+| No policy retrieval (historical backend baseline only) | Saved claim evidence only. Missing governing policy evidence remains explicit, with no invented citations or benefit limits. Not selectable in the app. |
 | FoundryIQ | Relevant saved Parse fields, selected first-pass text and prefetched Azure AI Search evidence for each check; follow-up chat can use the Search tool. |
 
 The application fixes the loss state, policy ID, insured VIN and source
@@ -398,10 +405,9 @@ and missing claim facts aren't filled in from policy rules or local answer guide
 
 ### Follow batch progress
 
-Both retrieval modes use the loaded saved Parse fields and selected first-pass
+Policy checks use the loaded saved Parse fields and selected first-pass
 page text. The ten cases run sequentially; the status line shows completed
 cases, the active case, four-comparison review progress and total elapsed time.
-No retrieval means no SOP lookup, not no Azure calls.
 
 Refreshing the same browser tab reconnects to its private session, reloads its
 selected CU run and resumes policy progress without submitting another batch.
@@ -477,7 +483,7 @@ SOP threshold and require exception approval.
 ## Ask follow-up questions
 
 The right panel opens in **Result**. Select **Ask agent** to ask about the selected
-check for the same case and retrieval mode without changing its saved results.
+check for the same case using grounded Search retrieval without changing its saved results.
 Daily rate, Rental start, Effective terms and Repair estimate
 each have their own conversation. Switching checks doesn't mix their history.
 
@@ -488,9 +494,8 @@ to inspect the input. New parallel reviews preserve the actual per-check
 prompts in the review cache. Older snapshots without those prompts use the
 current per-check question and selected CU fields, explicitly labeled as current.
 
-Each explicit question runs the same Python agent. Search-backed questions
-retrieve fresh evidence; no-retrieval questions must disclose that SOP evidence
-is unavailable. Questions don't change claim facts or authorize payment.
+Each explicit question runs the same Python agent and can retrieve fresh Search
+evidence. Questions don't change claim facts or authorize payment.
 
 Chat history stays in server memory, isolated by private session, CU run, case,
 check, mode and result/model/configuration identity. It isn't written into shared review

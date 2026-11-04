@@ -5,6 +5,7 @@ import { Cache, type Run } from "./batch.ts";
 import { cacheFolders, LabError } from "./config.ts";
 import { checkContractVersion, checkNames, digest, parseSourceDigest } from "./policy-core.ts";
 import { frameworkConfigSchema, loadPolicyCache, PolicyService } from "./policy-service.ts";
+import { policyResources } from "./policy-resources.ts";
 
 export const policyDemoManifestSchema = z.object({
   schemaVersion: z.literal(2),
@@ -55,6 +56,7 @@ export async function readPolicyDemo(
   const config = frameworkConfigSchema.parse(
     await loadPolicyCache(path.join(folder, "policy-agent-framework.json")),
   );
+  const resources = await policyResources(config, folder);
   const service = new PolicyService({ config: async () => config, cacheFolder: folder });
   const run = await cache.load(manifest.runId);
   const items = await service.snapshot(run, "search", (id) => cache.raw(run.id, id));
@@ -68,6 +70,7 @@ export async function readPolicyDemo(
       runId: manifest.runId,
       mode: manifest.mode,
       indexName: config.indexName,
+      resources,
       checks: checkNames,
       datasetHash: run.datasetHash,
     },
@@ -79,6 +82,7 @@ export async function readPolicyDemo(
         sourceRunId: run.id,
         sourceDatasetHash: run.datasetHash,
         indexName: config.indexName, extractionMode: config.extractionMode, items,
+        resources,
       };
     },
   };

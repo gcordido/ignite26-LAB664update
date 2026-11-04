@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "indexName": "lab664-claim-policy-v4b-1728bee05009",
+  "corpusHash": "5b198c1586770f3a60a357a78c3f5d63f1a633bc65c53307392883e51c36488e",
+  "indexFingerprint": "a71bc9a95f9492099dfca85d19633e3427706c975f5fb3fdbe007ae361342c2a",
+  "search": {
+    "resourceId": "/subscriptions/609bbde3-d152-4d7d-a12b-005e38ac4f27/resourceGroups/mmi-sample-vendors/providers/Microsoft.Search/searchServices/mmi-sample-ai-search",
+    "location": "West US",
+    "sku": "standard"
+  },
+  "storage": {
+    "kind": "local"
+  }
+}

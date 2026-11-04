@@ -492,8 +492,7 @@ input,
 select {
   font: inherit;
 }
-.toolbar select,
-#policy-toolbar select {
+.toolbar select {
   appearance: none;
   -webkit-appearance: none;
   padding-right: 36px;
@@ -505,12 +504,10 @@ select {
     border-color 120ms,
     box-shadow 120ms;
 }
-.toolbar select:hover,
-#policy-toolbar select:hover {
+.toolbar select:hover {
   border-color: #8ca8bd;
 }
-.toolbar select:focus,
-#policy-toolbar select:focus {
+.toolbar select:focus {
   outline: none;
   border-color: var(--conference-blue);
   box-shadow: 0 0 0 3px #0a6bba1c;
@@ -791,12 +788,13 @@ body.resizing-column * {
   font-weight: 600;
   color: var(--text);
 }
-#policy-toolbar {
+#policy-resources {
   padding: 4px 0;
 }
-#policy-toolbar p {
+#policy-resources p {
   margin: 3px 0;
   font-size: 12px;
+  overflow-wrap: anywhere;
 }
 .policy-run-status {
   display: flex;

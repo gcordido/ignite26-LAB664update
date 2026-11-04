@@ -13,6 +13,7 @@ import {
   type PolicyMode,
 } from "./policy-core.ts";
 import { chatAnswerSchema, type ChatMessage } from "./policy-chat.ts";
+import { policyResources, type PolicyResources } from "./policy-resources.ts";
 
 const hash = z.string().regex(/^[a-f0-9]{64}$/);
 const azureRoot = z.string().url().refine((value) => {
@@ -191,6 +192,11 @@ type Dependencies = {
   configPath?: string; config?: () => Promise<FrameworkConfig | undefined>;
   invoke?: typeof invokeFramework; cu?: Pick<CuClient, "detail" | "analyze">; cacheFolder?: string;
 };
+type PolicyStatus = {
+  configured: boolean; message: string; batchRunning?: boolean;
+  resources?: PolicyResources;
+  modes?: Partial<Record<FrameworkMode, Pick<PolicyContext, "provider" | "indexName" | "extractionMode">>>;
+};
 export class PolicyService {
   private running = false;
   private configPath: string;
@@ -217,12 +223,13 @@ export class PolicyService {
     }
     return value;
   }
-  async status() {
+  async status(): Promise<PolicyStatus> {
     try {
       const config = await this.frameworkConfig();
       if (!config) return { configured: false, message: "Run infra/setup-policy-index.py to check policy setup prerequisites." };
       return {
         configured: true, batchRunning: this.running,
+        resources: await policyResources(config),
         modes: Object.fromEntries((["ungrounded", "search"] as const).map((mode) => {
           const agent = this.agent(config, mode);
           return [mode, { provider: agent.provider, indexName: agent.indexName,

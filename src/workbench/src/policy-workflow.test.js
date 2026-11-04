@@ -428,7 +428,7 @@ test("top-level pivots preserve the selected extraction type and share the exist
     "workflow-pivots": { querySelectorAll: () => buttons },
     "view-types": { hidden: false },
     "extraction-toolbar": { hidden: false },
-    "policy-toolbar": { hidden: false },
+    "policy-resources": { hidden: false },
     "show-confidence": { closest: () => ({ hidden: false }) },
     "results-heading": { textContent: "" },
     "policy-table-intro": { hidden: false },

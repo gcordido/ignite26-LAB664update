@@ -70,9 +70,10 @@ the index configuration only to run live analysis or policy checks.
 #### Try the policy-check comparison
 
 On first launch, the app automatically loads the included **10/10** CU run and
-all **40** saved policy checks. Open **Check policies** with **FoundryIQ**
-selected. **Load cached results** reloads them; no separate extraction step is needed.
-**Parse and extract** > **Load cached results** also loads the included CU run
+all **40** saved policy checks. Open **Check policies**; grounded Search retrieval
+is the default, with no retrieval selector. **Settings** > **Reload policy reviews**
+reloads them; no separate extraction step is needed.
+**Settings** > **Reload saved results** also loads the included CU run
 independently. Without compatible local reviews,
 the app reads all ten synthetic reviews directly from the checked-in demo bundle.
 No restore command, Azure configuration or credentials are needed. **Bundled demo**
@@ -82,6 +83,11 @@ and caches aren't overwritten. Live-compatible cached results take precedence.
 Loading makes no Azure calls. Follow-up chat requires live Azure configuration, but viewing the saved checks doesn't.
 FoundryIQ is the lab's umbrella label; this implementation retrieves evidence
 directly from Azure AI Search, not a Foundry IQ knowledge base.
+The index name above the grid links directly to its Azure portal index view.
+Resource links describe the displayed results' generation, not a different live
+configuration. The current Layout corpus uses local policy PDFs, so the storage
+line explicitly reports that no verified Azure container is available; it doesn't
+invent a container link. Rendering these labels needs no Azure sign-in or calls.
 
 Under **Claim policy checks**, the four columns are **Daily rate**, **Rental start**,
 **Effective terms**, and **Repair estimate**, in that order.
@@ -112,7 +118,8 @@ These are evidence-based reviews, not coverage or payment approval.
 Keep Texas's **$75/day** and Washington's **$85/day** contractual rental limits
 separate from repair review authority; inspect the matched policy evidence for each.
 
-Select **Run live** and confirm only to request policy work. Matching current
+In **Settings**, enable live calls, then select **Run live policy checks** and
+confirm only to request policy work. Matching current
 reviews are reused; uncached packets use saved Parse fields and selected first-pass
 page text, without claim-summary preparation or claim CU reanalysis. The agent
 interprets rental applicability before four parallel comparison calls. Azure charges apply.

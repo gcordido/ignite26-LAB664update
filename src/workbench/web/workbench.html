@@ -43,6 +43,8 @@
       <p id="policy-cache-status" class="muted" role="status">
         Saved checks for the loaded CU run. Loading makes no Azure calls.
       </p>
+      <button id="policy-run" data-live-control hidden disabled>Run live policy checks</button>
+      <p id="policy-status" class="muted" role="status"></p>
       <div class="actions">
         <button id="close-settings" class="secondary">Close</button>
       </div>
@@ -130,15 +132,11 @@
           <span id="origin" class="badge"></span>
         </div>
         <p id="checks-description" class="muted" hidden></p>
-        <div id="policy-toolbar" hidden>
-          <div class="toolbar-group">
-            <label for="policy-mode">Policy retrieval</label>
-            <select id="policy-mode" disabled>
-              <option value="">Loading policy configuration...</option>
-            </select>
-            <button id="policy-run" data-live-control hidden disabled>Run live</button>
-          </div>
-          <p id="policy-status" class="muted" role="status"></p>
+        <div id="policy-resources" hidden>
+          <p>Azure Search (FoundryIQ) Index for policy documents: <span id="policy-index-resource">Loading verified resource metadata...</span></p>
+          <p>Azure Storage documents here: <span id="policy-storage-resource">Loading verified resource metadata...</span></p>
+          <p id="policy-resource-context" class="muted" hidden></p>
+        </div>
           <div id="policy-run-status" class="policy-run-status" role="status" hidden>
             <div class="policy-run-details">
               <strong class="policy-run-heading">
@@ -153,7 +151,6 @@
               <span>Total elapsed</span>
             </div>
           </div>
-        </div>
         <div class="workspace">
           <div class="table-area">
             <div class="table-status">

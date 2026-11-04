@@ -53,7 +53,7 @@ const detailPanels = {
 let policyStatus;
 let policyBusy = false;
 let policyAvailabilityTimer;
-let policyMode = "search";
+const policyMode = "search";
 let policySource;
 const claimEvidenceRequests = new Map();
 let policyPaneMode = "result";
@@ -188,18 +188,12 @@ function controls() {
     policyStatus?.batchRunning ||
     !run ||
     !policyStatus?.configured;
-  get("policy-run").title =
-    policyMode === "search"
-      ? ""
-      : "Select FoundryIQ to run policy checks.";
   for (const button of get("policy-output").querySelectorAll(".policy-retry")) {
     button.disabled = get("policy-run").disabled;
     button.title = button.disabled
       ? "Wait for the current operation to finish before retrying."
       : "Retry this case only. Azure charges may apply.";
   }
-  get("policy-mode").disabled = busy || policyBusy ||
-    (!policyStatus?.configured && !policyStatus?.bundledDemo);
   const saved = policyResults.get(policyMode);
   get("policy-chat-mode").disabled =
     !policyStatus?.configured ||
@@ -216,9 +210,7 @@ async function policyCaches() {
   const runId = run?.id;
   if (!runId) {
     get("policy-cache-status").textContent =
-      policyMode === "search"
-        ? "Load cached results to open the included CU run and saved policy checks. Loading makes no Azure calls."
-        : "Select FoundryIQ to load the included policy demo, or load a saved CU run in Parse and extract.";
+      "Load cached results to open the included CU run and saved policy checks. Loading makes no Azure calls.";
     controls();
     return;
   }
@@ -1040,7 +1032,7 @@ function renderWorkflowNavigation() {
     button.setAttribute("aria-pressed", String(button.dataset.workflow === workflow));
   get("view-types").hidden = workflow !== "extract";
   get("extraction-toolbar").hidden = workflow !== "extract";
-  get("policy-toolbar").hidden = workflow !== "policy";
+  get("policy-resources").hidden = workflow !== "policy";
   get("show-confidence").closest("label").hidden = workflow === "policy";
   get("results-heading").hidden = workflow === "policy";
   get("policy-table-intro").hidden = workflow !== "policy";
@@ -1219,7 +1211,6 @@ api("session", {})
   .then(async (value) => {
     sessionId = value.sessionId;
     if (value.policyMode) {
-      policyMode = value.policyMode;
       view = "policy";
     }
     await Promise.all([
@@ -1272,28 +1263,45 @@ function policyMessage() {
         : policyStatus?.bundledDemo
           ? "Saved policy reviews are available. Loading makes no Azure calls."
           : (policyStatus?.message ?? "Policy configuration is loading.");
+  renderPolicyResources();
 }
 function policyModeLabel(mode = policyMode) {
   return mode === "search" ? "FoundryIQ" : "No policy retrieval";
 }
-function renderPolicyModes() {
-  const modes = policyStatus?.configured ? Object.keys(policyStatus.modes) : [];
-  if (policyStatus?.bundledDemo && !modes.includes("search")) modes.push("search");
-  const options = modes.map((mode) => {
-    const option = element("option", policyModeLabel(mode));
-    option.value = mode;
-    return option;
-  });
-  if (!options.length) {
-    const option = element("option", "Policy retrieval unavailable - see status below");
-    option.value = "";
-    options.push(option);
-  }
-  get("policy-mode").replaceChildren(...options);
-  if (modes.length) {
-    if (!modes.includes(policyMode)) policyMode = modes[0];
-    get("policy-mode").value = policyMode;
-  }
+function renderPolicyResources() {
+  const saved = policyResults.get(policyMode);
+  const names = [...new Set((saved?.items ?? [])
+    .filter((item) => item.status === "completed" && item.indexName)
+    .map((item) => item.indexName))];
+  const name = saved?.indexName ?? (names.length === 1 ? names[0] : undefined);
+  const candidate = saved?.resources ?? (saved?.source === "bundled"
+    ? policyStatus?.bundledDemo?.resources
+    : name && name !== policyStatus?.resources?.index?.name
+      ? undefined
+      : policyStatus?.resources ?? (!saved ? policyStatus?.bundledDemo?.resources : undefined));
+  const resources = names.length > 1 || (name && candidate?.index?.name !== name) ? undefined : candidate;
+  const render = (id, label, href, message) => {
+    const node = get(id);
+    node.title = message ?? "";
+    if (href && new URL(href).origin === "https://portal.azure.com") {
+      node.replaceChildren();
+      const link = element("a", label);
+      link.href = href;
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      node.append(link);
+    } else node.textContent = label;
+  };
+  const unavailable = "Verified resource metadata is unavailable for these policy results.";
+  render("policy-index-resource", names.length > 1 ? "Multiple saved index generations" :
+    name ?? resources?.index?.name ?? "Unavailable",
+    resources?.index?.href, resources?.index?.message ?? (!resources ? unavailable : ""));
+  render("policy-storage-resource", resources?.storage?.containerName ??
+    resources?.storage?.message ?? unavailable, resources?.storage?.href, resources?.storage?.message);
+  const active = policyStatus?.resources?.index?.name;
+  const context = get("policy-resource-context");
+  context.hidden = !name || !active || name === active;
+  context.textContent = context.hidden ? "" : `Showing saved result sources. Live checks use index ${active}.`;
 }
 async function updatePolicyAvailability() {
   clearTimeout(policyAvailabilityTimer);
@@ -1304,12 +1312,10 @@ async function updatePolicyAvailability() {
       configured: false,
       message: `Could not load policy configuration: ${error.message}`,
     };
-    renderPolicyModes();
     policyMessage();
     controls();
     throw error;
   }
-  renderPolicyModes();
   controls();
   if (policyStatus.batchRunning && !policyBusy) {
     policyMessage();
@@ -1339,11 +1345,11 @@ async function refreshPolicy(mode = policyMode) {
   if (run?.id !== id || value.runId !== id) return;
   if (value.configurationMessage) {
     policyStatus = { ...policyStatus, configured: false, message: value.configurationMessage };
-    renderPolicyModes();
     policyMessage();
     controls();
   }
   storePolicyResults(mode, value);
+  policyMessage();
   policyPolls.set(mode, Date.now());
   policyProgressErrors.delete(mode);
   if (view === "policy" && mode === policyMode) {
@@ -1918,23 +1924,6 @@ function selectPolicyPane(mode) {
 }
 for (const mode of ["result", "chat"])
   get(`policy-${mode}-mode`).onclick = () => selectPolicyPane(mode);
-get("policy-mode").onchange = async () => {
-  policyMode = get("policy-mode").value;
-  controls();
-  showPolicyPanel(true);
-  policyMessage();
-  if (run) {
-    renderTable();
-    renderPolicyOutput();
-    if (selectedPacket) void showAgentClaim(selectedPacket).catch(fail);
-  }
-  try {
-    await refreshPolicy();
-    await policyCaches();
-  } catch (error) {
-    fail(error);
-  }
-};
 async function loadPolicyCache() {
   if (get("load-policy-cache").disabled) return;
   const mode = policyMode;
@@ -1955,8 +1944,6 @@ async function loadPolicyCache() {
     const value = await api("policy/cache/load", { runId, mode,
       ...(entry?.source ? { source: entry.source } : {}) });
     if (run?.id !== runId || value.runId !== runId) return;
-    policyMode = mode;
-    get("policy-mode").value = mode;
     policyResults.set(mode, value);
     policyChat.reset();
     if (value.source === "bundled") {
@@ -1984,6 +1971,7 @@ async function loadPolicyCache() {
 get("load-policy-cache").onclick = () => loadPolicyCache().catch(fail);
 function confirmPolicyRun(packetIds) {
   if (get("policy-run").disabled) return;
+  get("app-settings").close();
   pendingPolicyRun = { runId: run.id, mode: policyMode, packetIds };
   const packetId = packetIds?.[0];
   get("policy-confirm-summary").textContent =
