@@ -1304,38 +1304,62 @@ async function openPolicyDocuments() {
   const dialog = get("policy-document-list");
   if (!dialog.open) dialog.showModal();
   const status = get("policy-document-list-status");
-  status.textContent = "Loading verified active policy documents...";
+  status.textContent = "Resolving local dataset folders...";
   get("policy-document-list-files").replaceChildren();
   try {
-    const value = await api("policy/documents");
-    const files = value.files;
-    if (!Array.isArray(files) || files.some((file) =>
-      typeof file !== "string" || !/^policies\/rental\/ocr-comparison-v2\/[a-z0-9-]+\.pdf$/.test(file)))
-      throw new Error("The active policy document list is invalid.");
-    for (const file of files) {
+    const { datasets } = await api("policy/datasets");
+    const ids = ["original", "search", "digital"];
+    if (!Array.isArray(datasets) || datasets.length !== 3 ||
+        datasets.some((dataset, index) => dataset.id !== ids[index] ||
+          typeof dataset.label !== "string" || typeof dataset.path !== "string" ||
+          !/^(?:[a-z]:[\\/]|\/|\\\\)/i.test(dataset.path) ||
+          new URL(dataset.href).protocol !== "file:"))
+      throw new Error("The local policy dataset folders are invalid.");
+    for (const dataset of datasets) {
       const row = element("li");
-      row.append(element("strong", file.split("/").at(-1)));
-      for (const [mode, label] of [["pdf", "Original"], ["search", "CU Search"], ["digital", "Digital parse"]]) {
-        const link = element("a", label);
-        link.href = `/data/${file}#page=1`;
-        link.dataset.representation = mode;
-        link.onclick = async (event) => {
-          event.preventDefault();
-          dialog.close();
-          try {
-            activateView("policy");
-            beginPolicySource(link, file.split("/").at(-1));
-            policySource.listing = true;
-            get("policy-source-back").textContent = "Back to policy documents";
-            await policyDocument.open(`/data/${file}`, 1);
-            if (mode !== "pdf") get(`policy-document-${mode === "search" ? "search" : "digital"}-tab`).click();
-          } catch (error) { fail(error); }
-        };
-        row.append(document.createTextNode(" \u00b7 "), link);
-      }
+      const link = element("a", dataset.path);
+      link.href = dataset.href;
+      link.dataset.datasetId = dataset.id;
+      let opening = false;
+      link.onclick = async (event) => {
+        event.preventDefault();
+        if (opening) return;
+        opening = true;
+        link.setAttribute("aria-disabled", "true");
+        status.textContent = `Requesting Windows Explorer for ${dataset.label}...`;
+        try {
+          await api("policy/datasets/open", { id: dataset.id });
+          status.textContent = `Folder requested in Windows Explorer: ${dataset.path}`;
+        } catch (error) {
+          status.textContent = `Could not open folder: ${error.message} Use Copy path instead.`;
+        } finally {
+          opening = false;
+          link.removeAttribute("aria-disabled");
+        }
+      };
+      const fallback = element("input");
+      fallback.value = dataset.path;
+      fallback.readOnly = true;
+      fallback.hidden = true;
+      fallback.setAttribute("aria-label", `${dataset.label} path to copy manually`);
+      const copy = element("button", "Copy path");
+      copy.className = "secondary";
+      copy.onclick = async () => {
+        try {
+          if (!navigator.clipboard?.writeText) throw new Error("Clipboard access is unavailable.");
+          await navigator.clipboard.writeText(dataset.path);
+          status.textContent = `Copied path: ${dataset.path}`;
+        } catch (error) {
+          fallback.hidden = false;
+          fallback.focus();
+          fallback.select();
+          status.textContent = `Could not copy automatically: ${error.message} Copy the selected path manually.`;
+        }
+      };
+      row.append(element("strong", dataset.label), link, copy, fallback);
       get("policy-document-list-files").append(row);
     }
-    status.textContent = `${files.length} active PDFs. Archived documents are not included.`;
+    status.textContent = "Three local datasets. The source folder may also contain supporting metadata.";
   } catch (error) {
     status.textContent = `Policy documents unavailable: ${error.message}`;
     throw error;

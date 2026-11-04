@@ -85,9 +85,11 @@ FoundryIQ is the lab's umbrella label; this implementation retrieves evidence
 directly from Azure AI Search, not a Foundry IQ knowledge base.
 The index name above the grid links directly to its Azure portal index view.
 Resource links describe the displayed results' generation, not a different live
-configuration. **Policy documents** links to a manifest-backed listing of
-`data\policies\rental\ocr-comparison-v2\`, not Blob Storage or Explorer.
-Open any of the 21 active PDFs as **Original**, **CU Search**, or **Digital parse**.
+configuration. **Policy documents** shows exactly three full-path dataset links:
+original policy PDFs, saved Search outputs, and saved Digital Parse outputs.
+On the local Windows workbench, a link requests its folder in Explorer; copy-path
+and manual-copy fallbacks are available. No files are uploaded to Blob Storage.
+Select a policy check's source link to view its **Original**, **CU Search**, or **Digital parse** tabs.
 Both native analyzer outputs are included for every active PDF; viewing them
 needs no Azure sign-in or calls. Digital parse can legitimately contain no text
 on a scanned PDF; the viewer explains that result without substituting OCR.

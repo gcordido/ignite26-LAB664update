@@ -304,10 +304,14 @@ archive paths and rationale. Historical citations resolve only through these
 verified records; archives aren't in active retrieval, previews or document counts.
 Corpus generation verifies the pruned sources rather than recreating legacy files.
 
-The **Policy documents** link opens a same-origin, manifest-backed list of the
-actual local source folder. Each file opens in **Original**, **CU Search**, or
-**Digital parse**. This isn't arbitrary directory browsing, a `file://` link,
-Explorer or a Blob container. No files are uploaded by this workflow.
+The **Policy documents** link opens three dataset entries, not a file inventory:
+the original PDFs, saved `prebuilt-documentSearch` outputs, and saved
+`prebuilt-digitalParse` outputs. Each link displays its resolved absolute directory.
+The local Windows workbench intercepts the file link and requests Explorer through
+a private-session, same-origin endpoint accepting only those three dataset IDs.
+Copy-path and manual-copy fallbacks remain available if opening is unsupported.
+No arbitrary paths or shell commands are accepted. Source links in check results
+still open **Original**, **CU Search**, and **Digital parse** tabs. No files are uploaded.
 Public portal metadata lives in `data\policy-demo\resources.json`, separate from
 model inputs and review-cache identity. It must match the exact index name,
 corpus hash, index fingerprint and Search endpoint before any links are shown.

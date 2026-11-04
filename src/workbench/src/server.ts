@@ -21,6 +21,7 @@ import { checkNames, modeSchema } from "./policy-core.ts";
 import { type PolicyChatState } from "./policy-chat.ts";
 import { PolicyDocuments, representationSchema } from "./policy-documents.ts";
 import { policySourcePrefix, verifiedPolicySource } from "./policy-sources.ts";
+import { launchPolicyFolder, policyDatasetId, policyDatasets } from "./policy-datasets.ts";
 import {
   Cache,
   dataset,
@@ -39,6 +40,7 @@ export function createApp(
     cache?: Cache;
     policy?: PolicyService;
     documents?: PolicyDocuments;
+    openPolicyFolder?: (directory: string) => Promise<void>;
   } = {},
 ) {
   const app = express();
@@ -312,6 +314,25 @@ export function createApp(
   app.get("/api/policy/documents", async (req, res) => {
     session(req);
     res.json({ files: await policyDocuments.files() });
+  });
+  app.get("/api/policy/datasets", async (req, res) => {
+    session(req);
+    if (!["127.0.0.1", "localhost", "::1", "[::1]"].includes(req.hostname) ||
+        req.header("sec-fetch-site") === "cross-site" ||
+        (req.header("origin") && req.header("origin") !== `${req.protocol}://${req.get("host")}`))
+      throw new LabError(403, "View dataset folders from this local workbench only.");
+    res.set("Cache-Control", "no-store").json({ datasets: await policyDatasets() });
+  });
+  app.post("/api/policy/datasets/open", async (req, res) => {
+    session(req);
+    if (req.header("origin") !== `${req.protocol}://${req.get("host")}` ||
+        req.header("sec-fetch-site") === "cross-site" ||
+        !["127.0.0.1", "localhost", "::1", "[::1]"].includes(req.hostname))
+      throw new LabError(403, "Open dataset folders from this local workbench only.");
+    const { id } = z.object({ id: policyDatasetId }).strict().parse(req.body);
+    const dataset = (await policyDatasets()).find((dataset) => dataset.id === id)!;
+    await (options.openPolicyFolder ?? launchPolicyFolder)(dataset.path);
+    res.json({ requested: true, id: dataset.id });
   });
   app.get("/api/policy/document", async (req, res) => {
     session(req);

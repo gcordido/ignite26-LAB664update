@@ -179,10 +179,18 @@ under `data\policy-demo\history\four-checks`.
 The active policy manifest has 21 PDFs. Legacy rental-terms/state-SOP/shared-standard
 PDFs remain in `data\policies\archive\legacy-rental-review-v2\` with verified
 historical aliases; they don't enter active ingestion or preview warming.
-The **Policy documents** link opens the local manifest-backed source listing,
-not Blob Storage or Explorer.
+The **Policy documents** link opens three dataset-folder links: the original policy
+PDFs, saved Search outputs, and saved Digital Parse outputs. Each displays its
+actual absolute directory on the workbench host. On the local Windows workbench,
+select a link to request Windows Explorer through a private-session, same-origin
+endpoint restricted to these three dataset IDs. If opening or clipboard access
+is unavailable, use **Copy path** or copy the selected fallback field manually.
+There is no arbitrary path execution, directory browsing, or Blob upload.
 
-Both native document representations are committed under `data\policy-document-demo\`.
+Native document representations are committed separately under
+`data\policy-document-demo\search\` and `data\policy-document-demo\digital\`.
+Bundle manifest version 2 records their mode-specific payload paths; the original
+response/Markdown bytes and provenance hashes are unchanged.
 The viewer validates the source hash, analyzer/API identity, raw native response,
 derived Markdown and payload hashes before reading live settings or credentials.
 Opening tabs makes no Azure calls. A successful empty Digital parse result on a

@@ -806,6 +806,15 @@ body.resizing-column * {
   margin-block: 8px;
   overflow-wrap: anywhere;
 }
+#policy-document-list-files strong,
+#policy-document-list-files a {
+  display: block;
+  margin-bottom: 8px;
+}
+#policy-document-list-files input {
+  width: 100%;
+  margin-top: 8px;
+}
 .policy-run-status {
   display: flex;
   align-items: center;

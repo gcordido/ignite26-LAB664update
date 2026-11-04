@@ -152,7 +152,7 @@ async function warmLockedNativePreviewBundle(options: Options) {
   let current: { file: string; mode: "search" | "digital" } | undefined;
   const existing = await documents.bundleManifest();
   const bundle: NativePreviewManifest = existing ?? {
-    schemaVersion: 1, activeManifestSha256: active.sha256, ...nativePreviewProvenance,
+    schemaVersion: 2, activeManifestSha256: active.sha256, ...nativePreviewProvenance,
     documents: active.files.map((file) => ({ file, sha256: sources.get(file)! })), entries: [],
   };
   for (const source of bundle.documents)
@@ -175,7 +175,7 @@ async function warmLockedNativePreviewBundle(options: Options) {
       const payload = JSON.stringify(value.response);
       const entry = {
         ...identity, mode, createdAt: value.createdAt,
-        responseFile: `${key}.response.json`, markdownFile: `${key}.md`,
+        responseFile: `${mode}/${key}.response.json`, markdownFile: `${mode}/${key}.md`,
         payloadSha256: digest(payload), responseSha256: value.responseSha256,
         markdownSha256: value.markdownSha256,
       };

@@ -154,41 +154,87 @@ test("live policy confirmation closes Settings so operational progress remains v
   assert.equal(vm.runInContext("pendingPolicyRun.mode", context), "search");
 });
 
-test("local source listing offers the PDF and both cached modes without accepting arbitrary paths", async () => {
+test("compact dataset dialog renders three absolute folder links, opens only dataset IDs, and provides copy fallbacks", async () => {
     const source = await readFile(new URL("../web/workbench.js", import.meta.url), "utf8");
     class Node {
       children: Node[] = [];
       dataset: Record<string, string> = {};
       textContent = ""; href = ""; open = false;
+      value = ""; hidden = false; focused = false; selected = false;
+      attributes: Record<string, string> = {};
+      onclick?: (event?: { preventDefault(): void }) => Promise<void>;
       append(...nodes: Node[]) { this.children.push(...nodes); }
       replaceChildren() { this.children = []; }
       showModal() { this.open = true; }
       close() { this.open = false; }
+      setAttribute(name: string, value: string) { this.attributes[name] = value; }
+      removeAttribute(name: string) { delete this.attributes[name]; }
+      focus() { this.focused = true; }
+      select() { this.selected = true; }
     }
     const nodes = new Map<string, Node>();
     const get = (id: string) => {
       if (!nodes.has(id)) nodes.set(id, new Node());
       return nodes.get(id)!;
     };
-    let files = ["policies/rental/ocr-comparison-v2/declarations-tx-packet-01.pdf"];
-    const calls: string[] = [];
+    const original = ["original", "search", "digital"].map(id => ({
+      id, label: `${id} dataset`, path: `C:\\Lab & demo\\${id}`,
+      href: `file:///C:/Lab%20%26%20demo/${id}/`,
+    }));
+    let datasets = original;
+    let openError = false, copyError = false;
+    const copied: string[] = [];
+    const calls: { route: string; body: unknown }[] = [];
     const context = vm.createContext({
       get, element: (_tag: string, text = "") => Object.assign(new Node(), { textContent: text }),
       document: { createTextNode: (text: string) => Object.assign(new Node(), { textContent: text }) },
-      api: async (route: string) => { calls.push(route); return { files }; },
+      URL,
+      navigator: { clipboard: { writeText: async (text: string) => {
+        if (copyError) throw new Error("Clipboard permission denied");
+        copied.push(text);
+      } } },
+      api: async (route: string, body: unknown) => {
+        calls.push({ route, body });
+        if (route === "policy/datasets") return { datasets };
+        if (openError) throw new Error("Platform cannot open folders");
+        return { requested: true };
+      },
     });
     vm.runInContext(source.slice(source.indexOf("async function openPolicyDocuments()"),
       source.indexOf('get("policy-local-documents").onclick')), context);
     await vm.runInContext("openPolicyDocuments()", context);
-    assert.deepEqual(calls, ["policy/documents"]);
-    const links = get("policy-document-list-files").children[0].children.filter(node => node.href);
-    assert.deepEqual(links.map(node => node.textContent), ["Original", "CU Search", "Digital parse"]);
-    assert.ok(links.every(node => node.href === `/data/${files[0]}#page=1`));
-    assert.match(get("policy-document-list-status").textContent, /1 active PDFs/);
-    for (const invalid of ["../private.pdf", "https://evil.example/x.pdf",
-      "policies/archive/legacy-rental-review-v2/tx-rental-review-sop-v2.pdf"]) {
-      files = [invalid];
-      await assert.rejects(vm.runInContext("openPolicyDocuments()", context), /list is invalid/);
+    assert.deepEqual(calls, [{ route: "policy/datasets", body: undefined }]);
+    const rows = get("policy-document-list-files").children;
+    assert.equal(rows.length, 3);
+    for (const [index, row] of rows.entries()) {
+      const [label, link, copy, fallback] = row.children;
+      assert.equal(label.textContent, original[index].label);
+      assert.equal(link.textContent, original[index].path);
+      assert.equal(link.href, original[index].href);
+      let prevented = false;
+      await link.onclick?.({ preventDefault: () => { prevented = true; } });
+      assert.ok(prevented, "file URLs must use the protected native opener, not browser file navigation");
+      assert.equal(calls.at(-1)?.route, "policy/datasets/open");
+      assert.equal(JSON.stringify(calls.at(-1)?.body), JSON.stringify({ id: original[index].id }));
+      await copy.onclick?.();
+      assert.equal(copied.at(-1), original[index].path);
+      assert.equal(fallback.hidden, true);
+    }
+    openError = true;
+    await rows[0].children[1].onclick?.({ preventDefault() {} });
+    assert.match(get("policy-document-list-status").textContent, /Could not open folder.*Copy path/);
+    copyError = true;
+    await rows[0].children[2].onclick?.();
+    assert.ok(!rows[0].children[3].hidden && rows[0].children[3].focused && rows[0].children[3].selected);
+    assert.match(get("policy-document-list-status").textContent, /Copy the selected path manually/);
+    for (const invalid of [
+      original.slice(0, 2), [...original, original[0]],
+      original.map((item, index) => index ? item : { ...item, id: "arbitrary" }),
+      original.map((item, index) => index ? item : { ...item, path: "../private" }),
+      original.map((item, index) => index ? item : { ...item, href: "javascript:alert(1)" }),
+    ]) {
+      datasets = invalid;
+      await assert.rejects(vm.runInContext("openPolicyDocuments()", context), /folders are invalid/);
       assert.equal(get("policy-document-list-files").children.length, 0);
       assert.match(get("policy-document-list-status").textContent, /unavailable/);
     }

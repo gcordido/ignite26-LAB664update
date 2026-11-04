@@ -73,6 +73,8 @@ test("native bundle preserves both genuine-shaped raw payloads and derived Markd
       assert.equal(response.result.analyzerId, entry.analyzer);
       assert.equal(entry.sha256, digest(pdfBytes));
       assert.ok(Number.isFinite(Date.parse(entry.createdAt)));
+      assert.ok(entry.responseFile.startsWith(`${entry.mode}/`));
+      assert.ok(entry.markdownFile.startsWith(`${entry.mode}/`));
       const value = await f.offline().get(file, entry.mode, true);
       assert.ok(value.available && value.cached);
       assert.equal(value.response, undefined);
@@ -88,7 +90,9 @@ test("native bundle preserves both genuine-shaped raw payloads and derived Markd
     assert.equal(f.calls.length, 2);
     assert.deepEqual(await warmNativePreviewBundle(f.options), warmed);
     assert.equal(f.calls.length, 2, "A repeated export must reuse every successful native pair.");
-    assert.equal((await readdir(f.common.bundleFolder)).length, 5);
+    assert.equal((await readdir(f.common.bundleFolder)).length, 3);
+    for (const mode of ["search", "digital"])
+      assert.equal((await readdir(path.join(f.common.bundleFolder, mode))).length, 2);
   } finally { await f.cleanup(); }
 });
 
@@ -125,12 +129,14 @@ test("indexed corruption, stale sources/provenance, duplicates, traversal and in
       (bundle) => { bundle.activeManifestSha256 = "0".repeat(64); },
       (bundle) => { bundle.endpoint = "https://other.services.ai.azure.com"; },
       (bundle) => { bundle.apiVersion = "2025-11-01"; },
+      (bundle) => { Object.assign(bundle, { schemaVersion: 1 }); },
       (bundle) => { bundle.documents.push(bundle.documents[0]); },
       (bundle) => { bundle.documents = []; },
       (bundle) => { bundle.entries.push(bundle.entries[0]); },
       (bundle) => { bundle.documents[0].file = "policies/rental/ocr-comparison-v2/archived.pdf"; },
       (bundle) => { bundle.entries[0].analyzer = "prebuilt-layout"; },
       (bundle) => { bundle.entries[0].responseFile = "../outside.response.json"; },
+      (bundle) => { bundle.entries[0].responseFile = bundle.entries[0].responseFile.replace("search/", "digital/"); },
       (bundle) => { bundle.entries[0].sha256 = "0".repeat(64); },
       (bundle) => { bundle.entries[0].markdownSha256 = "0".repeat(64); },
       () => writeFile(payloadFile, "{}"),

@@ -5,8 +5,9 @@ data/policy-demo/*.json text eol=lf
 data/policy-demo/history/five-checks/*.json text eol=lf
 data/policy-demo/history/three-checks/*.json text eol=lf
 data/policy-demo/history/four-checks/*.json text eol=lf
-data/policy-document-demo/*.json text eol=lf
-data/policy-document-demo/*.md text eol=lf whitespace=-trailing-space
+data/policy-document-demo/**/*.json text eol=lf
+data/policy-document-demo/**/*.md text eol=lf whitespace=-trailing-space
+data/policy-document-demo/manifest.json text eol=lf
 # Archive metadata preserves the exact original registry bytes and their recorded hashes.
 data/policies/archive/legacy-rental-review-v2/*.json -text whitespace=cr-at-eol
 # Review identity hashes these exact source bytes on every platform.

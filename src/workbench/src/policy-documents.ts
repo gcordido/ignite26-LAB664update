@@ -29,12 +29,12 @@ const cacheSchema = identitySchema.extend({
 });
 export const nativePreviewEntrySchema = identitySchema.extend({
   mode: representationSchema, createdAt: capturedTime,
-  responseFile: z.string().regex(/^[a-f0-9]{64}\.response\.json$/),
-  markdownFile: z.string().regex(/^[a-f0-9]{64}\.md$/),
+  responseFile: z.string().regex(/^(search|digital)\/[a-f0-9]{64}\.response\.json$/),
+  markdownFile: z.string().regex(/^(search|digital)\/[a-f0-9]{64}\.md$/),
   payloadSha256: hash, responseSha256: hash, markdownSha256: hash,
 }).strict();
 export const nativePreviewManifestSchema = z.object({
-  schemaVersion: z.literal(1),
+  schemaVersion: z.literal(2),
   activeManifestSha256: hash,
   endpoint: z.string(), apiVersion: z.string(),
   documents: z.array(z.object({ file: policyFile, sha256: hash }).strict()),
@@ -156,8 +156,8 @@ export class PolicyDocuments {
       payloads.add(entry.markdownFile);
       if (documents.get(entry.file) !== entry.sha256 ||
           Object.entries(identity).some(([name, value]) => entry[name as keyof Identity] !== value) ||
-          entry.responseFile !== `${digest(JSON.stringify(identity))}.response.json` ||
-          entry.markdownFile !== `${digest(JSON.stringify(identity))}.md`)
+          entry.responseFile !== `${entry.mode}/${digest(JSON.stringify(identity))}.response.json` ||
+          entry.markdownFile !== `${entry.mode}/${digest(JSON.stringify(identity))}.md`)
         throw new LabError(500, "Native policy preview bundle entry identity mismatch.");
     }
     return bundle;
