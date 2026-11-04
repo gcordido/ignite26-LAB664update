@@ -264,8 +264,8 @@ test("policy details lead with a short finding, field comparisons and verified s
     policyPaneMode: "result",
     selectedPacket: "packet-02",
     policyMode: "search",
-    policyCheckNames: ["Daily rate", "Rental start", "Effective terms", "Repair estimate"],
-    policyShortNames: ["Daily rate", "Rental start", "Effective terms", "Repair estimate"],
+    policyCheckNames: ["Daily rate", "Effective terms", "Repair estimate"],
+    policyShortNames: ["Daily rate", "Effective terms", "Repair estimate"],
     focusedPolicyCheck: 0,
     policyResults: new Map([
       [
@@ -275,7 +275,7 @@ test("policy details lead with a short finding, field comparisons and verified s
             {
               id: "packet-02",
               completedAt: "2026-01-01",
-              result: { Checks: [check, { ...check, Check: "Rental start" }, { ...check, Check: "Effective terms" }, {
+              result: { Checks: [check, { ...check, Check: "Effective terms" }, {
                 ...check, Check: "Repair estimate", Outcome: "Satisfied", ReviewRequired: false,
                 ExpectedValue: "Retrieved synthetic state repair-review threshold",
                 ActualValue: "Distinct quote gross totals including stated tax",
@@ -316,7 +316,7 @@ test("policy details lead with a short finding, field comparisons and verified s
     panel.children.filter((node) => node.tag === "section").length,
     1,
   );
-  vm.runInContext("renderPolicyOutput(3);", context);
+  vm.runInContext("renderPolicyOutput(2);", context);
   const repair = panel.children.find((node) => node.tag === "section")!;
   assert.equal(title.textContent, "Repair estimate");
   assert.equal(repair.children[0].textContent, "Satisfied");
@@ -387,7 +387,7 @@ test("policy details lead with a short finding, field comparisons and verified s
   assert.match(waiting.children[1].textContent, /Unrelated repair completion or payment approval isn't required/);
   assert.ok(!waiting.children[0].className.includes("policy-satisfied"));
   vm.runInContext("renderPolicyOutput(1);", context);
-  assert.equal(title.textContent, "Rental start");
+  assert.equal(title.textContent, "Effective terms");
   assert.equal(
     panel.children.filter((node) => node.tag === "section").length,
     1,
@@ -803,7 +803,8 @@ test("policy resource labels replace the retrieval selector and live controls st
   );
   assert.doesNotMatch(html, /id="policy-mode"|id="policy-toolbar"/);
   assert.match(html, /Azure Search \(FoundryIQ\) Index for policy documents:/);
-  assert.match(html, /Azure Storage documents here:/);
+  assert.match(html, /Policy documents: <a id="policy-local-documents" href="\/#policy-documents">data\\policies\\rental\\ocr-comparison-v2\\/);
+  assert.doesNotMatch(html, /Azure Storage documents here:|policy-storage-resource/);
   const settings = html.match(/<dialog id="app-settings"[\s\S]*?<\/dialog>/)![0];
   assert.match(settings, /id="policy-run"/);
   assert.match(settings, /id="policy-status"/);
@@ -1113,14 +1114,14 @@ test("policy run banner shows the active packet independently of selection and c
   render();
   assert.equal(get("policy-run-status").hidden, false);
   assert.equal(get("policy-status").hidden, true);
-  assert.equal(get("policy-run-label").textContent, "Agent checking four comparisons");
+  assert.equal(get("policy-run-label").textContent, "Agent checking three comparisons");
   assert.equal(get("policy-run-packet").textContent, "packet-02 · Victor Bennett");
   assert.match(get("policy-run-detail").textContent, /1\/3 packets finished/);
   assert.equal(get("policy-run-elapsed").textContent, "2:05");
-  assert.match(get("policy-run-detail").textContent, /Checking four comparisons and citations/);
+  assert.match(get("policy-run-detail").textContent, /Checking three comparisons and citations/);
   job.items[1].status = "pending";
   render();
-  assert.equal(get("policy-run-label").textContent, "Agent checking four comparisons");
+  assert.equal(get("policy-run-label").textContent, "Agent checking three comparisons");
   assert.match(get("policy-run-detail").textContent, /Preparing next case from saved Parse evidence/);
   errors.set("search", "Disconnected");
   render();

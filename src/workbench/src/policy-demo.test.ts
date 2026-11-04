@@ -17,31 +17,36 @@ test("Parse source integrity survives Git LF/CRLF checkout conversion without ac
   assert.notEqual(parseSourceDigest(source), parseSourceDigest(source.replace("2026-02-12", "2026-02-13")));
 });
 
-test("five-check bundles are rejected explicitly rather than reinterpreted", async () => {
+test("earlier three, four and five-check bundles are history-only, not reinterpreted", async () => {
   const root = await mkdtemp(path.join(os.tmpdir(), "policy-five-check-history-"));
   try {
     await writeFile(path.join(root, "manifest.json"), JSON.stringify({ schemaVersion: 1 }));
-    await assert.rejects(readPolicyDemo(root), /three\/five-check.*history-only/);
-    await writeFile(path.join(root, "manifest.json"), JSON.stringify({ schemaVersion: 2, checkContractVersion: 3 }));
-    await assert.rejects(readPolicyDemo(root), /history-only.*four-comparison/);
+    await assert.rejects(readPolicyDemo(root), /three\/four\/five-check.*history-only/);
+    for (const checkContractVersion of [3, 4]) {
+      await writeFile(path.join(root, "manifest.json"), JSON.stringify({ schemaVersion: 2, checkContractVersion }));
+      await assert.rejects(readPolicyDemo(root), /history-only.*pruned three-comparison/);
+    }
   } finally {
     await rm(root, { recursive: true, force: true });
   }
 });
 
-test("four-check bundle uses hash-verified first-pass Parse without a summary cache", async () => {
+test("pruned three-check bundle uses hash-verified first-pass Parse without a summary cache", async () => {
   const folder = path.join(repositoryRoot, "data", "policy-demo");
   const demo = await readPolicyDemo(folder);
   const manifest = JSON.parse(await readFile(path.join(folder, "manifest.json"), "utf8"));
   assert.equal(manifest.schemaVersion, 2);
-  assert.equal(manifest.checkContractVersion, 4);
-  assert.deepEqual(manifest.checks, ["Daily rate", "Rental start", "Effective terms", "Repair estimate"]);
+  assert.equal(manifest.checkContractVersion, 5);
+  assert.deepEqual(manifest.checks, ["Daily rate", "Effective terms", "Repair estimate"]);
   assert.equal(manifest.files.length, 21);
   assert.equal(manifest.sourceFiles.length, 11);
   assert.equal(manifest.sourceHashFormat, "utf8-lf");
   assert.ok(manifest.files.every(({ name }: { name: string }) => !name.startsWith("claim-")));
   assert.equal(demo.sourceCache.folder, path.join(repositoryRoot, "data", "results"));
   assert.equal(demo.results(demo.sourceRun).items.length, 10);
+  assert.equal(demo.results(demo.sourceRun).items.flatMap(item => item.result?.Checks ?? []).length, 30);
+  assert.ok(demo.results(demo.sourceRun).items.every(item => !item.historical),
+    "A fresh checkout must keep the exact current runtime/question identity.");
 });
 
 test("bundled comparisons use Texas 75, Washington 85 and the original Illinois policy VIN", async () => {
@@ -53,7 +58,7 @@ test("bundled comparisons use Texas 75, Washington 85 and the original Illinois 
     assert.equal(check.Outcome, "Satisfied");
     assert.ok(check.Comparisons?.some((pair) => pair.ClaimValue.includes(rate) && pair.PolicyValue.includes(cap)));
   }
-  const terms = items.find((item) => item.id === "packet-06")?.result?.Checks[2];
+  const terms = items.find((item) => item.id === "packet-06")?.result?.Checks[1];
   assert.equal(terms?.Check, "Effective terms");
   assert.equal(terms.Outcome, "Satisfied");
   assert.ok(terms.Comparisons?.some((pair) =>
@@ -78,7 +83,7 @@ test("all eleven original repair quotes use their loss-state diagram, independen
   ];
   for (const [index, source] of expected.entries()) {
     const item = items.find(item => item.id === `packet-${String(index + 1).padStart(2, "0")}`);
-    const check = item?.result?.Checks[3];
+    const check = item?.result?.Checks[2];
     assert.equal(check?.Check, "Repair estimate");
     assert.equal(check.Outcome, source.gross.some(amount => amount > source.threshold)
       ? "ReviewRequired" : "Satisfied", item?.id ?? `packet index ${index}`);
@@ -88,15 +93,15 @@ test("all eleven original repair quotes use their loss-state diagram, independen
     assert.ok(check.Comparisons?.some(pair => pair.PolicyValue.replaceAll(",", "").includes(String(source.threshold))));
     assert.ok(check.Citation.some(citation => citation.RuleId === `REPAIR-${source.state}-01`));
     const page = index < 5 ? 1 : 2;
-    assert.ok(item?.citations?.[3].some(citation =>
+    assert.ok(item?.citations?.[2].some(citation =>
       citation.File === "synthetic-repair-review-authority-v1.pdf" && citation.href?.endsWith(`#page=${page}`)));
   }
-  const arizona = items.find(item => item.id === "packet-03")?.result?.Checks[3];
+  const arizona = items.find(item => item.id === "packet-03")?.result?.Checks[2];
   assert.ok((arizona?.Comparisons?.length ?? 0) >= 2, "Distinct Arizona quotes are compared separately, never summed.");
   for (const id of ["packet-04", "packet-06", "packet-08", "packet-10"]) {
     const item = items.find(item => item.id === id);
     assert.equal(item?.result?.Checks[0].Outcome, "NotApplicable");
-    assert.equal(item?.result?.Checks[3].Outcome, "Satisfied");
+    assert.equal(item?.result?.Checks[2].Outcome, "Satisfied");
   }
 });
 
@@ -169,7 +174,7 @@ test("a fresh machine loads the current bundled policy reviews without Azure or 
   assert.equal(payload.extractionMode, "layout");
   assert.equal(payload.items.length, 10);
   assert.ok(payload.items.every((item: PolicyItem) =>
-    item.status === "completed" && item.result?.Checks.length === 4));
+    item.status === "completed" && item.result?.Checks.length === 3));
   const chat = await request(`policy/chat?${new URLSearchParams({
     runId: selected.id, packetId: "packet-01", mode: "search", check: "Daily rate",
   })}`);
@@ -186,7 +191,7 @@ test("the policy bundle preserves its own inputs independently of the selected C
   assert.equal(bundled.items.length, 10);
   assert.ok(bundled.items.every((item: PolicyItem) =>
     item.status === "completed" &&
-    item.result?.Checks.length === 4 &&
+    item.result?.Checks.length === 3 &&
     item.indexName === demo.info.indexName &&
     item.citations?.flat().every((citation) => citation.href)));
   const current = await extractionRun();

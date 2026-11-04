@@ -20,6 +20,7 @@ import { policyDemo } from "./policy-demo.ts";
 import { checkNames, modeSchema } from "./policy-core.ts";
 import { type PolicyChatState } from "./policy-chat.ts";
 import { PolicyDocuments, representationSchema } from "./policy-documents.ts";
+import { policySourcePrefix, verifiedPolicySource } from "./policy-sources.ts";
 import {
   Cache,
   dataset,
@@ -62,6 +63,24 @@ export function createApp(
       res.sendFile(filename, { root: path.join(repositoryRoot, folder) }),
     );
   }
+  app.use("/data/policies", async (req, res, next) => {
+    let logicalPath: string;
+    try { logicalPath = decodeURIComponent(req.path); }
+    catch { return res.sendStatus(404); }
+    if (!logicalPath.toLowerCase().endsWith(".pdf")) return next();
+    try {
+      const source = await verifiedPolicySource(logicalPath.startsWith("/rental/ocr-comparison-v2/")
+        ? `${policySourcePrefix}${logicalPath.slice("/rental/ocr-comparison-v2/".length)}`
+        : "", { includeArchived: true });
+      if (!source) return res.sendStatus(404);
+      res.setHeader("Cache-Control", "no-store");
+      return res.sendFile(path.basename(source.path), {
+        root: path.dirname(source.path), dotfiles: "deny",
+      });
+    } catch {
+      return res.sendStatus(404);
+    }
+  });
   app.use(
     "/data",
     express.static(dataRoot, { dotfiles: "deny", index: false }),
@@ -290,6 +309,10 @@ export function createApp(
       mode: representationSchema,
     })
     .strict();
+  app.get("/api/policy/documents", async (req, res) => {
+    session(req);
+    res.json({ files: await policyDocuments.files() });
+  });
   app.get("/api/policy/document", async (req, res) => {
     session(req);
     const { file, mode } = documentSelection.parse(req.query);

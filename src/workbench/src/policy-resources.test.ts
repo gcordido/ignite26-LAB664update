@@ -16,7 +16,7 @@ test("the actual current generation links to its exact Search index, not a servi
   const resources = policyResourceLinks(config, metadata);
   const target = new URL(resources.index.href!);
   assert.equal(target.origin, "https://portal.azure.com");
-  assert.equal(resources.index.name, "lab664-claim-policy-v4b-1728bee05009");
+  assert.equal(resources.index.name, "lab664-claim-policy-pruned-v5-1728bee05009");
   const parts = target.hash.split("/");
   assert.equal(parts[2], "Index.ReactView");
   assert.equal(decodeURIComponent(parts[4]), `${metadata.search.resourceId}#${config.indexName}`);
@@ -109,8 +109,7 @@ test("resource rendering preserves saved-generation links and separately identif
   assert.equal(anchor.href, savedResources.index.href);
   assert.equal(anchor.target, "_blank");
   assert.equal(anchor.rel, "noopener noreferrer");
-  assert.equal(get("policy-storage-resource").children.length, 0);
-  assert.match(get("policy-storage-resource").textContent, /No verified Azure container/);
+  assert.ok(!nodes.has("policy-storage-resource"));
   assert.equal(get("policy-resource-context").hidden, false);
   assert.match(get("policy-resource-context").textContent, /Live checks use index different-live-index/);
   results.set("search", { items: [{ status: "completed", indexName: "historical-index" }] });
@@ -123,7 +122,7 @@ test("resource rendering preserves saved-generation links and separately identif
   ] });
   vm.runInContext("renderPolicyResources()", context);
   assert.equal(get("policy-index-resource").textContent, "Multiple saved index generations");
-  assert.match(get("policy-storage-resource").textContent, /unavailable/);
+  assert.ok(!nodes.has("policy-storage-resource"));
   results.set("search", { indexName: "current", resources: {
     index: { name: "current", href: "https://evil.example/" }, storage: { message: "Unavailable" },
   } });
@@ -146,10 +145,51 @@ test("live policy confirmation closes Settings so operational progress remains v
     policyMode: "search", pendingPolicyRun: undefined,
     policyModeLabel: () => "FoundryIQ",
   });
+
   vm.runInContext(source.slice(source.indexOf("function confirmPolicyRun("),
     source.indexOf('get("policy-run").onclick')), context);
   vm.runInContext("confirmPolicyRun()", context);
   assert.deepEqual(calls, ["close-settings", "confirm"]);
-  assert.match(summary.textContent, /four checks per case/);
+  assert.match(summary.textContent, /three checks per case/);
   assert.equal(vm.runInContext("pendingPolicyRun.mode", context), "search");
+});
+
+test("local source listing offers the PDF and both cached modes without accepting arbitrary paths", async () => {
+    const source = await readFile(new URL("../web/workbench.js", import.meta.url), "utf8");
+    class Node {
+      children: Node[] = [];
+      dataset: Record<string, string> = {};
+      textContent = ""; href = ""; open = false;
+      append(...nodes: Node[]) { this.children.push(...nodes); }
+      replaceChildren() { this.children = []; }
+      showModal() { this.open = true; }
+      close() { this.open = false; }
+    }
+    const nodes = new Map<string, Node>();
+    const get = (id: string) => {
+      if (!nodes.has(id)) nodes.set(id, new Node());
+      return nodes.get(id)!;
+    };
+    let files = ["policies/rental/ocr-comparison-v2/declarations-tx-packet-01.pdf"];
+    const calls: string[] = [];
+    const context = vm.createContext({
+      get, element: (_tag: string, text = "") => Object.assign(new Node(), { textContent: text }),
+      document: { createTextNode: (text: string) => Object.assign(new Node(), { textContent: text }) },
+      api: async (route: string) => { calls.push(route); return { files }; },
+    });
+    vm.runInContext(source.slice(source.indexOf("async function openPolicyDocuments()"),
+      source.indexOf('get("policy-local-documents").onclick')), context);
+    await vm.runInContext("openPolicyDocuments()", context);
+    assert.deepEqual(calls, ["policy/documents"]);
+    const links = get("policy-document-list-files").children[0].children.filter(node => node.href);
+    assert.deepEqual(links.map(node => node.textContent), ["Original", "CU Search", "Digital parse"]);
+    assert.ok(links.every(node => node.href === `/data/${files[0]}#page=1`));
+    assert.match(get("policy-document-list-status").textContent, /1 active PDFs/);
+    for (const invalid of ["../private.pdf", "https://evil.example/x.pdf",
+      "policies/archive/legacy-rental-review-v2/tx-rental-review-sop-v2.pdf"]) {
+      files = [invalid];
+      await assert.rejects(vm.runInContext("openPolicyDocuments()", context), /list is invalid/);
+      assert.equal(get("policy-document-list-files").children.length, 0);
+      assert.match(get("policy-document-list-status").textContent, /unavailable/);
+    }
 });

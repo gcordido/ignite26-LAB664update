@@ -84,9 +84,9 @@ class PolicyEvidenceTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             runtime.source_evidence(row, config, sources, citations, "TX")
 
-    def test_four_check_names_are_the_evidence_scenarios(self):
-        self.assertEqual(runtime.CHECKS, ["Daily rate", "Rental start", "Effective terms", "Repair estimate"])
-        self.assertEqual(len(runtime.CHECKS), 4)
+    def test_three_check_names_are_the_evidence_scenarios(self):
+        self.assertEqual(runtime.CHECKS, ["Daily rate", "Effective terms", "Repair estimate"])
+        self.assertEqual(len(runtime.CHECKS), 3)
         self.assertIn("policyScope", runtime.Turn.model_fields)
 
     def test_check_projections_keep_whole_controlling_pages_and_metadata(self):
@@ -106,17 +106,17 @@ class PolicyEvidenceTests(unittest.TestCase):
                 ("amendment.pdf", 2), ("sop.pdf", 5),
             ])
         ]
-        start = check_evidence(evidence, sources, "Rental start")
-        self.assertEqual(start, evidence)
+        with self.assertRaisesRegex(ValueError, "Unknown policy check"):
+            check_evidence(evidence, sources, "Rental start")
         rate = check_evidence(evidence, sources, "Daily rate")
         self.assertEqual([doc["file"] for doc in rate],
-                         ["terms.pdf", "declarations.pdf", "amendment.pdf"])
+                         ["declarations.pdf", "amendment.pdf"])
         effective = check_evidence(evidence, sources, "Effective terms")
         self.assertEqual([doc["file"] for doc in effective], ["declarations.pdf", "amendment.pdf"])
-        for doc in start:
+        for doc in rate:
             self.assertEqual(doc["content"], whole)
             self.assertEqual(doc["sha256"], "a" * 64)
-        start[0]["content"] = "changed copy"
+        rate[0]["content"] = "changed copy"
         self.assertEqual(evidence[0]["content"], whole)
 
     def test_flat_claim_schema_uses_literal_facts_without_boolean_defaults(self):

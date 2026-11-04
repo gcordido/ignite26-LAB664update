@@ -49,6 +49,14 @@
         <button id="close-settings" class="secondary">Close</button>
       </div>
     </dialog>
+    <dialog id="policy-document-list" aria-labelledby="policy-document-list-title">
+      <h2 id="policy-document-list-title">Active policy documents</h2>
+      <p>Source folder: data\policies\rental\ocr-comparison-v2\</p>
+      <p class="muted">Only manifest-listed active PDFs are shown. CU Search and Digital parse use their own genuine saved analyzer outputs; opening them makes no Azure calls.</p>
+      <p id="policy-document-list-status" role="status"></p>
+      <ul id="policy-document-list-files"></ul>
+      <button id="policy-document-list-close" class="secondary">Close</button>
+    </dialog>
     <nav id="workflow-pivots" aria-label="Workbench sections">
       <button data-workflow="extract" aria-pressed="true">Parse and extract</button>
       <button
@@ -64,7 +72,7 @@
         data-workflow="policy"
         data-view="policy"
         aria-pressed="false"
-        title="Agent review of rental claims using retrieved SOPs and verified policy sources."
+        title="Compare saved claim facts with matched policy terms and synthetic repair-review authority."
       >
         Check policies
       </button>
@@ -134,7 +142,7 @@
         <p id="checks-description" class="muted" hidden></p>
         <div id="policy-resources" hidden>
           <p>Azure Search (FoundryIQ) Index for policy documents: <span id="policy-index-resource">Loading verified resource metadata...</span></p>
-          <p>Azure Storage documents here: <span id="policy-storage-resource">Loading verified resource metadata...</span></p>
+          <p>Policy documents: <a id="policy-local-documents" href="/#policy-documents">data\policies\rental\ocr-comparison-v2\</a></p>
           <p id="policy-resource-context" class="muted" hidden></p>
         </div>
           <div id="policy-run-status" class="policy-run-status" role="status" hidden>
@@ -182,7 +190,7 @@
             </div>
             <div id="policy-table-intro" hidden>
               <h2 class="results-heading">Claim policy checks</h2>
-              <p>Compare rental terms, effective dates and each repair-estimate gross total with retrieved evidence. Repair authority is a synthetic internal review threshold, not law, a coverage cap or payment approval. Select a result to see the values and sources.</p>
+              <p>Compare daily rental base caps, effective dates and each repair-estimate gross total with retrieved evidence. Repair authority is a synthetic internal review threshold, not law, a coverage cap or payment approval. Select a result to see the values and sources.</p>
             </div>
             <div id="packets" class="table">
               <table id="packet-table" aria-label="Customer results">
@@ -413,7 +421,7 @@
         <ul class="policy-confirm-steps">
           <li>Reuse matching saved results.</li>
           <li>Use saved Parse fields and selected first-pass page text; no claim CU reanalysis.</li>
-          <li>Review four comparisons for each remaining case, one case at a time.</li>
+          <li>Review three comparisons for each remaining case, one case at a time.</li>
         </ul>
         <p id="policy-confirm-cost"><strong>Azure charges apply</strong> to new Search and agent calls.</p>
         <p class="muted policy-confirm-note">You can follow progress in the workbench. Refreshing this tab reconnects without starting another run.</p>

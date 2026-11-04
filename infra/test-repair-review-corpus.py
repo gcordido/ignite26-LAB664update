@@ -159,6 +159,9 @@ class RepairReviewCorpusTests(unittest.TestCase):
         self.assertEqual(loaded["sections"], SOURCE.SECTIONS)
 
     def test_original_entries_are_byte_preserved_and_all_pdf_hashes_unchanged(self):
+        archive = ROOT / "data" / "policies" / "archive" / "legacy-rental-review-v2"
+        registry = json.loads((archive / "registry.json").read_text(encoding="utf-8"))
+        retired_ids = {d["documentId"] for d in registry["documents"]}
         for name in ("manifest.json", "citations.json"):
             path = SOURCE.OUT / name
             previous = head_bytes(path)
@@ -167,9 +170,15 @@ class RepairReviewCorpusTests(unittest.TestCase):
                 previous = previous.replace(b"\r\n", b"\n").replace(b"\n", b"\r\n")
             current = path.read_bytes()
             old_entries, new_entries = entry_texts(previous), entry_texts(current)
+            archived_original = (archive / f"original-{name}").read_bytes()
+            archived_entries = entry_texts(archived_original)
+            self.assertEqual(archived_original.replace(b"\r\n", b"\n"),
+                             previous.replace(b"\r\n", b"\n"))
             for document_id, original in old_entries.items():
                 if document_id != SOURCE.DOCUMENT_ID:
-                    self.assertEqual(new_entries[document_id], original, document_id)
+                    target = archived_entries if document_id in retired_ids else new_entries
+                    self.assertEqual(target[document_id].replace("\r\n", "\n"),
+                                     original.replace("\r\n", "\n"), document_id)
             if name == "manifest.json":
                 previous_manifest = json.loads(previous)
                 for key, value in previous_manifest.items():
@@ -183,8 +192,13 @@ class RepairReviewCorpusTests(unittest.TestCase):
         for relative in original_pdfs:
             path = ROOT / relative
             if path.suffix.lower() == ".pdf" and path != self.pdf_path:
-                self.assertEqual(SOURCE.digest(path.read_bytes()),
-                                 SOURCE.digest(head_bytes(path)), relative)
+                expected = SOURCE.digest(head_bytes(path))
+                archived = next((d for d in registry["documents"]
+                                 if d["originalLogicalPath"] == relative), None)
+                actual = ROOT / archived["archivePath"] if archived else path
+                self.assertEqual(SOURCE.digest(actual.read_bytes()), expected, relative)
+                if archived:
+                    self.assertEqual(archived["sha256"], expected)
                 checked += 1
         self.assertGreater(checked, 30)
 

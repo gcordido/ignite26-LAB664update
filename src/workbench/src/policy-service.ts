@@ -99,7 +99,7 @@ const frameworkOutput = z.object({
 }).strict().superRefine((value, ctx) => value.Checks.forEach((check, index) => {
   if (check.Check !== checkNames[index] || check.ReviewRequired !== (check.Outcome === "ReviewRequired") ||
       (check.Outcome !== "ReviewRequired" && !check.Citation.length))
-    ctx.addIssue({ code: "custom", message: "Inconsistent four-check outcome or missing rule citation." });
+    ctx.addIssue({ code: "custom", message: "Inconsistent three-check outcome or missing rule citation." });
   if (Boolean(check.Headline) !== Boolean(check.Comparisons))
     ctx.addIssue({ code: "custom", message: "A compact check requires both a headline and comparisons." });
   for (const pair of check.Comparisons ?? [])
@@ -235,7 +235,7 @@ export class PolicyService {
           return [mode, { provider: agent.provider, indexName: agent.indexName,
             extractionMode: agent.extractionMode }];
         })),
-        message: `${config.extractionMode === "standard" ? "Search-managed CU extraction" : "Current index: CU Layout extraction; managed extraction not activated"}. Four comparisons reuse saved Parse and extract evidence; no claim extraction is submitted. Earlier three/five-check caches remain history, not four-check results. Repair authority is synthetic internal handling guidance, not law or coverage/payment approval. Run explicitly; Search and model usage may be billed.`,
+        message: `${config.extractionMode === "standard" ? "Search-managed CU extraction" : "Current index: CU Layout extraction; managed extraction not activated"}. Three comparisons reuse saved Parse and extract evidence; no claim extraction is submitted. Earlier three/four/five-check caches remain history, not the current contract. Repair authority is synthetic internal handling guidance, not law or coverage/payment approval. Run explicitly; Search and model usage may be billed.`,
       };
     } catch (error) {
       console.error(JSON.stringify({ event: "framework_configuration_failed", message: String(error) }));

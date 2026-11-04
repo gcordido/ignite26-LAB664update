@@ -26,11 +26,6 @@ CHECK_FIELDS = {
         "RentalDailyBaseRate", "RentalCurrency", "Rental.DailyRates",
         "Rental.Currency", "Rental.ChargingTerms", "Rental.LineItems",
     },
-    "Rental start": {
-        "PolicyEndorsement", "Damage", "DrivabilityEvidence",
-        "RentalPickup", "Rental.Pickup", "Rental.DailyRates.StartDate", "Rental.ChargingTerms",
-        "Repair", "ActualRepairDelivery", "ScheduledRepairStart", "Authorization.CoveredStart",
-    },
     "Effective terms": {
         "Policy", "PolicyDailyBaseCap", "PolicyEndorsement",
     },
@@ -38,8 +33,6 @@ CHECK_FIELDS = {
 }
 INVOICE_FIELDS = {
     "Daily rate": {"InvoiceId", "InvoiceDate", "LineItems", "TotalAmount"},
-    "Rental start": {"InvoiceId", "InvoiceDate", "LineItems.Description", "LineItems.ServiceStartDate",
-               "LineItems.ServiceEndDate", "LineItems.Quantity", "PaymentTerm"},
     "Effective terms": {"InvoiceId", "LineItems.Description"},
     "Repair estimate": set(),
 }
@@ -195,20 +188,8 @@ def check_evidence(evidence: list[dict], sources: dict, check: str, state: str |
             continue
         if source.get("role") == "repair_review":
             continue
-        # Effective-date checks need declarations and issued changes, not rental
-        # timing diagrams. Other checks retain whole relevant contract pages.
-        if check == "Effective terms" and source.get("role") == "rental_terms":
+        if source.get("documentType") != "policy_contract" or source.get("role") == "rental_terms":
             continue
-        if source.get("role") == "rental_terms" and check != "Rental start" and doc["page"] > 1:
-            continue
-        if source.get("documentType") != "policy_contract":
-            pages = {1, 2, 4}
-            if check != "Effective terms":
-                pages.add(3)
-            if check == "Rental start":
-                pages.add(5)
-            if not any(doc["page"] <= page <= doc["pageTo"] for page in pages):
-                continue
         # Hashes and generation IDs have already been checked; they are not rules.
         result.append(deepcopy(doc))
     return result
@@ -227,7 +208,7 @@ def check_questions(file: Path, checks: list[str]) -> dict[str, str]:
             raise ValueError(f"Empty per-check question: {name}")
         sections[name.strip()] = question
     if set(sections) != {"Shared", *checks}:
-        raise ValueError("Per-check questions must contain Shared and exactly the four check names.")
+        raise ValueError("Per-check questions must contain Shared and exactly the three check names.")
     return sections
 
 
@@ -235,6 +216,6 @@ def check_prompt(analysis: dict, check: str, questions: dict[str, str],
                  applicability: dict | None = None) -> str:
     shared = ("\n\nShared rental applicability (derived interpretation of supplied Parse evidence, "
               "NOT a new extracted CU field):\n" + json.dumps(applicability, ensure_ascii=False)
-              if applicability is not None and check != "Repair estimate" else "")
+              if applicability is not None and check == "Daily rate" else "")
     return (questions["Shared"] + "\n\n" + questions[check]
             + shared + "\n\n" + claim_input(check_analysis(analysis, check)))

@@ -24,7 +24,7 @@ test("all ten saved Parse packets resolve explicit policy and insured vehicle sc
       assert.ok(source.pages.start > 0 && source.pages.end <= packet.pages);
     }
   }
-  assert.deepEqual(checkNames, ["Daily rate", "Rental start", "Effective terms", "Repair estimate"]);
+  assert.deepEqual(checkNames, ["Daily rate", "Effective terms", "Repair estimate"]);
 });
 
 test("scope preserves conflicting identities and excludes rented-vehicle and supplier routing", async () => {

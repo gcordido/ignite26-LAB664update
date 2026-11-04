@@ -367,6 +367,24 @@ def load_sources(root: Path = ROOT) -> dict[str, Any]:
                if doc.get("documentType") == "repair_review_sop" else {}),
             **({"policyScope": policy_scope} if policy_scope is not None else {}),
         })
+    if "activeChecks" in manifest:
+        expected_states = {"TX", "WA", "AZ", "CO", "FL", "IL", "LA", "CA", "NY", "OH"}
+        declarations = [d for d in docs_in if d.get("role") == "revised_declarations"]
+        effective = [d for d in docs_in
+                     if d.get("role") in ("policy_effective_date", "issued_amendment")]
+        repair = [d for d in docs_in if d.get("role") == "repair_review"]
+        if (manifest["activeChecks"] != ["Daily rate", "Effective terms", "Repair estimate"]
+                or len(docs_in) != 21 or len(declarations) != 10 or len(effective) != 10
+                or len(repair) != 1
+                or any(d.get("documentType") != "policy_contract" or len(d["states"]) != 1
+                       for d in declarations + effective)
+                or {d["states"][0] for d in declarations} != expected_states
+                or {d["states"][0] for d in effective} != expected_states
+                or {d["states"][0] for d in effective if d.get("role") == "issued_amendment"} != {"TX"}
+                or repair[0].get("documentType") != "repair_review_sop"
+                or set(repair[0]["states"]) != expected_states):
+            raise SetupError("The three-check corpus requires all ten declarations, ten effective-date "
+                             "sources (including the Texas issued amendment), and one repair diagram.")
     documents.sort(key=lambda d: d["documentId"])
     return {"corpusHash": sha256_hex(raw), "documents": documents}
 

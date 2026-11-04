@@ -2,15 +2,15 @@
 
 Use this question with the
 [v2 corpus](../data/policies/rental/ocr-comparison-v2/manifest.json).
-The workbench reads the Recommended question for each review. The four
-ordered checks are **Daily rate**, **Rental start**, **Effective terms**,
+The workbench reads the Recommended question for each review. The three
+ordered checks are **Daily rate**, **Effective terms**,
 and **Repair estimate**.
 Each is a narrow claim-versus-policy comparison, not benefit or payment approval.
 
 ## Recommended question
 
-> Evaluate exactly four checks in this order: Daily rate, Rental start, Effective terms, Repair estimate.
-> Return only the requested JSON schema with four ordered check objects.
+> Evaluate exactly three checks in this order: Daily rate, Effective terms, Repair estimate.
+> Return only the requested JSON schema with three ordered check objects.
 > Use original typed Content Understanding Parse fields and supplied textEvidence
 > as claim evidence. These aren't summaries or new extractions. Don't run CU,
 > reread PDFs, request polygons, or invent missing fields, identifiers or values.
@@ -32,7 +32,7 @@ Each is a narrow claim-versus-policy comparison, not benefit or payment approval
 > rental columns. Apply blank-cell continuation only where the printed key
 > explicitly permits it; unknown doesn't mean zero, unlimited or an adjacent limit.
 >
-> Resolve rental applicability ONCE before the first two checks. In parallel
+> Resolve rental applicability ONCE for Daily rate only. In parallel
 > review use the shared derived applicability decision; don't independently
 > reinterpret it. In a single review resolve it once inside this call.
 > A genuine matched rental invoice, agreement, actual use or affirmative request
@@ -45,7 +45,7 @@ Each is a narrow claim-versus-policy comparison, not benefit or payment approval
 > a pending request. Missing documents alone cannot prove no rental.
 > Unknown applicability remains explicit; contradictory positive/negative
 > evidence requires ReviewRequired, never a silent extraction correction.
-> Confirmed nonrental may make Daily rate and Rental start NotApplicable.
+> Confirmed nonrental may make Daily rate NotApplicable.
 > NEVER blanket NotApplicable Effective terms or Repair estimate: evaluate them independently.
 >
 > Daily rate compares the actual rental BASE daily price against the effective
@@ -58,25 +58,6 @@ Each is a narrow claim-versus-policy comparison, not benefit or payment approval
 > optional fees or total/tax reconciliation. These aren't additional checks.
 > Unknown actual base price means InProgress; missing or ambiguous effective
 > cap evidence means ReviewRequired. Preserve any known contradiction.
->
-> Rental start compares the actual documented START BASIS/event against the
-> scoped drivable/non-drivable rule, not the rental end or completed repair period.
-> Distinguish actual rental start/pickup and actual covered-repair delivery from
-> scheduled appointments. Never invent actual delivery from an appointment,
-> rental return or expected completion. Don't require repair completion or prior
-> usage to decide an otherwise supported start fit.
-> For an exact policy/VIN match to the registered Texas or Washington controlling
-> rental-terms document, Figure R-1 and R.6 govern eligibility branches/start timing
-> over conflicting R.2. The safely-drivable branch begins at actual covered-repair
-> delivery, not an appointment. Cite the controlling Figure R-1. Don't extend
-> that authority to another policy or override unrelated declarations/clauses.
-> Other registered Figure R-1 diagrams are illustrative: written clauses control.
-> Where Arizona AZ-R1 applies, use its retrieved whole page-5 Figure 1 and actual
-> branches; a matrix reference alone isn't the figure.
-> Unknown drivability means InProgress when it is necessary to choose the branch;
-> explain the unresolved alternatives. Conflicting drivability means ReviewRequired.
-> Missing necessary actual start-basis evidence means InProgress; a known mismatch
-> or missing/ambiguous controlling branch means ReviewRequired.
 >
 > Effective terms independently matches policy ID and insured VIN, actual loss
 > date, policy start and expiration, revised declarations and genuine carrier-issued
@@ -128,7 +109,7 @@ Each is a narrow claim-versus-policy comparison, not benefit or payment approval
 > contradictions and known rule violations remain ReviewRequired, even when
 > some claim facts are also missing. Neither Satisfied nor NotApplicable approves
 > benefits, coverage or payment. Non-review outcomes require retrieved citations.
-> With no retrieval, return four ReviewRequired checks with empty citations;
+> With no retrieval, return three ReviewRequired checks with empty citations;
 > never quote limits from memory or prior turns.
 >
 > Compact responses additionally contain Headline and Comparisons. Headline
@@ -171,16 +152,16 @@ and its timing, model deployment and source references remain in the result.
 > ClaimField must be an exact supplied typed path or textEvidence.id, never
 > an invented OCR/source label. Interpretation of page text is derived reasoning,
 > NOT a new CU field. Preserve source provenance and name unknowns explicitly.
-> For Daily rate and Rental start, use the supplied shared rental applicability
+> For Daily rate only, use the supplied shared rental applicability
 > decision when present. Without that context resolve rental request/use once
 > from supplied evidence, not policy limits or category labels.
 > A real matched rental invoice establishes rental even without RentalRequested.
 > A towing/glass/repair bill isn't rental. A towing Yes isn't rental Yes.
 > RentalUsed=false alone doesn't exclude a pending request; blank/unchecked
 > rental checkboxes aren't negative evidence. Confirmed nonrental allows
-> NotApplicable with ReviewRequired=false for Daily rate and Rental start ONLY.
+> NotApplicable with ReviewRequired=false for Daily rate ONLY.
 > Unknown necessary applicability means InProgress; contradictory applicability
-> requires ReviewRequired for those two checks. Effective terms is independent:
+> requires ReviewRequired for Daily rate. Effective terms is independent:
 > never make it NotApplicable or wait merely because rental is absent/unknown.
 > Repair estimate is also independent: actual relevant repair quotes remain
 > applicable even on a confirmed nonrental claim or pending total-loss assessment.
@@ -210,24 +191,6 @@ and its timing, model deployment and source references remain in the result.
 > evidence or conflicting rates/limits means ReviewRequired. Use declarations
 > and genuine issued amendments; don't shift sparse cells or confuse collision
 > deductible with a rental limit. Apply the shared applicability decision.
-
-### Rental start
-
-> Check: Rental start. Compare the actual documented rental START BASIS/event
-> against the scoped drivable/non-drivable rule, not end/completed-period eligibility.
-> Never turn an appointment into actual covered-repair delivery or use return
-> as repair completion. Don't require completion or prior usage for a start fit.
-> For the exact registered Texas/Washington controlling policy/VIN match,
-> Figure R-1 and R.6 control start/eligibility branches over conflicting R.2;
-> the safely-drivable branch begins at actual delivery for covered repairs.
-> Cite the whole retrieved controlling Figure R-1 and preserve all branches,
-> headers and blank conventions. Other Figure R-1 diagrams are illustrative;
-> written clauses control. Arizona AZ-R1 requires its retrieved whole page-5
-> Figure 1 where applicable; don't invent it from a matrix reference.
-> Unknown necessary drivability or actual start-basis facts means InProgress;
-> explain unresolved branches. Conflicting drivability, known start mismatch
-> or missing/ambiguous controlling rules means ReviewRequired. Apply the
-> shared applicability decision without extending it to Effective terms.
 
 ### Effective terms
 

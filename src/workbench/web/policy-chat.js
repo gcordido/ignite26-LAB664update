@@ -3,7 +3,6 @@ const escapeHtml = (value) => String(value).replace(/[&<>"']/g, (character) =>
 
 const checkLabels = {
   "Daily rate": "Daily rate",
-  "Rental start": "Rental start",
   "Effective terms": "Effective terms",
   "Repair estimate": "Repair estimate",
 };

@@ -60,7 +60,7 @@ class RepairCheckTests(unittest.TestCase):
         self.assertEqual(check_evidence(evidence, sources, "Repair estimate", "IL"), evidence[1:])
         self.assertEqual(check_evidence(evidence, sources, "Repair estimate", None), evidence)
         self.assertEqual(check_evidence(evidence, sources, "Repair estimate", "AK"), [])
-        for name in runtime.CHECKS[:3]:
+        for name in runtime.CHECKS[:-1]:
             self.assertEqual(check_evidence(evidence, sources, name, "TX"), [])
 
     def test_unknown_state_retrieves_only_common_scope_without_substitution(self):

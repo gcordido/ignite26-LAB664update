@@ -5,7 +5,7 @@ import importlib.util
 import json
 from pathlib import Path
 import shutil
-import tempfile
+import uuid
 import unittest
 
 import pymupdf
@@ -32,8 +32,12 @@ class PolicyCapTests(unittest.TestCase):
         self.assertEqual(questions[0]["questions"][0]["answer"], "$75 per day.")
         self.assertEqual(questions[1]["questions"][0]["answer"], "$85 per day.")
         manifest = json.loads((CORPUS / "manifest.json").read_text(encoding="utf-8"))
+        registry = json.loads((cap.ROOT / "data" / "policies" / "archive" /
+                               "legacy-rental-review-v2" / "registry.json").read_text(encoding="utf-8"))
         for state, amount in (("TX", "75.00"), ("WA", "60.00")):
-            sop = next(doc for doc in manifest["documents"] if doc["documentId"] == f"{state}-RENTAL-002")
+            sop = next(doc["source"] for doc in registry["documents"]
+                       if doc["documentId"] == f"{state}-RENTAL-002")
+            self.assertNotIn(sop["documentId"], {d["documentId"] for d in manifest["documents"]})
             self.assertEqual(sop["routineAuthority"]["dailyBaseRateUsd"], amount)
             self.assertFalse(sop["routineAuthority"]["contractualBenefit"])
 
@@ -47,8 +51,8 @@ class PolicyCapTests(unittest.TestCase):
                 self.assertEqual(hashlib.sha256((CORPUS / name).read_bytes()).hexdigest(), expected)
 
     def test_revision_is_idempotent_and_does_not_rebuild_other_sources(self):
-        with tempfile.TemporaryDirectory() as temporary:
-            root = Path(temporary)
+        root = cap.ROOT / ".tools" / f"policy-cap-test-{uuid.uuid4().hex}"
+        try:
             corpus = root / "data" / "policies" / "rental" / "ocr-comparison-v2"
             corpus.mkdir(parents=True)
             names = ("01-revised-declarations.pdf", "manifest.json", "citations.json")
@@ -58,6 +62,8 @@ class PolicyCapTests(unittest.TestCase):
             cap.revise(root)
             self.assertEqual(before, {name: (corpus / name).read_bytes() for name in names})
             self.assertEqual(set(before), {path.name for path in corpus.iterdir()})
+        finally:
+            shutil.rmtree(root, ignore_errors=True)
 
 
 if __name__ == "__main__":

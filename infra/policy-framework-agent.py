@@ -26,7 +26,7 @@ from policy_check_inputs import (
 )
 
 ROOT = Path(__file__).resolve().parents[1]
-CHECKS = ["Daily rate", "Rental start", "Effective terms", "Repair estimate"]
+CHECKS = ["Daily rate", "Effective terms", "Repair estimate"]
 
 
 class Citation(BaseModel):
@@ -40,7 +40,7 @@ class Citation(BaseModel):
 
 class Check(BaseModel):
     model_config = ConfigDict(extra="forbid")
-    Check: Literal["Daily rate", "Rental start", "Effective terms", "Repair estimate"]
+    Check: Literal["Daily rate", "Effective terms", "Repair estimate"]
     Outcome: Literal["Satisfied", "ReviewRequired", "NotApplicable", "InProgress"]
     ReviewRequired: bool
     ExpectedValue: str
@@ -51,7 +51,7 @@ class Check(BaseModel):
 
 class Review(BaseModel):
     model_config = ConfigDict(extra="forbid")
-    Checks: list[Check] = Field(min_length=4, max_length=4)
+    Checks: list[Check] = Field(min_length=3, max_length=3)
 
 class Comparison(BaseModel):
     model_config = ConfigDict(extra="forbid")
@@ -69,7 +69,7 @@ class CompactCheck(Check):
 
 
 class CompactReview(Review):
-    Checks: list[CompactCheck] = Field(min_length=4, max_length=4)
+    Checks: list[CompactCheck] = Field(min_length=3, max_length=3)
 
 
 class RentalApplicability(BaseModel):
@@ -175,7 +175,7 @@ def check_claim_references(value: Review | Check | Answer, analysis: dict) -> No
 def check_shared_applicability(value: Review, decision: RentalApplicability, mode: str) -> None:
     if mode == "ungrounded":
         return
-    for check in value.Checks[:2]:
+    for check in (item for item in value.Checks if item.Check == "Daily rate"):
         if decision.status == "nonrental" and check.Outcome != "NotApplicable":
             raise ValueError("Rental check disagrees with shared confirmed nonrental applicability.")
         if decision.status != "nonrental" and check.Outcome == "NotApplicable":
@@ -205,7 +205,7 @@ class Turn(BaseModel):
     lossState: str | None = None
     policyScope: PolicyScope | None = None
     chat: bool = False
-    prepareCheck: Literal["Daily rate", "Rental start", "Effective terms", "Repair estimate"] | None = None
+    prepareCheck: Literal["Daily rate", "Effective terms", "Repair estimate"] | None = None
     compact: bool = False
     reviewStrategy: Literal["single", "parallel"] = "single"
     reasoningEffort: Literal["minimal", "low", "medium", "high"] | None = None
@@ -328,11 +328,7 @@ def check_citations(value: Review | Answer | Check, evidence: list[dict], mode: 
     if isinstance(value, (Review, Check)):
         checks = value.Checks if isinstance(value, Review) else [value]
         if isinstance(value, Review) and [check.Check for check in checks] != CHECKS:
-            raise ValueError("Agent must return the four checks in order.")
-        if isinstance(value, Review) and any(
-            check.Outcome == "NotApplicable" for check in checks[:2]
-        ) and not all(check.Outcome == "NotApplicable" for check in checks[:2]):
-            raise ValueError("The first two checks disagree on confirmed nonrental applicability.")
+            raise ValueError("Agent must return the three checks in order.")
         for check in checks:
             if check.Check == "Effective terms" and check.Outcome == "NotApplicable":
                 raise ValueError("Effective terms is independent of rental applicability.")
@@ -451,14 +447,11 @@ async def run(turn: Turn) -> dict:
         "Citations must exactly match a File, DocumentId, Version, singular RuleId, and Section "
         "retrieved during this turn; Section must be one of its citationSections. "
         "Do not reuse prior turn citations without retrieving again. "
-        "Evaluate only Daily rate, Rental start, Effective terms and Repair estimate, in that order. "
+        "Evaluate only Daily rate, Effective terms and Repair estimate, in that order. "
         "Satisfied means narrow claim-versus-policy fit, never benefit, coverage or payment approval. "
         "Daily rate compares actual rental BASE daily price to the effective matched policy/VIN cap; "
         "known excess requires review. Do not gate a numeric fit on repair completion, prior usage, "
         "pending approval, total/tax reconciliation or rental end dates. "
-        "Rental start compares the actual documented start basis/event with the scoped "
-        "drivable/non-drivable rule, not an end/completed period or cumulative days. "
-        "Never turn an appointment into actual delivery. Unknown/conflicting drivability stays explicit. "
         "Effective terms always evaluates policy/VIN and loss date versus term start/expiry independently "
         "of rental applicability. Never blanket NotApplicable this check. "
         "Use an explicitly image-verified policy VIN transcription when retrieval includes that ingestion note; "
@@ -690,11 +683,11 @@ async def run(turn: Turn) -> dict:
                 prompt = turn.prompt + ("\n\n" + input_text
                                         if turn.claimAnalysis is not None else "")
                 extra = "" if turn.chat else (
-                    "Return exactly the four checks in order: " + json.dumps(CHECKS) + ". "
-                    "Resolve rental applicability once within this call before the first two checks. "
+                    "Return exactly the three checks in order: " + json.dumps(CHECKS) + ". "
+                    "Resolve rental applicability once within this call for Daily rate only. "
                     "Never apply that gate to Effective terms or Repair estimate. " + APPLICABILITY_INSTRUCTIONS.replace(
                         "Return only status, reason and sourceReferences.",
-                        "Use this decision internally; return only the requested four-check schema.",
+                        "Use this decision internally; return only the requested three-check schema.",
                     )
                 )
                 value, metrics = await model_call("Follow-up" if turn.chat else "All checks", prompt, prefetched, schema, extra)

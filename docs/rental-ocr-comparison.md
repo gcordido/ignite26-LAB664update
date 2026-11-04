@@ -1,11 +1,12 @@
 # Rental SOP OCR and table comparison
 
-The [v2 corpus manifest](../data/policies/rental/ocr-comparison-v2/manifest.json)
-contains ten state SOPs and one shared evidence standard covering every state
+This is the historical rental-review extraction guide. Its sources now live in
+the [legacy archive](../data/policies/archive/legacy-rental-review-v2/registry.json),
+not the active three-check corpus. The archive retains ten state SOPs and one shared evidence standard covering every state
 in the existing ten-packet dataset. These are fictional internal processing
 rules, not state law, new contractual benefits or permission to pay a claim.
 The retired Texas/Washington v1 files and their ZIP archive have been removed.
-The v2 PDFs are indexed in the current Layout-based policy index. The
+The current active index excludes these legacy PDFs and Rental start. The
 [managed extraction setup](policy-setup.md) prepares the semantic extraction
 pipeline separately and activates it only after verification.
 
@@ -13,19 +14,19 @@ pipeline separately and activates it only after verification.
 
 | State | Routine daily base, inclusive | Routine days, inclusive | Scope with an express rental benefit |
 |---|---:|---:|---|
-| [Texas](../data/policies/rental/ocr-comparison-v2/tx-rental-review-sop-v2.pdf) | $75 | 7 | Personal collision |
-| [Washington](../data/policies/rental/ocr-comparison-v2/wa-rental-review-sop-v2.pdf) | $60 | 5 | Personal collision |
-| [Arizona](../data/policies/rental/ocr-comparison-v2/az-rental-review-sop-v2.pdf) | $70 | 5 | Personal comprehensive/theft |
-| [Colorado](../data/policies/rental/ocr-comparison-v2/co-rental-review-sop-v2.pdf) | $80 | 5 | Personal comprehensive/hail |
-| [Florida](../data/policies/rental/ocr-comparison-v2/fl-rental-review-sop-v2.pdf) | $75 | 7 | Personal collision |
-| [Illinois](../data/policies/rental/ocr-comparison-v2/il-rental-review-sop-v2.pdf) | $80 | 5 | Personal collision |
-| [Louisiana](../data/policies/rental/ocr-comparison-v2/la-rental-review-sop-v2.pdf) | $70 | 5 | Personal comprehensive/flood |
-| [California](../data/policies/rental/ocr-comparison-v2/ca-rental-review-sop-v2.pdf) | $85 | 3 | Personal comprehensive/glass |
-| [New York](../data/policies/rental/ocr-comparison-v2/ny-rental-review-sop-v2.pdf) | $75 | 5 | Personal comprehensive/animal strike |
-| [Ohio](../data/policies/rental/ocr-comparison-v2/oh-rental-review-sop-v2.pdf) | $80 | 5 | Commercial delivery with express rental endorsement |
+| [Texas](../data/policies/archive/legacy-rental-review-v2/tx-rental-review-sop-v2.pdf) | $75 | 7 | Personal collision |
+| [Washington](../data/policies/archive/legacy-rental-review-v2/wa-rental-review-sop-v2.pdf) | $60 | 5 | Personal collision |
+| [Arizona](../data/policies/archive/legacy-rental-review-v2/az-rental-review-sop-v2.pdf) | $70 | 5 | Personal comprehensive/theft |
+| [Colorado](../data/policies/archive/legacy-rental-review-v2/co-rental-review-sop-v2.pdf) | $80 | 5 | Personal comprehensive/hail |
+| [Florida](../data/policies/archive/legacy-rental-review-v2/fl-rental-review-sop-v2.pdf) | $75 | 7 | Personal collision |
+| [Illinois](../data/policies/archive/legacy-rental-review-v2/il-rental-review-sop-v2.pdf) | $80 | 5 | Personal collision |
+| [Louisiana](../data/policies/archive/legacy-rental-review-v2/la-rental-review-sop-v2.pdf) | $70 | 5 | Personal comprehensive/flood |
+| [California](../data/policies/archive/legacy-rental-review-v2/ca-rental-review-sop-v2.pdf) | $85 | 3 | Personal comprehensive/glass |
+| [New York](../data/policies/archive/legacy-rental-review-v2/ny-rental-review-sop-v2.pdf) | $75 | 5 | Personal comprehensive/animal strike |
+| [Ohio](../data/policies/archive/legacy-rental-review-v2/oh-rental-review-sop-v2.pdf) | $80 | 5 | Commercial delivery with express rental endorsement |
 
 Every state also requires the
-[shared evidence standard](../data/policies/rental/ocr-comparison-v2/shared-rental-evidence-standard-v2.pdf).
+[shared evidence standard](../data/policies/archive/legacy-rental-review-v2/shared-rental-evidence-standard-v2.pdf).
 State rules use `XX-R1` through `XX-R5`; the shared rules use `E-01` through
 `E-06`. Document IDs end in `-002`, version `2.0`; select this corpus alone,
 not a mixture of v1 and v2 sources. The fictional effective window covers

@@ -10,7 +10,7 @@ The workflow has three parts:
 2. **Policy rules:** Azure AI Search holds searchable chunks of the synthetic
    SOP PDFs and policy-scoped contractual PDFs. The active configuration
    identifies the index and extraction mode.
-3. **Review:** A Python Microsoft Agent Framework agent evaluates four comparisons
+3. **Review:** A Python Microsoft Agent Framework agent evaluates three comparisons
    and answers follow-up questions using grounded Search retrieval.
 
 Reviews use only saved **Parse and extract** fields and selected first-pass page
@@ -28,20 +28,20 @@ Interpretations of first-pass page text are distinguished from typed CU facts.
 They reference the supplied `parse.<contentpath>` ID and its native page range,
 not a guessed field label or fabricated polygon.
 
-For the initial four-check review, the application fetches all indexed chunks
+For the initial three-check review, the application fetches all indexed chunks
 within the registered state, policy, vehicle and corpus scope in one Search
 request and verifies their source identities. A separate interpretation establishes
-rental applicability from the saved evidence before **four concurrent comparison
+rental applicability for Daily rate from the saved evidence before **three concurrent comparison
 requests per packet**, one for each check, without a Search tool-planning
 loop. Each gets its own question, relevant saved Parse evidence and complete relevant
-policy pages. **Rental start** retains the governing drivability diagrams; **Effective
+policy pages. **Effective
 terms** compares the loss date with the matched terms, independently of rental use.
 **Repair estimate** independently compares each relevant distinct quote's gross total,
 including stated tax and before deductible or payments, with the retrieved
 synthetic internal state-specific routine review threshold.
 The calls share one model connection
 pool and cached Azure CLI token provider. Citation validation is scoped to the
-evidence supplied to each call. Results are combined in the four-column
+evidence supplied to each call. Results are combined in the three-column
 order; one failed call cancels its siblings rather than saving a partial review.
 A scope exceeding 200 chunks is an explicit error, not truncated evidence.
 Follow-up questions retain tool-based retrieval and only the selected check's
@@ -62,7 +62,7 @@ For a different model in follow-up chat only, set
 Azure OpenAI resource. Optionally set
 `POLICY_CHAT_REASONING_EFFORT=minimal|low|medium|high` to an effort that model
 supports, then restart the server. These settings don't change the model used
-for the four initial checks or invalidate their saved results. Chat shows its
+for the three initial checks or invalidate their saved results. Chat shows its
 deployment name and starts a separate context when model settings change.
 For example, an existing `gpt-4.1-mini` deployment is a smaller-model candidate
 for short follow-ups; don't set a reasoning effort for this non-reasoning model.
@@ -90,7 +90,7 @@ exclude preceding CU extraction. They distinguish actual model latency from
 Search/authentication overhead; compare live timings before claiming a speedup.
 
 The **Claim policy checks** heading sits directly above the comparison table.
-Its four columns are **Daily rate**, **Rental start**, **Effective terms**, and **Repair estimate**,
+Its three columns are **Daily rate**, **Effective terms**, and **Repair estimate**,
 with a short comparison question under each. These labels are also the exact
 ordered runtime check IDs.
 Select a result to replace the right-hand panel with a short agent-written finding and the decisive claim
@@ -129,7 +129,7 @@ check** to return to the finding or chat. **Parse and extract** and
 
 ### Non-rental claims
 
-**Daily rate** and **Rental start** can show **N/A** when affirmative saved
+**Daily rate** can show **N/A** when affirmative saved
 evidence confirms no rental was requested or used and no rental request,
 agreement, use or bill conflicts. A pending request still applies before use.
 **Effective terms** still compares the applicable policy and genuine amendment
@@ -143,7 +143,7 @@ first-pass page text, preserving their supplied evidence IDs. Explicit, labeled
 Yes/No answers can establish applicability; a blank checkbox, absent rental
 invoice or unrelated repair, towing or glass bill can't establish no rental.
 An answer to a towing question isn't a rental request answer. Missing applicability
-evidence can leave the rate/start comparisons **Waiting for info**; contradictory
+evidence can leave the Daily rate comparison **Waiting for info**; contradictory
 evidence requires review. Neither changes an independently supported
 **Effective terms** comparison. Rental amounts come from rental evidence only.
 
@@ -178,7 +178,7 @@ If a case shows **Run error**, open its **Result** and select **Retry this case*
 under the error. The confirmation names that one case; it does not rerun other
 customers. Wait for any active batch to finish first. Matching saved claim fields
 and completed reviews are reused; new Search and agent work can
-incur Azure charges. Retrying evaluates all four checks for that case, not just
+incur Azure charges. Retrying evaluates all three checks for that case, not just
 the selected check. Historical failures remain available after restarting the
 workbench and are labeled with their previous attempt time.
 
@@ -206,10 +206,10 @@ charges, use [Load saved policy results](#load-saved-policy-results) instead.
 3. Wait for the batch to finish. While a run is active, a prominent status banner
    shows the packet being processed, its customer name when available, the
    number of finished packets, and a total elapsed timer updated every second.
-   The banner reports the four policy comparisons and
+   The banner reports the three policy comparisons and
    follows the active packet even when another customer is selected.
    Packets run sequentially; an uncached packet uses saved Parse evidence,
-   one Search prefetch, applicability interpretation and four parallel Agent Framework calls, one per
+   one Search prefetch, applicability interpretation and three parallel Agent Framework calls, one per
    check. Matching current reviews skip the model calls.
    Open a check's **Result** tab for an activity indicator, elapsed stage time
    and the age of the last successful workbench response. This confirms the
@@ -220,40 +220,38 @@ charges, use [Load saved policy results](#load-saved-policy-results) instead.
    values, and sources in the right panel.
    Open **Review details** for the fuller explanation.
    Claim PDFs remain available in Parse and extract.
-6. For packet **01**, select the Texas **Source** link. In the **Document** tab,
-   inspect rule **TX-R2** on page 2 and **Schedule A** on page 3 of
-   `tx-rental-review-sop-v2.pdf`. Select **Back to policy check** to restore the finding.
+5. For packet **01**, select the declarations and issued amendment source links.
+   Inspect the matched vehicle row and the amendment's effective terms.
+   Select **Back to policy check** to restore the finding.
 
-| Case | Daily base evidence | Contractual daily cap | Retrieved routine authority | Comparison to inspect |
-|---|---:|---:|---:|---|
-| Packet 01 / Texas | $54 | $75 | $75, inclusive | Compare $54/day with the matched effective $75/day cap, conditional on eligibility |
-| Packet 02 / Washington | $61 | $85 | $60, inclusive | Compare $61/day with the matched effective $85/day cap; routine authority isn't the benefit cap |
+| Case | Daily base evidence | Contractual daily cap | Comparison to inspect |
+|---|---:|---:|---|
+| Packet 01 / Texas | $54 | $75 | Compare $54/day with the matched effective $75/day cap, conditional on eligibility |
+| Packet 02 / Washington | $61 | $85 | Compare $61/day with the matched effective $85/day cap |
 
-Inspect **Rental start** against the documented drivability branch and stated
-start basis, not the completed repair interval. Inspect **Effective terms**
+Inspect **Effective terms**
 against the actual loss date and genuine issued amendment. Unrelated completion,
 fee classification and insurer payment approval aren't additional checks.
 
 These are source-based expectations, not hardcoded agent answers. If returned
 facts, routing or citations differ, inspect the evidence and errors rather than
 forcing a pass. Neither daily-rate result approves the entire claim or payment;
-other checks can still require review. A rate below Texas's $75 routine authority
-doesn't establish the contractual cap; the SOP can't supply a missing benefit.
+other checks can still require review. The synthetic repair SOP can't supply
+a missing contractual rental benefit.
 The matching revised declarations and effective amendment can establish the
 contractual limit when the policy ID and insured VIN are verified. They cannot
 establish that repairs actually began or ended.
 
-In the source viewer, compare **CU Search** and **Digital parse** with the PDF.
-Texas's page 3 table deliberately contains blank cells: a blank rate or duration
-doesn't grant extra authority. Washington's SOP is entirely scanned, so Digital
-parse may have no readable text. Arizona adds an image-based eligibility
-flowchart. These examples show why understanding tables, scans and figures
-matters to retrieval. A missing representation has an explicit, billable
-generation action; switching tabs alone doesn't run CU.
+In **Policy documents**, compare **CU Search** and **Digital parse** with each PDF.
+Declarations retain sparse tables; effective-date records retain scans; the
+repair SOP retains both complete diagram pages. Both genuine native outputs
+are bundled for every active PDF. Digital parse may successfully return no text
+for a scan. The viewer explains this without substituting OCR or Layout chunks.
+An unavailable representation has an explicit, billable generation action;
+switching tabs alone doesn't run CU.
 
 Optionally, select **Ask agent** in the expanded review. Ask: "Explain this case's
-daily-rate result. Cite the applicable rule and separate the contractual cap
-from routine handling authority." Each chat turn
+daily-rate result and cite the matched contractual cap." Each chat turn
 uses the selected case and retrieval mode; it isn't a new batch comparison.
 
 ## Optional: look under the hood
@@ -282,39 +280,34 @@ steps.
    use page ranges. The agent restricts retrieval to the loss state and verified
    corpus generation rather than searching every policy indiscriminately.
 
-The current four-check bundle records
-`lab664-claim-policy-v4b-1728bee05009`, with **CU Layout** extraction.
+The current pruned three-check bundle records its isolated index in
+`data\policy-demo\policy-agent-framework.json`, with **CU Layout** extraction.
 Don't describe it as Standard extraction. The
 [managed CU ingestion setup](policy-setup.md) activates a replacement only
 after ingestion and source verification succeed.
 
-### Inspect the policy files and Blob Storage
+### Inspect the local policy files
 
 Open the [v2 policy folder](../data/policies/rental/ocr-comparison-v2/) and its
 [manifest](../data/policies/rental/ocr-comparison-v2/manifest.json). The PDFs are
 the knowledge sources; the manifest carries state, version and hash metadata.
-The expected-answer fixtures aren't indexed. Start with the
-[Texas SOP](../data/policies/rental/ocr-comparison-v2/tx-rental-review-sop-v2.pdf),
-[Washington SOP](../data/policies/rental/ocr-comparison-v2/wa-rental-review-sop-v2.pdf)
-and [shared evidence standard](../data/policies/rental/ocr-comparison-v2/shared-rental-evidence-standard-v2.pdf).
+The expected-answer fixtures aren't indexed. The active manifest contains
+21 PDFs: ten declarations, nine scanned effective-date records, the issued
+Texas amendment and the two-page synthetic repair-review diagram.
+These establish the contractual rental cap, effective terms and synthetic
+repair authority needed by the three current questions.
 
-For a **successfully applied managed ingestion pipeline**, open the matching
-Search **Data source**, note its actual container, then inspect that container
-under **Storage browser** in the configured storage account. The setup script
-targets **mmiusw3bbstore**, resource group **mmi-usw3-eft**, subscription
-**3b393ccb-47e3-4dea-9004-0c1085b5aba6**. Expect the manifest-listed PDFs,
-including the Texas, Washington and shared SOPs. Inspect the corresponding
-**Indexer** and **Skillset** to follow Blob PDFs through the CU skill to chunks.
+The 21 legacy rental-terms, state rental-review SOP and shared five-check-standard
+PDFs remain in `data\policies\archive\legacy-rental-review-v2\`.
+The archive manifest records original logical paths, versions, SHA-256 values,
+archive paths and rationale. Historical citations resolve only through these
+verified records; archives aren't in active retrieval, previews or document counts.
+Corpus generation verifies the pruned sources rather than recreating legacy files.
 
-The existing Layout index doesn't prove that this Blob/indexer pipeline has
-been deployed. If only Layout is active or no matching data source exists, use
-the repository PDFs for this optional inspection. Ask the lab owner about the
-reported ingestion prerequisites; don't assign roles or create resources during
-the attendee walkthrough.
-
-The current generation has no matching container in `mmiusw3bbstore`. Its
-**Azure Storage documents here** label explicitly identifies local corpus storage.
-No upload is implied by the configured storage-account resource ID.
+The **Policy documents** link opens a same-origin, manifest-backed list of the
+actual local source folder. Each file opens in **Original**, **CU Search**, or
+**Digital parse**. This isn't arbitrary directory browsing, a `file://` link,
+Explorer or a Blob container. No files are uploaded by this workflow.
 Public portal metadata lives in `data\policy-demo\resources.json`, separate from
 model inputs and review-cache identity. It must match the exact index name,
 corpus hash, index fingerprint and Search endpoint before any links are shown.
@@ -367,7 +360,7 @@ remaining cases stay **Not run**. Live runs still save successful cases
 automatically. Loading is disabled while this session is processing a batch.
 
 On first launch, the app automatically loads the included **10/10** CU run and
-**40** saved comparison cells. Open **Check policies**;
+**30** saved comparison cells. Open **Check policies**;
 **Settings** > **Reload policy reviews** reloads them.
 Without compatible local reviews, the app
 reads ten policy reviews and their claim fields directly from `data\policy-demo`.
@@ -379,8 +372,10 @@ The original CU run is already included under `data\results`.
 The bundle covers **FoundryIQ**, not **No policy retrieval**; follow-up chat and
 live work require the approved lab identity and configured Azure resources.
 `.\infra\policy-demo-cache.ps1` remains an optional maintenance command, never an
-attendee prerequisite. Earlier five-check and three-check reviews remain history,
-not relabeled or converted into four-check outcomes. The new bundle replaces
+attendee prerequisite. Earlier five-, four-, and three-check reviews remain history,
+not relabeled or converted into the current three-check outcomes. Contract version 5
+distinguishes this bundle from the old three-check set containing Rental start.
+The new bundle replaces
 the active results without altering saved Parse facts.
 
 The grounded workflow uses the saved Parse evidence and
@@ -394,7 +389,7 @@ tab or source link doesn't submit an agent request or start ingestion.
 
 The application fixes the loss state, policy ID, insured VIN and source
 generation in the Search filter. Policy-specific documents require both
-identifiers to match; state/shared SOPs remain available without them.
+identifiers to match; the synthetic repair SOP remains available by loss state.
 Initial reviews use one scoped prefetch; follow-up chat can choose search
 keywords, not a different state's rules. Missing
 routing or evidence remains explicit; a similar state's SOP isn't substituted.
@@ -407,7 +402,7 @@ and missing claim facts aren't filled in from policy rules or local answer guide
 
 Policy checks use the loaded saved Parse fields and selected first-pass
 page text. The ten cases run sequentially; the status line shows completed
-cases, the active case, four-comparison review progress and total elapsed time.
+cases, the active case, three-comparison review progress and total elapsed time.
 
 Refreshing the same browser tab reconnects to its private session, reloads its
 selected CU run and resumes policy progress without submitting another batch.
@@ -420,22 +415,21 @@ If a progress request fails, reload the same tab to reconnect. Restarting the
 server clears in-memory jobs and private chat; it doesn't automatically rerun
 them. Completed saved results remain available for the next explicitly confirmed run.
 
-## Read the four checks
+## Read the three checks
 
 The checks appear in this order:
 
 | Check | Question |
 |---|---|
 | Daily rate | Is the claimed daily rental base rate within the effective cap for the matched insured vehicle, conditional on rental eligibility? |
-| Rental start | Does the stated rental start basis match the documented drivability rule? |
 | Effective terms | Were the applicable policy and genuine amendment effective and in force on the actual loss date for the policy ID and insured VIN? |
 | Repair estimate | Is each supplied repair-estimate total within this state's routine review authority? |
 
-For Packet #1, inspect the revised declarations, rental terms/diagram and
+For Packet #1, inspect the revised declarations and
 scanned amendment in the source viewer. The Honda row's blank optional-code
 cell must not shift the $500 collision deductible, $75 daily rental limit, or
 30-day maximum. The separate Toyota row does not establish the Honda's
-coverage. R.4 states no separate rental deductible and mandatory taxes
+coverage. The declarations identify the base daily cap with mandatory tax
 additional. A numerical fit is not proof of an eligible repair period.
 Verify the policy ID and insured VIN against the actual source image; a similar
 vehicle description or parsed VIN alone doesn't establish the matched vehicle.
@@ -453,11 +447,7 @@ independent of rental applicability. Keep Texas's **$75/day** and Washington's
 **$85/day** contractual rental limits distinct from repair authority.
 
 **Effective terms** requires a genuine issued amendment and its effective time,
-not just a customer signature. **Rental start** compares the stated basis with
-the relevant drivability branch, not an entire completed repair period. A
-scheduled appointment isn't proof that a required repair-start event happened.
-Missing drivability remains unknown, with both branches explained rather than
-guessed. Missing unrelated repair completion or payment authorization doesn't
+not just a customer signature. Missing unrelated repair completion or payment authorization doesn't
 turn these narrow comparisons into a wait.
 
 For a bounded owner evaluation, `POST /api/policy/batch` accepts
@@ -484,7 +474,7 @@ SOP threshold and require exception approval.
 
 The right panel opens in **Result**. Select **Ask agent** to ask about the selected
 check for the same case using grounded Search retrieval without changing its saved results.
-Daily rate, Rental start, Effective terms and Repair estimate
+Daily rate, Effective terms and Repair estimate
 each have their own conversation. Switching checks doesn't mix their history.
 
 Chat uses the locally served, MIT-licensed [Deep Chat](https://deepchat.dev/)

@@ -47,15 +47,15 @@ class FrameworkTests(unittest.TestCase):
                 "FullName": {"type": "string", "valueString": "Irrelevant ID"},
             }},
         ]}
-        timing = check_analysis(source, "Rental start")
-        self.assertEqual(len(timing["contents"]), 1)
-        fields = timing["contents"][0]["fields"]
-        self.assertNotIn("RentalDailyBaseRate", fields)
-        self.assertNotIn("PolicyDailyBaseCap", fields)
+        amount = check_analysis(source, "Daily rate")
+        self.assertEqual(len(amount["contents"]), 1)
+        fields = amount["contents"][0]["fields"]
+        self.assertEqual(fields["RentalDailyBaseRate"]["valueNumber"], 0)
+        self.assertEqual(fields["PolicyDailyBaseCap"]["valueNumber"], 54)
         rows = fields["Rental"]["valueObject"]["DailyRates"]["valueArray"]
         self.assertEqual(len(rows), 2)
-        self.assertEqual(rows[1]["valueObject"], {"StartDate": {"type": "date"}})
-        text = fields_frontmatter(timing)
+        self.assertEqual(rows[1]["valueObject"]["StartDate"], {"type": "date"})
+        text = fields_frontmatter(amount)
         self.assertIn("RentalRequested: false", text)
         self.assertNotIn("ActualRepairCompletion", text)
         self.assertIn("Rental.DailyRates[1].StartDate", text)
@@ -66,7 +66,9 @@ class FrameworkTests(unittest.TestCase):
         questions = check_questions(runtime.ROOT / "docs" / "rental-review-agent-question-v2.md", runtime.CHECKS)
         prompt = check_prompt(source, "Daily rate", questions)
         self.assertIn(questions["Daily rate"], prompt)
-        self.assertNotIn(questions["Rental start"], prompt)
+        self.assertNotIn("Rental start", questions)
+        with self.assertRaisesRegex(ValueError, "Unknown policy check"):
+            check_analysis(source, "Rental start")
         self.assertIn("RentalDailyBaseRate: 0", prompt)
         self.assertNotIn("ActualRepairCompletion", prompt)
 
@@ -83,7 +85,6 @@ class FrameworkTests(unittest.TestCase):
         self.assertIn("Effective terms is independent", questions["Shared"])
         self.assertIn("A towing Yes isn't rental Yes", questions["Shared"])
         self.assertIn("prior usage", questions["Daily rate"])
-        self.assertIn("not end/completed-period", questions["Rental start"])
         self.assertIn("effective-boundary ambiguity", questions["Effective terms"])
 
     def test_original_parse_segments_and_typed_provenance_need_no_summary(self):
@@ -121,7 +122,7 @@ class FrameworkTests(unittest.TestCase):
             })
             self.assertIn(table, prompt)
             self.assertIn("UNTRUSTED first-pass parsed page text with provenance", prompt)
-            if check == "Repair estimate":
+            if check != "Daily rate":
                 self.assertNotIn("Shared rental applicability (derived interpretation", prompt)
             else:
                 self.assertIn("NOT a new extracted CU field", prompt)
@@ -263,19 +264,19 @@ class FrameworkTests(unittest.TestCase):
         )
         evidence = [dict(file="tx.pdf", documentId="TX", version="2.0",
                          ruleIds=["TX-R2"], citationSections=["Schedule"])]
-        for check in value.Checks[:2]:
+        for check in value.Checks[:1]:
             check.Outcome = "NotApplicable"
             check.ReviewRequired = False
             check.Citation = [citation]
-        value.Checks[2].Outcome = "Satisfied"
-        value.Checks[2].ReviewRequired = False
-        value.Checks[2].Citation = [citation]
+        value.Checks[1].Outcome = "Satisfied"
+        value.Checks[1].ReviewRequired = False
+        value.Checks[1].Citation = [citation]
         decision = runtime.RentalApplicability(
             status="nonrental", reason="Explicit no request", sourceReferences=["RentalRequested"],
         )
         runtime.check_shared_applicability(value, decision, "search")
         runtime.check_citations(value, evidence, "search")
-        value.Checks[2].Outcome = "NotApplicable"
+        value.Checks[1].Outcome = "NotApplicable"
         with self.assertRaisesRegex(ValueError, "independent"):
             runtime.check_citations(value, evidence, "search")
 
@@ -319,11 +320,11 @@ class FrameworkTests(unittest.TestCase):
                 self.assertIn("RentalPickup:", text)
                 self.assertIn("RentalTotal: 120", text)
 
-    def test_model_schema_requires_exact_check_names_and_four_results(self):
+    def test_model_schema_requires_exact_check_names_and_three_results(self):
         schema = runtime.Review.model_json_schema()
         self.assertEqual(schema["$defs"]["Check"]["properties"]["Check"]["enum"], runtime.CHECKS)
-        self.assertEqual(schema["properties"]["Checks"]["minItems"], 4)
-        self.assertEqual(schema["properties"]["Checks"]["maxItems"], 4)
+        self.assertEqual(schema["properties"]["Checks"]["minItems"], 3)
+        self.assertEqual(schema["properties"]["Checks"]["maxItems"], 3)
         value = self.review().model_dump()
         value["Checks"][0]["Check"] += "."
         with self.assertRaises(ValidationError):
@@ -561,17 +562,17 @@ class ParallelFrameworkTests(unittest.IsolatedAsyncioTestCase):
                         elif fail:
                             with self.assertRaisesRegex(ValueError, "Daily rate failed: offline model failure"):
                                 await runtime.run(turn)
-                            self.assertEqual(len(cancelled), 3)
+                            self.assertEqual(len(cancelled), 2)
                         else:
                             value = await runtime.run(turn)
                             self.assertEqual([c["Check"] for c in value["result"]["Checks"]], runtime.CHECKS)
-                            self.assertEqual(value["timings"]["modelRequests"], 5)
+                            self.assertEqual(value["timings"]["modelRequests"], 4)
                             self.assertEqual(value["rentalApplicability"]["status"], "rental")
                             self.assertEqual(value["timings"]["applicability"]["modelDeployment"], "gpt-5")
-                            self.assertNotIn("RentalDailyBaseRate", prompts["Rental start"])
+                            self.assertNotIn("RentalDailyBaseRate", prompts["Repair estimate"])
                             self.assertIn("RentalDailyBaseRate: 0", prompts["Daily rate"])
                             for name, prompt in prompts.items():
-                                if name == "Repair estimate":
+                                if name != "Daily rate":
                                     self.assertNotIn("Shared rental applicability (derived interpretation", prompt)
                                 else:
                                     self.assertIn("Shared rental applicability (derived interpretation", prompt)
@@ -579,7 +580,7 @@ class ParallelFrameworkTests(unittest.IsolatedAsyncioTestCase):
                                 for other in runtime.CHECKS:
                                     if other != name:
                                         self.assertNotIn(questions[other], prompt)
-                        self.assertEqual(maximum, 0 if fail == "reference" else 4)
+                        self.assertEqual(maximum, 0 if fail == "reference" else 3)
                         self.assertEqual(active, 0)
                         token.assert_called_once_with()
 

@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 import io
 import json
+import sys
 from pathlib import Path
 from xml.sax.saxutils import escape
 
@@ -659,7 +660,37 @@ def comparison_probes() -> dict:
     }
 
 
-def main() -> None:
+def main(*, legacy_archive: bool = False) -> None:
+    global OUT
+    archive = ROOT / "data" / "policies" / "archive" / "legacy-rental-review-v2"
+    registry_path = archive / "registry.json"
+    scenario_folder = ROOT / "data" / "scenarios"
+    if registry_path.exists():
+        registry = json.loads(registry_path.read_text(encoding="utf-8"))
+        active = json.loads((OUT / "manifest.json").read_text(encoding="utf-8"))
+        active_citations = json.loads((OUT / "citations.json").read_text(encoding="utf-8"))
+        retired_ids = {d["documentId"] for d in registry["documents"]}
+        if retired_ids & {d["documentId"] for d in active["documents"]}:
+            raise ValueError("Archived rental sources must not return to the active manifest.")
+        for doc in active["documents"]:
+            if digest((OUT / doc["pdf"]).read_bytes()) != doc["sha256"]:
+                raise ValueError(f"Active PDF changed: {doc['pdf']}")
+            matches = [c for c in active_citations if c["documentId"] == doc["documentId"]]
+            if len(matches) != 1 or any(matches[0][key] != doc[key] for key in
+                                       ("version", "pdf", "sha256", "ruleIds")):
+                raise ValueError(f"Active citation registration differs: {doc['documentId']}")
+        for doc in registry["documents"]:
+            if digest((ROOT / doc["archivePath"]).read_bytes()) != doc["sha256"]:
+                raise ValueError(f"Archived PDF changed: {doc['pdf']}")
+        if not legacy_archive:
+            print(f"Validated {len(active['documents'])} active and "
+                  f"{len(registry['documents'])} archived PDFs; no files rewritten.")
+            print("Use --rebuild-legacy-archive to reproduce legacy material under the archive only.")
+            return
+        OUT = archive / "reproduced"
+        scenario_folder = OUT
+    elif legacy_archive:
+        raise ValueError("Archive the legacy sources before requesting a legacy-only rebuild.")
     manifest_path, citations_path = OUT / "manifest.json", OUT / "citations.json"
     preserved = []
     preserved_citations = []
@@ -728,9 +759,9 @@ def main() -> None:
     for name, value in [("manifest.json", manifest), ("citations.json", citations)]:
         (OUT / name).write_text(json.dumps(value, indent=2) + "\n", encoding="utf-8",
                                newline="\r\n" if name == "manifest.json" else "\n")
-    (ROOT / "data" / "scenarios" / "rental-review-v2.expected.json").write_text(
+    (scenario_folder / "rental-review-v2.expected.json").write_text(
         json.dumps(fixture, indent=2) + "\n", encoding="utf-8")
-    (ROOT / "data" / "scenarios" / "rental-ocr-comparison.probes.json").write_text(
+    (scenario_folder / "rental-ocr-comparison.probes.json").write_text(
         json.dumps(comparison_probes(), indent=2) + "\n", encoding="utf-8")
 
 
@@ -793,4 +824,6 @@ def validate(manifest: dict, fixture: dict) -> None:
 
 
 if __name__ == "__main__":
-    main()
+    if any(arg != "--rebuild-legacy-archive" for arg in sys.argv[1:]):
+        raise SystemExit("Usage: generate-rental-sop-corpus.py [--rebuild-legacy-archive]")
+    main(legacy_archive="--rebuild-legacy-archive" in sys.argv[1:])

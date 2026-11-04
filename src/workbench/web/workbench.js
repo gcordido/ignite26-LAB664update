@@ -66,14 +66,12 @@ let policyCacheVersion = 0;
 const policyResultScroll = new Map();
 const policyCheckNames = [
   "Daily rate",
-  "Rental start",
   "Effective terms",
   "Repair estimate",
 ];
 const policyShortNames = [...policyCheckNames];
 const policyCheckDescriptions = [
   "Is the claimed daily base rate within the effective insured-vehicle cap?",
-  "Does the stated rental start basis match the documented drivability rule?",
   "Were the matched policy and genuine amendment in force on the actual loss date?",
   "Is each supplied repair-estimate total within this state's routine review authority?",
 ];
@@ -1227,6 +1225,7 @@ api("session", {})
       if (first) await showCustomer(first.id);
     }
     controls();
+    if (globalThis.location?.hash === "#policy-documents") await openPolicyDocuments();
   })
   .catch(fail);
 
@@ -1296,13 +1295,61 @@ function renderPolicyResources() {
   render("policy-index-resource", names.length > 1 ? "Multiple saved index generations" :
     name ?? resources?.index?.name ?? "Unavailable",
     resources?.index?.href, resources?.index?.message ?? (!resources ? unavailable : ""));
-  render("policy-storage-resource", resources?.storage?.containerName ??
-    resources?.storage?.message ?? unavailable, resources?.storage?.href, resources?.storage?.message);
   const active = policyStatus?.resources?.index?.name;
   const context = get("policy-resource-context");
   context.hidden = !name || !active || name === active;
   context.textContent = context.hidden ? "" : `Showing saved result sources. Live checks use index ${active}.`;
 }
+async function openPolicyDocuments() {
+  const dialog = get("policy-document-list");
+  if (!dialog.open) dialog.showModal();
+  const status = get("policy-document-list-status");
+  status.textContent = "Loading verified active policy documents...";
+  get("policy-document-list-files").replaceChildren();
+  try {
+    const value = await api("policy/documents");
+    const files = value.files;
+    if (!Array.isArray(files) || files.some((file) =>
+      typeof file !== "string" || !/^policies\/rental\/ocr-comparison-v2\/[a-z0-9-]+\.pdf$/.test(file)))
+      throw new Error("The active policy document list is invalid.");
+    for (const file of files) {
+      const row = element("li");
+      row.append(element("strong", file.split("/").at(-1)));
+      for (const [mode, label] of [["pdf", "Original"], ["search", "CU Search"], ["digital", "Digital parse"]]) {
+        const link = element("a", label);
+        link.href = `/data/${file}#page=1`;
+        link.dataset.representation = mode;
+        link.onclick = async (event) => {
+          event.preventDefault();
+          dialog.close();
+          try {
+            activateView("policy");
+            beginPolicySource(link, file.split("/").at(-1));
+            policySource.listing = true;
+            get("policy-source-back").textContent = "Back to policy documents";
+            await policyDocument.open(`/data/${file}`, 1);
+            if (mode !== "pdf") get(`policy-document-${mode === "search" ? "search" : "digital"}-tab`).click();
+          } catch (error) { fail(error); }
+        };
+        row.append(document.createTextNode(" \u00b7 "), link);
+      }
+      get("policy-document-list-files").append(row);
+    }
+    status.textContent = `${files.length} active PDFs. Archived documents are not included.`;
+  } catch (error) {
+    status.textContent = `Policy documents unavailable: ${error.message}`;
+    throw error;
+  }
+}
+get("policy-local-documents").onclick = (event) => {
+  event.preventDefault();
+  void openPolicyDocuments().catch(fail);
+};
+get("policy-document-list-close").onclick = () => get("policy-document-list").close();
+globalThis.addEventListener?.("hashchange", () => {
+  if (globalThis.location?.hash === "#policy-documents")
+    void openPolicyDocuments().catch(fail);
+});
 async function updatePolicyAvailability() {
   clearTimeout(policyAvailabilityTimer);
   try {
@@ -1413,7 +1460,7 @@ function renderPolicyRunStatus() {
   const interrupted = policyProgressErrors.has(policyMode);
   setText("policy-run-label", interrupted
     ? "Progress connection interrupted"
-    : "Agent checking four comparisons");
+    : "Agent checking three comparisons");
   get("policy-run-status").querySelector(".spinner").hidden = interrupted;
   const customer = active ? customerName(results.get(active.id)) : "";
   setText("policy-run-packet", active
@@ -1422,7 +1469,7 @@ function renderPolicyRunStatus() {
   setText("policy-run-detail", interrupted
     ? "The server may still be running. Reload to reconnect; do not start a duplicate review."
     : `${completed}/${job.items.length} packets finished · ${policyModeLabel()} · ${
-      active ? "Checking four comparisons and citations" : "Preparing next case from saved Parse evidence"
+      active ? "Checking three comparisons and citations" : "Preparing next case from saved Parse evidence"
     }`);
   const elapsed = Math.max(0, Math.floor((Date.now() - Date.parse(job.startedAt)) / 1000));
   get("policy-run-elapsed").textContent = Number.isFinite(elapsed)
@@ -1518,7 +1565,7 @@ function renderPolicyTable() {
             ? "Run error"
             : ({
                 pending: "Queued",
-                reviewing: "Checking four comparisons",
+                reviewing: "Checking three comparisons",
               }[item?.status] ?? "Not run");
         const button = element("button", text, "cell-content");
         const state = element(
@@ -1603,14 +1650,14 @@ function renderPolicyOutput(focused) {
       heading.querySelector(".spinner")?.setAttribute("aria-hidden", "true");
       const title = element("span", paused ? "Progress connection interrupted" : ({
         pending: "Queued for policy review",
-        reviewing: "Agent checking four comparisons",
+        reviewing: "Agent checking three comparisons",
       }[item.status]));
       title.setAttribute("role", "status");
       heading.append(title);
       activity.append(heading,
         element("p", item.status === "pending"
           ? "Cases run sequentially. This case will start after the cases ahead of it."
-          : "The agent is evaluating four comparisons using saved Parse fields and selected first-pass page text. No claim CU reanalysis is run. Search and model calls can take several minutes; results appear after the response and source citations are verified."),
+          : "The agent is evaluating three comparisons using saved Parse fields and selected first-pass page text. No claim CU reanalysis is run. Search and model calls can take several minutes; results appear after the response and source citations are verified."),
         element("p", "", "policy-activity-time"),
         element("p", "", "policy-activity-connection muted"));
       panel.append(activity);
@@ -1632,7 +1679,7 @@ function renderPolicyOutput(focused) {
       const retry = element("button", "Retry this case", "policy-retry secondary");
       retry.dataset.liveControl = "";
       retry.onclick = () => confirmPolicyRun([packetId]);
-      const notice = element("p", "Retries the four checks for this case only, using saved Parse fields and selected first-pass page text. No claim CU reanalysis is run; Azure charges may apply.", "muted");
+      const notice = element("p", "Retries the three checks for this case only, using saved Parse fields and selected first-pass page text. No claim CU reanalysis is run; Azure charges may apply.", "muted");
       notice.dataset.liveControl = "";
       panel.append(retry, notice);
       controls();
@@ -1899,6 +1946,10 @@ async function openPolicySource(citation, link) {
 get("policy-source-back").onclick = () => {
   const previous = policySource;
   showPolicyPanel(true);
+  if (previous?.listing) {
+    void openPolicyDocuments().catch(fail);
+    return;
+  }
   get("policy-review-pane").scrollTop = previous?.scrollTop ?? 0;
   previous?.link.focus({ preventScroll: true });
 };
@@ -1976,8 +2027,8 @@ function confirmPolicyRun(packetIds) {
   const packetId = packetIds?.[0];
   get("policy-confirm-summary").textContent =
     (packetId
-      ? `1 case: ${customerName(results.get(packetId)) || packetId} · ${policyModeLabel()}. Only this case's four checks will be retried. `
-      : `${run.items.filter((item) => item.rawSaved).length} cases · four checks per case · ${policyModeLabel()}.`);
+      ? `1 case: ${customerName(results.get(packetId)) || packetId} · ${policyModeLabel()}. Only this case's three checks will be retried. `
+      : `${run.items.filter((item) => item.rawSaved).length} cases · three checks per case · ${policyModeLabel()}.`);
   get("policy-confirmation").showModal();
 }
 get("policy-run").onclick = () => confirmPolicyRun();

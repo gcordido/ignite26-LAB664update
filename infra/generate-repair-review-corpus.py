@@ -269,6 +269,8 @@ def registrations(pdf_hash: str) -> tuple[dict, dict]:
 def upsert_registration(raw: bytes, entry: dict, *, manifest: bool) -> bytes:
     """Change only our array element; leave all original entries byte-for-byte."""
     text = raw.decode("utf-8")
+    if not manifest:
+        text = text.replace("\r\n", "\n")
     newline = "\r\n" if manifest else "\n"
     if text.replace(newline, "").find("\n") != -1:
         raise ValueError("Unexpected registry line endings.")

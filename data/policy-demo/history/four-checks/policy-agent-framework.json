@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "provider": "agent-framework",
+  "azureOpenAIEndpoint": "https://mmi-usw3-eft-foundry.services.ai.azure.com",
+  "modelDeployment": "gpt-5",
+  "searchEndpoint": "https://mmi-sample-ai-search.search.windows.net",
+  "indexName": "lab664-claim-policy-v4b-1728bee05009",
+  "corpusHash": "5b198c1586770f3a60a357a78c3f5d63f1a633bc65c53307392883e51c36488e",
+  "indexFingerprint": "a71bc9a95f9492099dfca85d19633e3427706c975f5fb3fdbe007ae361342c2a",
+  "extractionMode": "layout",
+  "cuEndpoint": "https://mmi-usw3-eft-foundry.services.ai.azure.com",
+  "cuApiVersion": "2026-06-01-preview",
+  "claimAnalyzerId": "lab664_rental_request_414186fd50e4",
+  "claimAnalyzerHash": "fbdd5e69358edfa88723425716f60bf8e9e6449a93adfc0553dee0e8bf28c4f0"
+}

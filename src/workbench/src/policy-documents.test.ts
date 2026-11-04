@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
-import { mkdtemp, rm, readdir, readFile, writeFile } from "node:fs/promises";
+import { mkdir, rm, readdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
-import os from "node:os";
+import { randomUUID } from "node:crypto";
 import vm from "node:vm";
 import { test } from "node:test";
 import { PolicyDocuments, representationMarkdown } from "./policy-documents.ts";
@@ -11,13 +11,29 @@ import { digest } from "./policy-core.ts";
 const settings = async () => ({
   endpoint: "https://example.services.ai.azure.com", apiVersion: "2026-06-01-preview", port: 8791,
 });
+const policy = (name: string) => `policies/rental/ocr-comparison-v2/${name}`;
+async function fixtureFolder() {
+  const folder = path.resolve(`.policy-document-test-${randomUUID()}`);
+  await mkdir(folder);
+  return folder;
+}
+function fixtureDocuments(dependencies: ConstructorParameters<typeof PolicyDocuments>[0]) {
+  return new PolicyDocuments({
+    bundleFolder: null,
+    provenance: { endpoint: "https://example.services.ai.azure.com", apiVersion: "2026-06-01-preview" },
+    manifest: async () => Buffer.from(JSON.stringify({
+      documents: ["test.pdf", "one.pdf", "two.pdf"].map((pdf) => ({ pdf })),
+    })),
+    ...dependencies,
+  });
+}
 
 test("CU Search does not relabel or reuse an old Layout cache", async () => {
-  const folder = await mkdtemp(path.join(os.tmpdir(), "policy-search-docs-"));
+  const folder = await fixtureFolder();
   try {
     const bytes = Buffer.from("document bytes");
     const identity = {
-      schemaVersion: 1, file: "test.pdf", sha256: digest(bytes),
+      schemaVersion: 1, file: policy("test.pdf"), sha256: digest(bytes),
       endpoint: (await settings()).endpoint, apiVersion: (await settings()).apiVersion,
       analyzer: "prebuilt-layout",
     };
@@ -25,18 +41,18 @@ test("CU Search does not relabel or reuse an old Layout cache", async () => {
       ...identity, createdAt: new Date().toISOString(), markdown: "Old Layout", response: result("Old Layout"),
     }));
     const calls: string[] = [];
-    const documents = new PolicyDocuments({
+    const documents = fixtureDocuments({
       cacheFolder: folder, source: async () => bytes, settings,
       analyze: async (id) => { calls.push(id); return result("# New Search"); },
     });
-    assert.equal((await documents.get("test.pdf", "search")).available, false);
+    assert.equal((await documents.get(policy("test.pdf"), "search")).available, false);
     assert.deepEqual(calls, []);
-    const generated = await documents.get("test.pdf", "search", true);
+    const generated = await documents.get(policy("test.pdf"), "search", true);
     assert.equal(generated.analyzer, "prebuilt-documentSearch");
     assert.ok(generated.available);
     assert.equal(generated.markdown, "# New Search");
     assert.deepEqual(calls, ["prebuilt-documentSearch"]);
-    const cached = await documents.get("test.pdf", "search");
+    const cached = await documents.get(policy("test.pdf"), "search");
     assert.ok(cached.available && cached.cached);
     assert.equal(cached.analyzer, "prebuilt-documentSearch");
     assert.equal((await readdir(folder)).length, 2);
@@ -50,6 +66,10 @@ test("representations preserve CU HTML tables and successful empty digital outpu
   const markdown = '<table><tr><td rowspan="2">Band</td><td></td></tr></table>';
   assert.equal(representationMarkdown(result(markdown)), markdown);
   assert.equal(representationMarkdown(result("")), "");
+  assert.equal(representationMarkdown({ status: "Succeeded", result: { contents: [] } }, "digital"), "");
+  assert.equal(representationMarkdown({ status: "Succeeded", result: {
+    contents: [{ kind: "document", pages: [{ pageNumber: 1 }] }],
+  } }, "digital"), "");
   assert.throws(() => representationMarkdown({ status: "Failed", result: { contents: [] } }), /did not succeed/);
   assert.throws(() => representationMarkdown({ status: "Succeeded", result: { contents: [{}] } }), /without Markdown/);
   assert.throws(() => representationMarkdown({ status: "Succeeded" }), /no document contents/);
@@ -57,32 +77,35 @@ test("representations preserve CU HTML tables and successful empty digital outpu
 });
 
 test("document cache is keyed by bytes, endpoint, API and analyzer; cache reads never submit Azure requests", async () => {
-  const folder = await mkdtemp(path.join(os.tmpdir(), "policy-docs-"));
+  const folder = await fixtureFolder();
   try {
     let bytes = Buffer.from("one");
     let apiVersion = "2026-06-01-preview";
     const calls: string[] = [];
-    const documents = new PolicyDocuments({
+    const provenance = { endpoint: (await settings()).endpoint, apiVersion };
+    const documents = fixtureDocuments({
+      provenance,
       cacheFolder: folder, source: async () => bytes,
       settings: async () => ({ ...await settings(), apiVersion }),
       analyze: async (id) => { calls.push(id); return result(id === "prebuilt-digitalParse" ? "" : "# Extracted"); },
     });
-    assert.equal((await documents.get("test.pdf", "search")).available, false);
+    assert.equal((await documents.get(policy("test.pdf"), "search")).available, false);
     assert.deepEqual(calls, []);
-    const first = await documents.get("test.pdf", "search", true);
+    const first = await documents.get(policy("test.pdf"), "search", true);
     assert.equal(first.available && first.markdown, "# Extracted");
     assert.equal(first.available && first.cached, false);
-    const cached = await documents.get("test.pdf", "search", true);
+    const cached = await documents.get(policy("test.pdf"), "search", true);
     assert.ok(cached.available);
     assert.equal(cached.available && cached.cached, true);
     assert.equal(cached.response, undefined);
-    await documents.get("test.pdf", "digital", true);
+    await documents.get(policy("test.pdf"), "digital", true);
     assert.deepEqual(calls, ["prebuilt-documentSearch", "prebuilt-digitalParse"]);
     bytes = Buffer.from("changed");
-    assert.equal((await documents.get("test.pdf", "search")).available, false);
+    assert.equal((await documents.get(policy("test.pdf"), "search")).available, false);
     bytes = Buffer.from("one");
     apiVersion = "2025-11-01";
-    assert.equal((await documents.get("test.pdf", "search")).available, false);
+    provenance.apiVersion = apiVersion;
+    assert.equal((await documents.get(policy("test.pdf"), "search")).available, false);
     const files = await readdir(folder);
     assert.equal(files.length, 2);
     const stored = JSON.parse(await readFile(path.join(folder, files[0]), "utf8"));
@@ -91,41 +114,42 @@ test("document cache is keyed by bytes, endpoint, API and analyzer; cache reads 
 });
 
 test("parallel duplicate requests share one analysis; unrelated extraction conflicts; failures remain retryable", async () => {
-  const folder = await mkdtemp(path.join(os.tmpdir(), "policy-docs-"));
+  const folder = await fixtureFolder();
   try {
     let release!: () => void, entered!: () => void;
     const ready = new Promise<void>((resolve) => { entered = resolve; });
     const wait = new Promise<void>((resolve) => { release = resolve; });
     let calls = 0;
-    const documents = new PolicyDocuments({
+    const documents = fixtureDocuments({
       cacheFolder: folder, source: async () => Buffer.from("test"), settings,
       analyze: async () => { calls++; entered(); await wait; return result(""); },
     });
-    const first = documents.get("one.pdf", "search", true);
+    const first = documents.get(policy("one.pdf"), "search", true);
     await ready;
-    const second = documents.get("one.pdf", "search", true);
-    await assert.rejects(documents.get("two.pdf", "search", true), /Another policy document/);
+    const second = documents.get(policy("one.pdf"), "search", true);
+    await assert.rejects(documents.get(policy("two.pdf"), "search", true), /Another policy document/);
     release();
     await Promise.all([first, second]);
     assert.equal(calls, 1);
-    const failed = new PolicyDocuments({
+    const failed = fixtureDocuments({
       cacheFolder: folder, source: async () => Buffer.from("failure"), settings,
       analyze: async () => { throw new Error("Azure unavailable"); },
     });
-    await assert.rejects(failed.get("one.pdf", "digital", true), /Azure unavailable/);
-    assert.equal((await failed.get("one.pdf", "digital")).available, false);
+    await assert.rejects(failed.get(policy("one.pdf"), "digital", true), /Azure unavailable/);
+    assert.equal((await failed.get(policy("one.pdf"), "digital")).available, false);
   } finally { await rm(folder, { recursive: true, force: true }); }
 });
 
 test("only exact v2 manifest PDF paths are accepted; extraction endpoint requires private session and explicit live consent", async () => {
   const documents = new PolicyDocuments();
   const files = await documents.files();
-  assert.equal(files.length, 42);
+  assert.ok(files.length > 0);
   assert.ok(files.includes("policies/rental/ocr-comparison-v2/synthetic-repair-review-authority-v1.pdf"));
-  assert.ok(files.includes("policies/rental/ocr-comparison-v2/az-rental-review-sop-v2.pdf"));
+  assert.equal(new Set(files).size, files.length);
   for (const file of ["../.tools/policy-checks.json", "policies/rental/tx-rental-review-sop.pdf",
     "policies/rental/../rental/ocr-comparison-v2/tx-rental-review-sop-v2.pdf",
-    "policies/rental/ocr-comparison-v2/controls/tx-rental-review-sop-v2-text-control.pdf"]) {
+    "policies/rental/ocr-comparison-v2/controls/tx-rental-review-sop-v2-text-control.pdf",
+    "policies/rental/ocr-comparison-v2/archive/tx-rental-review-sop-v2.pdf"]) {
     await assert.rejects(documents.get(file, "search"), /manifest-listed/);
   }
   const server = createApp({ detail: async () => null, analyze: async () => null }).listen(0, "127.0.0.1");

@@ -70,7 +70,7 @@ the index configuration only to run live analysis or policy checks.
 #### Try the policy-check comparison
 
 On first launch, the app automatically loads the included **10/10** CU run and
-all **40** saved policy checks. Open **Check policies**; grounded Search retrieval
+all **30** saved policy checks. Open **Check policies**; grounded Search retrieval
 is the default, with no retrieval selector. **Settings** > **Reload policy reviews**
 reloads them; no separate extraction step is needed.
 **Settings** > **Reload saved results** also loads the included CU run
@@ -85,15 +85,17 @@ FoundryIQ is the lab's umbrella label; this implementation retrieves evidence
 directly from Azure AI Search, not a Foundry IQ knowledge base.
 The index name above the grid links directly to its Azure portal index view.
 Resource links describe the displayed results' generation, not a different live
-configuration. The current Layout corpus uses local policy PDFs, so the storage
-line explicitly reports that no verified Azure container is available; it doesn't
-invent a container link. Rendering these labels needs no Azure sign-in or calls.
+configuration. **Policy documents** links to a manifest-backed listing of
+`data\policies\rental\ocr-comparison-v2\`, not Blob Storage or Explorer.
+Open any of the 21 active PDFs as **Original**, **CU Search**, or **Digital parse**.
+Both native analyzer outputs are included for every active PDF; viewing them
+needs no Azure sign-in or calls. Digital parse can legitimately contain no text
+on a scanned PDF; the viewer explains that result without substituting OCR.
 
-Under **Claim policy checks**, the four columns are **Daily rate**, **Rental start**,
+Under **Claim policy checks**, the three columns are **Daily rate**,
 **Effective terms**, and **Repair estimate**, in that order.
 Compare the claimed daily rental base rate with the effective cap for the matched
-insured vehicle, the stated rental start basis with the documented drivability rule,
-and the applicable policy and genuine amendment with the actual loss date.
+insured vehicle, and the applicable policy and genuine amendment with the actual loss date.
 Match the policy ID and insured VIN, not just a similar vehicle.
 **Repair estimate** independently compares each relevant distinct quote's gross total,
 including stated tax and before deductible or payments, with the synthetic internal
@@ -105,12 +107,12 @@ Compare the claim and policy
 values in the right panel, then follow a value's source link to its PDF.
 A check mark means **Satisfied**, an open circle means **Review required**,
 and a circular-arrow icon means **Waiting for info**, not an agent still running.
-**N/A** can apply to **Daily rate** and **Rental start** for a confirmed non-rental
+**N/A** can apply to **Daily rate** for a confirmed non-rental
 claim; **Effective terms** still compares the matched terms with the loss date,
 and **Repair estimate** remains independent of rental applicability.
 Packet **01** illustrates why a numerical rate fit is conditional on rental
-eligibility, not payment approval. Packet **02** separates the contractual cap
-from the SOP's routine handling authority. Missing unrelated repair completion
+eligibility, not payment approval. Packet **02** compares $61/day with its
+$85 contractual cap. Missing unrelated repair completion
 or insurer payment authorization doesn't create a wait for these narrow checks.
 Linked page text is labeled as first-pass parsed evidence: its interpretation
 isn't a typed CU fact, and no source boxes are invented.
@@ -122,9 +124,14 @@ In **Settings**, enable live calls, then select **Run live policy checks** and
 confirm only to request policy work. Matching current
 reviews are reused; uncached packets use saved Parse fields and selected first-pass
 page text, without claim-summary preparation or claim CU reanalysis. The agent
-interprets rental applicability before four parallel comparison calls. Azure charges apply.
-The previous five-check bundle remains legacy history; the new bundle replaces
+interprets rental applicability for Daily rate before three parallel comparison calls. Azure charges apply.
+The previous three-, four-, and five-check bundles remain history; the new bundle replaces
 the active results without editing extracted facts or inventing outcomes.
+The active corpus contains 10 declarations, nine scanned effective-date records,
+the issued Texas amendment and the two-page synthetic repair-review diagram.
+The 21 legacy rental-terms/SOP PDFs remain under
+`data\policies\archive\legacy-rental-review-v2\` with verified historical source aliases;
+they aren't ingested or used by the current checks.
 See [policy checks](docs/policy-checks.md) for the walkthrough and cache details.
 
 For guided and self-paced sessions, follow

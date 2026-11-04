@@ -5,14 +5,14 @@ import { z } from "zod";
 import { LabError, record, repositoryRoot } from "./config.ts";
 import { contents, normalize } from "./results.ts";
 import { fieldValue, type packetJson } from "./packet-json.ts";
+import { loadPolicySources, policySourceFilename } from "./policy-sources.ts";
 
 export const checkNames = [
   "Daily rate",
-  "Rental start",
   "Effective terms",
   "Repair estimate",
 ] as const;
-export const checkContractVersion = 4;
+export const checkContractVersion = 5;
 export const modeSchema = z.enum(["ungrounded", "search"]);
 export type PolicyMode = z.infer<typeof modeSchema>;
 const hash = z.string().regex(/^[a-f0-9]{64}$/);
@@ -261,42 +261,24 @@ const citationMapSchema = z.array(
 export async function resolveCitations(output: {
   Checks: { Citation: z.infer<typeof citationSchema>[] }[];
 }) {
-  const relative = "policies/rental/ocr-comparison-v2";
-  const folder = path.join(repositoryRoot, "data", relative);
-  const maps = citationMapSchema.parse(
-    JSON.parse(await readFile(path.join(folder, "citations.json"), "utf8")),
-  );
-  const valid = new Set<string>();
-  for (const map of maps)
-    if (digest(await readFile(path.join(folder, map.pdf))) === map.sha256)
-      valid.add(map.documentId);
+  const maps = await loadPolicySources({ includeArchived: true });
   return output.Checks.map((check) =>
     check.Citation.map((citation) => {
       const map = maps.find(
         (item) =>
-          valid.has(item.documentId) &&
           item.documentId === citation.DocumentId &&
           (item.version === citation.Version ||
             `v${item.version}` === citation.Version) &&
           item.ruleIds.includes(citation.RuleId),
       );
-      const file = citation.File;
-      let filename = file;
-      if (file.startsWith("https://")) {
-        try {
-          const url = new URL(file);
-          filename = decodeURIComponent(url.pathname.split("/").at(-1) ?? "");
-        } catch {
-          filename = "";
-        }
-      }
+      const filename = policySourceFilename(citation.File);
       const page = map?.sections[citation.Section];
       const stateRule = Object.values(map?.stateRules ?? {}).find((rule) => rule.ruleId === citation.RuleId);
       return {
         ...citation,
         href:
           map && filename === map.pdf && page && (!stateRule || stateRule.page === page)
-            ? `/data/${relative}/${map.pdf}#page=${page}`
+            ? `${map.href}#page=${page}`
             : null,
       };
     }),

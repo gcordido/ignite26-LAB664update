@@ -1,9 +1,8 @@
 {
   "schemaVersion": 2,
-  "checkContractVersion": 4,
+  "checkContractVersion": 5,
   "checks": [
     "Daily rate",
-    "Rental start",
     "Effective terms",
     "Repair estimate"
   ],
@@ -13,87 +12,87 @@
   "files": [
     {
       "name": "policy-agent-framework.json",
-      "sha256": "96fb4fe67471e5c2542baa7ca00d2e59254e4a2decbb986176c38e403850fb4f"
+      "sha256": "2e12f74ce0847d46b140ef67da15029887014f0ff5cd479d763f83e625bb7dda"
     },
     {
-      "name": "framework-saved-f8431a5b5b2dd1c33980b260d71628a9b4b5e9c42df7d90e7e67fd74aed5e7a8.json",
-      "sha256": "bad1ca49496441d0046e9292535a3ced113d281049deeb6afc19ac77a00d1de9"
+      "name": "framework-saved-465805ac668d99d681a08c48c88123f65289d291fae6824ca5942c9ce4939f56.json",
+      "sha256": "9700b41241993ee7cd063feb6f5ccc790558f895185febab72b668d4bd4d92d7"
     },
     {
-      "name": "framework-review-71d07da2e41b06eb6bd43413e7d28d1084089aa05d1f73e7316c399a5a604c6d.json",
-      "sha256": "23cd9f1ca9031d8cce2eadc432e9a0664082f8b0e486cefe99012836eaf63dec"
+      "name": "framework-review-8c8fc054d307b97cf595a28661e2e37639df677930d70dfad24361b781f49f46.json",
+      "sha256": "c9ab398653cce98cf64df19a476973919dc1b936834116a924f1f03e35c74373"
     },
     {
-      "name": "framework-saved-301f4b2be87cb6e85c79f8a864123fe833d6c19defa1c301fe8105ea53bb86a0.json",
-      "sha256": "774f5cf9f284593184a0a3da567eeba7f74f0af512baeda06f0331bb333e69fd"
+      "name": "framework-saved-df63a6d8dc887d49f528509a8cc1cd24b9864146b33d565430a9b53e63826310.json",
+      "sha256": "308970b9774d4cd04c5c4109ebc56871f8702d405ac4fc8b5a62da67cffc3335"
     },
     {
-      "name": "framework-review-1f6a58828ae60cf416675be3e2c57a7039738e5ef1f9eedb926295619b0d9c8f.json",
-      "sha256": "984acb6be1ab16ffae1c8e17ed7a4f59f71f1d5abaf33e40a3aa46a2c798b1f8"
+      "name": "framework-review-3e7551d31e629ba89cfcb2e2856a6a2524b27c6dffda5b6844117b4451480f4a.json",
+      "sha256": "a567e7770c261856dffccc90fd5a51f26be0049ca7a8bbc87bd7855ce02c652d"
     },
     {
-      "name": "framework-saved-86c0ce1fabd92ffd1ef68efe37e7173ed49df6e8c2b747a1c420b70af23792be.json",
-      "sha256": "5c6db6c1a9cb685b6b37680c969bcbcb9c813b5d2fe2c6ab77089578fc81370d"
+      "name": "framework-saved-17c721cbe0f81c195a14aa0f117820ce1148bec70e24bc1005ce900dc2625df0.json",
+      "sha256": "2afa692d99d1f784db57fa189b8ea8b1678bce315ddb9870fc92ec59a7448ad8"
     },
     {
-      "name": "framework-review-9d73ba16bff93343b76f4772b5f457513ffed2051224858160bfc0abae81c9df.json",
-      "sha256": "025ea256c3ce1be7fd457154d4f4be3fa004229de48476f0617e680405942791"
+      "name": "framework-review-5a925a7d4985d7ffd870c0de33532f71fa3475d49dbe55808a46e2cc04b1e093.json",
+      "sha256": "c4291a4039a16799cb0ea26d9988f77c8a9c7607801f57a899323ce3472203ca"
     },
     {
-      "name": "framework-saved-6e16c3ef95572cd86583e2703f250d91fc34b5a84f8092acbb52920ce08269ae.json",
-      "sha256": "1d3594aa35b05907fdbf62b7580ae92717cb08d44c968dcb50926112490106e1"
+      "name": "framework-saved-104a80df1da551978e9add2c612663d88fcabe1b690a0eda1f784e8385713179.json",
+      "sha256": "68d739f33b1d5150cd0cad467759cfceec328ed3a7256430601a8385120d0b83"
     },
     {
-      "name": "framework-review-e7437fa598af11f38e7ccbe92c803d179d02c976d961040ff8dfc0a54bed2d4f.json",
-      "sha256": "5d7806272d16f4c5a35d432bea54e1dcc6c970c2ca276f19fc461f918fde4b9d"
+      "name": "framework-review-c0966067dcc13b4f24d88bbed67957a1b20580aa7f8da6cce2953c5fcffa4951.json",
+      "sha256": "41c944d3f9181a6756650c582a80f084da85526d02a005090193d1b9767ac5b5"
     },
     {
-      "name": "framework-saved-cd5c09e2ae54c211c1bbeade50b9dfcf89acf31f793e547fe068230dae4236d5.json",
-      "sha256": "7021680a52f6592bdd3f2452ed5847f1b1ffdf600fe343536b55b256438fd844"
+      "name": "framework-saved-4597951b4eaffd146cd3c43e6fc5528bb4c7c0cd878f49551447020551c0a542.json",
+      "sha256": "3b841f60a928f0faf8b8f9cb82ec0607d25c429196510d9b6635df5257a231d9"
     },
     {
-      "name": "framework-review-bb054582a7f120a12af036ae61a0da863f16ec664d762ae72fc07618eab08918.json",
-      "sha256": "795bc299566d5b6aeaec5bc9a09fef134505291a27c288cf451a46467d6eacb5"
+      "name": "framework-review-0bd96b1a4040089c928951076df1175eec546bce5168a092a3c3e6449042aa5d.json",
+      "sha256": "880659f1851b59fe630e187f6bcd5322cb9b1f7217560f900814bca2d409466b"
     },
     {
-      "name": "framework-saved-84a8a851f7644c810971f25b435293cce6ac1665f665952627fc32c3e76a251b.json",
-      "sha256": "05f730ba6d30956d12e400bfa94fdfa6507a051e8d218a1472822bb68746153f"
+      "name": "framework-saved-22d5aca2922da383cd46fb03e2bb3a6037567dd465452a828ab1da7161cf2376.json",
+      "sha256": "9fb864b92b20978e26d00057dbb1d6fbcd2d2ffdf3a423cf34e737c927662890"
     },
     {
-      "name": "framework-review-3725e9d0c9612eb98bff8e71743578b4c971dff35cb216a88ab07e617d440c7f.json",
-      "sha256": "ffdb038398f138e8d5a1e269d1cc582e4d9d266b093522103ff4891eb24f4990"
+      "name": "framework-review-60f7e12dcfa3f477164f5050c9a0c35e65ec755781a03259354e30f5a0c9222f.json",
+      "sha256": "39fa65492904f690974d6fcc0f414f7acbcf417bdb355f12e83e32b969bfa459"
     },
     {
-      "name": "framework-saved-44360adfc3d986dc5775920d131ce590961bd29425716a21cdfd9e876bb11216.json",
-      "sha256": "ecf51e59e52c637055db038309a1a62ab674128a12e76b1f5ddd15a47927b9bb"
+      "name": "framework-saved-648f3e14d9611af5c954a35160fc79e029731e772d73a01a8132cb8cb5c3089d.json",
+      "sha256": "877c475847cb8738efdaf9479bcc17cf6d760f86b108c0efcc6aad145c9a686e"
     },
     {
-      "name": "framework-review-05aca0d4957424bd13401f47a4ca809a3ed5f6c0e42dd1a231bc7e6be91e6a61.json",
-      "sha256": "a3f035a3abaf01f7b16eb92fb6686c38c62dd8b20104dce02ec4d076ce628251"
+      "name": "framework-review-71bc3271f020df01162c198cff122bdc625a39c0ad67d84b8c86cf1b4e611b5a.json",
+      "sha256": "a3439466176211c21f490b8286e3f355f26ef3eb50178fca3f7fa395df9c272e"
     },
     {
-      "name": "framework-saved-48a1534e2ef4899e388acd4e4dca22934cc9d73ed7930b7cae6ef2877c24ce8b.json",
-      "sha256": "94ced065ae1e00867cfa50b748b16233db27e6f48b25757ee30927b71af133a0"
+      "name": "framework-saved-fc8db8574828cbc3ef3a75a93b565b29124e93df8c99380ce8e376feb23639d5.json",
+      "sha256": "2b5a2e5195c631c36b5053879d51795908224d952fb3741dfeeb5d2cd97941cf"
     },
     {
-      "name": "framework-review-dea4a7994ab6773c66203fb717de790ba63ff3aaa3f42348300da972ee6e5a47.json",
-      "sha256": "329493d0bcd16bbe63ba212ef3cc9702fd39d265fd64c79727cac3593fbe734e"
+      "name": "framework-review-1f4a13a6899905439735ed8a51895f992ce26d1ef619b71c8f93beae479e1774.json",
+      "sha256": "a5a2a58feba27b11957b39098a406ba0f05a41f07b8378208c0ebd710e6dcf0e"
     },
     {
-      "name": "framework-saved-37acd72d8239b5ee1da5a77e329f4a5f1e9f9cfa1cb61d477a93a59d54767c3a.json",
-      "sha256": "5f1618e92ea300fd792c272b26ab9b1c266b6153cf1ddd04167d99ed7ff05f33"
+      "name": "framework-saved-40b614634b527c6e37c536b6d484ba23b66d7b1a9812a7d279b5a45e3ed5d4fd.json",
+      "sha256": "bacef22abc012cd8d556fc8304eca951b202f22949177a3d6bd90658b9d2e236"
     },
     {
-      "name": "framework-review-ba0d4b9beca3bd4446e8610bef532b96565273ad4b4557969e8446e4ef2e4dd4.json",
-      "sha256": "f1487beaba57ab6206910dd200625ab4050e0b94654bf9b104490f232424f75a"
+      "name": "framework-review-7827ab319865d4f7276c0616df2e8c65b580a22c333c9750812014786e2f84b1.json",
+      "sha256": "9bfd0741b4fc39351ef005e37ce5ed64e86e6d2f6867d09c01a725755c4048cd"
     },
     {
-      "name": "framework-saved-1d29a1109007450443c72e3e5f41b3c34974c4fcb028fc107a24493b2694537e.json",
-      "sha256": "9991a5e412855579d85c4c810f5fee2436a5d84c3c0f5ef000713654b5c81b99"
+      "name": "framework-saved-65add37b3e9e1ce7cdc00498b74025e57a0e6c559b2fdb1bb3039930b4a0fbed.json",
+      "sha256": "67983559c1e9965e8b978114b4de457223fc9c667bff452bfbb1ee45eea57af3"
     },
     {
-      "name": "framework-review-6b153fb748a524b7ecb058037db555629b607a1887069b6242be6161d7b15a2e.json",
-      "sha256": "031c96c30b7c5e687d44de340a794fb5ff37a384d2e8560970046fca4ec9cb5c"
+      "name": "framework-review-1f6a85f990a992479c84d502d7b564638ad5cd450ec61b261833430a52776c6c.json",
+      "sha256": "7ae4900ca12ab820cbf77a6d036e4728d163f67993957b7e4b9912e982bea9bd"
     }
   ],
   "sourceCache": "../results",

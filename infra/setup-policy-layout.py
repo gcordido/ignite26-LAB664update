@@ -196,6 +196,99 @@ def reusable_rows(rows, sources):
     return [row for row in rows if row["documentId"] not in changed | reread], changed, reread
 
 
+def layout_generation(rows, corpus_hash, settings):
+    return setup.digest({"pipeline": "verified-layout-extension-v2",
+                         "vinImagePrompt": setup.digest(VIN_IMAGE_PROMPT),
+                         "searchEndpoint": settings["searchEndpoint"],
+                         "corpusHash": corpus_hash,
+                         "chunks": [{k: v for k, v in row.items()
+                                     if k not in ("corpusHash", "indexFingerprint")}
+                                    for row in sorted(rows, key=lambda row: row["id"])]})
+
+
+def prune_archived_rows(rows, sources, settings, root):
+    """Drop only unchanged, registered archive evidence from its complete verified generation."""
+    active_ids = {doc["documentId"] for doc in sources["documents"]}
+    unknown_ids = {row.get("documentId") for row in rows} - active_ids
+    if not unknown_ids:
+        return rows, []
+    folder = root / "data" / "policies" / "archive" / "legacy-rental-review-v2"
+    registry = setup.read_json(folder / "registry.json")
+    if (not isinstance(registry, dict) or registry.get("schemaVersion") != 1
+            or registry.get("archiveId") != "legacy-rental-review-v2"
+            or registry.get("includeInKnowledgeIndex") is not False
+            or not isinstance(registry.get("documents"), list)
+            or not isinstance(registry.get("sourceGeneration"), dict)):
+        raise setup.SetupError("Invalid historical Layout archive registry.")
+    generation = registry["sourceGeneration"]
+    if (generation.get("originalManifest") != "original-manifest.json"
+            or generation.get("originalCitations") != "original-citations.json"
+            or any(not re.fullmatch(r"[a-f0-9]{64}", str(generation.get(key, "")))
+                   for key in ("manifestSha256", "citationsSha256", "nativeLayoutIndexFingerprint"))):
+        raise setup.SetupError("Invalid historical Layout generation registration.")
+    originals = {}
+    for kind in ("manifest", "citations"):
+        filename = folder / f"original-{kind}.json"
+        if not filename.resolve().is_relative_to(root.resolve()):
+            raise setup.SetupError("Historical source metadata escapes the repository.")
+        raw = filename.read_bytes()
+        if setup.sha256_hex(raw) != generation[f"{kind}Sha256"]:
+            raise setup.SetupError("Historical Layout source-generation metadata hash mismatch.")
+        originals[kind] = json.loads(raw)
+    original_docs = originals["manifest"].get("documents")
+    original_citations = originals["citations"]
+    if not isinstance(original_docs, list) or not isinstance(original_citations, list):
+        raise setup.SetupError("Malformed historical Layout source registrations.")
+    docs = {doc["documentId"]: doc for doc in original_docs}
+    citations = {cite["documentId"]: cite for cite in original_citations}
+    if len(docs) != len(original_docs) or len(citations) != len(original_citations) or set(docs) != set(citations):
+        raise setup.SetupError("Duplicate or incomplete historical Layout registrations.")
+    registered, files = set(), set()
+    for entry in registry["documents"]:
+        if not isinstance(entry, dict):
+            raise setup.SetupError("Malformed historical Layout archive entry.")
+        doc_id, name = entry.get("documentId"), entry.get("pdf")
+        original, citation = docs.get(doc_id), citations.get(doc_id)
+        if (not original or not citation or doc_id in registered or name in files
+                or doc_id in active_ids or not entry.get("rationale")
+                or entry.get("source") != original or entry.get("citation") != citation
+                or any(entry.get(key) != original.get(key)
+                       or citation.get(key) != original.get(key)
+                       for key in ("documentId", "version", "pdf", "sha256"))
+                or citation.get("ruleIds") != original.get("ruleIds")
+                or entry.get("originalLogicalPath") != f"data/policies/rental/ocr-comparison-v2/{name}"
+                or entry.get("archivePath") != f"data/policies/archive/legacy-rental-review-v2/{name}"):
+            raise setup.SetupError("Historical Layout alias disagrees with its original registration.")
+        pdf = setup._safe_pdf(folder, name)
+        if (not pdf.resolve().is_relative_to(root.resolve())
+                or setup.sha256_hex(pdf.read_bytes()) != entry["sha256"]):
+            raise setup.SetupError(f"{doc_id}: archived PDF hash mismatch.")
+        registered.add(doc_id)
+        files.add(name)
+    if not unknown_ids <= registered:
+        raise setup.SetupError("Unexpected Layout source identity; not a registered archived source.")
+    historical = []
+    for doc_id, doc in docs.items():
+        cite = citations[doc_id]
+        if any(cite.get(key) != doc.get(key) for key in
+               ("documentId", "version", "pdf", "sha256", "ruleIds")):
+            raise setup.SetupError("Historical Layout source/citation metadata differs.")
+        state_codes = list(doc["states"])
+        if doc.get("documentType") == "shared_standard" and "SHARED" not in state_codes:
+            state_codes.append("SHARED")
+        historical.append({
+            "documentId": doc_id, "version": doc["version"], "file": doc["pdf"],
+            "sha256": doc["sha256"], "ruleIds": doc["ruleIds"],
+            "stateCodes": state_codes, "sections": cite["sections"],
+        })
+    old_sources = {"documents": historical, "corpusHash": generation["manifestSha256"]}
+    fingerprint = generation["nativeLayoutIndexFingerprint"]
+    verify_rows(rows, old_sources, fingerprint)
+    if layout_generation(rows, old_sources["corpusHash"], settings) != fingerprint:
+        raise setup.SetupError("Historical Layout generation content fingerprint mismatch.")
+    return [row for row in rows if row["documentId"] in active_ids], sorted(unknown_ids)
+
+
 def layout(http, doc, settings, root):
     identity = {"sha256": doc["sha256"], "endpoint": settings["cuEndpoint"],
                 "apiVersion": settings["cuApiVersion"], "analyzer": "prebuilt-layout"}
@@ -292,12 +385,16 @@ def run(args, http=None, root=None):
     else:
         settings = setup.resolve_analyzer(http, settings)
     definition, rows = {"fields": layout_fields()}, []
-    changed, reread = set(), set()
+    changed, reread, pruned = set(), set(), []
+    pruned_chunks = 0
     if source_index:
         definition, _ = request(http, "GET", f"{index_url(source_index, settings)}?api-version={API}")
         if {f["name"] for f in definition["fields"]} != set(FIELDS):
             raise setup.SetupError("The source index is not a supported CU Layout index.")
         rows = read_rows(http, source_index, settings)
+        original_count = len(rows)
+        rows, pruned = prune_archived_rows(rows, sources, settings, root)
+        pruned_chunks = original_count - len(rows)
         rows, changed, reread = reusable_rows(rows, sources)
     present = {r["documentId"] for r in rows}
     missing = [d for d in sources["documents"] if d["documentId"] not in present]
@@ -305,19 +402,15 @@ def run(args, http=None, root=None):
         raise setup.SetupError("Source index is missing existing SOP evidence; refusing partial migration.")
     report = {"sourceIndex": source_index, "targetIndex": target_index, "extractionMode": "layout",
               "reusedChunks": len(rows), "newDocuments": [d["file"] for d in missing],
+              "prunedArchivedChunks": pruned_chunks, "prunedArchivedDocuments": pruned,
+              "prunedArchivedDocumentCount": len(pruned),
               "revisedDocuments": sorted(changed), "vinVerificationDocuments": sorted(reread),
               "ready": True, "status": "preflight"}
     if not args.apply:
         return report
     for doc in missing:
         rows.extend(layout(http, doc, settings, root))
-    generation = setup.digest({"pipeline": "verified-layout-extension-v2",
-                               "vinImagePrompt": setup.digest(VIN_IMAGE_PROMPT),
-                               "searchEndpoint": settings["searchEndpoint"],
-                               "corpusHash": sources["corpusHash"],
-                               "chunks": [{k: v for k, v in r.items()
-                                           if k not in ("corpusHash", "indexFingerprint")} for r in
-                                          sorted(rows, key=lambda r: r["id"])]})
+    generation = layout_generation(rows, sources["corpusHash"], settings)
     name = target_index or f"lab664-rental-v2-layout-{generation[:12]}"
     if name == source_index:
         raise setup.SetupError("The source index cannot be overwritten.")
