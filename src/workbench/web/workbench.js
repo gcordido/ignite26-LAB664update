@@ -1506,7 +1506,7 @@ function renderPolicyTable() {
   const availableWidth = Math.max(360, table.parentElement?.clientWidth || 640);
   const widths = keys.map(
     (key, index) => columnWidths.get(key) ??
-      Math.floor(availableWidth * (index ? 0.19 : 0.24)),
+      Math.floor(availableWidth * (index ? 0.76 / policyCheckNames.length : 0.24)),
   );
   table.style.width = `${widths.reduce((sum, width) => sum + width, 0)}px`;
   table.querySelector("colgroup").replaceChildren(

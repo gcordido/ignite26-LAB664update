@@ -354,6 +354,8 @@ test("claim grid keeps all ten packets and exactly three named full-cell check b
   assert.equal(mounted, 3);
   assert.equal(sections.colgroup.children.length, 4);
   assert.ok(parseFloat(table.style.width) <= table.parentElement.clientWidth);
+  assert.ok(table.parentElement.clientWidth - parseFloat(table.style.width) < 4,
+    "the three policy checks fill the available table width without a removed column's blank space");
   assert.deepEqual(sections.thead.children[0].children.slice(1).map((cell) => cell.children[0].textContent), names);
   assert.equal(sections.thead.children[0].children[3].children[1].textContent,
     "Is each supplied repair-estimate total within this state's routine review authority?");
