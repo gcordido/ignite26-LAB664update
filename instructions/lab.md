@@ -68,7 +68,7 @@ For this step, use the **gpt-5.5** model instance pre-provisioned and mapped by 
 6. Expand the **Advanced settings** section and select **gpt-5.5** as model.
 7. Leave the other parameters as default and confirm by selecting **Create**.
 !IMAGE[qm5a1m18.png](instructions359897/qm5a1m18.png)
-7. Once your project is created, select **Browse for Files** and upload `C:\Users\LabUser\Desktop\ignite26-LAB664\data\step2\repair-estimate.pdf`. **Run analysis**.
+7. Once your project is created, select **Browse for Files** and upload `C:\Users\LabUser\Desktop\ignite26-LAB664\data\step2\repair-estimate.pdf`.
 8. In the **Choose a template window**, select the **Invoice** one. Click on **Save** to proceed.
 9. Add **these three lowercase fields**, with method **Extract**, one by one. For each field, enter the field's **Name** and **Description** from the table below. Complete both cells before selecting **Add field** again, and repeat for all three rows.
 
@@ -319,32 +319,41 @@ Wait for the cached results to load. Opening the app or switching review tabs do
     - **Total Amount, SubTotal, Tax verification** asks whether SubTotal plus tax equals Total Amount.
     - **Repair line items, SubTotal verification** asks whether repair line-item amounts sum to the explicit SubTotal.
     - **Multiple Estimates Warning** warns when repair-estimate totals differ. It shows each shop and quote amount with a source link. This is a review warning, not proof of an extraction error.
-2. Select the red **Error** for packet 8, **Repair line items, SubTotal verification**. The original Repair Estimate result shows the calculation `USD 980.00 + 124.00 + 0.00 = 1104.00; Subtotal = 1600.00`. Review the explanation and the formula fields, then select the source or formula to highlight the native values in the PDF.
-3. In **CU Studio**, reopen the editable custom **Repair Estimate** extraction project from step 2. Do not edit the packet router or classification project: this rerun requires a ready single-document repair extractor. Keep the project on **GPT-5.5** and keep the existing schema, descriptions, source/confidence settings, and `TotalAmount.Amount` extraction behavior.
-4. In the `LineItems` item object, add these two **number / Extract** fields immediately **before** `TotalAmount`:
+2. Select the red **Error** for packet 8, under **Repair line items, SubTotal verification**. 
+!IMAGE[hs9rqs9w.png](instructions359897/hs9rqs9w.png)
+The original Repair Estimate result shows the calculation `USD 980.00 + 124.00 + 0.00 = 1104.00; Subtotal = 1600.00`. Review the explanation and the formula fields, then select the source or formula to highlight the native values in the PDF.
+3. Go back to **CU Studio** and reopen the editable custom **Repair Estimate** extraction project from step 2 - *custom-repair-extractor*. Do not edit the packet router or classification project: this rerun requires a ready single-document repair extractor. 
+4. In the **Schema** fields list, identify **LineItems** and click on the grid icon to open the line items editor. 
+!IMAGE[spqympsb.png](instructions359897/spqympsb.png)
+Then add these two **number / Extract** fields, within the **Total Amount** object umbrella:
 
    | Field | Description |
    |---|---|
    | `PartsAmount` | `Part amount associated with each line item` |
    | `LaborAmount` | `Labor amount associated with each line item` |
 
-   Keep the field order `PartsAmount`, `LaborAmount`, then `TotalAmount`. Do not replace `TotalAmount`; the validation rule continues to prefer a returned row total and uses parts plus labor only when that total is missing.
-5. In Studio, upload and test [packet 8's repair estimate](../data/documents/packet-08/05-estimate.pdf) before building. Inspect every line item and its source regions. A useful result for this document is:
+ Add the 2 new fields *after* the current ones (**Amount**, **CurrencyCode**). The validation rule continues to prefer a returned row total -**Amount**- and uses parts plus labor only when that total is missing.
+ !IMAGE[wosopyzi.png](instructions359897/wosopyzi.png)
+ Click **Back to main view**->**Save** to confirm the schema changes.
+5. To verify the changes, select **Browse for files**, upload and test `C:\Users\LabUser\Desktop\ignite26-LAB664\data\documents\packet-08\05-estimate.pdf` before running the analysis (through the **Run Analysis** button). Expand **LineItems** object in the **Test** tab and inspect every line item and its source regions. A useful result for this document is:
 
-   | Line item | PartsAmount | LaborAmount | TotalAmount |
+   | Line item | PartsAmount | LaborAmount | Amount |
    |---|---:|---:|---:|
-   | 0 | 980.00 | 223.20 | 1203.20 |
-   | 1 | 124.00 | 62.00 | 186.00 |
-   | 2 | 0.00 | 210.80 | 210.80 |
+   | 1 | 980.00 | 223.20 | 1203.20 |
+   | 2 | 124.00 | 62.00 | 186.00 |
+   | 3 | 0.00 | 210.80 | 210.80 |
 
    The explicit `SubtotalAmount` is `1600.00`. These values reconcile, but always verify the native Studio result rather than assuming a model run is deterministic.
-6. Save and build the updated project with a new unique analyzer name. Wait until the analyzer is **Ready**, then copy its analyzer name exactly. Return to the packet-8 error in the Workbench, enter it in **Updated repair estimate analyzer name**, and select **Rerun**. This submits only `05-estimate.pdf` as a fresh, billable CU call; there is no second confirmation dialog.
-7. While the spinner is active, wait for the rerun to finish. The updated result appears below the original with its own status and calculation. Its field table shows formula inputs plus returned `PartsAmount` and `LaborAmount`, grouped by numeric line-item index in the order total, parts, labor, followed by SubTotal. Select the original and updated results to compare their own source boxes. A successful updated result should show `USD 1203.20 + 186.00 + 210.80 = 1600.00 (Subtotal)` and change the check to **Pass**.
-8. The rerun preview is temporary and browser-only. It is not written to the saved extraction cache or native JSON. Navigating within the current run keeps the original and latest updated result; another rerun replaces the previous preview. Refreshing the page or changing runs clears it. If the source cannot be matched to one individual PDF, return to Studio and correct the router's document boundaries before rerunning.
+6. Save and build the updated project by clicking on **Build analyzer** and pick a new unique analyzer name, like `custom_repair_analyzer_v2`. Add a description too, such as `Updated repair analyzer with parts and labor amounts`. Wait until the analyzer is **Ready**, then copy its analyzer name exactly. 
+7. Return to the packet-8 error in the **Insurance Workbench App**, enter it in **Updated repair estimate analyzer name**, and select **Rerun**. This submits only `05-estimate.pdf` as a fresh, billable CU call; there is no second confirmation dialog.
+!IMAGE[z71i70zd.png](instructions359897/z71i70zd.png)
+8. While the spinner is active, wait for the rerun to finish. The updated result appears below the original with its own status and calculation. Its field table shows formula inputs plus returned `PartsAmount` and `LaborAmount`, grouped by numeric line-item index in the order total, parts, labor, followed by SubTotal. Select the original and updated results to compare their own source boxes. A successful updated result should show `USD 1203.20 + 186.00 + 210.80 = 1600.00 (Subtotal)` and change the check to **Pass**.
+!IMAGE[6cfzqmxd.png](instructions359897/6cfzqmxd.png)
+9. The rerun preview is temporary and browser-only. It is not written to the saved extraction cache or native JSON. Navigating within the current run keeps the original and latest updated result; another rerun replaces the previous preview. Refreshing the page or changing runs clears it. If the source cannot be matched to one individual PDF, return to Studio and correct the router's document boundaries before rerunning.
 
 > [+Note] **Where the files are**
 >
-> `instructions\lab.md` is the Markdown version of this single guide; `instructions\lab.html` is the original HTML version. `infra\setup.ps1` installs dependencies; `infra\launch-workbench.ps1` launches only the app. `src\workbench` contains the minimal app runtime, not another lab guide.
+> `instructions\lab.md` is the Markdown version of this single guide; `infra\setup.ps1` installs dependencies; `infra\launch-workbench.ps1` launches only the app. `src\workbench` contains the minimal app runtime, not another lab guide.
 >
 > `data\packets`: 10 complete customer PDFs. `data\documents\packet-01` through `packet-10`: 90 individual logical-document PDFs, extracted from the authored page groups. `data\samples`: six small Studio specimens. `data\packets.json`: source hashes and authored page ranges. `data\results`: completed CU runs, each with its original manifest and ten native JSON responses; future live runs save here too.
 >
