@@ -414,3 +414,58 @@ Open a saved finding in **Check policies**, then select **Ask agent**. A prepare
 If a question fails, keep the exact error and use the [troubleshooting table](../docs/policy-setup.md#troubleshoot-live-policy-setup). Do not repeatedly send billable requests to diagnose a configuration problem.
  
 ---
+
+===
+
+## Step 8: Optional - improve your analyzer with Copilot
+
+You improved the repair analyzer manually in Step 6. Now let Copilot perform that workflow using **`azd ai cu`**, then review its schema change and fresh results. It works on a disposable copy; your original analyzers and Workbench results stay unchanged.
+
+This optional exercise plans two document analyses. Azure charges and Copilot usage apply.
+
+### Start Copilot
+
+Open a separate **Windows PowerShell** window:
+
+```PowerShell
+Set-Location "C:\Users\LabUser\Desktop\ignite26-LAB664"
+copilot
+```
+
+### Give the agent the task
+
+Replace `<ORIGINAL_REPAIR_ANALYZER_ID>` with the analyzer built in **Step 2**, not the router or the improved analyzer built in Step 6. Paste this prompt:
+
+> Packet 8's repair line totals don't match the subtotal. Start from my repair analyzer `<ORIGINAL_REPAIR_ANALYZER_ID>` and work on an exercise copy. Add PartsAmount and LaborAmount to each line item, keep TotalAmount, rerun using azd ai cu, and compare before and after.
+
+Copilot shows each CU CLI command before running it. Review the proposed scope and schema diff. Approve only the named repair estimate and disposable analyzer. Copilot will ask separately before deleting/recreating its copy; never approve replacement of an original analyzer.
+
+### Review the comparison
+
+Review the before/after table in Copilot: parts, labor, row totals, subtotal, and the remaining difference. The JSON evidence is saved under `.tools\copilot-lab`.
+
+Fresh results can vary. Missing values are not zero, and matching arithmetic does not prove extraction accuracy. If the result does not improve, discuss the remaining issue rather than repeatedly rerunning it.
+
+### More prompts to try
+
+Stay in the same session. The first four prompts use saved JSON and make **no new Azure calls**.
+
+**Explain the change**
+
+> Explain the before/after differences and how the added fields could affect extraction. Cite the saved JSON and any uncertainty. No Azure calls or PDF reading.
+
+**Make a comparison table**
+
+> Make a before/after table of parts, labor, row totals, subtotal, and the remaining difference from saved CU JSON. Show missing values explicitly. No Azure calls.
+
+**Check for unintended changes**
+
+> Compare the saved definitions. Were TotalAmount, vehicle, vin, odometer, models, and source/confidence settings preserved? Report unintended changes. No Azure calls.
+
+**Create a reusable local check**
+
+> Create and run a small reusable check in this run's folder that flags missing line totals or subtotal mismatches. Read saved CU JSON only. No Azure calls or PDF reading.
+
+**Try two more repair estimates - additional Azure charges**
+
+> List two other existing individual repair-estimate PDF filenames, not full packets. Propose an azd ai cu run and the number of new analyses. Wait for my approval before running, then compare reconciliation without reading PDFs directly.
