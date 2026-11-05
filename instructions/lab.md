@@ -417,26 +417,43 @@ If a question fails, keep the exact error and use the [troubleshooting table](..
 
 ===
 
-## Step 8: Optional - improve your analyzer with Copilot
+## Step 8: Optional: Use GitHub Copilot + CLI to improve your analyzer
 
-You improved the repair analyzer manually in Step 6. Now let Copilot perform that workflow using **`azd ai cu`**, then review its schema change and fresh results. It works on a disposable copy; your original analyzers and Workbench results stay unchanged.
+Take what you've learned in Studio further with the Content Understanding CLI (`azd ai cu`) and Copilot. Build and improve analyzers, process documents and compare results, simply by describing what you want.
+
+In this exercise, ask Copilot to repeat the repair-analyzer workflow from Step 6 on a disposable copy, then review the changes and before/after results. Your original analyzers and Workbench results stay unchanged.
 
 This optional exercise plans two document analyses. Azure charges and Copilot usage apply.
 
-### Start Copilot
+### Install the Content Understanding CLI
 
-Open a separate **Windows PowerShell** window:
+Open a separate **Windows PowerShell** window. With Azure Developer CLI (`azd`) 1.37.0 or later already available on the lab VM, run:
 
 ```PowerShell
-Set-Location "C:\Users\LabUser\Desktop\ignite26-LAB664"
-copilot
+azd ai cu
 ```
+
+When `azd ai cu` prompts, press **Enter** to install `azure.ai.content-understanding`. Then run:
+
+```PowerShell
+azd ai cu --help
+azd auth login
+```
+
+Sign in with the same Azure lab account used in CU Studio. Copilot will check the connection and ask for your Step 4 resource endpoint if it is not already configured.
+
+### Sign in to the GitHub Copilot app
+
+1. In your browser, navigate to [GitHub enterprise sign-in](https://github.com/enterprises/skillable-events/sso) and sign in with your **Azure lab credentials**.
+2. Return to the **GitHub Copilot app** and select **Sign in with GitHub**. Follow the instructions on the web page that opens, including the one-time code prompt, to complete sign-in.
+3. Under **Sessions** (not **Chats**), click **+** > **Open local folder** and choose `C:\Users\LabUser\Desktop\ignite26-LAB664`.
+4. Select that folder under **Start session in**. Set **Environment** to **This computer** and **Workspace** to **Current checkout**.
 
 ### Give the agent the task
 
 Replace `<ORIGINAL_REPAIR_ANALYZER_ID>` with the analyzer built in **Step 2**, not the router or the improved analyzer built in Step 6. Paste this prompt:
 
-> Packet 8's repair line totals don't match the subtotal. Start from my repair analyzer `<ORIGINAL_REPAIR_ANALYZER_ID>` and work on an exercise copy. Add PartsAmount and LaborAmount to each line item, keep TotalAmount, rerun using azd ai cu, and compare before and after.
+> The repair amounts in packet 8 don't add up. My analyzer is `<ORIGINAL_REPAIR_ANALYZER_ID>`. Can you try fixing it on a copy and show me the before and after?
 
 Copilot shows each CU CLI command before running it. Review the proposed scope and schema diff. Approve only the named repair estimate and disposable analyzer. Copilot will ask separately before deleting/recreating its copy; never approve replacement of an original analyzer.
 
@@ -448,24 +465,14 @@ Fresh results can vary. Missing values are not zero, and matching arithmetic doe
 
 ### More prompts to try
 
-Stay in the same session. The first four prompts use saved JSON and make **no new Azure calls**.
+Stay in the same session. The first prompt needs approval for **four new document analyses**. The second uses saved results only.
 
-**Explain the change**
+**Check other packets**
 
-> Explain the before/after differences and how the added fields could affect extraction. Cite the saved JSON and any uncertainty. No Azure calls or PDF reading.
+> Can you try the repair estimates from packets 1 and 3 with both analyzers? Check if the fix changed anything else, like the vehicle, VIN or odometer. Show me the files and ask before running the four analyses.
 
-**Make a comparison table**
+Use the individual repair estimates, not the full packets. Changed values are potential regressions to review, not proof that either result is correct.
 
-> Make a before/after table of parts, labor, row totals, subtotal, and the remaining difference from saved CU JSON. Show missing values explicitly. No Azure calls.
+**Review the changes - no new Azure calls**
 
-**Check for unintended changes**
-
-> Compare the saved definitions. Were TotalAmount, vehicle, vin, odometer, models, and source/confidence settings preserved? Report unintended changes. No Azure calls.
-
-**Create a reusable local check**
-
-> Create and run a small reusable check in this run's folder that flags missing line totals or subtotal mismatches. Read saved CU JSON only. No Azure calls or PDF reading.
-
-**Try two more repair estimates - additional Azure charges**
-
-> List two other existing individual repair-estimate PDF filenames, not full packets. Propose an azd ai cu run and the number of new analyses. Wait for my approval before running, then compare reconciliation without reading PDFs directly.
+> Other than the amounts we fixed, did anything change or go missing? Show me the old and new values using the saved results. Don't run anything again.
