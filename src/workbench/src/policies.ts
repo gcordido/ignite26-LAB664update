@@ -184,8 +184,11 @@ function readLineItemMoney(
   facts: Fact[],
   field: string,
 ): { values?: Money[]; problem?: string; evidence: EvidenceFact[] } {
-  if (hasValue(facts.find((fact) => fact.field === field))) {
-    const total = readMoney(document, facts, field);
+  const totalField = [field, field.replace(/\.Amount$/, "")].find((path) =>
+    hasValue(facts.find((fact) => fact.field === path)),
+  );
+  if (totalField) {
+    const total = readMoney(document, facts, totalField);
     return {
       values: total.money ? [total.money] : undefined,
       problem: total.problem,
@@ -266,7 +269,7 @@ function arrayMoney(
 
 function lineItemCheck(document: PolicyDocument) {
   const rule =
-    "Line-item totals, or PartAmount + LaborAmount when a total is missing, must sum to the explicit subtotal.";
+    "Line-item totals must sum to the explicit subtotal.";
   const subtotal = readMoney(
     document,
     document.document.facts,
