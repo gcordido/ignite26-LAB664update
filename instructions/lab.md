@@ -16,11 +16,42 @@ In this lab you will use Azure AI Content Understanding to turn synthetic insura
 - **Customize extraction:** extend an invoice template to extract vehicle, VIN, and odometer details from a repair estimate, then build a Statement analyzer that combines extracted facts with grounded summaries.
 - **Classify and split document packets:** identify document types and logical page ranges in mixed insurance packets, keeping continuation pages together without extracting fields yet.
 - **Add extraction routes:** connect document categories to prebuilt analyzers and your custom repair and Statement analyzers, including dedicated routes for towing and rental invoices. Review the returned fields and source highlights.
-- **Review results in the Insurance Workbench:** explore saved results, review **Business rules validation** findings, inspect grounded policy comparisons, then connect your own built analyzer to run live analysis across ten customer packets.
+- **Review results in the Insurance Workbench App:** see a real-world use case in action, explore saved results, review **Business rules validation** findings, inspect grounded policy comparisons, then connect your own built analyzer to run live analysis across ten customer packets.
 
 ===
 
 ## Step 1: Explore prebuilt analyzers
+
+### Environment set up
+
+> [!Note] The following set up prepares the environment for the following steps of the lab. As it takes a few minutes, starting it now enables it to run while you explore analyzers in CU Studio. Keep the PowerShell window open and continue with the browser instructions below while it runs.
+
+Use the prepared lab environment with Azure CLI and **Python 3.10 or later**, including pip and venv. The commands below restore dependencies, discover the lab's existing Azure resources, and index the policy PDFs using Search-managed Standard extraction with figure descriptions. They do not redeploy Azure infrastructure or assign roles.
+
+1. Open **Windows PowerShell** CLI - pinned on the taskbar - and move to the repository root, the folder containing `src`, `data`, and `infra`:
+
+   ```PowerShell
+   Set-Location "C:\Users\LabUser\Desktop\ignite26-LAB664"
+   ```
+
+2. Sign in with the account provided in the **Resources** tab. Choose **Work or School account** if prompted, then select the lab subscription:
+
+   ```PowerShell
+   az login
+   ```
+
+3. Run the two commands below in the order they are listed. Wait for **Setup** to finish successfully before starting **Deploy**, then continue in CU Studio while **Deploy** runs.
+   - **Setup** restores the locked npm dependencies, including *Deep Chat*, and prepares `.tools\policy-venv` using the lab's approved package sources.
+   - **Deploy** discovers Search, Storage, Foundry resources and the model in your resource group, uploads the policy PDFs to Blob Storage, and configures a Search indexer and Content Understanding skill. Azure AI Search runs extraction, semantic chunking and AI figure descriptions, then populates the index. Deployment writes the workbench connection after verification. Policy review reuses saved Parse evidence without preparing a claim-summary analyzer or submitting claim CU reanalysis. Python does not extract or manually upload policy chunks. No pre-filled configuration file or hosted agent is needed.
+
+   ```PowerShell
+   powershell -ExecutionPolicy Bypass -File .\infra\setup.ps1
+   powershell -ExecutionPolicy Bypass -File .\infra\deploy.ps1 -ResourceGroup "@lab.CloudResourceGroup(ResourceGroup1).Name" -Apply
+   ```
+
+Leave this terminal open. You will return to it in step 5 to check that setup completed and launch the app.
+
+### Explore the prebuilt analyzers in CU Studio
 
 To get started, let's explore the prebuilt analyzers in CU (Content Understanding) Studio by uploading and analyzing a few sample documents.
 This will help you understand the distinction between layout extraction and schema-based extraction before you move on to customizing your own analyzers.
@@ -258,48 +289,25 @@ Inspect ID fields on segment 1, nested 1099-A fields on segment 2, and custom `v
 
 ===
 
-## Step 5: Setup Insurance Workbench app
+## Step 5: Launch the Insurance Workbench app
 
 In this step, you will move from authoring analyzers to reviewing their results in an application. The Insurance Workbench loads ten customer packets, totaling 118 pages, from `data\packets`; you do not need to upload them manually.
 
 The app automatically loads the included cached extraction results and policy reviews. Use it as a results viewer: inspect the collection, review **Business rules validation** results, and follow policy findings back to their evidence. CU Studio remains your tool for editing and building analyzers. Later, you will explicitly rerun one repair estimate and can ask the policy agent follow-up questions.
 
-### Prepare and launch the app
+### Launch the app
 
-Use the prepared lab environment with Azure CLI and **Python 3.10 or later**, including pip and venv. The commands below restore dependencies, discover the lab's existing Azure resources, and index the policy PDFs using Search-managed Standard extraction with figure descriptions. They do not redeploy Azure infrastructure or assign roles.
+1. Return to the PowerShell window you used in [step 1](#start-the-insurance-workbench-setup). Confirm both setup commands completed successfully and **Deploy** reported `Workbench configuration activated`. If it is still running, wait for it to finish. If either command failed, resolve the reported error and rerun that command successfully before continuing.
 
-1. Open **Windows PowerShell** CLI and move to the repository root, the folder containing `src`, `data`, and `infra`:
-
-   ```PowerShell
-   Set-Location "C:\Users\LabUser\Desktop\ignite26-LAB664"
-   ```
-
-2. Sign in with the account provided in the **Resources** tab. Choose **Work or School account** if prompted, then select the lab subscription:
-
-   ```PowerShell
-   az login
-
-   ```
-
-3. Run the two commands below in the order they are listed. 
-   - **Setup** restores the locked npm dependencies, including *Deep Chat*, and prepares `.tools\policy-venv` using the lab's approved package sources.
-   - **Deploy** discovers Search, Storage, Foundry resources and the model in your resource group, uploads the policy PDFs to Blob Storage, and configures a Search indexer and Content Understanding skill. Azure AI Search runs extraction, semantic chunking and AI figure descriptions, then populates the index. Deployment writes the workbench connection after verification. Policy review reuses saved Parse evidence without preparing a claim-summary analyzer or submitting claim CU reanalysis. Python does not extract or manually upload policy chunks. No pre-filled configuration file or hosted agent is needed.
-
-   ```PowerShell
-   powershell -ExecutionPolicy Bypass -File .\infra\setup.ps1
-   powershell -ExecutionPolicy Bypass -File .\infra\deploy.ps1 -ResourceGroup "@lab.CloudResourceGroup(ResourceGroup1).Name" -Apply
-   ```
-
-
-4. Launch the separate app and keep this terminal open:
+2. Launch the separate app and keep this terminal open:
 
    ```PowerShell
    powershell -ExecutionPolicy Bypass -File .\infra\launch-workbench.ps1
    ```
 
-5. Open +++http://127.0.0.1:8791/+++ in a new browser tab. Do not open `workbench.html` directly.
+3. Open +++http://127.0.0.1:8791/+++ in a new browser tab. Do not open `workbench.html` directly.
 
-Wait for the cached results to load. Opening the app or switching review tabs does not submit a new analysis. The setup above prepares the connection needed for the repair rerun in step 6 and follow-up chat in step 7.
+Wait for the cached results to load. Opening the app or switching review tabs does not submit a new analysis. The setup in step 1 prepares the connection needed for the repair rerun in step 6 and follow-up chat in step 7.
 
 > [!Note] To stop the app at anytime just return to PowerShell and press **Ctrl+C**. 
 
@@ -372,7 +380,7 @@ Within **LineItems**, delete the existing **TotalAmount** object using its **Del
 
 **Check policies** shows **Claim policy checks**, with three ordered comparisons: **Daily rate**, **Effective terms**, and **Repair estimate**. These checks don't change the separate **Business rules validation** results. Selecting a policy check opens its concise headline, one to three claim-versus-policy comparisons, status and citations in the right panel. Select a linked value to inspect its source PDF, then **Back to policy check** to return. The loaded CU results remain shared across tabs.
 
-The app automatically loads ten cached agent reviews from the current packet dataset and their recorded CU Layout index alongside the CU results. Loading these reviews does not contact Azure. Inspect all **30** saved checks and their linked evidence without Azure setup, a restore script or another review. Previous five-, four- and three-check reviews remain history; the new contract distinguishes this three-check set from the earlier one containing Rental start. **Ask agent** requires the live connection prepared in step 5 for additional questions; it does not replace the saved checks. This workflow uses the existing dependencies and needs no new npm packages.
+The app automatically loads ten cached agent reviews from the current packet dataset and their recorded CU Layout index alongside the CU results. Loading these reviews does not contact Azure. Inspect all **30** saved checks and their linked evidence without Azure setup, a restore script or another review. Previous five-, four- and three-check reviews remain history; the new contract distinguishes this three-check set from the earlier one containing Rental start. **Ask agent** requires the live connection prepared in step 1 for additional questions; it does not replace the saved checks. This workflow uses the existing dependencies and needs no new npm packages.
 
 1. Open **Check policies** after the initial cached results finish loading.
 2. Confirm that all ten customer rows show their saved checks. Grounded Search retrieval is the default; there is no retrieval selector and you do not need to start or wait for an agent batch.
