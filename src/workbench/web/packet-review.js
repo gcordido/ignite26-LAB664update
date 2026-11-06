@@ -3,6 +3,7 @@ import {
   fieldLabel,
   fieldRegions,
   policyFamily,
+  policyRule,
   documentLabel,
   policyProblem,
   policyChecks,
@@ -117,7 +118,7 @@ export function packetReviewer({
     const amounts = family === "financial.total"
       ? /^(?:(?:SubtotalAmount|TotalTaxAmount|TotalAmount)\.Amount|TaxDetails\[\d+\]\.Amount\.Amount)$/
       : family === "financial.line_items"
-        ? /^(?:LineItems\[\d+\]\.(?:TotalAmount\.Amount|Parts?Amount|LaborAmount)|SubtotalAmount\.Amount)$/
+        ? /^(?:LineItems\[\d+\]\.(?:TotalAmount(?:\.Amount)?|Parts?Amount|LaborAmount)|SubtotalAmount\.Amount)$/
         : undefined;
     const operands = amounts && includeComponents
       ? formulaEntries(check, [doc], true)
@@ -189,6 +190,7 @@ export function packetReviewer({
         const match = /^LineItems\[(\d+)\]\.(.+)$/.exec(entry.item.field);
         const fieldRank = {
           "TotalAmount.Amount": 0,
+          TotalAmount: 0,
           PartsAmount: 1,
           LaborAmount: 2,
         }[match?.[2]] ?? 3;
@@ -212,9 +214,7 @@ export function packetReviewer({
     content.append(
       node(
         "p",
-        policyFamily(check) === "financial.line_items"
-          ? "Repair estimate line items amounts should sum to the explicit SubTotal amount."
-          : check.rule,
+        policyRule(check),
         "check-explanation",
       ),
     );
@@ -400,7 +400,7 @@ export function packetReviewer({
       undefined,
       `policy-indicator indicator-${check.status}`,
     );
-    indicator.title = `${check.status === "fail" ? "Fixed check failed" : check.status === "pass" ? "Fixed check passed" : check.status === "warn" ? "Review needed" : "Not checkable"}: ${check.rule}`;
+    indicator.title = `${check.status === "fail" ? "Fixed check failed" : check.status === "pass" ? "Fixed check passed" : check.status === "warn" ? "Review needed" : "Not checkable"}: ${policyRule(check)}`;
     indicator.setAttribute("role", "img");
     indicator.setAttribute(
       "aria-label",

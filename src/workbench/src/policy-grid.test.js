@@ -93,6 +93,17 @@ test("line-item evidence shows the extracted addends, including zero, without ch
   assert.equal(value.status, "pass");
 });
 
+test("numeric row totals show the same calculation and preserve mismatched arithmetic", () => {
+  const value = lineItemResult("pass", 0.3);
+  value.evidence = value.evidence.map((item) => ({
+    ...item, field: item.field.replace(/\.TotalAmount\.Amount$/, ".TotalAmount"),
+  }));
+  assert.equal(policyProblem(value, []).text, "USD 0.10 + 0.20 + 0.00 = 0.30 (Subtotal)");
+  value.status = "fail";
+  value.evidence.find((item) => item.field === "SubtotalAmount.Amount").value = 0.32;
+  assert.equal(policyProblem(value, []).text, "USD 0.10 + 0.20 + 0.00 = 0.30; Subtotal = 0.32");
+});
+
 test("mismatched and cent-tolerated calculations never display a false equality to subtotal", () => {
   for (const [status, subtotal] of [["fail", 0.32], ["pass", 0.31]]) {
     const value = lineItemResult(status, subtotal);
@@ -172,9 +183,24 @@ test("only the three renamed checks appear, even when legacy cached checks have 
       (column) =>
         column.label.split(" ").every((word) => word.length <= 12) &&
         column.summary.endsWith("?") &&
-        column.description.includes("Full description"),
+        (column.id === "financial.line_items" ||
+          column.description.includes("Full description")),
     ),
   );
+});
+
+test("legacy repair-rule tooltips describe the check without revealing the schema fix", () => {
+  const legacy = {
+    ...check("financial.line_items", "repair", "fail"),
+    rule: "Line-item totals, or PartAmount + LaborAmount when a total is missing, must sum to the explicit subtotal.",
+  };
+  const original = JSON.stringify(legacy);
+  const other = check("financial.total", "repair");
+  const columns = policyColumns([result(legacy, other)]);
+  assert.equal(columns.find(column => column.id === "financial.line_items").description,
+    "Line-item totals must sum to the explicit subtotal.");
+  assert.equal(columns.find(column => column.id === "financial.total").description, other.rule);
+  assert.equal(JSON.stringify(legacy), original);
 });
 
 test("review prose uses document types and pages instead of internal IDs without replacing partial identifiers", () => {

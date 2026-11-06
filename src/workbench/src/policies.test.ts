@@ -231,6 +231,39 @@ test("explicit invalid or mismatched row totals are not hidden by component fall
   }
 });
 
+test("numeric repair totals retain zero and use the returned total rather than components", () => {
+  const totals = [1203.2, 186, 210.8, 0];
+  const repair = document("numeric", "repair_estimate", money("SubtotalAmount.Amount", 1600), [
+    array("LineItems", totals.map((total, index) => [
+      fact(`LineItems[${index}].PartsAmount`, 500),
+      fact(`LineItems[${index}].LaborAmount`, 500),
+      fact(`LineItems[${index}].TotalAmount`, total),
+    ])),
+  ]);
+  const value = check([repair], "financial.line_items:numeric");
+  assert.equal(value.status, "pass");
+  assert.deepEqual(
+    value.evidence.filter((item) => item.field.startsWith("LineItems")).map((item) => [item.field, item.value]),
+    totals.map((total, index) => [`LineItems[${index}].TotalAmount`, total]),
+  );
+});
+
+test("numeric repair totals preserve errors and fall back only when the total is missing", () => {
+  for (const [total, status] of [
+    [980, "fail"], [0, "fail"], [Infinity, "not_checkable"],
+    ["1203.20", "not_checkable"], [null, "pass"],
+  ] as const) {
+    const repair = document("numeric-error", "repair_estimate", money("SubtotalAmount.Amount", 1203.2), [
+      array("LineItems", [[
+        fact("LineItems[0].TotalAmount", total),
+        fact("LineItems[0].PartsAmount", 980),
+        fact("LineItems[0].LaborAmount", 223.2),
+      ]]),
+    ]);
+    assert.equal(check([repair], "financial.line_items:numeric-error").status, status);
+  }
+});
+
 test("component fallback accepts PartsAmount and preserves the actual source field name", () => {
   const repair = document("parts", "repair_estimate", money("SubtotalAmount.Amount", 1203.2), [
     array("LineItems", [[

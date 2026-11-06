@@ -159,7 +159,7 @@ You will start with a small three-page packet, then test the same configuration 
 | :--- | :--- |
 | `id_document` | `The lab's identity-like demo card with named holder, portrait and membership identifier. This synthetic membership card demonstrates ID field extraction, not government-ID authenticity. Exclude invoice, tax and repair documents.` |
 | `tax_1099a` | `An IRS Form 1099-A Acquisition or Abandonment of Secured Property, including fictional borrower-copy examples. Exclude other tax forms and prose references.` |
-| `repair_estimate` | `A standalone repair workshop estimate or quote with vehicle details and proposed parts/labor. Keep continuation pages of the same estimate together; split a different estimate even if adjacent. Exclude towing/rental/glass invoices and their supporting inspection supplements even when they mention a proposed repair schedule.` |
+| `repair_estimate` | `A standalone repair workshop estimate or quote with vehicle details and proposed repair work. Keep continuation pages of the same estimate together; split a different estimate even if adjacent. Exclude towing/rental/glass invoices and their supporting inspection supplements even when they mention a proposed repair schedule.` |
 | `other` | `Each distinct supporting document: policy declarations/endorsements, claim intake forms, incident reports, handwritten statements, towing/rental/glass invoices with their own continuation supplements, valuation/downtime schedules, and workshop inspection records. Identify logical boundaries even when adjacent documents both have category other. Keep paginated continuation pages together; do not merge different document titles or identifiers. These documents are unrouted, not discarded.` |
 
 Next, configure how the classifier separates documents:
@@ -325,30 +325,36 @@ The original Repair Estimate result shows the calculation `USD 980.00 + 124.00 +
 3. Go back to **CU Studio** and reopen the editable custom **Repair Estimate** extraction project from step 2 - *custom-repair-extractor*. Do not edit the packet router or classification project: this rerun requires a ready single-document repair extractor. 
 4. In the **Schema** fields list, identify **LineItems** and click on the grid icon to open the line items editor. 
 !IMAGE[spqympsb.png](instructions359897/spqympsb.png)
-Then add these two **number / Extract** fields, within the **Total Amount** object umbrella:
+The PDF lists parts and labor separately, matched by operation reference. The original extraction copied only the parts amounts into the row totals, leaving out labor. Use **Extract** for `PartsAmount` and `LaborAmount` to read those printed values, and **Generate** for `TotalAmount` to calculate their sum, which is not printed as a single row total. This makes the intended calculation explicit; the independent subtotal check still verifies the result.
 
-   | Field | Description |
-   |---|---|
-   | `PartsAmount` | `Part amount associated with each line item` |
-   | `LaborAmount` | `Labor amount associated with each line item` |
+Within **LineItems**, delete the existing **TotalAmount** object using its **Delete field** control. This removes its nested **Amount** and **CurrencyCode** fields too. Do not delete the separate document-level **TotalAmount** field.
 
- Add the 2 new fields *after* the current ones (**Amount**, **CurrencyCode**). The validation rule continues to prefer a returned row total -**Amount**- and uses parts plus labor only when that total is missing.
- !IMAGE[wosopyzi.png](instructions359897/wosopyzi.png)
+ Add these three fields directly under **LineItems**, as siblings of **Description** and **Quantity**, not inside another object:
+
+   | Field | Value type | Method | Description |
+   |---|---|---|---|
+   | `PartsAmount` | Number | Extract | `Part amount associated with each line item` |
+   | `LaborAmount` | Number | Extract | `Labor amount associated with each line item` |
+   | `TotalAmount` | Number | Generate | `Total amount for this line item. Use its explicit printed total; otherwise, sum PartsAmount and LaborAmount. Do not use a parts-only amount or the invoice subtotal. Leave unset if no line-item total is printed and either component is missing.` |
+
+!IMAGE[new_fields.png](../img/new_fields.png)
+
+ Add the fields in this order. The new **TotalAmount** uses the same name as the deleted field, but is a single **Number**, not an object. The validation rule supports both this numeric `LineItems[i].TotalAmount` and the original `LineItems[i].TotalAmount.Amount`. It prefers the returned row total and uses parts plus labor only when that total is missing; a wrong returned total still fails.
  Click **Back to main view**->**Save** to confirm the schema changes.
 5. To verify the changes, select **Browse for files**, upload and test `C:\Users\LabUser\Desktop\ignite26-LAB664\data\documents\packet-08\05-estimate.pdf` before running the analysis (through the **Run Analysis** button). Expand **LineItems** object in the **Test** tab and inspect every line item and its source regions. A useful result for this document is:
 
-   | Line item | PartsAmount | LaborAmount | Amount |
+   | Line item | PartsAmount | LaborAmount | TotalAmount |
    |---|---:|---:|---:|
    | 1 | 980.00 | 223.20 | 1203.20 |
    | 2 | 124.00 | 62.00 | 186.00 |
    | 3 | 0.00 | 210.80 | 210.80 |
 
-   The explicit `SubtotalAmount` is `1600.00`. These values reconcile, but always verify the native Studio result rather than assuming a model run is deterministic.
+   The explicit `SubtotalAmount` is `1600.00`. Inspect the extracted parts and labor source regions; a generated total may not have its own source box. These values reconcile, but always verify the native Studio result rather than assuming a model run is deterministic.
 6. Save and build the updated project by clicking on **Build analyzer** and pick a new unique analyzer name, like `custom_repair_analyzer_v2`. Add a description too, such as `Updated repair analyzer with parts and labor amounts`. Wait until the analyzer is **Ready**, then copy its analyzer name exactly. 
 7. Return to the packet-8 error in the **Insurance Workbench App**, enter it in **Updated repair estimate analyzer name**, and select **Rerun**. This submits only `05-estimate.pdf` as a fresh, billable CU call; there is no second confirmation dialog.
 !IMAGE[z71i70zd.png](instructions359897/z71i70zd.png)
 8. While the spinner is active, wait for the rerun to finish. The updated result appears below the original with its own status and calculation. Its field table shows formula inputs plus returned `PartsAmount` and `LaborAmount`, grouped by numeric line-item index in the order total, parts, labor, followed by SubTotal. Select the original and updated results to compare their own source boxes. A successful updated result should show `USD 1203.20 + 186.00 + 210.80 = 1600.00 (Subtotal)` and change the check to **Pass**.
-!IMAGE[6cfzqmxd.png](instructions359897/6cfzqmxd.png)
+!IMAGE[fixed_amounts_calculation.png](../img/fixed_amounts_calculation.png)
 9. The rerun preview is temporary and browser-only. It is not written to the saved extraction cache or native JSON. Navigating within the current run keeps the original and latest updated result; another rerun replaces the previous preview. Refreshing the page or changing runs clears it. If the source cannot be matched to one individual PDF, return to Studio and correct the router's document boundaries before rerunning.
 
 > [+Note] **Where the files are**
