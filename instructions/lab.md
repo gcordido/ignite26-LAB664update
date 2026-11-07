@@ -446,8 +446,26 @@ Sign in with the same Azure lab account used in CU Studio. Copilot will check th
 
 1. In your browser, navigate to [GitHub enterprise sign-in](https://github.com/enterprises/skillable-events/sso) and sign in with your **Azure lab credentials**.
 2. Return to the **GitHub Copilot app** and select **Sign in with GitHub**. Follow the instructions on the web page that opens, including the one-time code prompt, to complete sign-in.
-3. Under **Sessions** (not **Chats**), click **+** > **Open local folder** and choose `C:\Users\LabUser\Desktop\ignite26-LAB664`.
-4. Select that folder under **Start session in**. Set **Environment** to **This computer** and **Workspace** to **Current checkout**.
+
+### Open the lab checkout
+
+1. In the sidebar, select **+** beside **Projects**, then select **Open folder**.
+
+!IMAGE[Open folder from the Projects menu](instructions359897/copilot-open-folder.png)
+
+2. Choose `C:\Users\LabUser\Desktop\ignite26-LAB664` in the folder picker. Select the lab project under **Projects**, then use **New** at the top left to start a fresh session for that project.
+
+!IMAGE[The lab project and New session navigation](instructions359897/copilot-new-session.png)
+
+3. Below the prompt, open the workspace selector, which may initially show **New worktree**. In the **Where to work** menu, select **Current checkout**.
+
+!IMAGE[Choose Current checkout instead of New worktree](instructions359897/copilot-select-current-checkout.png)
+
+4. Confirm the prompt footer shows **ignite26-LAB664** and **Current checkout**. Keep **Interactive** mode and normal tool approvals enabled; do not enable **allow-all**.
+
+!IMAGE[The prompt footer with the lab project and Current checkout](instructions359897/copilot-current-checkout.png)
+
+Use **Current checkout**, not **New worktree**: instructions staged on the VM may be uncommitted and absent from a new worktree. Changing folders in a PowerShell window does not change the Copilot app's workspace.
 
 ### Give the agent the task
 
@@ -455,7 +473,19 @@ Replace `<ORIGINAL_REPAIR_ANALYZER_ID>` with the analyzer built in **Step 2**, n
 
 > The repair amounts in packet 8 don't add up. My analyzer is `<ORIGINAL_REPAIR_ANALYZER_ID>`. Can you try fixing it on a copy and show me the before and after?
 
-Copilot shows each CU CLI command before running it. Review the proposed scope and schema diff. Approve only the named repair estimate and disposable analyzer. Copilot will ask separately before deleting/recreating its copy; never approve replacement of an original analyzer.
+At first tool use, you may see **Trust this repository?**. Confirm that the project is the lab checkout above, then select **Trust repository** only if you trust its files. You can choose **Skip for now** instead and review individual tool requests.
+
+!IMAGE[Trust repository and Skip for now choices](instructions359897/copilot-trust-repository.png)
+
+Copilot is instructed to show each CU CLI command in chat before running it. This currently works only partially: some commands may appear only in grouped tool cards. Expand those cards to inspect the available command details; a missing chat preview does not mean a command was not run. If you cannot review the operation or its scope, pause and ask your lab supporter.
+
+Review Copilot's initial proposal before approving a disposable repair-analyzer copy and **two analyses** of `data\documents\packet-08\05-estimate.pdf`: one before the fix and one after. Azure charges and Copilot usage apply. This confirmation is separate from repository trust or tool permissions. Local help/version checks and questions using saved results do not require this analysis approval.
+
+!IMAGE[Illustrative confirmation for the disposable copy and two packet-8 analyses](instructions359897/copilot-repair-analysis-approval-example.png)
+
+This edited example illustrates the initial approval. Review the actual file, analyzer ID and analysis count shown by Copilot.
+
+After the baseline analysis, review the proposed schema diff. Copilot will ask **separately** before deleting/recreating its disposable copy to apply the fix. Approve only the copy it created for this run, never an original analyzer. The after-analysis is the second of the two planned analyses; retries or extra documents need a new approval.
 
 ### Review the comparison
 
