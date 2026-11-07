@@ -1,16 +1,16 @@
 {
-  "id": "9da36ada-6a78-43b2-9a7d-17d3f296fd1b",
+  "id": "c9cc6ed6-9aa7-4faf-91b7-90de5cfbec5a",
   "status": "Succeeded",
   "result": {
     "analyzerId": "lab664_cache_20261103_195602_router",
     "apiVersion": "2026-06-01-preview",
-    "createdAt": "2026-11-03T21:02:51Z",
+    "createdAt": "2026-11-07T01:58:36Z",
     "stringEncoding": "codePoint",
     "warnings": [],
     "infos": [
       {
         "code": "LLMStats",
-        "message": "completion calls: 7; avg completion latency: 4.47s; total completion latency: 31.28s"
+        "message": "completion calls: 7; avg completion latency: 4.77s; total completion latency: 33.37s"
       }
     ],
     "contents": [
@@ -111,7 +111,7 @@
             "startPageNumber": 1,
             "endPageNumber": 1,
             "category": "id_document",
-            "confidence": 0.93
+            "confidence": 0.98
           },
           {
             "span": {
@@ -122,7 +122,7 @@
             "startPageNumber": 2,
             "endPageNumber": 4,
             "category": "other",
-            "confidence": 0.98
+            "confidence": 0.99
           },
           {
             "span": {
@@ -133,7 +133,7 @@
             "startPageNumber": 5,
             "endPageNumber": 6,
             "category": "other",
-            "confidence": 0.9
+            "confidence": 0.92
           },
           {
             "span": {
@@ -144,7 +144,7 @@
             "startPageNumber": 7,
             "endPageNumber": 7,
             "category": "other",
-            "confidence": 0.96
+            "confidence": 0.99
           },
           {
             "span": {
@@ -177,7 +177,7 @@
             "startPageNumber": 10,
             "endPageNumber": 11,
             "category": "rental_invoice",
-            "confidence": 0.95
+            "confidence": 0.97
           },
           {
             "span": {
@@ -188,7 +188,7 @@
             "startPageNumber": 12,
             "endPageNumber": 12,
             "category": "other",
-            "confidence": 0.96
+            "confidence": 0.98
           },
           {
             "span": {
@@ -222,7 +222,15 @@
           },
           "DocumentNumber": {
             "type": "string",
-            "confidence": 0.816
+            "valueString": "MR-366083",
+            "spans": [
+              {
+                "offset": 57,
+                "length": 9
+              }
+            ],
+            "confidence": 0.939,
+            "source": "D(1,6.8322,3.7748,7.9360,3.7909,7.9330,3.9986,6.8291,3.9824)"
           },
           "DocumentDiscriminator": {
             "type": "string",
@@ -237,7 +245,7 @@
                 "length": 8
               }
             ],
-            "confidence": 0.745,
+            "confidence": 0.821,
             "source": "D(1,4.9146,2.8722,6.3733,2.8736,6.3732,3.2011,4.9146,3.1918)"
           },
           "LastName": {
@@ -249,7 +257,7 @@
                 "length": 5
               }
             ],
-            "confidence": 0.757,
+            "confidence": 0.83,
             "source": "D(1,6.4863,2.8742,7.4121,2.8875,7.4121,3.2052,6.4863,3.2017)"
           },
           "Address": {
@@ -262,11 +270,27 @@
           },
           "ExpirationDate": {
             "type": "date",
-            "confidence": 0.854
+            "valueDate": "2026-07-17",
+            "spans": [
+              {
+                "offset": 103,
+                "length": 10
+              }
+            ],
+            "confidence": 0.893,
+            "source": "D(1,6.8428,4.7552,7.9277,4.7608,7.9277,4.9683,6.8428,4.9627)"
           },
           "IssueDate": {
             "type": "date",
-            "confidence": 0.854
+            "valueDate": "2025-07-17",
+            "spans": [
+              {
+                "offset": 79,
+                "length": 10
+              }
+            ],
+            "confidence": 0.977,
+            "source": "D(1,6.8320,4.3081,7.8955,4.3081,7.8955,4.5073,6.8320,4.5073)"
           },
           "EyeColor": {
             "type": "string",
@@ -368,7 +392,7 @@
                     "length": 7
                   }
                 ],
-                "confidence": 0.513,
+                "confidence": 0.592,
                 "source": "D(8,1.3168,1.7242,2.5048,1.7169,2.5057,1.8595,1.3177,1.8668);D(8,4.4326,4.1883,4.8813,4.1898,4.8809,4.3151,4.4322,4.3136);D(8,4.5281,4.3443,4.7863,4.3460,4.7854,4.4869,4.5272,4.4852)"
               }
             }
@@ -569,7 +593,7 @@
                             "length": 7
                           }
                         ],
-                        "confidence": 0.708,
+                        "confidence": 0.791,
                         "source": "D(8,4.4326,4.1883,4.8813,4.1898,4.8809,4.3151,4.4322,4.3136);D(8,4.5281,4.3443,4.7863,4.3460,4.7854,4.4869,4.5272,4.4852)"
                       }
                     }
@@ -673,7 +697,7 @@
                             "length": 7
                           }
                         ],
-                        "confidence": 0.708,
+                        "confidence": 0.791,
                         "source": "D(8,4.4326,4.1883,4.8813,4.1898,4.8809,4.3151,4.4322,4.3136);D(8,4.5281,4.3443,4.7863,4.3460,4.7854,4.4869,4.5272,4.4852)"
                       }
                     }
@@ -777,7 +801,7 @@
                             "length": 7
                           }
                         ],
-                        "confidence": 0.708,
+                        "confidence": 0.791,
                         "source": "D(8,4.4326,4.1883,4.8813,4.1898,4.8809,4.3151,4.4322,4.3136);D(8,4.5281,4.3443,4.7863,4.3460,4.7854,4.4869,4.5272,4.4852)"
                       }
                     }
@@ -881,7 +905,7 @@
                             "length": 7
                           }
                         ],
-                        "confidence": 0.708,
+                        "confidence": 0.791,
                         "source": "D(8,4.4326,4.1883,4.8813,4.1898,4.8809,4.3151,4.4322,4.3136);D(8,4.5281,4.3443,4.7863,4.3460,4.7854,4.4869,4.5272,4.4852)"
                       }
                     }
@@ -985,7 +1009,7 @@
                             "length": 7
                           }
                         ],
-                        "confidence": 0.708,
+                        "confidence": 0.791,
                         "source": "D(8,4.4326,4.1883,4.8813,4.1898,4.8809,4.3151,4.4322,4.3136);D(8,4.5281,4.3443,4.7863,4.3460,4.7854,4.4869,4.5272,4.4852)"
                       }
                     }
@@ -1071,7 +1095,7 @@
                     "length": 7
                   }
                 ],
-                "confidence": 0.513,
+                "confidence": 0.592,
                 "source": "D(8,1.3168,1.7242,2.5048,1.7169,2.5057,1.8595,1.3177,1.8668);D(8,4.4326,4.1883,4.8813,4.1898,4.8809,4.3151,4.4322,4.3136);D(8,4.5281,4.3443,4.7863,4.3460,4.7854,4.4869,4.5272,4.4852)"
               }
             }
@@ -1110,7 +1134,7 @@
                             "length": 7
                           }
                         ],
-                        "confidence": 0.708,
+                        "confidence": 0.791,
                         "source": "D(8,4.4326,4.1883,4.8813,4.1898,4.8809,4.3151,4.4322,4.3136);D(8,4.5281,4.3443,4.7863,4.3460,4.7854,4.4869,4.5272,4.4852)"
                       }
                     }
@@ -1180,7 +1204,7 @@
                     "length": 7
                   }
                 ],
-                "confidence": 0.513,
+                "confidence": 0.592,
                 "source": "D(8,1.3168,1.7242,2.5048,1.7169,2.5057,1.8595,1.3177,1.8668);D(8,4.4326,4.1883,4.8813,4.1898,4.8809,4.3151,4.4322,4.3136);D(8,4.5281,4.3443,4.7863,4.3460,4.7854,4.4869,4.5272,4.4852)"
               }
             }
@@ -1218,10 +1242,6 @@
                 "valueString": "USD",
                 "spans": [
                   {
-                    "offset": 37,
-                    "length": 20
-                  },
-                  {
                     "offset": 1062,
                     "length": 10
                   },
@@ -1230,8 +1250,8 @@
                     "length": 7
                   }
                 ],
-                "confidence": 0.513,
-                "source": "D(8,1.3168,1.7242,2.5048,1.7169,2.5057,1.8595,1.3177,1.8668);D(8,4.4326,4.1883,4.8813,4.1898,4.8809,4.3151,4.4322,4.3136);D(8,4.5281,4.3443,4.7863,4.3460,4.7854,4.4869,4.5272,4.4852)"
+                "confidence": 0.793,
+                "source": "D(8,4.4326,4.1883,4.8813,4.1898,4.8809,4.3151,4.4322,4.3136);D(8,4.5281,4.3443,4.7863,4.3460,4.7854,4.4869,4.5272,4.4852)"
               }
             }
           },
@@ -1361,7 +1381,7 @@
                 "length": 14
               }
             ],
-            "confidence": 0.854,
+            "confidence": 0.834,
             "source": "D(9,1.4352,9.5846,3.7735,9.6552,3.7576,10.1806,1.4193,10.1100)"
           },
           "incident_date": {
@@ -1406,7 +1426,7 @@
           },
           "reported_damage": {
             "type": "string",
-            "valueString": "Damage to the rear bumper and right rear lamp; the bumper cover appears pushed in with scuffs, and the right rear lamp is cracked. The vehicle is drivable.",
+            "valueString": "The claimant reports damage to the rear bumper and right rear lamp: the bumper cover appears pushed in with scuffs, and the right rear lamp is cracked. The vehicle is drivable.",
             "spans": [
               {
                 "offset": 522,
@@ -1434,7 +1454,7 @@
           },
           "summary": {
             "type": "string",
-            "valueString": "The claimant reports a rear-end collision on 02/12/2026 at approximately 08:23 while stopped at a red light northbound on Canyon Road at Bell Avenue in Cedar Mesa, TX 78758, in a 2022 Honda CR-V EX. A blue sedan driven by Caleb Turner struck the rear of the claimant's vehicle. Both drivers pulled over safely, exchanged insurance information, took photos, and no injuries were reported. The claimant reports rear bumper and right rear lamp damage and plans to take the vehicle to Copper Bend Collision for inspection.",
+            "valueString": "The claimant reports that on 02/12/2026 at approximately 08:23, while stopped at a red light northbound on Canyon Road at Bell Avenue in Cedar Mesa, TX, in a 2022 Honda CR-V EX, a blue sedan driven by Caleb Turner struck the rear of her vehicle. Both drivers pulled over safely, exchanged insurance information, took photos of the damage and scene, and no injuries were reported by either driver. The claimant plans to take the vehicle to Copper Bend Collision for inspection.",
             "spans": [
               {
                 "offset": 58,
@@ -1509,7 +1529,7 @@
                 "length": 25
               }
             ],
-            "confidence": 0.875,
+            "confidence": 0.839,
             "source": "D(9,1.4993,1.7164,7.2384,1.7182,7.2383,1.9569,1.4992,1.9551);D(9,1.5064,2.0627,7.2549,2.0582,7.2551,2.2910,1.5066,2.2955);D(9,1.5061,2.5950,7.1558,2.6073,7.1553,2.8507,1.5056,2.8385);D(9,1.5568,2.9190,7.5911,2.9041,7.5917,3.1474,1.5574,3.1623);D(9,1.5823,3.2340,7.3545,3.2119,7.3554,3.4429,1.5831,3.4650);D(9,1.5660,3.5446,7.4250,3.5249,7.4258,3.7572,1.5668,3.7768);D(9,1.5491,3.8453,4.3290,3.8461,4.3289,4.0658,1.5490,4.0650);D(9,1.5927,4.3383,7.0308,4.3377,7.0308,4.5806,1.5927,4.5812);D(9,1.5471,4.6535,7.1019,4.6689,7.1013,4.8895,1.5465,4.8741);D(9,1.5595,4.9605,7.1555,4.9647,7.1553,5.1877,1.5593,5.1835);D(9,1.5522,5.2702,2.7256,5.2753,2.7247,5.4792,1.5513,5.4741);D(9,1.5594,5.7756,6.5659,5.7728,6.5660,6.0409,1.5595,6.0437);D(9,1.5612,6.1058,7.2175,6.0967,7.2179,6.3308,1.5616,6.3399);D(9,1.5542,6.4053,7.0515,6.4019,7.0516,6.6448,1.5543,6.6482);D(9,1.5637,6.7061,7.2009,6.7017,7.2011,6.9337,1.5639,6.9381);D(9,1.5709,7.0043,5.6985,7.0043,5.6985,7.2141,1.5709,7.2141);D(9,1.5455,7.5076,6.6577,7.5172,6.6572,7.7647,1.5450,7.7551);D(9,1.5727,7.8249,4.2767,7.8461,4.2749,8.0815,1.5709,8.0603)"
           }
         },
@@ -1675,7 +1695,7 @@
                 "length": 9
               }
             ],
-            "confidence": 0.816,
+            "confidence": 0.54,
             "source": "D(11,6.5613,0.8599,7.1719,0.8575,7.1724,0.9879,6.5618,0.9904)"
           },
           "LineItems": {
@@ -1705,7 +1725,7 @@
                         "length": 21
                       }
                     ],
-                    "confidence": 0.696,
+                    "confidence": 0.713,
                     "source": "D(11,1.1597,3.8939,2.5214,3.8917,2.5217,4.0555,1.1600,4.0577)"
                   },
                   "ProductCode": {
@@ -1795,7 +1815,7 @@
                         "length": 21
                       }
                     ],
-                    "confidence": 0.707,
+                    "confidence": 0.725,
                     "source": "D(11,1.1537,4.1501,2.5151,4.1406,2.5163,4.3090,1.1548,4.3185)"
                   },
                   "ProductCode": {
@@ -1885,7 +1905,7 @@
                         "length": 21
                       }
                     ],
-                    "confidence": 0.699,
+                    "confidence": 0.721,
                     "source": "D(11,1.1519,4.4067,2.5150,4.3912,2.5169,4.5608,1.1538,4.5763)"
                   },
                   "ProductCode": {
@@ -1975,7 +1995,7 @@
                         "length": 21
                       }
                     ],
-                    "confidence": 0.696,
+                    "confidence": 0.72,
                     "source": "D(11,1.1465,4.6794,2.5151,4.6619,2.5172,4.8288,1.1486,4.8463)"
                   },
                   "ProductCode": {
@@ -2106,7 +2126,7 @@
                             "length": 5
                           }
                         ],
-                        "confidence": 0.86,
+                        "confidence": 0.899,
                         "source": "D(11,6.9934,5.3715,7.3420,5.3645,7.3420,5.5106,6.9934,5.5153)"
                       },
                       "CurrencyCode": {
@@ -2124,7 +2144,7 @@
                         "length": 30
                       }
                     ],
-                    "confidence": 0.647,
+                    "confidence": 0.686,
                     "source": "D(11,4.5685,5.3927,6.2339,5.3811,6.2350,5.5341,4.5696,5.5457)"
                   },
                   "NetAmount": {
@@ -2230,7 +2250,7 @@
                 "length": 19
               }
             ],
-            "confidence": 0.65,
+            "confidence": 0.798,
             "source": "D(11,1.5119,0.8215,3.8558,0.8405,3.8536,1.1093,1.5097,1.0903)"
           },
           "VendorTaxId": {
@@ -2533,9 +2553,9 @@
     "contextualizationTokens": 13000,
     "tokens": {
       "gpt-5.5-input": 17272,
-      "gpt-5.5-output": 1970,
+      "gpt-5.5-output": 1944,
       "gpt-5.2-input": 20062,
-      "gpt-5.2-output": 1187
+      "gpt-5.2-output": 1151
     }
   }
 }
