@@ -1426,7 +1426,7 @@
           },
           "reported_damage": {
             "type": "string",
-            "valueString": "The claimant reports damage to the rear bumper and right rear lamp: the bumper cover appears pushed in with scuffs, and the right rear lamp is cracked. The vehicle is drivable.",
+            "valueString": "Damage to the rear bumper and right rear lamp; the bumper cover appears pushed in with scuffs, and the right rear lamp is cracked. The vehicle is drivable.",
             "spans": [
               {
                 "offset": 522,
@@ -1454,7 +1454,7 @@
           },
           "summary": {
             "type": "string",
-            "valueString": "The claimant reports that on 02/12/2026 at approximately 08:23, while stopped at a red light northbound on Canyon Road at Bell Avenue in Cedar Mesa, TX, in a 2022 Honda CR-V EX, a blue sedan driven by Caleb Turner struck the rear of her vehicle. Both drivers pulled over safely, exchanged insurance information, took photos of the damage and scene, and no injuries were reported by either driver. The claimant plans to take the vehicle to Copper Bend Collision for inspection.",
+            "valueString": "The claimant reports a rear-end collision on 02/12/2026 at approximately 08:23 while stopped at a red light northbound on Canyon Road at Bell Avenue in Cedar Mesa, TX 78758, in a 2022 Honda CR-V EX. A blue sedan driven by Caleb Turner struck the rear of the claimant's vehicle. Both drivers pulled over safely, exchanged insurance information, took photos, and no injuries were reported. The claimant reports rear bumper and right rear lamp damage and plans to take the vehicle to Copper Bend Collision for inspection.",
             "spans": [
               {
                 "offset": 58,

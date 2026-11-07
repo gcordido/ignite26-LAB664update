@@ -366,11 +366,31 @@
             "valueObject": {
               "Amount": {
                 "type": "number",
-                "confidence": 0.929
+                "valueNumber": 1092,
+                "spans": [
+                  {
+                    "offset": 2092,
+                    "length": 9
+                  }
+                ],
+                "confidence": 0.353,
+                "source": "D(6,6.3623,8.0736,6.8855,8.0730,6.8857,8.2231,6.3625,8.2237)"
               },
               "CurrencyCode": {
                 "type": "string",
-                "confidence": 0.849
+                "valueString": "USD",
+                "spans": [
+                  {
+                    "offset": 1080,
+                    "length": 12
+                  },
+                  {
+                    "offset": 2092,
+                    "length": 9
+                  }
+                ],
+                "confidence": 0.648,
+                "source": "D(6,4.6152,4.5458,5.3085,4.5466,5.3083,4.6919,4.6150,4.6911);D(6,6.3623,8.0736,6.8855,8.0730,6.8857,8.2231,6.3625,8.2237)"
               }
             }
           },
@@ -397,19 +417,15 @@
           },
           "CountryRegion": {
             "type": "string",
-            "valueString": "United States",
+            "valueString": "US",
             "spans": [
               {
                 "offset": 33,
                 "length": 21
-              },
-              {
-                "offset": 355,
-                "length": 21
               }
             ],
-            "confidence": 0.723,
-            "source": "D(6,1.1311,1.0540,2.5505,1.0949,2.5465,1.2337,1.1271,1.1927);D(6,1.1258,2.5563,2.5212,2.5749,2.5193,2.7220,1.1239,2.7035)"
+            "confidence": 0.683,
+            "source": "D(6,1.1311,1.0540,2.5505,1.0949,2.5465,1.2337,1.1271,1.1927)"
           },
           "CustomerAddress": {
             "type": "string",
@@ -1411,7 +1427,7 @@
           },
           "summary": {
             "type": "string",
-            "valueString": "Victor Bennett reported that on 04/08/2025 he parked his 2020 Subaru Outback Premium in the east parking area of Pine Market in Alder Sound, WA, returned around 21:10, and discovered left-side damage. The impact time and other driver are unknown, no note was left, he did not see the incident, there were no known witnesses, and no injuries were involved. The vehicle remained drivable, he filed a parking incident report with the store, and reported the loss to his insurer under claim number ASA-25-615743.",
+            "valueString": "Victor Bennett reported that on 04/08/2025 he parked his 2020 Subaru Outback Premium in the east parking area of Pine Market in Alder Sound, WA, returned around 21:10, and discovered left-side damage. The impact time and other driver are unknown, no note was left, he did not see the incident, there were no known witnesses, and no injuries were involved. The vehicle remained drivable, he filed a parking incident report with the store, and he reported the loss to his insurer under claim number ASA-25-615743.",
             "spans": [
               {
                 "offset": 83,
