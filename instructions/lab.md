@@ -406,6 +406,8 @@ Within **LineItems**, delete the existing **TotalAmount** object using its **Del
 
 ## Step 9. Review claims with Azure Search (Foundry IQ)
 
+!IMAGE[Diagram showing a claims agent comparing extracted claim facts with evidence retrieved from an indexed policy collection for human review.](../img/policy-check-overview.png)
+
 Step 8 used fixed business rules. Now we'll add Azure Search (Foundry IQ) to retrieve guidance for a particular claim and compare it with the extracted facts. This demo queries a Search index directly.
 
 If you're starting here and the app isn't running, follow [Step 7's app-launch instructions](#launch-the-app), then open +++http://127.0.0.1:8791/+++.
