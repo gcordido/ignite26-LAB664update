@@ -72,7 +72,7 @@ test("normal statement route supports seven classes without rejecting legacy fou
 test("Studio import supplies five extracted facts and two generated narratives accepted by a routed analyzer", async () => {
   const schema: unknown = JSON.parse(
     await readFile(
-      path.join(dataRoot, "step2", "statement-schema.json"),
+      path.join(dataRoot, "samples", "statement-schema.json"),
       "utf8",
     ),
   );
@@ -120,6 +120,14 @@ test("Studio import supplies five extracted facts and two generated narratives a
     ),
     /summary: string, Generate/,
   );
+});
+test("consolidated Studio packets retain the canonical packet bytes", async () => {
+  for (const filename of ["packet-01.pdf", "packet-03.pdf"]) {
+    assert.deepEqual(
+      await readFile(path.join(dataRoot, "samples", filename)),
+      await readFile(path.join(dataRoot, "packets", filename)),
+    );
+  }
 });
 test("statement routes require a correctly typed custom extractor, while classification-only remains supported", async () => {
   const categories = [
