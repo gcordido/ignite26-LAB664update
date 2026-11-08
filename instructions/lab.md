@@ -6,7 +6,7 @@ To begin, log into the virtual machine using the following credentials: +++@lab.
 
 **Note:** Text formatted as an +++example+++ represents type text. Clicking on this text will automatically insert it to prevent any typing errors.
 
-# From files to an decisions
+### From files to decisions
 
 Imagine you are helping an auto insurance claims team review vehicle incident packets. They packets contain details like repair estimates, claimant statements, and towing and rental invoices. Manually piecing together these documents makes it difficult to spot inconsistencies and check the relevant policy information. Your goal is to bring the key facts and their source evidence into one workbench so reviewers can investigate each case more efficiently.
 
