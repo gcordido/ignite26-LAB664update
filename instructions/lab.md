@@ -267,8 +267,21 @@ In the previous step, you tested a small packet to ensure the classifier correct
 ## Step 6: Extract fields from each segment of the packet
 > [!Note] **Reuse the uploaded packets:** the three PDFs in `data\samples` are the same inputs used in the previous step. Select their existing thumbnails in the project. If you need to upload them again, use [classification-packet.pdf](../data/samples/classification-packet.pdf), [packet-01.pdf](../data/samples/packet-01.pdf) (statement and rental invoice), and [packet-03.pdf](../data/samples/packet-03.pdf) (towing invoice). 
 
-1. Continue in the editable step 3 project. If you left it, return to [CU Studio Build](https://contentunderstanding.ai.azure.com/build), open **Project list**, and open your project. 
-2. Open **Routing rules**. In each existing category's **Analyzer ID** selector, choose the route in the table below. Use the selector's **Prebuilt** tab to search for the exact prebuilt ID, or **Custom** to find your built repair analyzer. Selecting a route shows its schema preview within the project; you do not need to leave for the gallery.
+Continue in the editable step 3 project. If you left it, return to [CU Studio Build](https://contentunderstanding.ai.azure.com/build), open **Project list**, and open your project.
+
+The manual walkthrough below is the main learning path. If you are short on time, use the optional import shortcut instead of entering the routing rules by hand. Both paths finish with the same packet tests and router build.
+
+### Running short on time? Import the routing configuration
+
+In **Routing rules**, open **More actions** (`...`) next to **Add category**, select **Import**, and click on **Confirm**. Then choose your local JSON file including the routing configuration, at `C:\Users\LabUser\Desktop\ignite26-LAB664\data\step4\router-config.json`.
+
+> [!Tip] If any of the imported analyzer is highlighted in red or shows **Analyzer not found**, there might be some misalignment between the analyzer IDs in the JSON file and the analyzers IDs you defined in previous steps. Verify that the custom analyzer IDs in the JSON match exactly with the ones you built in steps 3 and 4.
+
+Skip the manual configuration below and continue at [Verify, test, and build the router](#verify-test-and-build-the-router). Recheck segmentation there even after importing.
+
+### Configure routes manually
+
+1. Open **Routing rules**. In each existing category's **Analyzer ID** selector, choose the route in the table below. Use the selector's **Prebuilt** tab to search for the exact prebuilt ID, or **Custom** to find your built repair analyzer. Selecting a route shows its schema preview within the project; you do not need to leave for the gallery.
 !IMAGE[1b7s3xw7.png](instructions359897/1b7s3xw7.png)
 
 > [!Note] Leave the descriptions unchanged. For tax, choose the unversioned `prebuilt-tax.us.1099A`, not the year-specific entry. 
@@ -280,7 +293,7 @@ In the previous step, you tested a small packet to ensure the classifier correct
 | `repair_estimate` | Your `repair_extractor_analyzer` ID |
 | `other` | **No route** |
 
-3. Select **Add category** and enter `statement` with its description below, then select your custom Statement analyzer through **Analyzer ID** > **Custom**. Repeat for `towing_invoice` and `rental_invoice`, selecting `prebuilt-invoice` through **Prebuilt** for each. Complete each name and description before adding the next row.
+2. Select **Add category** and enter `statement` with its description below, then select your custom Statement analyzer through **Analyzer ID** > **Custom**. Repeat for `towing_invoice` and `rental_invoice`, selecting `prebuilt-invoice` through **Prebuilt** for each. Complete each name and description before adding the next row.
 !IMAGE[ujvd6zg6.png](instructions359897/ujvd6zg6.png)
 
 | Category key | Extraction route | Description change |
@@ -290,22 +303,26 @@ In the previous step, you tested a small packet to ensure the classifier correct
 | `rental_invoice` | `prebuilt-invoice` | `A vehicle rental billing document or invoice with rental agreement references, dates or daily charges. Keep the same agreement's pickup/billing/vehicle-condition continuation pages together. Payment may be unpaid or pending; do not infer payment. Exclude towing bills, repair estimates, and glass or panel service quotes.` |
 
 
-4. Verify there are **seven categories and six assigned routes**, with no route for `other`. Keep **Enable segment** on and click on the gear icon to verify the settings. Keep **Auto segment content** selected, **Allow in-page segments** off, and **Segment by page** unselected. 
+### Verify, test, and build the router
+
+Continue here after either manual configuration or import.
+
+1. Verify there are **seven categories and six assigned routes**, with no route for `other`. Keep **Enable segment** on and click on the gear icon to verify the settings. Keep **Auto segment content** selected, **Allow in-page segments** off, and **Segment by page** unselected.
 !IMAGE[bj0sbmti.png](instructions359897/bj0sbmti.png)
-5. Select **Save** and wait until saving indicators clear.
-6. Select the existing **classification-packet.pdf** thumbnail, then **Run analysis**. Wait for completion before inspecting results or selecting another file. 
-7. In **Test**, expand the segments dropdown and select the child content you want to inspect (e.g. input1/segment1), then open **Fields**. 
+2. Select **Save** and wait until saving indicators clear.
+3. Select the existing **classification-packet.pdf** thumbnail, then **Run analysis**. Wait for completion before inspecting results or selecting another file.
+4. In **Test**, expand the segments dropdown and select the child content you want to inspect (e.g. input1/segment1), then open **Fields**.
 !IMAGE[6cp63e2r.png](instructions359897/6cp63e2r.png)
 
 > [!Note] The parent `input1` is not the child analyzer's field view. 
 
 Inspect ID fields on segment 1, nested 1099-A fields on segment 2, and custom `vehicle` , `vin`, and `odometer` fields on segment 3. The tax route adds nested year/copy segment entries; select the nested entry with a **Fields** tab. These are not extra input documents. Select a field label to inspect its source highlight. 
-8. Return to `input1` > **Result** and download the routed result separately from the step 3 JSON.
-9. Replicate the same process for the other 2 files:
+5. Return to `input1` > **Result** and download the routed result separately from the step 3 JSON.
+6. Replicate the same process for the other 2 files:
    - Select **packet-01.pdf** and run analysis. Compare categories and page ranges with step 3, then inspect repair on page 8, the Statement route on page 9, and the rental invoice across pages 10-11. The statement and rental invoice now have their named categories and child fields rather than belonging to Other. Check that the rental continuation remains part of the same invoice. Download the parent result.
    - Select **packet-03.pdf** and run analysis. Inspect the Statement route on page 10, and the towing invoice on page 11, along with the other categories and logical boundaries. Check invoice amounts against the towing supplement's **$237 charge** on page 11, not the separate **$1,699.04 repair quote** it references. Download the parent result. Other documents remain in the parent content without a domain extraction route.
-10. Compare returned fields with their source documents. Keep claimant-reported details distinct from verified facts, and proposed repair amounts distinct from invoiced charges or proof of payment. If a fact is not stated, check that its field is unset rather than invented; turn off **Hide missing fields** to see fields marked **Not found**.
-11. After reviewing all three packets, select **Build analyzer** with a new unique ID, such as `router_analyzer`. Do not overwrite the classification-only analyzer you created in the previous step. After a successful build, use **Jump to analyzer list**. Verify this exact analyzer has status **Ready**. Record its ID and your resource endpoint for step 5.
+7. Compare returned fields with their source documents. Keep claimant-reported details distinct from verified facts, and proposed repair amounts distinct from invoiced charges or proof of payment. If a fact is not stated, check that its field is unset rather than invented; turn off **Hide missing fields** to see fields marked **Not found**.
+8. After reviewing all three packets, select **Build analyzer** with a new unique ID, such as `router_analyzer`. Do not overwrite the classification-only analyzer you created in the previous step. After a successful build, use **Jump to analyzer list**. Verify this exact analyzer has status **Ready**. Record its ID and your resource endpoint for step 5.
 
 > [!Note] **Checkpoint:** a tested, ready router links every non-Other category to extraction.
 
