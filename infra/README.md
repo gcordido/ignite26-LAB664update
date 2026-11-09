@@ -1,7 +1,5 @@
 # Infrastructure
 
-<!-- IGNITE TEMPLATE PLACEHOLDER: remove this folder when the session needs no infrastructure. -->
-
 Use this folder for deployment or runtime infrastructure, including Skillable-specific files when needed.
 
 ## Preview lab images locally
@@ -53,7 +51,7 @@ script; images themselves are not modified.
   or cache files aren't overwritten.
 
 Run these scripts from the repository root as described in
-[step 5 of the attendee guide](../instructions/lab.html#step5).
+[step 7 of the attendee guide](../instructions/lab.md#step-7-evaluate-results-with-the-insurance-workbench-app).
 
 Install Python 3.10 or later with pip and venv before running setup. Setup uses
 the existing Python installation; it doesn't install Agent Framework with npm.

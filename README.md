@@ -1,29 +1,3 @@
-## Before you're done
-
-This repo has been created for your Microsoft Ignite 2026 session. Here's how to get it ready.
-
-**Easiest path — use the agent (recommended):**
-
-- Open GitHub Copilot Chat and say `help me initialize repo`. The agent will walk you through getting the README populated.
-- When you're ready to publish, say `help me finalize repo`. The agent will clean up unused folders, validate everything, and remove this "Before you're done" section and other extra stuff that attendees don't need to see.
-- Curious how it works? Read the [agent workflow](.github/AGENT-WORKFLOW.md).
-
-**Doing it manually?**
-
-Fill in the sections below yourself, then:
-
-- Delete any placeholder folders you don't need (`data/`, `infra/`, etc.)
-- Delete this "Before you're done" section
-- Delete `.github/agents/`, `.github/tests/`, `.github/copilot-instructions.md`, and `.github/AGENT-WORKFLOW.md` — these are template tooling, not part of your published repo
-
-**Folder conventions:**
-
-- Attendee step-by-step guidance goes in `instructions/`. If you use MkDocs or a docs site instead, put it in `docs/` and link to it from this README.
-- Reference material and background reading go in `docs/`.
-- You can add a `.devcontainer/` folder if needed.
-
----
-
 <a name="start-building"></a>
 
 <p align="center">
@@ -39,10 +13,12 @@ Enterprise processes start with unstructured content—documents, images, audio,
 
 ### 🚀 Getting started
 
-Clone or download the repository, then open
-[`instructions/lab.html`](instructions/lab.html) locally in your browser.
-The five-step guide covers Content Understanding extraction in CU Studio,
+Follow the [nine-step lab guide](instructions/lab.md) for both guided and
+self-paced sessions in the provisioned lab environment.
+The guide covers Content Understanding extraction in CU Studio,
 then policy checks in the separate Insurance Workbench App.
+Lab-platform variables and VM screenshot paths in the guide are resolved
+by the lab environment, not by GitHub's Markdown preview.
 
 #### Set up or update the workbench
 
@@ -137,7 +113,7 @@ they aren't ingested or used by the current checks.
 See [policy checks](docs/policy-checks.md) for the walkthrough and cache details.
 
 For guided and self-paced sessions, follow
-[step 5: compare policy checks](instructions/lab.html#policy-checks).
+[step 9: compare policy checks](instructions/lab.md#step-9-review-claims-with-azure-search-foundry-iq).
 Optional under-the-hood guidance covers the deployed Search index, policy PDFs,
 Blob ingestion and the Agent Framework implementation. This PR uses an ordinary
 Search index directly, not a Foundry IQ knowledge base.
@@ -159,15 +135,17 @@ The setup notebook also walks through managed ingestion on the existing Search s
 
 By the end of this session, you will be able to:
 
-- Outcome 1
-- Outcome 2
-- Outcome 3
+- Extract structured, source-linked facts with prebuilt and custom Content Understanding analyzers.
+- Classify and split insurance packets and route documents to extraction analyzers.
+- Evaluate extracted claims with business rules, grounded policy checks, and human review.
 
 ### 💻 Technologies used
 
-- Technology 1
-- Technology 2
-- Technology 3
+- Azure Content Understanding
+- Azure Document Intelligence
+- Microsoft Foundry
+- Azure AI Search
+- Microsoft Agent Framework
 
 ### 📚 Continue your learning
 
@@ -180,9 +158,7 @@ Pick your next step based on your learning style:
 | **[Microsoft Learn](https://aka.ms/ignite26-learn)** | Official documentation and guided learning paths on these topics |
 | **[Microsoft Foundry Community](https://aka.ms/MicrosoftFoundryDiscord-Ignite26)** | Connect with other learners and experts in our Discord community |
 
-### 🌟 Microsoft Learn MCP Server
-
-<!-- Remove this section if the Microsoft Learn MCP Server is not relevant to the session. -->
+### 🌟 Microsoft Learn MCP server
 
 The Microsoft Learn MCP Server gives your AI agent direct access to Microsoft's official documentation — grounded, up-to-date answers about the topics in this session.
 
@@ -199,17 +175,27 @@ For more information, visit the [Learn MCP Server repo](https://aka.ms/learnmcp)
 
 ### 👥 Content owners
 
-<!-- TODO: Add yourself as a content owner
-1. Change the src in the image tag to {your github url}.png
-2. Change INSERT NAME HERE to your name
-3. Change the github url in the final href to your url. -->
-
 <table>
 <tr>
-    <td align="center"><a href="http://github.com/yourGitHubHandle">
-        <img src="https://github.com/yourGitHubHandle.png" width="100px;" alt="INSERT NAME HERE"/><br />
-        <sub><b>INSERT NAME HERE</b></sub></a><br />
-            <a href="https://github.com/yourGitHubHandle" title="talk">📢</a>
+    <td align="center"><a href="https://github.com/jfilcik">
+        <img src="https://github.com/jfilcik.png" width="100px;" alt="Joe Flick"/><br />
+        <sub><b>Joe Flick</b></sub></a><br />
+            <a href="https://github.com/jfilcik" title="talk">📢</a>
+    </td>
+    <td align="center"><a href="https://github.com/anatolip">
+        <img src="https://github.com/anatolip.png" width="100px;" alt="Anatoly Ponomarev"/><br />
+        <sub><b>Anatoly Ponomarev</b></sub></a><br />
+            <a href="https://github.com/anatolip" title="talk">📢</a>
+    </td>
+    <td align="center"><a href="https://github.com/carlotta94c/">
+        <img src="https://github.com/carlotta94c.png" width="100px;" alt="Carlotta Castelluccio"/><br />
+        <sub><b>Carlotta Castelluccio</b></sub></a><br />
+            <a href="https://github.com/carlotta94c/" title="talk">📢</a>
+    </td>
+    <td align="center"><a href="https://github.com/krishnakumar-muthukrishnan">
+        <img src="https://github.com/krishnakumar-muthukrishnan.png" width="100px;" alt="Krishnakumar Muthukrishnan"/><br />
+        <sub><b>Krishnakumar Muthukrishnan</b></sub></a><br />
+            <a href="https://github.com/krishnakumar-muthukrishnan" title="talk">📢</a>
     </td>
 </tr></table>
 
