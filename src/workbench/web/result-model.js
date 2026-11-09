@@ -48,7 +48,7 @@ function lineItemCalculation(check) {
   const items = new Map();
   for (const item of check.evidence) {
     const match = item.field.match(
-      /^LineItems\[(\d+)\]\.(TotalAmount\.Amount|Parts?Amount|LaborAmount)$/,
+      /^LineItems\[(\d+)\]\.(TotalAmount(?:\.Amount)?|Parts?Amount|LaborAmount)$/,
     );
     if (!match) continue;
     const index = Number(match[1]);
@@ -73,8 +73,9 @@ function lineItemCalculation(check) {
   let sum = 0;
   for (const [, row] of [...items].sort(([a], [b]) => a - b)) {
     let total;
-    if (row.has("TotalAmount.Amount")) {
-      total = amount(row.get("TotalAmount.Amount"));
+    const totalField = ["TotalAmount.Amount", "TotalAmount"].find((field) => row.has(field));
+    if (totalField) {
+      total = amount(row.get(totalField));
       if (total === undefined) return undefined;
       expressions.push(format(total));
     } else {
@@ -126,6 +127,12 @@ export function policyProblem(check, documents) {
 export function policyFamily(check) {
   return check.id.split(":")[0];
 }
+/** @param {import("../src/policies.ts").PolicyCheck} check */
+export function policyRule(check) {
+  return policyFamily(check) === "financial.line_items"
+    ? "Line-item totals must sum to the explicit subtotal."
+    : check.rule;
+}
 /** @param {string} family */
 export function policyLabel(family) {
   return (
@@ -172,7 +179,7 @@ export function policyColumns(results) {
       id,
       label: policyLabel(id),
       summary: policyDescriptions[id],
-      description: checks.find((check) => policyFamily(check) === id).rule,
+      description: policyRule(checks.find((check) => policyFamily(check) === id)),
     }));
 }
 const invoiceDefaults = [

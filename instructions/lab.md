@@ -6,44 +6,112 @@ To begin, log into the virtual machine using the following credentials: +++@lab.
 
 **Note:** Text formatted as an +++example+++ represents type text. Clicking on this text will automatically insert it to prevent any typing errors.
 
-# From documents to an Insurance Workbench
+### From files to decisions
 
-Imagine you are helping an insurance claims team review vehicle incident packets containing repair estimates, claimant statements, and towing and rental invoices. Manually piecing together these documents makes it difficult to spot inconsistencies and check the relevant policy information. Your goal is to bring the key facts and their source evidence into one workbench so reviewers can investigate each case more efficiently.
+Imagine you are helping an auto insurance claims team review vehicle incident packets. The packets contain details like repair estimates, claimant statements, and towing and rental invoices. Manually piecing together these documents makes it difficult to spot inconsistencies and check the relevant policy information. Your goal is to bring the key facts and their source evidence into one workbench so reviewers can investigate each case more efficiently.
 
-In this lab you will use Azure AI Content Understanding to turn synthetic insurance documents into structured, source-linked results. You will build and test analyzers in CU Studio, then connect your finished analyzer to a **separate Insurance Workbench application**. Along the way, you will:
+In this lab, you will use Azure Document Intelligence and Content Understanding in Foundry to turn insurance documents into structured, source-linked results, then use code and agents to make decisions about the claims. You will build and test analyzers in CU Studio, then explore the end-to-end workflow and evaluate results with the **Insurance Workbench app**. Along the way, you will:
 
-- **Explore prebuilt analyzers:** compare document layout with pre-built extraction models, and inspect how returned values relate to the source documents.
+- **Explore Content Understanding's prebuilt capabilities:** compare document layout with prebuilt extraction models, and inspect how returned values relate to the source documents.
 - **Customize extraction:** extend an invoice template to extract vehicle, VIN, and odometer details from a repair estimate, then build a Statement analyzer that combines extracted facts with grounded summaries.
 - **Classify and split document packets:** identify document types and logical page ranges in mixed insurance packets, keeping continuation pages together without extracting fields yet.
 - **Add extraction routes:** connect document categories to prebuilt analyzers and your custom repair and Statement analyzers, including dedicated routes for towing and rental invoices. Review the returned fields and source highlights.
-- **Review results in the Insurance Workbench:** explore saved results, review **Business rules validation** findings, inspect grounded policy comparisons, then connect your own built analyzer to run live analysis across ten customer packets.
+- **Evaluate results and identify improvements:** see a real-world use case in the **Insurance Workbench app**, explore saved results across ten customer packets, review **Business rules validation** findings, inspect grounded policy comparisons, then use your updated analyzer to rerun one repair estimate.
+- **Check claims against policies in a knowledge base:** explore issues identified by an agent checking the extracted claims against a knowledge base.
+  
+===
+
+## Step 1: Environment setup
+
+> [!Note] The following setup prepares the environment for the remaining steps of the lab. As it takes a few minutes, starting it now enables it to run while you explore analyzers in CU Studio. Keep the PowerShell window open and continue with the browser instructions below while it runs.
+
+1. Open **Windows PowerShell**, pinned on the taskbar, and move to the repository root, the folder containing `src`, `data`, and `infra`:
+
+!IMAGE[dafb0t2p.png](instructions359897/dafb0t2p.png)
+
+   ```PowerShell
+   Set-Location "C:\Users\LabUser\Desktop\ignite26-LAB664"
+   ```
+
+2. Sign in with the Azure account provided below.
+
+   ```PowerShell
+   az login
+   ```
+   Choose **Work or School account** if prompted, then use the following credentials:
+
+   - Username: +++@lab.CloudPortalCredential(User1).Username+++
+   - If prompted for a Temporary Access Pass (TAP): +++@lab.CloudPortalCredential(User1).AccessToken+++
+   - If prompted for a Password: +++@lab.CloudPortalCredential(User1).Password+++
+
+Then select 'Yes' when asked to sign in to all apps and websites. 
+
+!IMAGE[38jmsmpt.png](instructions359897/38jmsmpt.png)
+
+Finally, confirm the subscription selection by pressing **Enter**.
+
+!IMAGE[jueqmgw8.png](instructions359897/jueqmgw8.png)
+
+3. Run the command below to set up the dependencies and prepare the policy search index:
+
+    - **Setup** restores the locked npm dependencies, including *Deep Chat*, and prepares the Python environment in `.tools\policy-venv` using the lab's approved package sources.
+    - **Deploy** finds the existing Azure AI Search, Storage, and Foundry resources and model in your resource group. It uploads the policy PDFs to Blob Storage and configures a Search indexer with a Content Understanding skill. Azure AI Search then extracts the content, splits it into semantic chunks, generates AI descriptions of figures, and populates the index. Once verification succeeds, the script saves the connection settings for the workbench.
+
+    No pre-filled configuration file or hosted agent is required. Azure AI Search handles policy extraction and indexing; Python does not extract or upload individual chunks. Later policy checks reuse the saved claim Parse results rather than creating a claim-summary analyzer or running Content Understanding on the claims again.
+
+```PowerShell
+powershell -ExecutionPolicy Bypass -Command "& '.\infra\setup.ps1'; & '.\infra\deploy.ps1' -ResourceGroup 'ResourceGroup1' -Apply"
+```
+
+Let the script run in the background. You don't need to wait for it to finish. Leave this terminal open. You will return to it in step 7 to check that setup completed and launch the app.
 
 ===
 
-## Step 1: Explore prebuilt analyzers
+## Step 2: Explore prebuilt analyzers
+### Explore the prebuilt analyzers in CU Studio
 
 To get started, let's explore the prebuilt analyzers in CU (Content Understanding) Studio by uploading and analyzing a few sample documents.
 This will help you understand the distinction between layout extraction and schema-based extraction before you move on to customizing your own analyzers.
 
-Open the browser to navigate to CU the Studio Gallery (`https://contentunderstanding.ai.azure.com/discover`).
+Open the browser to navigate to the CU Studio Gallery (`https://contentunderstanding.ai.azure.com/discover`).
 Click **Sign in** on the top right corner of the page and log in with the provided credentials for Azure:
 - Username: +++@lab.CloudPortalCredential(User1).Username+++
 - If prompted for a Temporary Access Pass (TAP): +++@lab.CloudPortalCredential(User1).AccessToken+++
 - If prompted for a Password: +++@lab.CloudPortalCredential(User1).Password+++
 
+### Try out Layout Analyzer
+
 Once done, follow the steps below to explore the prebuilt analyzers:
-1. Click on **Layout** to test the document layout extraction. When prompted to confirm the details of the subscription, resource group and resource name, confirm default selections and proceed. Click **Next**->**Save**.
-2. You'll get a list of samples for different content types (checklist, financial report, formulas, etc). Select a sample to see the original document scan and how the prebuilt analyzer extracts information from it.
+1. Click on **Layout** to test the document layout extraction. 
+2.  Click **Next**->**Save** to confirm details of subscription, resource group etc.
+3. You'll get a list of samples for different content types (checklist, financial report, formulas, etc). Select a sample to see the original document scan and how the prebuilt analyzer extracts information from it.
+4. 
 !IMAGE[chshn4cn.png](instructions359897/chshn4cn.png)
-4. Next click on **Browse for files** to upload your own document for analysis. In the File Explorer window that opens, navigate to `C:\Users\LabUser\Desktop\ignite26-LAB664\data\step1` and select **towing-invoice.pdf**. Notice how both the content and the format (tables, lists, headers) are extracted and displayed on the right side panel.
+
+4. Next, click on **Browse for files** to upload your own document for analysis. In the File Explorer window that opens, navigate to `C:\Users\LabUser\Desktop\ignite26-LAB664\data\samples` and select **towing-invoice.pdf**.
+5. Explore the output in the right panel by navigating across the different tabs (**Markdown**, **Tables**, **Result**). It includes Markdown, document structure (tables, lists, headings), and JSON parsed from the document.
+
+> [!Note] The Layout analyzer parses a file into standard Markdown and JSON representations. It uses OCR to extract text and also extracts additional structures like tables, headings, lists, formulas, and figures.
+
 !IMAGE[xfe4ei8u.png](instructions359897/xfe4ei8u.png)
 
-Now come back to the previous page - by clicking on the arrow on the top left corner of the page - and let's examine the differences between the prebuilt layout extraction and the schema-based extraction for the same document. 
-1. Scroll down on the **Procurement** section to locate the **Invoice** prebuilt analyzer and click on it to open the details.
-2. Inspect the default sample to understand how the schema-based extraction identifies and extracts specific fields relevant to the document type, such as **AmontDue**, **BalanceForward** and **Billing Address**. Note that each field is also mapped to the corresponding confidence score.
-3. Now upload the same **towing-invoice.pdf** document to see how the schema-based extraction applies to your own file. Compare the extracted fields and confidence scores with the layout extraction results you've got in the previous step to understand the differences.
+### Try out Invoice prebuilt
 
-Feel free to experiment with further pre-built analyzers to understand how CU Studio handles different document types and extraction scenarios. Below you can find a few examples of prebuilt analyzers along with the sample documents provided in the data folder, and the fields they extract.
+Return to the previous page by clicking the **Back** button at the top left of the page.
+
+!IMAGE[utcl2ivw.png](instructions359897/utcl2ivw.png)
+
+Let's examine the differences between the prebuilt layout extraction and the schema-based extraction for the same document. 
+1. Scroll down on the **Procurement** section to locate the **Invoice** prebuilt analyzer and click on it to open the details.
+2. Inspect the **Fields tab** on the right panel with the default samples.  Invoice does schema-based extraction to extract fields relevant to the document type, such as **AmountDue**, **BalanceForward** and **Billing Address**. Note fields have a confidence score.
+3. Hover over a field in the right panel, like "AmountDue". Notice that it shows grounding to the document.
+4. Now upload the same **towing-invoice.pdf** document to see how the schema-based extraction applies to your own file. Compare the extracted fields and confidence scores with the layout extraction results you've got in the previous step to understand the differences.
+
+> [!Note] **Layout and fields:** Use Layout to inspect how a document is organized, and an invoice schema to retrieve named business values. A field such as **AmountDue** selects a specific meaning rather than returning every number on the page.
+
+### Try out other prebuilts
+
+Feel free to experiment with further prebuilt analyzers to understand how CU Studio handles different document types and extraction scenarios. Below you can find a few examples of prebuilt analyzers along with the sample documents provided in the data folder, and the fields they extract.
 
 | Prebuilt in Studio | Upload | Inspect |
 | :--- | :--- | :--- |
@@ -54,70 +122,80 @@ Feel free to experiment with further pre-built analyzers to understand how CU St
 
 ===
 
-## Step 2: Build a custom repair extractor
+## Step 3: Build a custom analyzer
 
-In the following step, we will build a custom repair extractor to handle repair estimate documents specifically. This involves creating a new extraction project, defining the necessary fields, and testing the extraction on a sample repair estimate PDF.
+### Custom repair estimate analyzer 
+In this step, we will build a custom repair analyzer to handle repair estimate documents specifically. This document is a lot like an invoice, but we need to add auto-specific fields like **VIN** and **odometer**.
 
-For this step, use the **gpt-5.5** model instance pre-provisioned and mapped by the lab template. 
+> [!Note] For this step, you'll use the **gpt-5.5** model instance pre-provisioned and mapped by the lab template. 
 
 1. Move from the **Discover** to the **Build** tab, by selecting it on the top right corner of the blue top navigation bar.
-2. Click on **Create** to start building your custom repair extractor.
+2. Click on **Create** to start building your custom repair analyzer.
 3. Name the project as `custom-repair-extractor`.
 4. Select `2026-06-01 (Preview)` as the API version and `Standard Extraction` as the workflow type.
+
 !IMAGE[kke6gm3z.png](instructions359897/kke6gm3z.png)
-6. Expand the **Advanced settings** section and select **gpt-5.5** as model.
-7. Leave the other parameters as default and confirm by selecting **Create**.
-!IMAGE[qm5a1m18.png](instructions359897/qm5a1m18.png)
-7. Once your project is created, select **Browse for Files** and upload `C:\Users\LabUser\Desktop\ignite26-LAB664\data\step2\repair-estimate.pdf`.
-8. In the **Choose a template window**, select the **Invoice** one. Click on **Save** to proceed.
-9. Add **these three lowercase fields**, with method **Extract**, one by one. For each field, enter the field's **Name** and **Description** from the table below. Complete both cells before selecting **Add field** again, and repeat for all three rows.
+
+5. Leave the other parameters as default and confirm by selecting **Create**.
+6. Once your project is created, select **Browse for Files** and upload `C:\Users\LabUser\Desktop\ignite26-LAB664\data\samples\repair-estimate.pdf`.
+7. In the **Choose a template window**, select the **Invoice** one. Click on **Save** to proceed.
+8. Add **these three fields**, with method **Extract**, one by one. For each field, enter the field's **Name** and **Description** from the table below. Complete both cells before selecting **Add field** again, and repeat for all three rows.
+
+!IMAGE[y1l65rn4.png](instructions359897/y1l65rn4.png)
 
 | Field | Type / method | Copy this description |
 | :--- | :--- | :--- |
 | `vehicle` | String / Extract | `Printed vehicle name as one string, including year/make/model when present. Do not add color, decode the VIN, or infer missing details.` |
 | `vin` | String / Extract | `Exact value explicitly labeled VIN. Do not correct it or substitute registration, plate, or account numbers. Leave unset if absent.` |
-| `odometer` | Number / Extract | `Printed Odometer or Inspection Mileage as a number. Remove grouping separators; no units. Do not substitute Annual Mileage or infer an absent value.` |
-10. Click on **Save** to confirm the added fields.
-!IMAGE[y1l65rn4.png](instructions359897/y1l65rn4.png)
-11. **Run analysis**.
+| `odometer` | **Number / Extract** | `Printed Odometer or Inspection Mileage as a number. Remove grouping separators; no units. Do not substitute Annual Mileage or infer an absent value.` |
+
+> [!Note] **Field names and descriptions instruct the model:** Names and descriptions act like "mini-prompts" instructing the LLM how to interpret the document. For example, naming the intended entity, likely printed label, and exclusions helps distinguish a vehicle VIN from other identifiers.
+
+9. Click on **Save** to confirm the added fields.
+10. **Run analysis:** Click the **Run** button on the upper left to test the updated analyzer.
+
 !IMAGE[ctdjrztc.png](instructions359897/ctdjrztc.png)
-12. In the analysis results, verify the saved schema contains the three fields above: `vehicle = "2019 Toyota Corolla LE"`, `vin = "5YFEPMAE3KA513905"`, `odometer = 94360`. The repair proposal total is $1,310.13. 
-13. After the test passes, click on **Build analyzer** and name it `repair_extractor_analyzer`. Add as description `Extractor for repair estimates based on uploaded documents`.Select **Build** to complete the process.
+
+11. In the analysis results, verify the saved schema contains the three fields above: `vehicle = "2019 Toyota Corolla LE"`, `vin = "5YFEPMAE3KA513905"`, `odometer = 94360`. The repair proposal total is $1,310.13. 
+12. After the test passes, click on **Build analyzer** to turn your tested extraction configuration into a reusable object. Name it `repair_extractor_analyzer` and optionally add a description. Select **Build** to complete the process.
+
 !IMAGE[eli9ysmu.png](instructions359897/eli9ysmu.png)
-14. Once you are prompted with 'Built successfully', your analyzer is ready for use. Click on **Jump to analyzer list** to verify the analyzer details. You'll find your newly created analyzer in the **Analyzer list**.
+
+13. Once you are prompted with 'Built successfully', your analyzer is ready for use. Click on **Jump to analyzer list** to verify the analyzer details. Close the window once done. You'll find your newly created analyzer in the **Analyzer list**.
+
 !IMAGE[22c2gk9p.png](instructions359897/22c2gk9p.png)
 
-### Add a custom Statement extractor
+===
 
-Now let's work with a different kind of document: a claimant's account of an incident. Unlike an invoice, a statement may describe the same damage in several places or leave important details unstated. You will use **Extract** for facts explicitly present in the document and **Generate** for a concise, grounded synthesis of the narrative.
+## Step 4: Add a custom Statement analyzer with generative fields
+
+Now let's work with a different kind of document: a statement about the incident. Unlike an invoice, a statement may describe the same damage in several places or leave important details unstated. You will use **Extract** for facts explicitly present in the document and **Generate** for a concise, grounded synthesis of the narrative.
 
 Instead of entering each field manually, you will import a prepared schema and inspect how its field descriptions constrain the result.
 
-1. Return to the **Build** tab -> **Project list** and create a second **Standard Extraction** project using the '2026-06-01 (Preview)' API version. Name it `custom-statement-extractor`.
-2. In **Advanced settings**, select **gpt-5.5**, then select **Create**.
-3. Click on **Browse for Files**. Within the File Explorer window, navigate to `C:\Users\LabUser\Desktop\ignite26-LAB664\data\documents\packet-01` and upload `06-handwriting.pdf`.
-4. In the pop-up that appears after the document upload, keep **Document Analysis** as selected template, disable **AI-Powered field suggestions**, then select **Save**.
+1. Return to the **Build** tab -> **Project list** and create a second **Standard Extraction** project using the '2026-06-01 (Preview)' API version. Name it `custom-statement-extractor`, then select **Create**. 
+
+!IMAGE[g5cz3r5i.png](instructions359897/g5cz3r5i.png)
+
+2. Click on **Browse for Files**. Within the File Explorer window, navigate to `C:\Users\LabUser\Desktop\ignite26-LAB664\data\documents\packet-01` and upload `06-handwriting.pdf`.
+3. In the pop-up that appears after the document upload, keep **Document Analysis** as the selected template, disable **AI-Powered field suggestions**, then select **Save**.
+
 !IMAGE[szpjguew.png](instructions359897/szpjguew.png)
-5. In the field-schema toolbar, choose **Import**, navigate to `C:\Users\LabUser\Desktop\ignite26-LAB664\data\step2`, and select `statement-schema.json`. Confirm schema replacement if prompted, then **Save**. This imports the fields and descriptions; no field-by-field typing is needed.
+
+4. In the field-schema toolbar, choose **Import**, navigate to `C:\Users\LabUser\Desktop\ignite26-LAB664\data\samples`, and select `statement-schema.json`. Confirm schema replacement if prompted, then **Save**. This imports the fields and descriptions; no field-by-field typing is needed.
+
 !IMAGE[03cudcq2.png](instructions359897/03cudcq2.png)
 
-You should have **seven flat fields: five Extract and two Generate**, with **Source & Confidence** enabled. *Do not add these fields again*.
+You should have **seven fields: five Extract and two Generate**, with **Source & Confidence** enabled. 
 
-| Field | Type / method | What to check |
-| :--- | :--- | :--- |
-| `claimant_name` | String / Extract | Identifies the claimant or insured vehicle owner, not a witness, other driver, adjuster, or recipient. |
-| `incident_date` | Date / Extract | Uses the incident date, not the date the statement or email was written or sent. |
-| `incident_location` | String / Extract | Contains only an explicitly reported incident location. |
-| `vehicle` | String / Extract | Describes the claimant's vehicle as one string, without color, the other vehicle, or inferred details. |
-| `vin` | String / Extract | Preserves the exact stated VIN without decoding, correcting, or inferring it. |
-| `reported_damage` | String / Generate | Combines claimant-reported damage into a concise description, without presenting it as inspected or verified. |
-| `summary` | String / Generate | Summarizes the narrative while preserving uncertainty, without inferring fault, coverage, liability, or payment. |
+> [!Note] **Extract and Generate:** Keep stated facts separate from generated interpretations. A **generated field** can summarize by combining passages and may not be a direct quotation from the document. **Extract** indicates the result should be pulled directly from a value in the document.
 
-6. Wait until saving indicators clear, then select **Run analysis** to test the uploaded handwritten statement. Inspect the returned facts alongside the source document.
-   - In the statement, check `claimant_name = "Danielle Ortiz"` and `incident_date = 2026-02-12`. The incident date should not be replaced by the letter's sent date.
-   - The five *Extract* fields contain stated facts; the two *Generate* fields provide readable, grounded synthesis rather than verbatim quotes.
-   - Inspect source highlights and confidence where returned. 
-   - If a fact is not stated in the document, check that the analyzer leaves the corresponding field empty rather than guessing a value.
+5. Click **Save**.
+6. Click **Run analysis** to test the uploaded handwritten statement. Inspect the returned facts alongside the source document.
+    - In the statement, check `claimant_name = "Danielle Ortiz"` and `incident_date = 2026-02-12`. The incident date should not be replaced by the letter's sent date.
+    - The five *Extract* fields contain stated facts; the two *Generate* fields provide readable, grounded synthesis rather than verbatim quotes.
+    - Inspect source highlights and confidence where returned. 
+    - If a fact is not stated in the document, check that the analyzer leaves the corresponding field empty rather than guessing a value.
 
 > [!Tip] 
 > Make sure to disable the **Hide missing fields** toggle to view all fields, including those that are not populated in the current document.
@@ -128,51 +206,59 @@ Next, test the same schema against a typed email:
 
 1. Select **Browse for Files** and upload `C:\Users\LabUser\Desktop\ignite26-LAB664\data\samples\email-statement.pdf`. Save the project, wait for saving to finish, then select **Run analysis**.
 2. Perform the same checks as in the handwritten statement. 
-3. After reviewing both documents, select **Build analyzer** and enter a new unique ID, for example `statement_extractor_analyzer`. Add as a description `Custom analyzer for extracting facts from handwritten and typed statements.` In the **Analyzer list**, you should now see two custom analyzers, as in the screenshot below.
+3. After reviewing both documents, select **Build analyzer** and enter a new unique ID, for example `statement_extractor_analyzer`.  In the **Analyzer list**, you should now see two custom analyzers, as in the screenshot below.
 !IMAGE[516v1pe7.png](instructions359897/516v1pe7.png)
 
 > [!Note] **Checkpoint:** your custom repair and statement analyzers have both been tested and built, and you have recorded both analyzer IDs.
 
 ===
 
-## Step 3: Classify and split a packet, without extraction
+## Step 5: Split a claims packet using a classification analyzer
 
 So far, you have analyzed one document at a time. An insurance submission usually contains several documents, often with different formats and multiple pages. In this step, you will create a classifier that identifies document types and splits a packet into logical documents before extracting any fields.
 
 You will start with a small three-page packet, then test the same configuration against two larger packets. This will help you see the difference between a page boundary and a document boundary.
 
+> [!Note] **Classification and splitting:** **Classification** identifies the document type based on a description. **Splitting** breaks the document into logical segments aligned with the categories.
+
 ### Create the classification project
 
 1. Return to **Build**->**Project List** in CU Studio and create a new **Classification** project, named `packet_classifier`. Make sure to configure the API version to *Preview* first.
+
 !IMAGE[9maoqxjx.png](instructions359897/9maoqxjx.png)
-2. In **Advanced settings**, select **gpt-5.5** as **Model for Analysis** and create the project.
-3. In the new project, select **Browse for files**. Navigate to `C:\Users\LabUser\Desktop\ignite26-LAB664\data\step3` and upload `classification-packet.pdf`.
+
+2. In the new project, select **Browse for files**. Navigate to `C:\Users\LabUser\Desktop\ignite26-LAB664\data\samples` and upload `classification-packet.pdf`.
  
 > [!Note] **Upload first:** the routing-rule editor becomes available after a file is uploaded.
 
-4. In **Routing rules**, add the four category keys and descriptions in the table below, one by one. For each category, enter the category's **Name** and **Description** from the table. Keep the keys exactly as shown. Complete both cells before selecting **Add category** again, and repeat for all four rows.
+3. In **Routing rules**, add the four category keys and descriptions in the table below, one by one. For each category, enter the category's **Name** and **Description** from the table. Keep the keys exactly as shown. Complete both cells before selecting **Add category** again, and repeat for all four rows.
+
 !IMAGE[7qhnpb5o.png](instructions359897/7qhnpb5o.png)
 
-> [!Note] **Do not assign child analyzer IDs yet**; you will add extraction routes in step 4.
+> [!Tip] **Do not assign child analyzer IDs yet**; you will add extraction routes in step 6.
 
 | Category key | Copy this description |
 | :--- | :--- |
 | `id_document` | `The lab's identity-like demo card with named holder, portrait and membership identifier. This synthetic membership card demonstrates ID field extraction, not government-ID authenticity. Exclude invoice, tax and repair documents.` |
 | `tax_1099a` | `An IRS Form 1099-A Acquisition or Abandonment of Secured Property, including fictional borrower-copy examples. Exclude other tax forms and prose references.` |
-| `repair_estimate` | `A standalone repair workshop estimate or quote with vehicle details and proposed parts/labor. Keep continuation pages of the same estimate together; split a different estimate even if adjacent. Exclude towing/rental/glass invoices and their supporting inspection supplements even when they mention a proposed repair schedule.` |
+| `repair_estimate` | `A standalone repair workshop estimate or quote with vehicle details and proposed repair work. Keep continuation pages of the same estimate together; split a different estimate even if adjacent. Exclude towing/rental/glass invoices and their supporting inspection supplements even when they mention a proposed repair schedule.` |
 | `other` | `Each distinct supporting document: policy declarations/endorsements, claim intake forms, incident reports, handwritten statements, towing/rental/glass invoices with their own continuation supplements, valuation/downtime schedules, and workshop inspection records. Identify logical boundaries even when adjacent documents both have category other. Keep paginated continuation pages together; do not merge different document titles or identifiers. These documents are unrouted, not discarded.` |
 
-Next, configure how the classifier separates documents:
+Click **Save** to confirm. Next, configure how the classifier separates documents:
 
-1. In **Routing rules**, turn on **Enable segment**, then open the settings panel, by clicking on the gear icon. Select **Auto segment content**, leave **Allow in-page segments** off, and do not select **Segment by page**. Close the dialog and leave other settings unchanged.
+1. In **Routing rules**, turn on **Enable segment**.
+
 !IMAGE[9zacnykv.png](instructions359897/9zacnykv.png)
 
 > [!Note] With the configured settings, a two-page rental invoice should remain one logical document. Two adjacent documents should still be separate, even when both belong to `other`.
 
 2. Select **Save** and wait until saving indicators clear before changing tabs. Select **Run analysis** and remain in the project until it finishes. Inspect the results to ensure documents are segmented correctly.
-3. Inspect details in **Test** tab. The **Segment** selector initially shows the retained parent, `input1`. Open it and select each `input1/segment...` entry to see its category and page range. Expect `id_document` on page 1, `tax_1099a` on page 2, and `repair_estimate` on page 3. Every page should be covered once. Classification-only child segments have **Result**, not domain extractor fields.
+3. Inspect details in **Test** tab. The **Segment** selector initially shows the retained parent, `input1`. Open it and select each `input1/segment...` entry to see its category and page range. Expect `id_document` on page 1, `tax_1099a` on page 2, and `repair_estimate` on page 3. Every page should be covered once. Classification-only child segments have **Result**, not domain analyzer fields.
+
 !IMAGE[s51l89mw.png](instructions359897/s51l89mw.png)
+
 4. To keep a before/after comparison, select the parent `input1`, then **Result** and **Download** to save the JSON. 
+
 !IMAGE[n0m86b6w.png](instructions359897/n0m86b6w.png)
 
 > [!Tip] Download results before leaving the project or adding routes; reopening a saved project does not restore the displayed analysis results.
@@ -181,8 +267,8 @@ Next, configure how the classifier separates documents:
 
 In the previous step, you tested a small packet to ensure the classifier correctly segments individual documents. Now, you will test the full customer packet to verify the classifier's behavior on larger, multi-document files.
 
-1. Within the same project, select again **Browse for Files** and upload `C:\Users\LabUser\Desktop\ignite26-LAB664\data\step3\packet-01.pdf`. 
-2. Click on **Run analysis**. After it finishes, inspect each segment's category and page range. Compare the returned boundaries with the individual PDFs under `C:\Users\LabUser\Desktop\ignite26-LAB664\data\documents\packet-01`. Use the authored document groups below as a reference for **packet-01.pdf**:
+1. Within the same project, select again **Browse for Files** and upload `C:\Users\LabUser\Desktop\ignite26-LAB664\data\samples\packet-01.pdf`. 
+2. Click on **Run analysis**. After it finishes, inspect each segment's category and page range. Compare the returned boundaries with the individual PDFs under `C:\Users\LabUser\Desktop\ignite26-LAB664\data\samples\packet-01`. Use the authored document groups below as a reference for **packet-01.pdf**:
 
 > [!Note] Page references use the PDF viewer's 1-based page numbers in the uploaded packet, not page numbers printed within individual documents or the segment number.
 
@@ -203,7 +289,7 @@ In the previous step, you tested a small packet to ensure the classifier correct
 > [!Tip] You can easily check the pages assigned to each segment, by looking at the label below the segment name.
 > !IMAGE[vcl16bde.png](instructions359897/vcl16bde.png)
 
-4. Next, upload `packet-03.pdf` from the same folder and run analysis. Review its 13 pages against the individual files in `C:\Users\LabUser\Desktop\ignite26-LAB664\data\documents\packet-03`, then download the parent result. Unlike packet-01, this packet has separate repair estimates on pages 8 and 9 (`repair_estimate`), a statement on page 10 (`other`), and a towing invoice on page 11 (`other`). All other page ranges and categories match the table above.
+4. Next, upload `packet-03.pdf` from the same folder and run analysis. Review its 13 pages against the individual files in `C:\Users\LabUser\Desktop\ignite26-LAB664\data\samples\packet-03`, then download the parent result. Unlike packet-01, this packet has separate repair estimates on pages 8 and 9 (`repair_estimate`), a statement on page 10 (`other`), and a towing invoice on page 11 (`other`). All other page ranges and categories match the table above.
 5. Before moving to the next step, select **Build analyzer** and use a unique ID such as `packet_classifier`. Also include a description, for example, `Classifier for multi-document analysis`.
 6. After the build succeeds, choose **Stay in the project** to continue.
 
@@ -211,24 +297,36 @@ In the previous step, you tested a small packet to ensure the classifier correct
 
 ===
 
-## Step 4: Add extraction routes to the classifier
+## Step 6: Extract fields from each segment of the packet
+> [!Note] **Reuse the uploaded packets:** the three PDFs in `data\samples` are the same inputs used in the previous step. Select their existing thumbnails in the project. If you need to upload them again, use [classification-packet.pdf](../data/samples/classification-packet.pdf), [packet-01.pdf](../data/samples/packet-01.pdf) (statement and rental invoice), and [packet-03.pdf](../data/samples/packet-03.pdf) (towing invoice). 
 
-> [!Note] **Reuse the uploaded packets:** the three PDFs in `data\step4` are identical to the ones in `data\step3`. Select their existing thumbnails in the project. If you need to upload them again, use [classification-packet.pdf](../data/step4/classification-packet.pdf), [packet-01.pdf](../data/step4/packet-01.pdf) (statement and rental invoice), and [packet-03.pdf](../data/step4/packet-03.pdf) (towing invoice). This keeps the before/after comparison about routing, not a changed source.
+Continue in the editable step 5 project. If you left it, return to [CU Studio Build](https://contentunderstanding.ai.azure.com/build), open **Project list**, and open your project.
 
-1. Continue in the editable step 3 project. If you left it, return to [CU Studio Build](https://contentunderstanding.ai.azure.com/build), open **Project list**, and open your project. 
-2. Open **Routing rules**. In each existing category's **Analyzer ID** selector, choose the route in the table below. Use the selector's **Prebuilt** tab to search for the exact prebuilt ID, or **Custom** to find your built repair analyzer. Selecting a route shows its schema preview within the project; you do not need to leave for the gallery.
+The manual walkthrough below is the main learning path. If you are short on time, use the optional import shortcut instead of entering the routing rules by hand. Both paths finish with the same packet tests and router build.
+
+### Running short on time? Import the routing configuration
+
+In **Routing rules**, open **More actions** (`...`) next to **Add category**, select **Import**, and click on **Confirm**. Then choose your local JSON file including the routing configuration, at `C:\Users\LabUser\Desktop\ignite26-LAB664\data\samples\router-config.json`.
+
+> [!Tip] If any of the imported analyzers are highlighted in red or show **Analyzer not found**, there might be a mismatch between the analyzer IDs in the JSON file and the analyzer IDs you defined in previous steps. Verify that the custom analyzer IDs in the JSON match exactly with the ones you built in steps 3 and 4.
+
+Skip the manual configuration below and continue at [Verify, test, and build the router](#verify-test-and-build-the-router). Recheck segmentation there even after importing.
+
+### Configure routes manually
+
+1. Open **Routing rules**. In each existing category's **Analyzer ID** selector, choose the route in the table below. Use the selector's **Prebuilt** tab to search for the exact prebuilt ID, or **Custom** to find your built repair analyzer. Selecting a route shows its schema preview within the project; you do not need to leave for the gallery.
 !IMAGE[1b7s3xw7.png](instructions359897/1b7s3xw7.png)
 
-> [!Note] For tax, choose the unversioned `prebuilt-tax.us.1099A`, not the year-specific entry. Edit the existing `other` description to the new version below, but leave its Analyzer ID unassigned. 
+> [!Note] Leave the descriptions unchanged. For tax, choose the unversioned `prebuilt-tax.us.1099A`, not the year-specific entry. 
 
-| Category key | Extraction route | Description change |
-| :--- | :--- | :--- |
-| `id_document` | `prebuilt-idDocument.generic` | Keep the step 3 description. |
-| `tax_1099a` | `prebuilt-tax.us.1099A` | Keep the step 3 description. |
-| `repair_estimate` | Your `repair_extractor_analyzer` ID | Keep the step 3 description. |
-| `other` | **No route** | `Each distinct unrouted supporting document: policy declarations/endorsements, claim intake forms, incident reports, glass/panel service supporting records, valuation/downtime schedules, and workshop inspection records. Statements, towing bills, and rental billing belong to their named categories, not Other. Identify logical boundaries even when adjacent documents both have category other. Keep continuation pages together; do not merge different titles or identifiers. These documents are unrouted, not discarded. Exclude towing/recovery/security charge supplements; classify those as towing_invoice.` |
+| Category key | Extraction route |
+| :--- | :--- |
+| `id_document` | `prebuilt-idDocument.generic` |
+| `tax_1099a` | `prebuilt-tax.us.1099A` |
+| `repair_estimate` | Your `repair_extractor_analyzer` ID |
+| `other` | **No route** |
 
-3. Select **Add category** and enter `statement` with its description below, then select your custom Statement analyzer through **Analyzer ID** > **Custom**. Repeat for `towing_invoice` and `rental_invoice`, selecting `prebuilt-invoice` through **Prebuilt** for each. Complete each name and description before adding the next row.
+2. Select **Add category** and enter `statement` with its description below, then select your custom Statement analyzer through **Analyzer ID** > **Custom**. Repeat for `towing_invoice` and `rental_invoice`, selecting `prebuilt-invoice` through **Prebuilt** for each. Complete each name and description before adding the next row.
 !IMAGE[ujvd6zg6.png](instructions359897/ujvd6zg6.png)
 
 | Category key | Extraction route | Description change |
@@ -237,71 +335,57 @@ In the previous step, you tested a small packet to ensure the classifier correct
 | `towing_invoice` | `prebuilt-invoice` | `A towing or roadside-recovery invoice, bill or charge ledger for vehicle transport, storage or release. Keep continuation and release/custody supplements from the same bill together. Payment may be unpaid or pending; do not infer payment. Exclude repair estimates, rental billing, and glass or panel service quotes. Include towing/recovery/security charge supplements that list service charges or a total due, even when they also contain inspection details or repair-quote references.` |
 | `rental_invoice` | `prebuilt-invoice` | `A vehicle rental billing document or invoice with rental agreement references, dates or daily charges. Keep the same agreement's pickup/billing/vehicle-condition continuation pages together. Payment may be unpaid or pending; do not infer payment. Exclude towing bills, repair estimates, and glass or panel service quotes.` |
 
-4. Verify there are **seven categories and six assigned routes**, with no route for `other`. Keep **Enable segment** on and click on the gear icon to verify the settings. Keep **Auto segment content** selected, **Allow in-page segments** off, and **Segment by page** unselected. 
+
+### Verify, test, and build the router
+
+Continue here after either manual configuration or import.
+
+1. Verify there are **seven categories and six assigned routes**, with no route for `other`. 
+
 !IMAGE[bj0sbmti.png](instructions359897/bj0sbmti.png)
-5. Select **Save** and wait until saving indicators clear.
-6. Select the existing **classification-packet.pdf** thumbnail, then **Run analysis**. Wait for completion before inspecting results or selecting another file. 
-7. In **Test**, expand the segments dropdown and select the child content you want to inspect (e.g. input1/segment1), then open **Fields**. 
+
+2. Select **Save** and wait until saving indicators clear.
+3. Select the existing **classification-packet.pdf** thumbnail, then **Run analysis**. Wait for completion before inspecting results or selecting another file.
+4. In **Test**, expand the segments dropdown and select the child content you want to inspect (e.g. input1/segment1), then open **Fields**.
 !IMAGE[6cp63e2r.png](instructions359897/6cp63e2r.png)
 
-> [!Note] The parent `input1` is not the child extractor's field view. 
+> [!Note] The parent `input1` is not the child analyzer's field view. 
 
-Inspect ID fields on segment 1, nested 1099-A fields on segment 2, and custom `vehicle`, `vin`, and `odometer` fields on segment 3. The tax route adds nested year/copy segment entries; select the nested entry with a **Fields** tab. These are not extra input documents. Select a field label to inspect its source highlight. 
-8. Return to `input1` > **Result** and download the routed result separately from the step 3 JSON.
-9. Replicate the same process for the other 2 files:
-   - Select **packet-01.pdf** and run analysis. Compare categories and page ranges with step 3, then inspect repair on page 8, the Statement route on page 9, and the rental invoice across pages 10-11. The statement and rental invoice now have their named categories and child fields rather than belonging to Other. Check that the rental continuation remains part of the same invoice. Download the parent result.
+Inspect ID fields on segment 1, nested 1099-A fields on segment 2, and custom `vehicle`, `vin`, and `odometer` fields on segment 3. The tax route adds nested year/copy segment entries; select the nested entry with a **Fields** tab. These are not extra input documents. Select a field label to inspect its source highlight.
+5. Return to `input1` > **Result** and download the routed result separately from the step 5 JSON.
+6. Replicate the same process for the other 2 files:
+   - Select **packet-01.pdf** and run analysis. Compare categories and page ranges with step 5, then inspect repair on page 8, the Statement route on page 9, and the rental invoice across pages 10-11. The statement and rental invoice now have their named categories and child fields rather than belonging to Other. Check that the rental continuation remains part of the same invoice. Download the parent result.
    - Select **packet-03.pdf** and run analysis. Inspect the Statement route on page 10, and the towing invoice on page 11, along with the other categories and logical boundaries. Check invoice amounts against the towing supplement's **$237 charge** on page 11, not the separate **$1,699.04 repair quote** it references. Download the parent result. Other documents remain in the parent content without a domain extraction route.
-10. Compare returned fields with their source documents. Keep claimant-reported details distinct from verified facts, and proposed repair amounts distinct from invoiced charges or proof of payment. If a fact is not stated, check that its field is unset rather than invented; turn off **Hide missing fields** to see fields marked **Not found**.
-11. After reviewing all three packets, select **Build analyzer** with a new unique ID, such as `router_analyzer`. Do not overwrite the classification-only analyzer you created in the previous step. After a successful build, use **Jump to analyzer list**. Verify this exact analyzer has status **Ready**. Record its ID and your resource endpoint for step 5.
+7. Compare returned fields with their source documents. Keep claimant-reported details distinct from verified facts, and proposed repair amounts distinct from invoiced charges or proof of payment. If a fact is not stated, check that its field is unset rather than invented; turn off **Hide missing fields** to see fields marked **Not found**.
+8. After reviewing all three packets, select **Build analyzer** with a new unique ID, such as `router_analyzer`. Do not overwrite the classification-only analyzer you created in the previous step. After a successful build, use **Jump to analyzer list**. Verify this exact analyzer has status **Ready**. Record its ID and your resource endpoint for step 5.
 
 > [!Note] **Checkpoint:** a tested, ready router links every non-Other category to extraction.
 
 ===
 
-## Step 5: Setup Insurance Workbench app
+## Step 7: Evaluate results with the Insurance Workbench app
 
-In this step, you will move from authoring analyzers to reviewing their results in an application. The Insurance Workbench loads ten customer packets, totaling 118 pages, from `data\packets`; you do not need to upload them manually.
+In this step, you will move from authoring analyzers to reviewing their results in an application. The Insurance Workbench loads ten customer packets, totaling 118 pages, from `data\packets` ; you do not need to upload them manually.
 
-The app automatically loads the included cached extraction results and policy reviews. Use it as a results viewer: inspect the collection, review **Business rules validation** results, and follow policy findings back to their evidence. CU Studio remains your tool for editing and building analyzers. Later, you will explicitly rerun one repair estimate and can ask the policy agent follow-up questions.
+The app automatically loads the included cached extraction results and policy reviews. Use it as a results viewer: inspect the collection, review **Business rules validation** results, and follow policy findings back to their evidence. Later, you will explicitly rerun one repair estimate and can ask the policy agent follow-up questions.
 
-### Prepare and launch the app
+### Launch the app
 
-Use the prepared lab environment with Azure CLI and **Python 3.10 or later**, including pip and venv. The commands below restore dependencies, discover the lab's existing Azure resources, and index the policy PDFs using Search-managed Standard extraction with figure descriptions. They do not redeploy Azure infrastructure or assign roles.
+1. Return to the PowerShell window you used in [step 1](#environment-set-up). Confirm both setup commands completed successfully and **Deploy** reported `Workbench configuration activated` . 
+If it is still running, wait for it to finish. 
+- If either command failed, resolve the reported error and rerun that command successfully before continuing.
 
-1. Open **Windows PowerShell** CLI and move to the repository root, the folder containing `src`, `data`, and `infra`:
-
-   ```PowerShell
-   Set-Location "C:\Users\LabUser\Desktop\ignite26-LAB664"
-   ```
-
-2. Sign in with the account provided in the **Resources** tab. Choose **Work or School account** if prompted, then select the lab subscription:
-
-   ```PowerShell
-   az login
-
-   ```
-
-3. Run the two commands below in the order they are listed. 
-   - **Setup** restores the locked npm dependencies, including *Deep Chat*, and prepares `.tools\policy-venv` using the lab's approved package sources.
-   - **Deploy** discovers Search, Storage, Foundry resources and the model in your resource group, uploads the policy PDFs to Blob Storage, and configures a Search indexer and Content Understanding skill. Azure AI Search runs extraction, semantic chunking and AI figure descriptions, then populates the index. Deployment writes the workbench connection after verification. Policy review reuses saved Parse evidence without preparing a claim-summary analyzer or submitting claim CU reanalysis. Python does not extract or manually upload policy chunks. No pre-filled configuration file or hosted agent is needed.
-
-   ```PowerShell
-   powershell -ExecutionPolicy Bypass -File .\infra\setup.ps1
-   powershell -ExecutionPolicy Bypass -File .\infra\deploy.ps1 -ResourceGroup "@lab.CloudResourceGroup(ResourceGroup1).Name" -Apply
-   ```
-
-
-4. Launch the separate app and keep this terminal open:
+2. Launch the separate app and keep this terminal open:
 
    ```PowerShell
    powershell -ExecutionPolicy Bypass -File .\infra\launch-workbench.ps1
    ```
 
-5. Open +++http://127.0.0.1:8791/+++ in a new browser tab. Do not open `workbench.html` directly.
+3. Open +++http://127.0.0.1:8791/+++ in a new browser tab. Do not open `workbench.html` directly.
 
-Wait for the cached results to load. Opening the app or switching review tabs does not submit a new analysis. The setup above prepares the connection needed for the repair rerun in step 6 and follow-up chat in step 7.
+Wait for the cached results to load. Opening the app or switching review tabs does not submit a new analysis. The setup in step 1 prepares the connection needed for the repair rerun in step 8 and follow-up chat in step 9.
 
-> [!Note] To stop the app at anytime just return to PowerShell and press **Ctrl+C**. 
+> [!Note] To stop the app at any time, return to PowerShell and press **Ctrl+C**.
 
 ### Explore the included results first 
 
@@ -310,120 +394,129 @@ Wait for the cached results to load. Opening the app or switching review tabs do
 3. Switch to the **ID**, **1099-A**, **Repair Estimate**, **Statement**, **Towing Invoice**, and **Rental Invoice** views. Select a returned value to inspect its source document.
 4. Turn on **Confidence** to inspect returned scores. Blank means the service omitted a score, not zero. Click line items for source boxes or their table icon to expand item rows below the customer.
 
-===
-## Step 6. Business rules validation
+> [!Note] **Confidence and grounding:** Confidence scores and source highlights are additional features created by CU for fields where these features are enabled. Confidence scores help identify low-confidence results for review. Source grounding shows where in the Markdown or PDF the value came from.
 
-**Business rules validation** uses fixed extraction and arithmetic rules to validate extraction accuracy. In this exercise, use the fixed repair error to identify issue with analyzer, improve it in CU Studio and compare results.
+===
+## Step 8. Evaluate results with business rules validation
+
+Evaluation with **Business rules validation** uses fixed rules to check the consistency of the results. In this exercise, use the included repair error to identify an issue with the analyzer, improve it in CU Studio, and compare results.
 
 1. Select **Business rules validation**. The matrix contains exactly three fixed extraction checks:
     - **Total Amount, SubTotal, Tax verification** asks whether SubTotal plus tax equals Total Amount.
     - **Repair line items, SubTotal verification** asks whether repair line-item amounts sum to the explicit SubTotal.
     - **Multiple Estimates Warning** warns when repair-estimate totals differ. It shows each shop and quote amount with a source link. This is a review warning, not proof of an extraction error.
 2. Select the red **Error** for packet 8, under **Repair line items, SubTotal verification**. 
+
 !IMAGE[hs9rqs9w.png](instructions359897/hs9rqs9w.png)
+
 The original Repair Estimate result shows the calculation `USD 980.00 + 124.00 + 0.00 = 1104.00; Subtotal = 1600.00`. Review the explanation and the formula fields, then select the source or formula to highlight the native values in the PDF.
-3. Go back to **CU Studio** and reopen the editable custom **Repair Estimate** extraction project from step 2 - *custom-repair-extractor*. Do not edit the packet router or classification project: this rerun requires a ready single-document repair extractor. 
+3. Go back to **CU Studio** and reopen the editable custom **Repair Estimate** extraction project from step 3, `custom-repair-extractor`. Do not edit the packet router or classification project: this rerun requires a ready single-document repair analyzer.
 4. In the **Schema** fields list, identify **LineItems** and click on the grid icon to open the line items editor. 
+
 !IMAGE[spqympsb.png](instructions359897/spqympsb.png)
-Then add these two **number / Extract** fields, within the **Total Amount** object umbrella:
 
-   | Field | Description |
-   |---|---|
-   | `PartsAmount` | `Part amount associated with each line item` |
-   | `LaborAmount` | `Labor amount associated with each line item` |
+The PDF lists parts and labor separately, matched by operation reference. The original extraction copied only the parts amounts into the row totals, leaving out labor. Use **Extract** for `PartsAmount` and `LaborAmount` to read those printed values, and **Generate** for `TotalAmount` to calculate their sum, which is not printed as a single row total. This makes the intended calculation explicit; the independent subtotal check still verifies the result.
 
- Add the 2 new fields *after* the current ones (**Amount**, **CurrencyCode**). The validation rule continues to prefer a returned row total -**Amount**- and uses parts plus labor only when that total is missing.
- !IMAGE[wosopyzi.png](instructions359897/wosopyzi.png)
+Within **LineItems**, delete the existing **TotalAmount** object using its **Delete field** control. This removes its nested **Amount** and **CurrencyCode** fields too. Do not delete the separate document-level **TotalAmount** field.
+
+ Add these three fields directly under **LineItems**, as siblings of **Description** and **Quantity**, not inside another object:
+
+   | Field | Value type | Method | Description |
+   |---|---|---|---|
+   | `PartsAmount` | Number | Extract | `Part amount associated with each line item` |
+   | `LaborAmount` | Number | Extract | `Labor amount associated with each line item` |
+   | `TotalAmount` | Number | Generate | `Total amount for this line item. Use its explicit printed total; otherwise, sum PartsAmount and LaborAmount. Do not use a parts-only amount or the invoice subtotal. Leave unset if no line-item total is printed and either component is missing.` |
+
+!IMAGE[ljfsfbut.png](instructions359897/ljfsfbut.png)
+
+ Add the fields in this order. The new **TotalAmount** uses the same name as the deleted field, but is a single **Number**, not an object. The validation rule supports both this numeric `LineItems[i].TotalAmount` and the original `LineItems[i].TotalAmount.Amount`. It prefers the returned row total and uses parts plus labor only when that total is missing; a wrong returned total still fails.
  Click **Back to main view**->**Save** to confirm the schema changes.
-5. To verify the changes, select **Browse for files**, upload and test `C:\Users\LabUser\Desktop\ignite26-LAB664\data\documents\packet-08\05-estimate.pdf` before running the analysis (through the **Run Analysis** button). Expand **LineItems** object in the **Test** tab and inspect every line item and its source regions. A useful result for this document is:
+5. To verify the changes, select **Browse for files** and upload `C:\Users\LabUser\Desktop\ignite26-LAB664\data\documents\packet-08\05-estimate.pdf`, then select **Run analysis**. Expand the **LineItems** object in the **Test** tab and inspect every line item and its source regions. A useful result for this document is:
 
-   | Line item | PartsAmount | LaborAmount | Amount |
+   | Line item | PartsAmount | LaborAmount | TotalAmount |
    |---|---:|---:|---:|
    | 1 | 980.00 | 223.20 | 1203.20 |
    | 2 | 124.00 | 62.00 | 186.00 |
    | 3 | 0.00 | 210.80 | 210.80 |
 
-   The explicit `SubtotalAmount` is `1600.00`. These values reconcile, but always verify the native Studio result rather than assuming a model run is deterministic.
+   The explicit `SubtotalAmount` is `1600.00`. Inspect the extracted parts and labor source regions; a generated total may not have its own source box. These values reconcile, but always verify the native Studio result rather than assuming a model run is deterministic.
+
+> [!Note] **Derived totals:** Treat a generated line-item total as a calculation, not newly printed source text. Verify its extracted parts and labor inputs against the PDF, then reconcile the rows with the independent subtotal. Arithmetic consistency alone doesn't prove every extracted value is correct.
+
 6. Save and build the updated project by clicking on **Build analyzer** and pick a new unique analyzer name, like `custom_repair_analyzer_v2`. Add a description too, such as `Updated repair analyzer with parts and labor amounts`. Wait until the analyzer is **Ready**, then copy its analyzer name exactly. 
-7. Return to the packet-8 error in the **Insurance Workbench App**, enter it in **Updated repair estimate analyzer name**, and select **Rerun**. This submits only `05-estimate.pdf` as a fresh, billable CU call; there is no second confirmation dialog.
+7. Return to the packet-8 error in the **Insurance Workbench app**, enter the new analyzer name in **Updated repair estimate analyzer name**, and select **Rerun**. This submits only `05-estimate.pdf` as a fresh, billable CU call; there is no second confirmation dialog.
+
 !IMAGE[z71i70zd.png](instructions359897/z71i70zd.png)
+
 8. While the spinner is active, wait for the rerun to finish. The updated result appears below the original with its own status and calculation. Its field table shows formula inputs plus returned `PartsAmount` and `LaborAmount`, grouped by numeric line-item index in the order total, parts, labor, followed by SubTotal. Select the original and updated results to compare their own source boxes. A successful updated result should show `USD 1203.20 + 186.00 + 210.80 = 1600.00 (Subtotal)` and change the check to **Pass**.
-!IMAGE[6cfzqmxd.png](instructions359897/6cfzqmxd.png)
+
+!IMAGE[tha6s6rr.png](instructions359897/tha6s6rr.png)
+
 9. The rerun preview is temporary and browser-only. It is not written to the saved extraction cache or native JSON. Navigating within the current run keeps the original and latest updated result; another rerun replaces the previous preview. Refreshing the page or changing runs clears it. If the source cannot be matched to one individual PDF, return to Studio and correct the router's document boundaries before rerunning.
 
 > [+Note] **Where the files are**
 >
 > `instructions\lab.md` is the Markdown version of this single guide; `infra\setup.ps1` installs dependencies; `infra\launch-workbench.ps1` launches only the app. `src\workbench` contains the minimal app runtime, not another lab guide.
 >
-> `data\packets`: 10 complete customer PDFs. `data\documents\packet-01` through `packet-10`: 90 individual logical-document PDFs, extracted from the authored page groups. `data\samples`: six small Studio specimens. `data\packets.json`: source hashes and authored page ranges. `data\results`: completed CU runs, each with its original manifest and ten native JSON responses; future live runs save here too.
+> `data\packets`: 10 complete customer PDFs. `data\documents\packet-01` through `packet-10`: 90 individual logical-document PDFs, extracted from the authored page groups. `data\samples`: Studio specimens, complete practice packets and the Statement schema. `data\packets.json`: source hashes and authored page ranges. `data\results`: completed CU runs, each with its original manifest and ten native JSON responses; future live runs save here too.
 >
-> `data\step1` through `data\step4` are convenience copies of the recommended inputs, not a second dataset. The app uses the canonical PDFs under `data`. Full packet 01 contains a statement and rental billing; full packet 03 contains towing. The authored four-class reference labels statements and both invoice types as Other, while the seven-class routed run gives them separate categories.
+> `data\samples` brings the recommended Studio inputs together in one folder, not a second dataset. The app uses the canonical PDFs under `data`. Full packet 01 contains a statement and rental billing; full packet 03 contains towing. The authored four-class reference labels statements and both invoice types as Other, while the seven-class routed run gives them separate categories.
 
 ===
 
-## Step 7. Check policy compliance using Azure Search (Foundry IQ) knowledge
-### Explore cached policy reviews
+## Step 9: Review claims with Azure Search (Foundry IQ)
 
-**Check policies** shows **Claim policy checks**, with three ordered comparisons: **Daily rate**, **Effective terms**, and **Repair estimate**. These checks don't change the separate **Business rules validation** results. Selecting a policy check opens its concise headline, one to three claim-versus-policy comparisons, status and citations in the right panel. Select a linked value to inspect its source PDF, then **Back to policy check** to return. The loaded CU results remain shared across tabs.
+Step 8 used fixed business rules. Now we'll add Azure Search (Foundry IQ) to retrieve guidance for a particular claim and compare it with the extracted facts. This demo queries a Search index directly.
 
-The app automatically loads ten cached agent reviews from the current packet dataset and their recorded CU Layout index alongside the CU results. Loading these reviews does not contact Azure. Inspect all **30** saved checks and their linked evidence without Azure setup, a restore script or another review. Previous five-, four- and three-check reviews remain history; the new contract distinguishes this three-check set from the earlier one containing Rental start. **Ask agent** requires the live connection prepared in step 5 for additional questions; it does not replace the saved checks. This workflow uses the existing dependencies and needs no new npm packages.
+!IMAGE[bsv08s9h.png](instructions359897/bsv08s9h.png)
 
-1. Open **Check policies** after the initial cached results finish loading.
-2. Confirm that all ten customer rows show their saved checks. Grounded Search retrieval is the default; there is no retrieval selector and you do not need to start or wait for an agent batch.
-3. Select packet **02 / Washington**, then open **Daily rate**. Compare the claimed **$61/day** rental base rate with the **$85/day** effective contractual cap for the matched policy ID and insured VIN. Inspect the saved status rather than assuming a scripted answer. A numerical fit is conditional on rental eligibility, not permission to pay.
-4. Open the source links to inspect the matched Washington declarations and effective-date record, then select **Back to policy check** to return. Inspect **Effective terms** to compare the actual loss date with the matched policy and genuine amendment's effective dates. A check mark means **Satisfied**; an open circle means **Review required**. The circular-arrow **Waiting for info** status means missing claim evidence needed for that comparison, not a model still running. **N/A** can apply to Daily rate for confirmed non-rental claims; effective terms and repair remain independent.
+If you're starting here and the app isn't running, follow [Step 7's app-launch instructions](#launch-the-app), then open +++http://127.0.0.1:8791/+++.
 
-| Case | Daily base evidence | Contractual daily cap | Comparison to inspect |
-| :--- | ---: | ---: | :--- |
-| Packet 01 / Texas | $54 | $75 | $54/day fits the matched effective cap numerically, conditional on eligibility |
-| Packet 02 / Washington | $61 | $85 | $61/day fits the matched effective cap numerically |
+1. Open **Check policies**. The customer grid contains **Daily rate**, **Effective terms**, and **Repair estimate** checks.
+2. Select the linked index name above the grid to inspect the policy index in the Azure portal's **Search explorer**, then return to the app.
+3. Select the **Policy documents** link to open a folder containing the indexed documents in File Explorer.
 
-These are source comparisons, not guaranteed model outcomes. Missing unrelated repair completion, fee classification or insurer payment authorization doesn't create a wait for these three narrow checks.
+### Follow claim facts to the policy evidence
 
-Open **Repair estimate** and ask, "Is each supplied repair-estimate total within this state's routine review authority?" Compare each relevant distinct quote's gross total, including stated tax and before deductible or payments, with the state-specific threshold retrieved from the repair-authority diagram. This is **synthetic internal routine review authority**, not law, a contractual coverage cap or payment approval. The check is independent of rental applicability, including confirmed non-rental cases. Different quote amounts alone don't require review here: **Business rules validation** keeps its separate multiple-estimates warning. Inspect the linked diagram rather than assuming a threshold or substituting Texas's **$75/day** or Washington's **$85/day** contractual rental limits.
+4. In the **#1 Danielle Ortiz** row, select the result under **Daily rate**. Compare the **Claim** and **Policy** values in the right panel. Select the linked claim amount "54 USD/day" to inspect its source files from the claim. Then select **Back to policy check**.
 
-5. For packet **01**, inspect the matching revised declarations and issued amendment. The blank optional-code cell must not shift the Honda's deductible or rental limits. Verify the policy ID and insured VIN against the actual source image, not just similar vehicle descriptions or parsed text.
-6. Select **Policy documents** to see three full-path dataset-folder links: original PDFs, saved Search outputs, and saved Digital Parse outputs. On the local Windows workbench, select a link to request the folder in Explorer, or use **Copy path**. To inspect an individual document in the workbench, select a source link in a check result and use **Original**, **CU Search**, or **Digital parse**. Both genuine native outputs are included for every active PDF. CU Search uses `prebuilt-documentSearch`, not relabeled Layout output. Digital parse can successfully return no text for a scanned effective-date record; the viewer explains that result without substituting OCR. Switching tabs makes no Azure calls. Inspect the repair-authority diagram's complete state branches.
-7. Inspect a linked **Claim** value. Typed CU facts use their original source boxes when available; **First-pass parsed page text** links preserve the exact supplied page range without invented boxes. A text interpretation isn't a typed CU fact. Optionally select **Daily rate**, then **Ask agent**, and ask, "Compare Washington's claimed daily base rate with the matched contractual cap and cite the declarations." Chat uses the prepared live connection and can incur Azure charges; it doesn't replace the saved checks.
+!IMAGE[uf89wmrn.png](instructions359897/uf89wmrn.png)
 
-The agent connects fields extracted from the claim to the business rules and policy evidence associated with that claim. Its findings and linked sources help reviewers understand which checks are satisfied and where humans should spend time reviewing missing evidence, exceptions, or approvals. The agent supports that review; it does not make the final claim or payment decision.
+5. Select the linked policy daily limit "$75/day base charge" to open the **Original** declarations that the agent found in Azure Search. Inspect the **Rental limit** column. Switch to **Prebuilt Search** to see the searchable representation created by Content Understanding as part of Azure Search standard content extraction. Then select **Back to policy check**.
 
-These are source-based examples, not guaranteed model answers. Inspect differing results, missing facts or errors rather than forcing a pass. The synthetic repair SOP can't supply a missing contractual benefit. Contradictory evidence or unclear controlling rules require review. A genuine issued amendment and its effective time, not a customer signature alone, establish changed terms. **Satisfied** for daily rate doesn't approve the claim or authorize payment.
+!IMAGE[9n46bxvj.png](instructions359897/9n46bxvj.png)
 
-### Optional: inspect Search, policy files and the agent
+> [!Note] **Search ingestion:** The lab's managed Search deployment uses [Content Understanding](https://learn.microsoft.com/azure/search/cognitive-search-skill-content-understanding) standard content extraction to retain searchable text, tables, and page references. This pipeline also enables semantic chunking and AI-generated figure descriptions. **Prebuilt Search** shows what the underlying indexed content looks like.
 
-| Inspect | Where to look | What to learn |
-| :--- | :--- | :--- |
-| Active Search index | Select the linked index name beside **Azure Search (FoundryIQ) Index for policy documents** to open its exact Azure portal view, then **Search explorer**. Search `rental daily rate`. | Chunks carry policy text, document identity, version and page information. The link identifies the displayed results' source generation; a different live index is labeled separately. |
-| Original policy files | Select **Policy documents** or open the [active manifest](../data/policies/rental/ocr-comparison-v2/manifest.json). | The 21 active PDFs retain tables, scans and repair diagrams. Both native viewer outputs work offline. |
-| Archived policy files | Open `data\policies\archive\legacy-rental-review-v2\`. | The 21 legacy rental-terms/SOP PDFs remain for historical citations but don't enter active retrieval or previews. No Blob upload is involved. |
-| Agent Framework | Open [`infra/policy-framework-agent.py`](../infra/policy-framework-agent.py). Find `Agent`, `OpenAIChatClient` and `search_policy_rules`. | Initial reviews interpret rental applicability for Daily rate, then run three parallel comparisons with saved Parse fields, selected first-pass text and prefetched rules; terms and repair remain independent. Follow-up chat can use the Search tool. |
+### Inspect figure-backed repair guidance
 
-For shared-resource names and subscriptions, see [under the hood](../docs/policy-checks.md#optional-look-under-the-hood). Don't change roles, networking or shared resources during this exercise.
+6. In the **#2 Victor Bennett** row, select the result under **Repair estimate**. Compare the gross repair total with the retrieved Washington routine-review threshold, rather than an arithmetic rule from step 8.
 
-**FoundryIQ** is the lab's umbrella label for grounded retrieval. This implementation queries an ordinary Azure AI Search index directly, not a Foundry IQ knowledge base. The current bundle records its exact isolated CU Layout index; loading it doesn't query Azure. The optional managed setup can provision a different **Standard** index, but that doesn't change the provenance of saved results. Resource labels render without Azure calls; opening the Search portal target requires your Azure permissions. **CU Search** and **Digital parse** document tabs are separate cached representations; changing the viewer doesn't change the active Search index.
+!IMAGE[91ysxon6.png](instructions359897/91ysxon6.png)
 
-### Prepare follow-up chat
+7. Select the linked policy threshold to inspect the supporting diagram. Compare its description in **Prebuilt Search** which uses a json object using MermadeJS format to render that flow chart  then select **Back to policy check**.
 
-The policy agent runs locally in Python Agent Framework and queries an ordinary Azure AI Search index. There is no hosted agent to create in Studio. Studio sign-in does not authenticate the local app.
+!IMAGE[2ihrasgl.png](instructions359897/2ihrasgl.png)
 
-Setup above has already indexed the policies and activated `.tools\policy-agent-framework.json`. No additional deployment command is needed here. Policy review uses saved Parse fields and selected first-pass page text, not a separate claim-summary analyzer or another CU analysis. The router you built in step 4 isn't changed. If you rerun deployment after launching the app, restart the app and reload the browser before continuing.
 
-Open a saved finding in **Check policies**, then select **Ask agent**. A prepared connection is required to send questions, but not to view the cached reviews. If **Ask agent** is unavailable, confirm that step 5's deployment completed successfully and restart the app. A configured status reports local configuration, not a successful connection; saved results do not prove that Search or the model is reachable.
+### Ask a follow-up question
 
-If a question fails, keep the exact error and use the [troubleshooting table](../docs/policy-setup.md#troubleshoot-live-policy-setup). Do not repeatedly send billable requests to diagnose a configuration problem.
- 
+8. For the selected **Repair estimate** check, select **Ask agent**. Enter a follow-up such as `What is the routine repair-review threshold if this incident were in Arizona?` Sending it allows you to use the agent to get additional clarification.
+
+!IMAGE[ckohd4yo.png](instructions359897/ckohd4yo.png)
+
 ---
 
 ===
 
-## Step 8: Optional: Use GitHub Copilot + CLI to improve your analyzer
+## Step 10: Optional: Use GitHub Copilot + CLI to improve your analyzer
 
-Take what you've learned in Studio further with the Content Understanding CLI (`azd ai cu`) and Copilot. Build and improve analyzers, process documents and compare results, simply by describing what you want.
+In this optional exercise, you'll see how:
 
-In this exercise, ask Copilot to repeat the repair-analyzer workflow from Step 6 on a disposable copy, then review the changes and before/after results. Your original analyzers and Workbench results stay unchanged.
+- The Content Understanding CLI (`azd ai cu`) lets you or a coding agent manage analyzers and analyze documents.
+- Copilot can turn a natural-language request into an improvement workflow: inspect the analyzer, make targeted schema changes on a copy, and compare before/after results.
 
-This optional exercise plans two document analyses. Azure charges and Copilot usage apply.
+You'll repeat the repair-analyzer workflow from Step 8 on a disposable copy. Your original analyzers and Workbench results stay unchanged.
 
 ### Install the Content Understanding CLI
 
@@ -440,7 +533,7 @@ azd ai cu --help
 azd auth login
 ```
 
-Sign in with the same Azure lab account used in CU Studio. Copilot will check the connection and ask for your Step 4 resource endpoint if it is not already configured.
+Sign in with the same Azure lab account used in CU Studio.
 
 ### Sign in to the GitHub Copilot app
 
@@ -465,33 +558,43 @@ Sign in with the same Azure lab account used in CU Studio. Copilot will check th
 
 !IMAGE[The prompt footer with the lab project and Current checkout](instructions359897/copilot-current-checkout.png)
 
+5. Open the model picker in the prompt footer and select **GPT 6.1 Sol**. This selects Copilot's coding model; leave the CU analyzer's existing **GPT-5.5** configuration unchanged.
+
 Use **Current checkout**, not **New worktree**: instructions staged on the VM may be uncommitted and absent from a new worktree. Changing folders in a PowerShell window does not change the Copilot app's workspace.
 
 ### Give the agent the task
 
-Replace `<ORIGINAL_REPAIR_ANALYZER_ID>` with the analyzer built in **Step 2**, not the router or the improved analyzer built in Step 6. Paste this prompt:
+Use `repair_extractor_analyzer` from **Step 3**, not the router or the improved analyzer from Step 8.
 
-> The repair amounts in packet 8 don't add up. My analyzer is `<ORIGINAL_REPAIR_ANALYZER_ID>`. Can you try fixing it on a copy and show me the before and after?
+> Hey, I just validated packet 8 and the repair line items don't add up to the subtotal. Can you try fixing it on a copy of `repair_extractor_analyzer`? Add PartsAmount and LaborAmount as extracted numbers, and change the line-item TotalAmount from an object to a generated number. Use the printed row total if there is one, otherwise add parts and labor when both are there. Don't guess missing amounts, and leave the document total alone. Show me what you'll change first, then compare before and after.
+
+After you send the prompt, Copilot will check your Azure connection and ask for your Content Understanding resource endpoint if needed.
+
+As Copilot works, follow how it translates your request into analyzer checks, CLI commands, a schema diff, approvals and a before/after comparison. Inspect the commands and results along the way, not just the final answer.
 
 At first tool use, you may see **Trust this repository?**. Confirm that the project is the lab checkout above, then select **Trust repository** only if you trust its files. You can choose **Skip for now** instead and review individual tool requests.
 
 !IMAGE[Trust repository and Skip for now choices](instructions359897/copilot-trust-repository.png)
 
-Copilot is instructed to show each CU CLI command in chat before running it. This currently works only partially: some commands may appear only in grouped tool cards. Expand those cards to inspect the available command details; a missing chat preview does not mean a command was not run. If you cannot review the operation or its scope, pause and ask your lab supporter.
+Copilot is instructed to show each CU CLI command in chat before running it and report the result afterward. Check the analyzer ID, input file, endpoint when present, and operation before approving. If a chat preview is missing, ask Copilot to show the full command before continuing. You can expand tool cards to inspect commands that already ran; missing chat text does not mean they were not executed.
 
-Review Copilot's initial proposal before approving a disposable repair-analyzer copy and **two analyses** of `data\documents\packet-08\05-estimate.pdf`: one before the fix and one after. Azure charges and Copilot usage apply. This confirmation is separate from repository trust or tool permissions. Local help/version checks and questions using saved results do not require this analysis approval.
+Review Copilot's initial proposal before approving a disposable repair-analyzer copy and **two analyses** of `data\documents\packet-08\05-estimate.pdf`: one before the fix and one after.
 
 !IMAGE[Illustrative confirmation for the disposable copy and two packet-8 analyses](instructions359897/copilot-repair-analysis-approval-example.png)
 
-This edited example illustrates the initial approval. Review the actual file, analyzer ID and analysis count shown by Copilot.
+Illustrative approval prompt (edited example).
 
-After the baseline analysis, review the proposed schema diff. Copilot will ask **separately** before deleting/recreating its disposable copy to apply the fix. Approve only the copy it created for this run, never an original analyzer. The after-analysis is the second of the two planned analyses; retries or extra documents need a new approval.
+Review Copilot's proposed changes. It will ask again before replacing its copy of the analyzer. Your original stays unchanged.
 
 ### Review the comparison
 
-Review the before/after table in Copilot: parts, labor, row totals, subtotal, and the remaining difference. The JSON evidence is saved under `.tools\copilot-lab`.
+For packet 8, use these reference checks:
 
-Fresh results can vary. Missing values are not zero, and matching arithmetic does not prove extraction accuracy. If the result does not improve, discuss the remaining issue rather than repeatedly rerunning it.
+- Each row has `PartsAmount` and `LaborAmount`, with a numeric `TotalAmount`.
+- Row totals are **1,203.20, 186.00 and 210.80**, adding to the **1,600.00 subtotal**.
+- The gap drops from **496.00 to 0.00**; the document total stays **1,691.08**.
+
+If values differ, ask Copilot to explain before rerunning.
 
 ### More prompts to try
 

@@ -17,7 +17,84 @@ function Update-ToolPath {
     $env:Path = "$portableNode;$env:Path;$([Environment]::GetEnvironmentVariable('Path', 'Machine'));$([Environment]::GetEnvironmentVariable('Path', 'User'))"
 }
 
+function Update-CuDefaults {
+    if (-not $env:CU_ENDPOINT) { return }
+    $uri = $null
+    if (-not [Uri]::TryCreate($env:CU_ENDPOINT, [UriKind]::Absolute, [ref]$uri) -or
+        $uri.Scheme -ne 'https' -or $uri.Host -notmatch '\.(services\.ai|cognitiveservices)\.azure\.com$' -or
+        -not $uri.IsDefaultPort -or $uri.AbsolutePath -ne '/' -or $uri.UserInfo -or $uri.Query -or $uri.Fragment) {
+        Write-Warning 'Optional CU defaults cleanup skipped: CU_ENDPOINT is not an Azure CU HTTPS root endpoint. Dependency setup continues.'
+        return
+    }
+    $request = @('rest', '--url', "$($uri.GetLeftPart([UriPartial]::Authority))/contentunderstanding/defaults?api-version=2025-11-01",
+        '--resource', 'https://cognitiveservices.azure.com/', '--output', 'json')
+    try {
+        $result = & az @request --method get
+        if ($LASTEXITCODE -ne 0) {
+            Write-Warning 'Optional CU defaults cleanup could not read defaults. Check az login and CU permissions. Dependency setup continues.'
+            return
+        }
+        $defaults = $result | ConvertFrom-Json -ErrorAction Stop
+        if ($defaults.modelDeployments -isnot [pscustomobject]) {
+            Write-Warning 'Optional CU defaults cleanup skipped: the response has no modelDeployments object. Dependency setup continues.'
+            return
+        }
+        $gpt55Deployment = $defaults.modelDeployments.'gpt-5.5'
+        if ($gpt55Deployment -isnot [string] -or [string]::IsNullOrWhiteSpace($gpt55Deployment)) {
+            Write-Warning 'Optional CU defaults cleanup skipped: GPT-5.5 has no configured deployment. Dependency setup continues.'
+            return
+        }
+        if ($defaults.modelDeployments.PSObject.Properties.Name -ccontains 'gpt-5.2') {
+            $bodyFile = [IO.Path]::GetTempFileName()
+            # Merge patch deletes a mapping with null; an omitted key would leave it unchanged.
+            try {
+                [IO.File]::WriteAllText($bodyFile, '{"modelDeployments":{"gpt-5.2":null}}', [Text.UTF8Encoding]::new($false))
+                $result = & az @request --method patch --headers 'Content-Type=application/merge-patch+json' --body "@$bodyFile"
+                if ($LASTEXITCODE -ne 0) {
+                    Write-Warning 'Optional CU defaults cleanup could not update the custom-model defaults. Dependency setup continues.'
+                    return
+                }
+            }
+            finally { [IO.File]::Delete($bodyFile) }
+            $updated = $result | ConvertFrom-Json -ErrorAction Stop
+            if ($updated.modelDeployments -isnot [pscustomobject] -or
+                $updated.modelDeployments.'gpt-5.5' -isnot [string] -or
+                $updated.modelDeployments.'gpt-5.5' -cne $gpt55Deployment -or
+                $updated.modelDeployments.PSObject.Properties.Name -ccontains 'gpt-5.2') {
+                Write-Warning 'Optional CU defaults cleanup could not confirm the GPT-5.5 default. Dependency setup continues.'
+                return
+            }
+            Write-Host 'GPT-5.5 is now the default model for CU Studio custom analyzers.'
+        }
+        else {
+            Write-Host 'Verified that GPT-5.5 is the default model for CU Studio custom analyzers.'
+        }
+    }
+    catch [ArgumentException], [IO.IOException], [UnauthorizedAccessException] {
+        Write-Warning "Optional CU defaults cleanup skipped: $($_.Exception.Message) Dependency setup continues."
+    }
+}
+
 Update-ToolPath
+if (-not (Get-Command az.cmd -ErrorAction SilentlyContinue)) {
+    if (-not (Get-Command winget.exe -ErrorAction SilentlyContinue)) {
+        throw 'Azure CLI is missing and winget is unavailable. Install Microsoft App Installer (winget), then rerun setup.ps1.'
+    }
+    Write-Host 'Installing Azure CLI (approve the Windows installer if prompted)...'
+    & winget.exe install --id Microsoft.AzureCLI --exact --source winget --accept-package-agreements --accept-source-agreements --disable-interactivity
+    if ($LASTEXITCODE -ne 0) { throw "Azure CLI installation failed (exit $LASTEXITCODE)." }
+    Update-ToolPath
+    if (-not (Get-Command az.cmd -ErrorAction SilentlyContinue)) {
+        throw 'Azure CLI is not on PATH after installation. Open a new PowerShell window and rerun setup.ps1.'
+    }
+}
+try {
+    Update-CuDefaults
+}
+catch {
+    Write-Warning "Optional CU defaults cleanup skipped: $($_.Exception.Message) Dependency setup continues." -WarningAction Continue
+}
+
 $nodeReady = $false
 if (Get-Command node.exe -ErrorAction SilentlyContinue) {
     & node.exe -e "process.exit(Number(process.versions.node.split('.')[0]) > 22 || (Number(process.versions.node.split('.')[0]) === 22 && Number(process.versions.node.split('.')[1]) >= 12) ? 0 : 1)"
@@ -55,19 +132,6 @@ if (-not $nodeReady) {
     }
     Remove-Item -LiteralPath $zip
     Update-ToolPath
-}
-
-if (-not (Get-Command az.cmd -ErrorAction SilentlyContinue)) {
-    if (-not (Get-Command winget.exe -ErrorAction SilentlyContinue)) {
-        throw 'Azure CLI is missing and winget is unavailable. Install Microsoft App Installer (winget), then rerun setup.ps1.'
-    }
-    Write-Host 'Installing Azure CLI (approve the Windows installer if prompted)...'
-    & winget.exe install --id Microsoft.AzureCLI --exact --source winget --accept-package-agreements --accept-source-agreements --disable-interactivity
-    if ($LASTEXITCODE -ne 0) { throw "Azure CLI installation failed (exit $LASTEXITCODE)." }
-    Update-ToolPath
-    if (-not (Get-Command az.cmd -ErrorAction SilentlyContinue)) {
-        throw 'Azure CLI is not on PATH after installation. Open a new PowerShell window and rerun setup.ps1.'
-    }
 }
 
 if (-not (Get-Command $PythonExecutable -ErrorAction SilentlyContinue)) {

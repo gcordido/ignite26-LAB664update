@@ -535,6 +535,91 @@ class PolicyIndexTests(unittest.TestCase):
         self.assertTrue(all("citationSections" in c for c in snapshot["chunks"]))
         self.assertFalse([c for c in fake.calls if c[0] == "DELETE"])
 
+    def test_default_setup_ignores_saved_summary_metadata_and_activates_without_analyzer(self):
+        original = setup.read_json(self.root / setup.CONFIG_PATH)
+        for analyzer_id in ("lab664_policy_checks_claim_summary", "custom_existing_claims"):
+            with self.subTest(analyzer_id=analyzer_id):
+                setup.atomic_json(self.root / setup.DEPLOYMENT_PATH, {
+                    **RESOURCES, "claimAnalyzerId": analyzer_id,
+                })
+                config = copy.deepcopy(original)
+                config["claimAnalyzerHash"] = "a" * 64
+                setup.atomic_json(self.root / setup.CONFIG_PATH, config)
+                fake = self.fake()
+                fake.analyzer = None
+                report = setup.preflight(fake, self.root)
+                self.assertTrue(report["ready"], report["problems"])
+                self.assertNotIn("claimAnalyzer", report)
+                self.assertEqual(report["generation"], self.generation)
+                result = setup.apply(fake, self.root, sleep=lambda _: None)
+                self.assertEqual(result["status"], "verified")
+                self.assertTrue(result["runtimeActivated"])
+                config = setup.read_json(self.root / setup.CONFIG_PATH)
+                self.assertNotIn("claimAnalyzerId", config)
+                self.assertNotIn("claimAnalyzerHash", config)
+                self.assertEqual(config["indexName"], setup.names_for(self.generation)["index"])
+                self.assertEqual(config["modelDeployment"], "gpt-5")
+                self.assertFalse(any("/contentunderstanding/analyzers/" in url for _, url in fake.calls))
+
+    def test_default_rerun_preserves_active_summary_metadata_without_analyzer_calls(self):
+        fake = self.fake()
+        setup.apply(fake, self.root, seed={"claimAnalyzerId": "claim_summary"}, sleep=lambda _: None)
+        before = setup.read_json(self.root / setup.CONFIG_PATH)
+        setup.atomic_json(self.root / setup.DEPLOYMENT_PATH, {
+            **RESOURCES, "claimAnalyzerId": "different_saved_summary",
+        })
+        fake.analyzer = None
+        fake.calls.clear()
+        result = setup.apply(fake, self.root, sleep=lambda _: None)
+        self.assertTrue(result["runtimeActivated"])
+        self.assertNotIn("claimAnalyzer", result)
+        after = setup.read_json(self.root / setup.CONFIG_PATH)
+        self.assertEqual(after["claimAnalyzerId"], before["claimAnalyzerId"])
+        self.assertEqual(after["claimAnalyzerHash"], before["claimAnalyzerHash"])
+        self.assertEqual(after["indexFingerprint"], before["indexFingerprint"])
+        self.assertFalse(any("/contentunderstanding/analyzers/" in url for _, url in fake.calls))
+
+    def test_summary_metadata_retention_requires_unchanged_targets_and_valid_fields(self):
+        setup.apply(self.fake(), self.root, seed={"claimAnalyzerId": "claim_summary"}, sleep=lambda _: None)
+        before = setup.read_json(self.root / setup.CONFIG_PATH)
+        config = {key: value for key, value in before.items()
+                  if key not in ("claimAnalyzerId", "claimAnalyzerHash")}
+        for key in ("azureOpenAIEndpoint", "modelDeployment", "searchEndpoint", "indexName",
+                    "corpusHash", "indexFingerprint", "extractionMode", "cuEndpoint", "cuApiVersion"):
+            with self.subTest(target=key):
+                changed = {**config, key: "different"}
+                result = setup.retain_claim_metadata(self.root, changed)
+                self.assertNotIn("claimAnalyzerId", result)
+                self.assertNotIn("claimAnalyzerHash", result)
+        for key, value in (("claimAnalyzerId", ""), ("claimAnalyzerHash", "not-a-hash")):
+            with self.subTest(invalid=key):
+                setup.atomic_json(self.root / setup.CONFIG_PATH, {**before, key: value})
+                logs = io.StringIO()
+                with redirect_stderr(logs):
+                    result = setup.retain_claim_metadata(self.root, config)
+                self.assertNotIn("claimAnalyzerId", result)
+                self.assertNotIn("claimAnalyzerHash", result)
+                self.assertIn("Not retaining invalid", logs.getvalue())
+
+    def test_fresh_default_setup_activates_without_summary_settings_or_analyzer(self):
+        (self.root / setup.CONFIG_PATH).unlink()
+        seed = {**RESOURCES, "modelDeployment": "gpt-5"}
+        fake = self.fake()
+        fake.analyzer = None
+        report = setup.preflight(fake, self.root, seed=seed)
+        self.assertTrue(report["ready"], report["problems"])
+        self.assertNotIn("claimAnalyzer", report)
+        result = setup.apply(fake, self.root, seed=seed, sleep=lambda _: None)
+        self.assertEqual(result["status"], "verified")
+        self.assertTrue(result["runtimeActivated"])
+        config = setup.read_json(self.root / setup.CONFIG_PATH)
+        self.assertNotIn("claimAnalyzerId", config)
+        self.assertNotIn("claimAnalyzerHash", config)
+        self.assertEqual(config["azureOpenAIEndpoint"], FOUNDRY_ROOT)
+        self.assertEqual(config["searchEndpoint"], SEARCH_ENDPOINT)
+        self.assertEqual(config["modelDeployment"], "gpt-5")
+        self.assertFalse(any("/contentunderstanding/analyzers/" in url for _, url in fake.calls))
+
     def test_index_only_uses_search_indexer_without_claim_analyzer_or_runtime_changes(self):
         fake = self.fake()
         fake.analyzer = None
@@ -657,13 +742,14 @@ class PolicyIndexTests(unittest.TestCase):
         self.assertEqual(config["claimAnalyzerHash"], setup.analyzer_hash(fake.analyzer))
         self.assertFalse((self.root / setup.BACKUP_PATH).exists())
 
-    def test_analyzer_missing_unready_or_unnamed_blocks_before_writes(self):
+    def test_explicit_analyzer_missing_unready_or_unnamed_blocks_before_writes(self):
         for name, mutate in {"missing": lambda f: setattr(f, "analyzer", None),
                              "unready": lambda f: f.analyzer.update(status="failed")}.items():
             fake = self.fake()
             mutate(fake)
             with self.subTest(name):
-                self.assertEqual(setup.apply(fake, self.root, sleep=lambda s: None)["status"], "blocked")
+                self.assertEqual(setup.apply(fake, self.root, sleep=lambda s: None,
+                                            seed={"claimAnalyzerId": "claim_summary"})["status"], "blocked")
                 self.assertFalse([c for c in fake.calls if c[0] in ("PUT", "POST")])
         with self.assertRaises(setup.SetupError):
             setup.resolve_analyzer(self.fake(), {**self.settings, "claimAnalyzerId": "bad-id"})

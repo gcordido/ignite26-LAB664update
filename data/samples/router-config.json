@@ -1,0 +1,42 @@
+{
+  "baseAnalyzerId": "prebuilt-document",
+  "description": "Classifier and extraction router for the lab's synthetic insurance packets.",
+  "config": {
+    "returnDetails": true,
+    "enableSegment": true,
+    "segmentPerPage": false,
+    "allowInPageSegments": false,
+    "contentCategories": {
+      "id_document": {
+        "description": "The lab's identity-like demo card with named holder, portrait and membership identifier. This synthetic membership card demonstrates ID field extraction, not government-ID authenticity. Exclude invoice, tax and repair documents.",
+        "analyzerId": "prebuilt-idDocument.generic"
+      },
+      "tax_1099a": {
+        "description": "An IRS Form 1099-A Acquisition or Abandonment of Secured Property, including fictional borrower-copy examples. Exclude other tax forms and prose references.",
+        "analyzerId": "prebuilt-tax.us.1099A"
+      },
+      "repair_estimate": {
+        "description": "A standalone repair workshop estimate or quote with vehicle details and proposed parts/labor. Keep continuation pages of the same estimate together; split a different estimate even if adjacent. Exclude towing/rental/glass invoices and their supporting inspection supplements even when they mention a proposed repair schedule.",
+        "analyzerId": "repair_extractor_analyzer"
+      },
+      "other": {
+        "description": "Each distinct unrouted supporting document: policy declarations/endorsements, claim intake forms, incident reports, glass/panel service supporting records, valuation/downtime schedules, and workshop inspection records. Statements, towing bills, and rental billing belong to their named categories, not Other. Identify logical boundaries even when adjacent documents both have category other. Keep continuation pages together; do not merge different titles or identifiers. These documents are unrouted, not discarded. Exclude towing/recovery/security charge supplements; classify those as towing_invoice."
+      },
+      "statement": {
+        "description": "A handwritten or typed claimant statement or email describing the incident, claimant vehicle, and reported damage. Keep continuation pages of the same statement together. Exclude claim forms, incident reports, witness or other-driver accounts, and repair or invoice documents.",
+        "analyzerId": "statement_extractor_analyzer"
+      },
+      "towing_invoice": {
+        "description": "A towing or roadside-recovery invoice, bill or charge ledger for vehicle transport, storage or release. Keep continuation and release/custody supplements from the same bill together. Payment may be unpaid or pending; do not infer payment. Exclude repair estimates, rental billing, and glass or panel service quotes. Include towing/recovery/security charge supplements that list service charges or a total due, even when they also contain inspection details or repair-quote references.",
+        "analyzerId": "prebuilt-invoice"
+      },
+      "rental_invoice": {
+        "description": "A vehicle rental billing document or invoice with rental agreement references, dates or daily charges. Keep the same agreement's pickup/billing/vehicle-condition continuation pages together. Payment may be unpaid or pending; do not infer payment. Exclude towing bills, repair estimates, and glass or panel service quotes.",
+        "analyzerId": "prebuilt-invoice"
+      }
+    }
+  },
+  "models": {
+    "completion": "gpt-5.5"
+  }
+}

@@ -70,8 +70,8 @@ Open the [Python setup notebook](../infra/policy-agent-framework-setup.ipynb)
 for a step-by-step walkthrough. The notebook calls the same Python functions
 as the automatic script.
 
-An existing workbench configuration supplies the current model and analyzer
-names. For a provisioned lab, `deploy.ps1 -ResourceGroup` discovers the actual
+An existing workbench configuration supplies the current model
+settings. For a provisioned lab, `deploy.ps1 -ResourceGroup` discovers the actual
 resource IDs and model deployment and saves `.tools\policy-deployment.json`
 after successful apply; no manually completed file is required. See
 [resource-group discovery](#discover-the-provisioned-lab-resources) below.
@@ -85,7 +85,6 @@ an existing model deployment:
   "foundryResourceId": "/subscriptions/YOUR-SUBSCRIPTION-ID/resourceGroups/YOUR-RESOURCE-GROUP/providers/Microsoft.CognitiveServices/accounts/YOUR-FOUNDRY",
   "modelDeployment": "YOUR-EXISTING-MODEL-DEPLOYMENT",
   "cuModelName": "YOUR-MODEL-NAME",
-  "claimAnalyzerId": "lab664_policy_checks_claim_summary",
   "cuApiVersion": "2026-06-01-preview"
 }
 ```
@@ -117,28 +116,33 @@ Run from the repository root:
 .\.tools\policy-venv\Scripts\python.exe .\infra\setup-policy-index.py --index-only --apply
 ```
 
-`--index-only` is an advanced Python-only mode that skips claim-analyzer
-reads/creation and leaves the active app configuration and its snapshot
+`--index-only` is an advanced Python-only mode that leaves the active app configuration and its snapshot
 untouched. It reports the new index and writes a generation-scoped inspection
-snapshot. `deploy.ps1` does not use this mode: successful apply always prepares
-the review runtime and writes the workbench configuration.
+snapshot. `deploy.ps1` does not use this mode: successful apply writes the
+workbench configuration without requiring a legacy claim-summary analyzer.
 
-For live reviews on a fresh lab without a claim extractor, first preview and then explicitly
-create the provided literal-fact extraction schema:
+The current policy comparisons and follow-up chat use saved Parse fields and
+native page text, not the legacy summary analyzer. To retain that optional
+literal-fact extractor for standalone experiments, explicitly select its ID:
 
 ```powershell
-.\.tools\policy-venv\Scripts\python.exe .\infra\setup-policy-index.py --create-claim-analyzer
-.\.tools\policy-venv\Scripts\python.exe .\infra\setup-policy-index.py --apply --create-claim-analyzer
+.\.tools\policy-venv\Scripts\python.exe .\infra\setup-policy-index.py --claim-analyzer-id lab664_policy_checks_claim_summary --create-claim-analyzer
+.\.tools\policy-venv\Scripts\python.exe .\infra\setup-policy-index.py --apply --claim-analyzer-id lab664_policy_checks_claim_summary --create-claim-analyzer
 ```
 
 This option never overwrites an existing analyzer. A conflicting definition is
-an error; choose a different analyzer ID, or omit the option to use an existing
-ready analyzer unchanged. No roles are assigned by setup.
+an error; choose a different analyzer ID, or omit `--create-claim-analyzer` while
+passing `--claim-analyzer-id` to validate an existing ready analyzer unchanged.
+Saved IDs alone do not opt into validation or creation. The Layout helper uses
+the same explicit flags. No roles are assigned by setup.
+Valid optional summary metadata from the active configuration is retained only
+on unchanged runtime targets, preserving live-review cache identity without
+analyzer calls. Fresh or changed targets do not inherit that metadata.
 
 The explicit apply operation can incur Blob, Search, CU and model charges.
 It scopes uploads and ingestion objects to this lab's manifest-listed PDFs,
 waits for the Search indexer, and verifies indexed sources and retrieval.
-Only full review preparation activates the index in the workbench configuration.
+Apply activates the index unless `--index-only` is requested.
 Conflicting resources and
 ingestion errors are reported rather than overwritten or treated as success.
 
@@ -246,12 +250,12 @@ candidates. Resolve ambiguity explicitly, for example:
 ```
 
 `-StorageResourceId` and `-FoundryResourceId` work the same way; selected
-resources must exist in the supplied group. Deployment also prepares the lab's
-`lab664_policy_checks_claim_summary` analyzer and writes the workbench connection
-after verification. This analyzer is created only if absent, including on reruns
-using saved default settings. `-ClaimAnalyzerId` selects a different existing
-analyzer; with a custom ID, add `-CreateClaimAnalyzer` only to explicitly create
-a missing analyzer. Existing definitions are never overwritten.
+resources must exist in the supplied group. Deployment writes the workbench
+connection after verification without creating or validating the unused
+claim-summary analyzer, including reruns with saved legacy settings.
+`-ClaimAnalyzerId` explicitly selects an existing legacy analyzer; add
+`-CreateClaimAnalyzer` only to create it if missing. Existing definitions are
+never overwritten.
 
 Discovery reuses services and models; it never falls back to ARM deployment,
 role assignment or network changes. Azure permissions for resource reads,
@@ -311,7 +315,7 @@ deploys the template's billable services and models; it is not Search-only.
 
 The apply operation deploys the ARM template, takes the actual Search, Storage,
 Foundry and model settings from deployment outputs, and runs Search-managed
-Standard ingestion, prepares the claim analyzer and activates the app's
+Standard ingestion and activates the app's
 configuration after verification.
 There is no hosted agent to deploy separately. Missing permissions or ingestion
 errors fail the command; they are not a successful combined deployment.
@@ -354,8 +358,8 @@ settings for advanced provisioning; it does not deploy ARM.
    ```
 
    This is a read-only preparation check, not a complete model/Search
-   connectivity test. Review the resolved targets and any errors. Preview checks
-   the claim analyzer as well; the default analyzer can be created on apply.
+   connectivity test. Review the resolved targets and any errors. Ordinary
+   preview and apply do not create or require a legacy claim-summary analyzer.
 5. After reviewing the targets and approving Azure usage, apply:
 
    ```powershell
@@ -368,8 +372,8 @@ settings for advanced provisioning; it does not deploy ARM.
    of deploying the ARM template. Apply can incur CU and Search charges.
 6. Require `"status": "verified"` and `"runtimeActivated": true`.
    Successful deployment activates `.tools\policy-agent-framework.json` with no
-   second preparation command. The existing claim analyzer is never overwritten;
-   a different definition requires choosing a separate ID.
+   second preparation command. Optional legacy summary-analyzer creation never
+   overwrites an existing definition; a different definition requires a separate ID.
    A preview is not successful activation.
 7. After activation, restart the app and reload the browser. Under the intended attendee identity,
    load the CU results and explicitly confirm a live **FoundryIQ** review.
@@ -394,7 +398,7 @@ or credential-bearing package configuration.
 | Azure CLI authentication fails, or the tenant/account is wrong | Run `az login` for the approved lab account and confirm `az account show`. Studio/browser login is separate. Resource IDs still determine deployment targets, regardless of the default CLI subscription. |
 | Search returns 403 | Have the administrator check data-plane query permissions for the app's signed-in identity, typically **Search Index Data Reader**. Direct Layout provisioning also needs index management and upload permissions, typically **Search Service Contributor** and **Search Index Data Contributor**. Resource-management access alone does not grant document query access. |
 | Search returns 404 or evidence does not match the corpus | Confirm the configured Search endpoint and index name. Re-run verified setup for the intended corpus; do not point at an arbitrary existing index or relabel Layout content as Standard. |
-| CU or the model returns 403/404 | Confirm the configured Foundry resource, ready claim analyzer, existing model deployment name, and the identity's service-specific invoke permissions. An app launch with `-Endpoint` changes CU routing, not the policy agent's Search/model configuration. |
+| CU or the model returns 403/404 | Confirm the configured Foundry resource, existing model deployment name, and the identity's service-specific invoke permissions. For a new Parse run, also confirm its selected claim analyzer is ready. An app launch with `-Endpoint` changes CU routing, not the policy agent's Search/model configuration. |
 | A service is unreachable or times out | Ask the administrator to check lab network access, service firewall/private endpoint settings, and service availability. Do not weaken network rules or bypass TLS. |
 | Bundled reviews load but chat is unavailable | This is expected for the read-only historical demo. Complete live setup and obtain a live-compatible review before using follow-up chat. |
 

@@ -1,7 +1,5 @@
 # Data
 
-<!-- IGNITE TEMPLATE PLACEHOLDER: remove this folder when the session needs no data files. -->
-
 Synthetic auto-insurance claim data for this lab, provided as ten complete
 claim packets and individual PDFs. All names and claim details are fictional.
 

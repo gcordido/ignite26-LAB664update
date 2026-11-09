@@ -55,6 +55,8 @@ try {
     Assert ($state.pythonCalls[-1] -notcontains '--apply') 'Default must not apply.'
     Assert ($state.pythonCalls[-1][0] -like '*setup-policy-index.py') 'Default must use Search-managed Standard indexing.'
     Assert ($state.pythonCalls[-1] -notcontains '--index-only') 'Default deploy must prepare and activate the workbench configuration.'
+    Assert ($state.pythonCalls[-1] -notcontains '--create-claim-analyzer') 'Default deploy must not create a summary analyzer.'
+    Assert ($state.pythonCalls[-1] -notcontains '--claim-analyzer-id') 'Default deploy must not require a summary analyzer.'
     Assert (-not (Test-Path (Join-Path $root '.tools\policy-deployment.json'))) 'Preflight must not save settings.'
 
     & $deploy -PythonExecutable Invoke-TestPython -Apply -UseLayout -SourceIndex source-index -IndexName isolated-index
@@ -71,11 +73,27 @@ try {
     & $deploy -PythonExecutable Invoke-TestPython -ResourceGroup test-group -Subscription test-sub -DeployResources -Apply
     Assert ($state.cliCalls[-1] -contains 'create') 'ARM apply must deploy.'
     Assert ($state.cliCalls[-1] -contains 'test-sub') 'Subscription must propagate.'
-    Assert ($state.pythonCalls[-1] -contains '--create-claim-analyzer') 'Fresh ARM must bootstrap the claim analyzer.'
+    Assert ($state.pythonCalls[-1] -notcontains '--create-claim-analyzer') 'Fresh ARM must not bootstrap the unused summary analyzer.'
+    Assert ($state.pythonCalls[-1] -notcontains '--claim-analyzer-id') 'Fresh ARM must not require a summary analyzer.'
     $settings = Get-Content (Join-Path $root '.tools\policy-deployment.json') -Raw | ConvertFrom-Json
     Assert ($settings.searchResourceId -eq $state.outputs.searchServiceResourceId.value) 'Search resource ID must propagate.'
     Assert ($settings.modelDeployment -eq 'test-model') 'Actual deployment name must propagate.'
     Assert ($settings.cuModelName -eq 'gpt-5.2') 'CU model name must propagate.'
+
+    & $deploy -PythonExecutable Invoke-TestPython -ResourceGroup test-group -DeployResources -Apply -CreateClaimAnalyzer
+    Assert ($state.pythonCalls[-1] -contains '--create-claim-analyzer') 'Explicit legacy creation must remain available.'
+    Assert ($state.pythonCalls[-1] -contains 'test_claims') 'Explicit ARM creation must use its compatibility output.'
+    [void]$state.outputs.Remove('policyClaimAnalyzerId')
+    & $deploy -PythonExecutable Invoke-TestPython -ResourceGroup test-group -DeployResources -Apply
+    Assert ($state.pythonCalls[-1] -notcontains '--claim-analyzer-id') 'Ordinary ARM deployment must work without the optional analyzer output.'
+    Assert ($state.pythonCalls[-1] -notcontains '--create-claim-analyzer') 'Missing compatibility metadata must not trigger creation.'
+    $count = $state.pythonCalls.Count
+    $failed = $false
+    try { & $deploy -PythonExecutable Invoke-TestPython -ResourceGroup test-group -DeployResources -Apply -CreateClaimAnalyzer } catch {
+        $failed = $_.Exception.Message -like '*requires the policyClaimAnalyzerId ARM output*'
+    }
+    Assert $failed 'Explicit ARM creation must fail closed without its requested analyzer ID.'
+    Assert ($state.pythonCalls.Count -eq $count) 'Missing explicit analyzer metadata must not invoke the helper.'
 
     $settings | Add-Member layoutSourceIndex 'previous-source'
     $settings | Add-Member layoutIndexName 'previous-target'
@@ -102,7 +120,8 @@ try {
     Assert ($state.pythonCalls[-1] -contains '--search-resource-id') 'Discovered targets must override previous configuration.'
     Assert ($state.pythonCalls[-1] -contains 'test-model') 'Discovery must select the policy model, not embeddings.'
     Assert ($state.pythonCalls[-1] -contains '--cu-model-name') 'Actual CU model name must propagate.'
-    Assert ($state.pythonCalls[-1] -contains '--create-claim-analyzer') 'Discovery must prepare the default claim analyzer.'
+    Assert ($state.pythonCalls[-1] -notcontains '--create-claim-analyzer') 'Discovery must not create a default summary analyzer.'
+    Assert ($state.pythonCalls[-1] -notcontains '--claim-analyzer-id') 'Discovery must not require a summary analyzer.'
     Assert ($state.pythonCalls[-1] -notcontains '--index-only') 'Discovery must activate the workbench after verification.'
     Assert ($state.pythonCalls[-1] -notcontains '--apply') 'Discovery preview must not apply.'
     Assert ($state.pythonCalls[-1] -notcontains 'previous-source') 'A different Search service must not reuse old index names.'
@@ -110,16 +129,22 @@ try {
     & $deploy -PythonExecutable Invoke-TestPython -ResourceGroup test-group -Apply
     $settings = Get-Content -LiteralPath $settingsFile -Raw | ConvertFrom-Json
     Assert ($settings.searchResourceId -eq $state.resources[0].id) 'Discovery must save actual resource IDs after apply.'
-    Assert ($settings.claimAnalyzerId -eq 'lab664_policy_checks_claim_summary') 'Default claim schema must use the lab analyzer ID.'
+    Assert (-not $settings.claimAnalyzerId) 'Normal discovery must not save unused summary settings.'
 
+    $settings | Add-Member claimAnalyzerId 'lab664_policy_checks_claim_summary'
+    $settings | ConvertTo-Json | Set-Content -LiteralPath $settingsFile
     & $deploy -PythonExecutable Invoke-TestPython -Apply
     Assert ($state.pythonCalls[-1] -notcontains '--index-only') 'Saved-settings deploy must activate runtime configuration.'
-    Assert ($state.pythonCalls[-1] -contains '--create-claim-analyzer') 'Saved default analyzer must be prepared automatically.'
+    Assert ($state.pythonCalls[-1] -notcontains '--create-claim-analyzer') 'Saved default analyzer metadata must not trigger creation.'
+    Assert ($state.pythonCalls[-1] -notcontains '--claim-analyzer-id') 'Saved default analyzer metadata must not trigger validation.'
     $settings.claimAnalyzerId = 'custom_existing_claims'
     $settings | ConvertTo-Json | Set-Content -LiteralPath $settingsFile
     & $deploy -PythonExecutable Invoke-TestPython -Apply
     Assert ($state.pythonCalls[-1] -notcontains '--index-only') 'Custom saved analyzer must still activate runtime configuration.'
-    Assert ($state.pythonCalls[-1] -notcontains '--create-claim-analyzer') 'A custom saved analyzer must be used unchanged by default.'
+    Assert ($state.pythonCalls[-1] -notcontains '--create-claim-analyzer') 'Custom saved metadata must not trigger creation.'
+    Assert ($state.pythonCalls[-1] -notcontains '--claim-analyzer-id') 'Custom saved metadata must not opt into legacy validation.'
+    & $deploy -PythonExecutable Invoke-TestPython -Apply -CreateClaimAnalyzer
+    Assert ($state.pythonCalls[-1] -contains '--create-claim-analyzer') 'Explicit saved-settings legacy creation must propagate.'
     $settings.claimAnalyzerId = 'lab664_policy_checks_claim_summary'
     $settings | ConvertTo-Json | Set-Content -LiteralPath $settingsFile
     $count = $state.pythonCalls.Count
@@ -152,6 +177,12 @@ try {
     Assert ($state.pythonCalls[-1] -contains 'second-policy') 'Explicit model must propagate.'
     Assert ($state.pythonCalls[-1] -contains 'existing_claims') 'Explicit analyzer must propagate.'
     Assert ($state.pythonCalls[-1] -notcontains '--create-claim-analyzer') 'An explicit existing analyzer must not be recreated.'
+    & $deploy -PythonExecutable Invoke-TestPython -ResourceGroup test-group -ModelDeployment second-policy -CreateClaimAnalyzer
+    Assert ($state.pythonCalls[-1] -contains '--create-claim-analyzer') 'Explicit discovery creation must propagate.'
+    Assert ($state.pythonCalls[-1] -contains 'lab664_policy_checks_claim_summary') 'Explicit discovery creation must retain the legacy default ID.'
+    & $deploy -PythonExecutable Invoke-TestPython -ResourceGroup test-group -ModelDeployment second-policy -UseLayout
+    Assert ($state.pythonCalls[-1] -notcontains '--claim-analyzer-id') 'Default Layout deployment must not require a summary analyzer.'
+    Assert ($state.pythonCalls[-1] -notcontains '--create-claim-analyzer') 'Default Layout deployment must not create a summary analyzer.'
 
     $state.models = @($state.models | Where-Object { $_.name -eq 'embeddings' })
     $failed = $false

@@ -1,7 +1,5 @@
 # Docs
 
-<!-- IGNITE TEMPLATE PLACEHOLDER: remove this folder when the session needs no additional documentation. -->
-
 Use this folder for supporting documentation such as reference material and
 architecture/context.
 

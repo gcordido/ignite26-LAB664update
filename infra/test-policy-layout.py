@@ -374,10 +374,63 @@ class LayoutTests(unittest.TestCase):
             self.run_setup("--apply", "--index-name", "../shared")
         self.assertFalse(self.http.calls)
 
-    def test_missing_claim_analyzer_requires_explicit_creation_and_preflight_never_creates(self):
+    def test_default_setup_ignores_saved_summary_and_activates_without_analyzer(self):
+        for analyzer_id in ("lab664_policy_checks_claim_summary", "custom_existing_claims"):
+            with self.subTest(analyzer_id=analyzer_id):
+                layout.setup.atomic_json(self.root / layout.setup.DEPLOYMENT_PATH, {
+                    **fixtures.RESOURCES, "claimAnalyzerId": analyzer_id,
+                })
+                config = json.loads(self.before)
+                config["claimAnalyzerHash"] = "a" * 64
+                layout.setup.atomic_json(self.root / layout.setup.CONFIG_PATH, config)
+                self.http.analyzer = None
+                report = self.run_setup("--index-name", "isolated-index")
+                self.assertEqual(report["status"], "preflight")
+                result = self.run_setup("--apply", "--index-name", "isolated-index")
+                self.assertEqual(result["status"], "verified")
+                config = layout.setup.read_json(self.root / layout.setup.CONFIG_PATH)
+                self.assertNotIn("claimAnalyzerId", config)
+                self.assertNotIn("claimAnalyzerHash", config)
+                self.assertEqual(config["indexName"], "isolated-index")
+                self.assertEqual(config["modelDeployment"], "gpt-5")
+                saved = layout.setup.read_json(self.root / layout.setup.DEPLOYMENT_PATH)
+                self.assertNotIn("claimAnalyzerId", saved)
+                self.assertFalse(any("/contentunderstanding/analyzers/" in url for _, url in self.http.calls))
+
+    def test_default_rerun_preserves_active_summary_metadata_without_analyzer_calls(self):
+        self.run_setup("--apply", "--claim-analyzer-id", "claim_summary", "--index-name", "isolated-index")
+        before = layout.setup.read_json(self.root / layout.setup.CONFIG_PATH)
+        saved = layout.setup.read_json(self.root / layout.setup.DEPLOYMENT_PATH)
+        saved["claimAnalyzerId"] = "different_saved_summary"
+        layout.setup.atomic_json(self.root / layout.setup.DEPLOYMENT_PATH, saved)
+        self.http.analyzer = None
+        self.http.calls.clear()
+        self.assertEqual(self.run_setup("--apply")["status"], "verified")
+        after = layout.setup.read_json(self.root / layout.setup.CONFIG_PATH)
+        self.assertEqual(after, before)
+        self.assertFalse(any("/contentunderstanding/analyzers/" in url for _, url in self.http.calls))
+
+    def test_fresh_default_setup_activates_without_summary_settings_or_analyzer(self):
+        (self.root / layout.setup.CONFIG_PATH).unlink()
+        self.http.analyzer = None
+        args = ["--model-deployment", "gpt-5", "--index-name", "isolated-index"]
+        for key, value in fixtures.RESOURCES.items():
+            args.extend(["--" + {"searchResourceId": "search-resource-id",
+                                "storageResourceId": "storage-resource-id",
+                                "foundryResourceId": "foundry-resource-id"}[key], value])
+        self.assertEqual(self.run_setup(*args)["status"], "preflight")
+        self.assertEqual(self.run_setup("--apply", *args)["status"], "verified")
+        config = layout.setup.read_json(self.root / layout.setup.CONFIG_PATH)
+        self.assertNotIn("claimAnalyzerId", config)
+        self.assertNotIn("claimAnalyzerHash", config)
+        self.assertEqual(config["searchEndpoint"], fixtures.SEARCH_ENDPOINT)
+        self.assertEqual(config["azureOpenAIEndpoint"], fixtures.FOUNDRY_ROOT)
+        self.assertFalse(any("/contentunderstanding/analyzers/" in url for _, url in self.http.calls))
+
+    def test_missing_explicit_claim_analyzer_requires_creation_and_preflight_never_creates(self):
         self.http.analyzer = None
         with self.assertRaises(layout.setup.SetupError):
-            self.run_setup("--index-name", "isolated-index")
+            self.run_setup("--claim-analyzer-id", "claim_summary", "--index-name", "isolated-index")
         self.http.calls.clear()
         report = self.run_setup("--create-claim-analyzer", "--index-name", "isolated-index")
         self.assertEqual(report["status"], "preflight")
@@ -387,6 +440,14 @@ class LayoutTests(unittest.TestCase):
             result = self.run_setup("--apply", "--create-claim-analyzer", "--index-name", "isolated-index")
         self.assertEqual(result["status"], "verified")
         self.assertEqual(self.http.analyzer["status"], "ready")
+        config = layout.setup.read_json(self.root / layout.setup.CONFIG_PATH)
+        self.assertEqual(config["claimAnalyzerId"], "claim_summary")
+        self.assertEqual(config["claimAnalyzerHash"], layout.setup.analyzer_hash(self.http.analyzer))
+        self.http.calls.clear()
+        self.run_setup("--apply", "--claim-analyzer-id", "claim_summary", "--index-name", "isolated-index")
+        self.assertTrue(any(method == "GET" and "/analyzers/claim_summary?" in url
+                            for method, url in self.http.calls))
+        self.assertFalse(any(method == "PUT" and "/analyzers/" in url for method, url in self.http.calls))
 
 
 class VinImageTests(unittest.TestCase):

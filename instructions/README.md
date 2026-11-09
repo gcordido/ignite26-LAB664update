@@ -1,20 +1,18 @@
 # Attendee instructions
 
-<!-- IGNITE TEMPLATE PLACEHOLDER: remove this folder when the session has no attendee step-by-step guidance. -->
-
 Use this folder for attendee step-by-step guidance, including self-paced
 instructions, for any session type.
 
 ## Lab entry point
 
-Use the [five-step lab guide](lab.html) for both guided and self-paced sessions.
-Clone or download the repository, then open `instructions\lab.html` locally
-in your browser; GitHub's file view does not run the HTML guide.
+Use the [nine-step lab guide](lab.md) for both guided and self-paced sessions
+in the provisioned lab environment. Lab-platform variables and VM screenshot
+paths are resolved by that environment, not by GitHub's Markdown preview.
 
-The guide identifies every input under `data\step1` through `data\step4`
+The guide identifies every input under `data\samples`
 and explains when to run the setup and launch scripts in `infra`.
-The Insurance Workbench App is launched separately in step 5. That step also
-includes the [policy-check comparison](lab.html#policy-checks): inspect all **30**
+The Insurance Workbench App is launched separately in step 7. Step 9
+includes the [policy-check comparison](lab.md#step-9-review-claims-with-azure-search-foundry-iq): inspect all **30**
 saved results without Azure setup under **Claim policy checks**, in the order
 **Daily rate**, **Effective terms**, and **Repair estimate**.
 Start with packet 01, compare the rental rates for packets 01 and 02,
