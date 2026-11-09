@@ -92,13 +92,15 @@ if ($DeployResources) {
         foundryResourceId = $outputs.accountResourceId.value
         modelDeployment = $outputs.policyModelDeployment.value
         cuModelName = $outputs.policyCuModelName.value
-        claimAnalyzerId = $outputs.policyClaimAnalyzerId.value
         cuApiVersion = '2026-06-01-preview'
     }
     if ($settings.Values | Where-Object { -not $_ }) {
         throw 'Azure deployment outputs are incomplete; policy configuration was not activated.'
     }
-    $CreateClaimAnalyzer = $true
+    if ($CreateClaimAnalyzer) {
+        $ClaimAnalyzerId = $outputs.policyClaimAnalyzerId.value
+        if (-not $ClaimAnalyzerId) { throw 'Explicit legacy analyzer creation requires the policyClaimAnalyzerId ARM output.' }
+    }
 }
 elseif ($ResourceGroup) {
     Write-Host "Discovering existing lab resources in '$ResourceGroup' (no ARM deployment or role assignments)..."
@@ -127,9 +129,8 @@ elseif ($ResourceGroup) {
         $model.properties.model.name -match 'embedding') {
         throw 'The selected deployment must have a model name and support policy chat, not embeddings.'
     }
-    if (-not $ClaimAnalyzerId) {
+    if ($CreateClaimAnalyzer -and -not $ClaimAnalyzerId) {
         $ClaimAnalyzerId = 'lab664_policy_checks_claim_summary'
-        $CreateClaimAnalyzer = $true
     }
     $settings = @{
         searchResourceId = $search.id
@@ -137,7 +138,6 @@ elseif ($ResourceGroup) {
         foundryResourceId = $foundry.id
         modelDeployment = $model.name
         cuModelName = $model.properties.model.name
-        claimAnalyzerId = $ClaimAnalyzerId
         cuApiVersion = '2026-06-01-preview'
     }
     Write-Host ($settings | ConvertTo-Json)
@@ -147,17 +147,8 @@ elseif ($Subscription) {
 }
 
 $settingsPath = Join-Path $repositoryRoot '.tools\policy-deployment.json'
-if (-not $settings) {
-    $savedAnalyzerId = $null
-    foreach ($path in @((Join-Path $repositoryRoot '.tools\policy-agent-framework.json'), $settingsPath)) {
-        if (Test-Path -LiteralPath $path) {
-            $saved = Get-Content -LiteralPath $path -Raw | ConvertFrom-Json
-            if ($saved.claimAnalyzerId) { $savedAnalyzerId = $saved.claimAnalyzerId }
-        }
-    }
-    if ($savedAnalyzerId -eq 'lab664_policy_checks_claim_summary') { $CreateClaimAnalyzer = $true }
-}
 if ($settings) {
+    if ($ClaimAnalyzerId) { $settings.claimAnalyzerId = $ClaimAnalyzerId }
     if (Test-Path -LiteralPath $settingsPath) {
         $previous = Get-Content -LiteralPath $settingsPath -Raw | ConvertFrom-Json
         if ($previous.searchResourceId -eq $settings.searchResourceId) {
@@ -179,11 +170,11 @@ if ($settings) {
         @('--foundry-resource-id', 'foundryResourceId'),
         @('--model-deployment', 'modelDeployment'),
         @('--cu-model-name', 'cuModelName'),
-        @('--claim-analyzer-id', 'claimAnalyzerId'),
         @('--cu-api-version', 'cuApiVersion')
     )) {
         $policyArguments += @($pair[0], $settings[$pair[1]])
     }
+    if ($ClaimAnalyzerId) { $policyArguments += @('--claim-analyzer-id', $ClaimAnalyzerId) }
     if ($UseLayout) {
         if (-not $SourceIndex) { $SourceIndex = $settings.layoutSourceIndex }
         if (-not $IndexName) { $IndexName = $settings.layoutIndexName }
@@ -199,7 +190,8 @@ if ($UseLayout) {
 else {
     Write-Host 'Preparing Search-managed Standard extraction with semantic chunks and AI figure descriptions...'
 }
-Write-Host 'Preparing the claim analyzer and workbench connection; configuration activates only after verification.'
+if ($CreateClaimAnalyzer -or $ClaimAnalyzerId) { Write-Host 'Preparing the explicitly requested legacy claim-summary analyzer...' }
+Write-Host 'Preparing the workbench connection; configuration activates only after verification.'
 & $PythonExecutable @policyArguments
 if ($LASTEXITCODE -ne 0) {
     throw 'Policy index deployment failed. The previous verified workbench configuration remains active; resolve the reported error and rerun.'

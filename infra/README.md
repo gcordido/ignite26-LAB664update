@@ -180,8 +180,8 @@ on the skill using the `2026-05-01-preview` API; `extractionOptions: ["images"]`
 is not required to verbalize figures into searchable Markdown.
 The preview displays targets and runs read-only checks without saving settings.
 Apply waits for the Search indexer, verifies retrieval, saves a local chunk
-snapshot and discovered settings, and reports the index name. It also prepares
-the claim analyzer and activates `.tools\policy-agent-framework.json` after
+snapshot and discovered settings, and reports the index name. It activates
+`.tools\policy-agent-framework.json` after
 verification, connecting the workbench without a second command.
 
 Console progress includes timestamps for prerequisite checks, authentication,
@@ -199,7 +199,7 @@ Discovery requires exactly one matching resource of each type and one matching
 ready policy model. Ambiguity or missing resources stops with candidate details;
 it never selects the first result or falls back to ARM. Select among existing
 resources with `-SearchResourceId`, `-StorageResourceId`, `-FoundryResourceId`,
-or `-ModelDeployment`. `-ClaimAnalyzerId` selects a different existing analyzer;
+or `-ModelDeployment`. `-ClaimAnalyzerId` explicitly selects a legacy summary analyzer;
 add `-CreateClaimAnalyzer` to explicitly create that ID if absent.
 `-Subscription` scopes all Azure CLI discovery reads. Resource overrides must
 belong to the supplied group. Required Azure permissions remain administrator
@@ -213,11 +213,17 @@ After initial discovery, rerun using the saved settings with:
 ```
 
 This reuses a completed matching indexer run and writes the workbench connection
-again after verification. The default `lab664_policy_checks_claim_summary`
-analyzer is created only if absent; conflicting definitions are never overwritten.
-Custom `-ClaimAnalyzerId` values select an existing analyzer unless creation is
-explicitly requested with `-CreateClaimAnalyzer`. The claim analyzer is not part
-of policy indexing, but it is required by the workbench's live-review runtime.
+again after verification. Ordinary deployment neither creates nor validates a
+legacy claim-summary analyzer, even when saved settings contain its ID.
+The three policy comparisons and follow-up chat use existing Parse fields and
+native page text, not that analyzer. `-ClaimAnalyzerId` opts into validating an
+existing legacy analyzer; `-CreateClaimAnalyzer` opts into creating it if absent.
+Explicit creation uses the saved ID, the discovery default
+`lab664_policy_checks_claim_summary`, or the ARM compatibility output as applicable.
+Conflicting definitions are never overwritten.
+On unchanged runtime targets, valid optional summary metadata from the active
+configuration is retained locally to preserve live-review cache identity; it
+does not trigger analyzer validation. Fresh or changed targets do not inherit it.
 For deliberately indexing without activation, invoke the Python script directly
 with `--index-only`; that advanced mode is not used by `deploy.ps1`.
 
@@ -242,8 +248,8 @@ To provision a new lab's Azure resources and then populate its policy index:
 
 The first command previews the ARM deployment only. The apply command deploys
 [`Lab664-arm-template.json`](Lab664-arm-template.json), propagates its resource
-IDs and model settings, runs Search-managed Standard ingestion, prepares the
-claim analyzer and activates the app's configuration after verification.
+IDs and model settings, runs Search-managed Standard ingestion, and activates
+the app's configuration after verification without a claim-summary analyzer.
 Use `-Subscription` and `-ParametersFile` for a specific
 subscription and ARM parameters file. Resource groups must already exist.
 This provisions the template's billable services and model deployments; use the
