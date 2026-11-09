@@ -506,3 +506,106 @@ If you're starting here and the app isn't running, follow [Step 7's app-launch i
 !IMAGE[ckohd4yo.png](instructions359897/ckohd4yo.png)
 
 ---
+
+===
+
+## Step 10: Optional: Use GitHub Copilot + CLI to improve your analyzer
+
+In this optional exercise, you'll see how:
+
+- The Content Understanding CLI (`azd ai cu`) lets you or a coding agent manage analyzers and analyze documents.
+- Copilot can turn a natural-language request into an improvement workflow: inspect the analyzer, make targeted schema changes on a copy, and compare before/after results.
+
+You'll repeat the repair-analyzer workflow from Step 8 on a disposable copy. Your original analyzers and Workbench results stay unchanged.
+
+### Install the Content Understanding CLI
+
+Open a separate **Windows PowerShell** window. With Azure Developer CLI (`azd`) 1.37.0 or later already available on the lab VM, run:
+
+```PowerShell
+azd ai cu
+```
+
+When `azd ai cu` prompts, press **Enter** to install `azure.ai.content-understanding`. Then run:
+
+```PowerShell
+azd ai cu --help
+azd auth login
+```
+
+Sign in with the same Azure lab account used in CU Studio.
+
+### Sign in to the GitHub Copilot app
+
+1. In your browser, navigate to [GitHub enterprise sign-in](https://github.com/enterprises/skillable-events/sso) and sign in with your **Azure lab credentials**.
+2. Return to the **GitHub Copilot app** and select **Sign in with GitHub**. Follow the instructions on the web page that opens, including the one-time code prompt, to complete sign-in.
+
+### Open the lab checkout
+
+1. In the sidebar, select **+** beside **Projects**, then select **Open folder**.
+
+!IMAGE[Open folder from the Projects menu](instructions359897/copilot-open-folder.png)
+
+2. Choose `C:\Users\LabUser\Desktop\ignite26-LAB664` in the folder picker. Select the lab project under **Projects**, then use **New** at the top left to start a fresh session for that project.
+
+!IMAGE[The lab project and New session navigation](instructions359897/copilot-new-session.png)
+
+3. Below the prompt, open the workspace selector, which may initially show **New worktree**. In the **Where to work** menu, select **Current checkout**.
+
+!IMAGE[Choose Current checkout instead of New worktree](instructions359897/copilot-select-current-checkout.png)
+
+4. Confirm the prompt footer shows **ignite26-LAB664** and **Current checkout**. Keep **Interactive** mode and normal tool approvals enabled; do not enable **allow-all**.
+
+!IMAGE[The prompt footer with the lab project and Current checkout](instructions359897/copilot-current-checkout.png)
+
+5. Open the model picker in the prompt footer and select **GPT 6.1 Sol**. This selects Copilot's coding model; leave the CU analyzer's existing **GPT-5.5** configuration unchanged.
+
+Use **Current checkout**, not **New worktree**: instructions staged on the VM may be uncommitted and absent from a new worktree. Changing folders in a PowerShell window does not change the Copilot app's workspace.
+
+### Give the agent the task
+
+Use `repair_extractor_analyzer` from **Step 3**, not the router or the improved analyzer from Step 8.
+
+> Hey, I just validated packet 8 and the repair line items don't add up to the subtotal. Can you try fixing it on a copy of `repair_extractor_analyzer`? Add PartsAmount and LaborAmount as extracted numbers, and change the line-item TotalAmount from an object to a generated number. Use the printed row total if there is one, otherwise add parts and labor when both are there. Don't guess missing amounts, and leave the document total alone. Show me what you'll change first, then compare before and after.
+
+After you send the prompt, Copilot will check your Azure connection and ask for your Content Understanding resource endpoint if needed.
+
+As Copilot works, follow how it translates your request into analyzer checks, CLI commands, a schema diff, approvals and a before/after comparison. Inspect the commands and results along the way, not just the final answer.
+
+At first tool use, you may see **Trust this repository?**. Confirm that the project is the lab checkout above, then select **Trust repository** only if you trust its files. You can choose **Skip for now** instead and review individual tool requests.
+
+!IMAGE[Trust repository and Skip for now choices](instructions359897/copilot-trust-repository.png)
+
+Copilot is instructed to show each CU CLI command in chat before running it and report the result afterward. Check the analyzer ID, input file, endpoint when present, and operation before approving. If a chat preview is missing, ask Copilot to show the full command before continuing. You can expand tool cards to inspect commands that already ran; missing chat text does not mean they were not executed.
+
+Review Copilot's initial proposal before approving a disposable repair-analyzer copy and **two analyses** of `data\documents\packet-08\05-estimate.pdf`: one before the fix and one after.
+
+!IMAGE[Illustrative confirmation for the disposable copy and two packet-8 analyses](instructions359897/copilot-repair-analysis-approval-example.png)
+
+Illustrative approval prompt (edited example).
+
+Review Copilot's proposed changes. It will ask again before replacing its copy of the analyzer. Your original stays unchanged.
+
+### Review the comparison
+
+For packet 8, use these reference checks:
+
+- Each row has `PartsAmount` and `LaborAmount`, with a numeric `TotalAmount`.
+- Row totals are **1,203.20, 186.00 and 210.80**, adding to the **1,600.00 subtotal**.
+- The gap drops from **496.00 to 0.00**; the document total stays **1,691.08**.
+
+If values differ, ask Copilot to explain before rerunning.
+
+### More prompts to try
+
+Stay in the same session. The first prompt needs approval for **four new document analyses**. The second uses saved results only.
+
+**Check other packets**
+
+> Can you try the repair estimates from packets 1 and 3 with both analyzers? Check if the fix changed anything else, like the vehicle, VIN or odometer. Show me the files and ask before running the four analyses.
+
+Use the individual repair estimates, not the full packets. Changed values are potential regressions to review, not proof that either result is correct.
+
+**Review the changes - no new Azure calls**
+
+> Other than the amounts we fixed, did anything change or go missing? Show me the old and new values using the saved results. Don't run anything again.
