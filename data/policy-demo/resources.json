@@ -1,14 +1,16 @@
 {
   "schemaVersion": 1,
-  "indexName": "lab664-claim-policy-pruned-v5-1728bee05009",
+  "indexName": "lab664-rental-v2-managed-23092a011115",
   "corpusHash": "97fc0fadd0e452a620c8cb9c454770dacc053dfdfb78a6e9449b43f368671fda",
-  "indexFingerprint": "4e7f5e75457a03ccaeda0d4e7cdb50fbe60abb5da4592f3dceab0acea479fddf",
+  "indexFingerprint": "23092a0111153fa99cd113c5ad317a936e34f3991641b41d58bb03ddccddb1c0",
   "search": {
-    "resourceId": "/subscriptions/609bbde3-d152-4d7d-a12b-005e38ac4f27/resourceGroups/mmi-sample-vendors/providers/Microsoft.Search/searchServices/mmi-sample-ai-search",
-    "location": "West US",
-    "sku": "standard"
+    "resourceId": "/subscriptions/5b6d15bb-1c6b-4fe5-9829-30d9c85f5ef7/resourceGroups/ResourceGroup1/providers/Microsoft.Search/searchServices/search-67149656",
+    "location": "South Central US",
+    "sku": "basic"
   },
   "storage": {
-    "kind": "local"
+    "kind": "blob",
+    "resourceId": "/subscriptions/5b6d15bb-1c6b-4fe5-9829-30d9c85f5ef7/resourceGroups/ResourceGroup1/providers/Microsoft.Storage/storageAccounts/stocmx3mp2dqc6c",
+    "containerName": "lab664-rental-v2-23092a011115"
   }
 }
