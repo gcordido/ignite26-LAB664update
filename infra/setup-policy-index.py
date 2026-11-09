@@ -9,9 +9,9 @@ Default (no flags) is READ-ONLY: it validates local sources and checks Azure
 prerequisites with GET requests only. ``--apply`` is the only mode that creates or
 uploads anything, and only when every prerequisite is verified. Role assignments,
 network settings and deletions are never performed; missing roles are reported.
-``--index-only`` does not require a claim analyzer or change the app's active
-configuration. Full review preparation activates a new configuration only after
-the indexer and retrieval are verified.
+Ordinary setup does not create or require the legacy claim-summary analyzer.
+``--apply`` activates a new configuration only after the indexer and retrieval
+are verified; ``--index-only`` leaves the app's active configuration unchanged.
 """
 
 from __future__ import annotations
@@ -785,8 +785,8 @@ def preflight(http: Any, root: Path = ROOT, offline: bool = False,
         report["existing"][kind] = "present" if status == 200 else ("absent" if status == 404 else _err(status, body))
         if status not in (200, 404):
             report["problems"].append(f"Cannot inspect {kind}: {_err(status, body)}")
-    if not index_only:
-        progress("Checking the separate claim-summary analyzer for live reviews...")
+    if not index_only and (create_claim_analyzer or (seed or {}).get("claimAnalyzerId")):
+        progress("Checking the explicitly requested legacy claim-summary analyzer...")
         try:
             resolved = (prepare_claim_analyzer(http, settings) if create_claim_analyzer
                         else resolve_analyzer(http, settings))
@@ -1062,6 +1062,28 @@ def save_snapshot(root: Path, sources, generation, verification, path: Path = SN
         "chunkDigest": verification["chunkDigest"], "documents": docs, "chunks": verification["chunks"]})
 
 
+def retain_claim_metadata(root: Path, config: dict[str, Any]) -> dict[str, Any]:
+    """Keep valid local compatibility metadata on unchanged targets, without analyzer calls."""
+    current = root / CONFIG_PATH
+    if any(key in config for key in ("claimAnalyzerId", "claimAnalyzerHash")) or not current.is_file():
+        return config
+    previous = read_json(current)
+    if not isinstance(previous, dict):
+        raise SetupError(f"{CONFIG_PATH} must contain a JSON object.")
+    runtime_keys = ("schemaVersion", "provider", "azureOpenAIEndpoint", "modelDeployment",
+                    "searchEndpoint", "indexName", "corpusHash", "indexFingerprint",
+                    "extractionMode", "cuEndpoint", "cuApiVersion")
+    if any(previous.get(key) != config[key] for key in runtime_keys):
+        return config
+    patterns = {"claimAnalyzerId": r"[A-Za-z0-9_-]{1,128}", "claimAnalyzerHash": r"[a-f0-9]{64}"}
+    metadata = {key: previous[key] for key in patterns if key in previous}
+    if any(not isinstance(value, str) or not re.fullmatch(patterns[key], value)
+           for key, value in metadata.items()):
+        progress("Not retaining invalid legacy claim-summary metadata from the previous configuration.")
+        return config
+    return {**config, **metadata}
+
+
 def activate(root: Path, sources, settings, names, generation, verification) -> dict[str, Any]:
     """Write the new snapshot/config only after verification; keep a backup of the old config."""
     current = root / CONFIG_PATH
@@ -1074,7 +1096,7 @@ def activate(root: Path, sources, settings, names, generation, verification) -> 
         "azureOpenAIEndpoint": settings["azureOpenAIEndpoint"], "modelDeployment": settings["modelDeployment"],
         "cuModelName": settings["modelName"],
         "cuEndpoint": settings["cuEndpoint"], "cuApiVersion": settings["cuApiVersion"],
-        "claimAnalyzerId": settings["claimAnalyzerId"], "claimAnalyzerHash": settings["claimAnalyzerHash"],
+        **{key: settings[key] for key in ("claimAnalyzerId", "claimAnalyzerHash") if key in settings},
         "searchEndpoint": settings["searchEndpoint"], "indexName": names["index"],
         "corpusHash": sources["corpusHash"], "indexFingerprint": generation,
         "chunkDigest": verification["chunkDigest"], "extractionMode": "standard",
@@ -1087,6 +1109,7 @@ def activate(root: Path, sources, settings, names, generation, verification) -> 
         "ingestion": {"mode": "search-managed-standard", "apiVersion": SEARCH_API, "names": names,
                       "pipeline": PIPELINE, "verifiedAt": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())},
     }
+    config = retain_claim_metadata(root, config)
     atomic_json(current, config)
     return config
 
@@ -1101,10 +1124,13 @@ def apply(http: Any, root: Path = ROOT, refresh: bool = False,
         report["status"] = "blocked"
         return report
     sources, settings = load_sources(root), runtime_settings(root, seed)
-    if not index_only:
+    if not index_only and (create_claim_analyzer or (seed or {}).get("claimAnalyzerId")):
         progress("Preparing the separate claim-summary analyzer...")
         settings = (prepare_claim_analyzer(http, settings, apply_changes=True, sleep=sleep)
                     if create_claim_analyzer else resolve_analyzer(http, settings))
+    else:
+        settings.pop("claimAnalyzerId", None)
+        settings.pop("claimAnalyzerHash", None)
     generation, names = report["generation"], report["names"]
     write_state(root, {"status": "running", "generation": generation, "names": names})
     steps = {"blobs": upload_sources(http, sources, names, generation, refresh, settings),
@@ -1147,9 +1173,9 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--refresh", action="store_true", help="with --apply: re-run indexing, replacing drifted blobs")
     parser.add_argument("--model-deployment", help="existing Foundry model deployment (seed for a fresh clone)")
     parser.add_argument("--cu-model-name", help="CU model name when it differs from the deployment name")
-    parser.add_argument("--claim-analyzer-id", help="existing CU claim analyzer ID; its hash is read, not supplied")
+    parser.add_argument("--claim-analyzer-id", help="opt into legacy summary-analyzer validation; its hash is read, not supplied")
     parser.add_argument("--create-claim-analyzer", action="store_true",
-                        help="with --apply, create the lab claim extractor only if absent; never overwrite it")
+                        help="with --apply, explicitly create the legacy claim extractor only if absent; requires an explicit or saved ID")
     parser.add_argument("--cu-api-version", help="CU API version for the analyzer lookup")
     parser.add_argument("--local-only", action="store_true", help="validate local sources only; no Azure calls")
     add_resource_arguments(parser)

@@ -382,8 +382,11 @@ def run(args, http=None, root=None):
         analyzer = setup.prepare_claim_analyzer(http, settings, apply_changes=args.apply)
         if args.apply or analyzer.get("status") != "planned":
             settings = analyzer
-    else:
+    elif args.claim_analyzer_id:
         settings = setup.resolve_analyzer(http, settings)
+    else:
+        settings.pop("claimAnalyzerId", None)
+        settings.pop("claimAnalyzerHash", None)
     definition, rows = {"fields": layout_fields()}, []
     changed, reread, pruned = set(), set(), []
     pruned_chunks = 0
@@ -467,17 +470,22 @@ def run(args, http=None, root=None):
         "searchEndpoint": settings["searchEndpoint"], "indexName": name,
         "corpusHash": sources["corpusHash"], "indexFingerprint": generation, "extractionMode": "layout",
         "cuEndpoint": settings["cuEndpoint"], "cuApiVersion": settings["cuApiVersion"],
-        "claimAnalyzerId": settings["claimAnalyzerId"], "claimAnalyzerHash": settings["claimAnalyzerHash"],
+        **{key: settings[key] for key in ("claimAnalyzerId", "claimAnalyzerHash") if key in settings},
     }
     if args.source_index or args.index_name:
         saved.update({key: settings[key] for key in setup.RESOURCE_TYPES})
         saved.update(modelDeployment=settings["modelDeployment"], cuModelName=settings["modelName"],
-                     claimAnalyzerId=settings["claimAnalyzerId"], cuApiVersion=settings["cuApiVersion"])
+                     cuApiVersion=settings["cuApiVersion"])
+        if "claimAnalyzerId" in settings:
+            saved["claimAnalyzerId"] = settings["claimAnalyzerId"]
+        else:
+            saved.pop("claimAnalyzerId", None)
         if args.source_index:
             saved["layoutSourceIndex"] = args.source_index
         if args.index_name:
             saved["layoutIndexName"] = args.index_name
         setup.atomic_json(deployment, saved)
+    config = setup.retain_claim_metadata(root, config)
     setup.atomic_json(config_path, config)
     return {**report, "status": "verified", "indexName": name, "chunks": len(actual),
             "documents": len(sources["documents"])}
@@ -489,11 +497,11 @@ def parser():
     parser.add_argument("--index-name", help="isolated target name; reruns verify and reuse matching chunks")
     parser.add_argument("--model-deployment")
     parser.add_argument("--cu-model-name", help="CU model name when it differs from its deployment name")
-    parser.add_argument("--claim-analyzer-id")
+    parser.add_argument("--claim-analyzer-id", help="opt into legacy summary-analyzer validation")
     parser.add_argument("--cu-api-version")
     parser.add_argument("--apply", action="store_true")
     parser.add_argument("--create-claim-analyzer", action="store_true",
-                        help="explicitly create the claim extractor if absent; never overwrite")
+                        help="explicitly create the legacy claim extractor if absent; requires an explicit or saved ID")
     setup.add_resource_arguments(parser)
     return parser
 
