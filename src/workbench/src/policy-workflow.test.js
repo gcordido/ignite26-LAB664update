@@ -9,6 +9,7 @@ import {
   policyChecks,
   policyFamily,
   policyProblem,
+  policyRule,
 } from "../web/result-model.js";
 import { claimFieldSources } from "../web/policy-evidence-links.js";
 
@@ -233,10 +234,10 @@ function rerunReview() {
     ["packet-review", "policy-checks", "review-title", "review-error", "close-review", "pdf-status"]
       .map(id => [id, new Element("div")]),
   );
-  const makeDocument = (id, totals, components = false) => {
+  const makeDocument = (id, totals, components = false, numericTotal = false) => {
     const facts = totals.map((value, index) => ({
-      field: `LineItems[${index}].TotalAmount.Amount`, value, status: "present",
-      regions: [{ page: 1, polygon: [components ? 0.6 : 0.1, index / 10, 0.8, index / 10] }],
+      field: `LineItems[${index}].TotalAmount${numericTotal ? "" : ".Amount"}`, value, status: "present",
+      regions: numericTotal ? [] : [{ page: 1, polygon: [components ? 0.6 : 0.1, index / 10, 0.8, index / 10] }],
     }));
     facts.push({
       field: "SubtotalAmount.Amount", value: 1600, status: "present",
@@ -258,7 +259,8 @@ function rerunReview() {
     };
   };
   const check = (doc, status) => ({
-    id: `financial.line_items:${doc.id}`, status, rule: "Line-item sum rule",
+    id: `financial.line_items:${doc.id}`, status,
+    rule: "Line-item totals, or PartAmount + LaborAmount when a total is missing, must sum to the explicit subtotal.",
     message: "Line items must match subtotal.",
     evidence: doc.document.facts.slice(0, 4).map(item => ({ ...item, documentId: doc.id })),
   });
@@ -276,7 +278,7 @@ function rerunReview() {
       createElementNS: (namespaceURI, tag) => Object.assign(new Element(tag), { namespaceURI }),
     },
     window: { confirm() { throw new Error("No extra confirmation is allowed."); } },
-    documentLabel, fieldLabel, fieldRegions, policyChecks, policyFamily, policyProblem,
+    documentLabel, fieldLabel, fieldRegions, policyChecks, policyFamily, policyProblem, policyRule,
     previewPdf: async (...args) => { pdf.push(args); },
   });
   vm.runInContext(reviewSource.slice(reviewSource.indexOf("const get ="))
@@ -302,8 +304,8 @@ function rerunReview() {
     input.oninput();
     return form.onsubmit({ preventDefault() {} });
   };
-  const preview = id => {
-    const doc = makeDocument(id, [1203.2, 186, 210.8], true);
+  const preview = (id, numericTotal = false) => {
+    const doc = makeDocument(id, [1203.2, 186, 210.8], true, numericTotal);
     return { id, analyzerId: id, persisted: false, documents: [doc], policies: { checks: [check(doc, "pass")] } };
   };
   return { reviewer, nodes, report, original, open, submit, table, preview, requests, pdf, busy, notifications };
@@ -315,7 +317,10 @@ test("updated review adds component amounts and highlights their source without 
   f.open("packet-08");
   assert.doesNotMatch(f.nodes["policy-checks"].textContent, /LLM|Not reviewed/);
   assert.match(f.nodes["policy-checks"].textContent,
-    /Repair estimate line items amounts should sum to the explicit SubTotal amount/);
+    /Line-item totals must sum to the explicit subtotal/);
+  assert.doesNotMatch(f.nodes["policy-checks"].textContent, /parts|labor/i);
+  assert.equal(f.nodes["policy-checks"].querySelector(".policy-indicator").title,
+    "Fixed check failed: Line-item totals must sum to the explicit subtotal.");
   assert.match(f.nodes["policy-checks"].textContent,
     /Update and build the extractor in CU Studio to improve extraction quality/);
   assert.deepEqual(
@@ -371,6 +376,30 @@ test("updated review adds component amounts and highlights their source without 
   f.reviewer.reset();
   f.open("packet-08");
   assert.equal(f.table("Updated extracted fields"), undefined);
+});
+
+test("generated numeric totals keep component evidence ordered and highlight extracted inputs", async () => {
+  const f = rerunReview();
+  const original = JSON.stringify(f.report);
+  f.open("packet-08");
+  const pending = f.submit("numeric_repair");
+  f.requests[0].resolve({ preview: f.preview("numeric-1", true) });
+  await pending;
+  assert.match(f.nodes["policy-checks"].textContent,
+    /1203\.20 \+ 186\.00 \+ 210\.80 = 1600\.00 \(Subtotal\)/);
+  assert.deepEqual(
+    f.table("Updated extracted fields").querySelector("tbody").children
+      .map(row => row.children.at(-1).textContent),
+    ["1203.2", "980", "223.2", "186", "124", "62", "210.8", "0", "210.8", "1600"],
+  );
+  assert.equal(f.pdf.at(-1)[2].length, 7);
+  assert.ok(f.pdf.at(-1)[2].some(region => region.polygon[0] === 0.2));
+  assert.ok(f.pdf.at(-1)[2].some(region => region.polygon[0] === 0.4));
+  assert.match(f.nodes["pdf-status"].textContent, /without source boxes cannot be highlighted/);
+  const rows = f.nodes["policy-checks"].querySelectorAll("tr");
+  rows.find(row => row.dataset.result === "original").click();
+  assert.equal(f.pdf.at(-1)[2].length, 4);
+  assert.equal(JSON.stringify(f.report), original);
 });
 
 test("formula-only fields retain component fallback inputs, zero and a missing subtotal", () => {
