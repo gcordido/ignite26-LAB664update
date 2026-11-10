@@ -85,7 +85,7 @@ Once done, follow the steps below to explore the prebuilt analyzers:
 1. Click on **Layout** to test the document layout extraction. 
 2.  Click **Next**->**Save** to confirm details of subscription, resource group etc.
 3. You'll get a list of samples for different content types (checklist, financial report, formulas, etc). Select a sample to see the original document scan and how the prebuilt analyzer extracts information from it.
-4. 
+
 !IMAGE[chshn4cn.png](instructions359897/chshn4cn.png)
 
 4. Next, click on **Browse for files** to upload your own document for analysis. In the File Explorer window that opens, navigate to `C:\Users\LabUser\Desktop\ignite26-LAB664\data\samples` and select **towing-invoice.pdf**.
@@ -136,7 +136,9 @@ In this step, we will build a custom repair analyzer to handle repair estimate d
 
 !IMAGE[kke6gm3z.png](instructions359897/kke6gm3z.png)
 
-5. Leave the other parameters as default and confirm by selecting **Create**.
+5. Expand the **Advanced settings** section and check that **gpt-5.5** is selected as model. Leave the other parameters as default and confirm by selecting **Create**.
+
+!IMAGE[jur6eyeq.png](instructions359897/jur6eyeq.png)
 6. Once your project is created, select **Browse for Files** and upload `C:\Users\LabUser\Desktop\ignite26-LAB664\data\samples\repair-estimate.pdf`.
 7. In the **Choose a template window**, select the **Invoice** one. Click on **Save** to proceed.
 8. Add **these three fields**, with method **Extract**, one by one. For each field, enter the field's **Name** and **Description** from the table below. Complete both cells before selecting **Add field** again, and repeat for all three rows.
@@ -173,7 +175,7 @@ Now let's work with a different kind of document: a statement about the incident
 
 Instead of entering each field manually, you will import a prepared schema and inspect how its field descriptions constrain the result.
 
-1. Return to the **Build** tab -> **Project list** and create a second **Standard Extraction** project using the '2026-06-01 (Preview)' API version. Name it `custom-statement-extractor`, then select **Create**. 
+1. Return to the **Build** tab -> **Project list** and create a second **Standard Extraction** project using the '2026-06-01 (Preview)' API version. Name it `custom-statement-extractor`. Expand the **Advanced settings** section and check that **gpt-5.5** is selected as model. Then select **Create**. 
 
 !IMAGE[g5cz3r5i.png](instructions359897/g5cz3r5i.png)
 
@@ -182,7 +184,7 @@ Instead of entering each field manually, you will import a prepared schema and i
 
 !IMAGE[szpjguew.png](instructions359897/szpjguew.png)
 
-4. In the field-schema toolbar, choose **Import**, navigate to `C:\Users\LabUser\Desktop\ignite26-LAB664\data\samples`, and select `statement-schema.json`. Confirm schema replacement if prompted, then **Save**. This imports the fields and descriptions; no field-by-field typing is needed.
+4. In the field-schema toolbar, choose **Import**, navigate to `C:\Users\LabUser\Desktop\ignite26-LAB664\data\samples`, and select `statement-schema.json`. Confirm schema replacement if prompted. This imports the fields and descriptions; no field-by-field typing is needed.
 
 !IMAGE[03cudcq2.png](instructions359897/03cudcq2.png)
 
@@ -204,7 +206,7 @@ You should have **seven fields: five Extract and two Generate**, with **Source &
 
 Next, test the same schema against a typed email:
 
-1. Select **Browse for Files** and upload `C:\Users\LabUser\Desktop\ignite26-LAB664\data\samples\email-statement.pdf`. Save the project, wait for saving to finish, then select **Run analysis**.
+1. Select **Browse for Files** and upload `C:\Users\LabUser\Desktop\ignite26-LAB664\data\samples\email-statement.pdf`. Then select **Run analysis**.
 2. Perform the same checks as in the handwritten statement. 
 3. After reviewing both documents, select **Build analyzer** and enter a new unique ID, for example `statement_extractor_analyzer`.  In the **Analyzer list**, you should now see two custom analyzers, as in the screenshot below.
 !IMAGE[516v1pe7.png](instructions359897/516v1pe7.png)
@@ -307,6 +309,8 @@ The manual walkthrough below is the main learning path. If you are short on time
 ### Running short on time? Import the routing configuration
 
 In **Routing rules**, open **More actions** (`...`) next to **Add category**, select **Import**, and click on **Confirm**. Then choose your local JSON file including the routing configuration, at `C:\Users\LabUser\Desktop\ignite26-LAB664\data\samples\router-config.json`.
+
+!IMAGE[ywqnyvhk.png](instructions359897/ywqnyvhk.png)
 
 > [!Tip] If any of the imported analyzers are highlighted in red or show **Analyzer not found**, there might be a mismatch between the analyzer IDs in the JSON file and the analyzer IDs you defined in previous steps. Verify that the custom analyzer IDs in the JSON match exactly with the ones you built in steps 3 and 4.
 
@@ -417,7 +421,9 @@ The original Repair Estimate result shows the calculation `USD 980.00 + 124.00 +
 
 The PDF lists parts and labor separately, matched by operation reference. The original extraction copied only the parts amounts into the row totals, leaving out labor. Use **Extract** for `PartsAmount` and `LaborAmount` to read those printed values, and **Generate** for `TotalAmount` to calculate their sum, which is not printed as a single row total. This makes the intended calculation explicit; the independent subtotal check still verifies the result.
 
-Within **LineItems**, delete the existing **TotalAmount** object using its **Delete field** control. This removes its nested **Amount** and **CurrencyCode** fields too. Do not delete the separate document-level **TotalAmount** field.
+Within **LineItems**, delete the existing **TotalAmount** object using the trash can icon that appears when hovering over its raw. This removes its nested **Amount** and **CurrencyCode** fields too. Do not delete the separate document-level **TotalAmount** field.
+
+!IMAGE[ma6pu0dc.png](instructions359897/ma6pu0dc.png)
 
  Add these three fields directly under **LineItems**, as siblings of **Description** and **Quantity**, not inside another object:
 
@@ -429,7 +435,7 @@ Within **LineItems**, delete the existing **TotalAmount** object using its **Del
 
 !IMAGE[ljfsfbut.png](instructions359897/ljfsfbut.png)
 
- Add the fields in this order. The new **TotalAmount** uses the same name as the deleted field, but is a single **Number**, not an object. The validation rule supports both this numeric `LineItems[i].TotalAmount` and the original `LineItems[i].TotalAmount.Amount`. It prefers the returned row total and uses parts plus labor only when that total is missing; a wrong returned total still fails.
+ Add the fields in this order. The new **TotalAmount** uses the same name as the deleted field, but is a single **Number**, not an object. The validation rule supports both this numeric `LineItems[i].TotalAmount` and the original `TotalAmount.Amount`. It prefers the returned row total and uses parts plus labor only when that total is missing; a wrong returned total still fails.
  Click **Back to main view**->**Save** to confirm the schema changes.
 5. To verify the changes, select **Browse for files** and upload `C:\Users\LabUser\Desktop\ignite26-LAB664\data\documents\packet-08\05-estimate.pdf`, then select **Run analysis**. Expand the **LineItems** object in the **Test** tab and inspect every line item and its source regions. A useful result for this document is:
 
