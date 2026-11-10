@@ -63,7 +63,7 @@ powershell -ExecutionPolicy Bypass -Command "& '.\infra\setup.ps1'; & '.\infra\d
 
    No pre-filled configuration file or hosted agent is required. Azure AI Search handles policy extraction and indexing; Python does not extract or upload individual chunks. Later policy checks reuse the saved claim Parse results rather than creating a claim-summary analyzer or running Content Understanding on the claims again.
 
-Let the script run in the background. You don't need to wait for it to finish. Leave this terminal open. You will return to it in step 7 to check that setup completed and launch the app.
+> [!Note] Let the script run in the background. You don't need to wait for it to finish. Leave this terminal open. You will return to it in step 7 to check that setup completed and launch the app.
 
 ===
 
