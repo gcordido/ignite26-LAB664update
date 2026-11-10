@@ -58,10 +58,10 @@ Finally, confirm the subscription selection by pressing **Enter**.
 powershell -ExecutionPolicy Bypass -Command "& '.\infra\setup.ps1'; & '.\infra\deploy.ps1' -ResourceGroup 'ResourceGroup1' -Apply"
 ```
 
-    - **Setup** restores the locked npm dependencies, including *Deep Chat*, and prepares the Python environment in **.tools\policy-venv** using the lab's approved package sources.
-    - **Deploy** finds the existing Azure AI Search, Storage, and Foundry resources and model in your resource group. It uploads the policy PDFs to Blob Storage and configures a Search indexer with a Content Understanding skill. Azure AI Search then extracts the content, splits it into semantic chunks, generates AI descriptions of figures, and populates the index. Once verification succeeds, the script saves the connection settings for the workbench.
+   - **Setup** restores the locked npm dependencies, including *Deep Chat*, and prepares the Python environment in **.tools\policy-venv** using the lab's approved package sources.
+   - **Deploy** finds the existing Azure AI Search, Storage, and Foundry resources and model in your resource group. It uploads the policy PDFs to Blob Storage and configures a Search indexer with a Content Understanding skill. Azure AI Search then extracts the content, splits it into semantic chunks, generates AI descriptions of figures, and populates the index. Once verification succeeds, the script saves the connection settings for the workbench.
 
-    No pre-filled configuration file or hosted agent is required. Azure AI Search handles policy extraction and indexing; Python does not extract or upload individual chunks. Later policy checks reuse the saved claim Parse results rather than creating a claim-summary analyzer or running Content Understanding on the claims again.
+   No pre-filled configuration file or hosted agent is required. Azure AI Search handles policy extraction and indexing; Python does not extract or upload individual chunks. Later policy checks reuse the saved claim Parse results rather than creating a claim-summary analyzer or running Content Understanding on the claims again.
 
 Let the script run in the background. You don't need to wait for it to finish. Leave this terminal open. You will return to it in step 7 to check that setup completed and launch the app.
 
