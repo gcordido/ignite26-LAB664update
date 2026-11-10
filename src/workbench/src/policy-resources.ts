@@ -29,6 +29,7 @@ export const resourceProvenanceSchema = z.object({
 
 type Generation = {
   indexName: string; corpusHash: string; indexFingerprint: string; searchEndpoint: string;
+  resourceProvenance?: unknown;
 };
 export type PolicyResources = {
   index: { name: string; href?: string; message?: string };
@@ -71,12 +72,14 @@ export function policyResourceLinks(config: Generation, metadata: unknown): Poli
   };
 }
 export async function policyResources(config: Generation, folder = cacheFolders().policy) {
-  let metadata: unknown;
-  try { metadata = JSON.parse(await readFile(path.join(folder, "resources.json"), "utf8")); }
-  catch (error) {
-    if (record(error)?.code !== "ENOENT") {
-      console.error(JSON.stringify({ event: "policy_resource_metadata_failed", message: String(error) }));
-      return policyResourceLinks(config, null);
+  let metadata: unknown = config.resourceProvenance;
+  if (metadata === undefined) {
+    try { metadata = JSON.parse(await readFile(path.join(folder, "resources.json"), "utf8")); }
+    catch (error) {
+      if (record(error)?.code !== "ENOENT") {
+        console.error(JSON.stringify({ event: "policy_resource_metadata_failed", message: String(error) }));
+        return policyResourceLinks(config, null);
+      }
     }
   }
   const resources = policyResourceLinks(config, metadata);

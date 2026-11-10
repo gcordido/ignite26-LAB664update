@@ -149,6 +149,32 @@ def claim_input(analysis: dict) -> str:
             "the exact listed textEvidence.id, not contentPath, a page number or an invented parse ID.")
 
 
+def claim_fields(analysis: dict, category: str = "") -> dict:
+    """Read original typed fields only from the server-selected packet."""
+    documents = [deepcopy(item) for item in analysis.get("contents", [])
+                 if not category or item.get("category") == category]
+    return {
+        "documents": documents,
+        "categories": sorted({item["category"] for item in analysis.get("contents", [])}),
+        **({} if documents else {"reason": "No saved CU fields match this document category."}),
+        "provenance": "Original typed CU Parse fields, not newly extracted or inferred values.",
+    }
+
+
+def claim_document_text(analysis: dict, document_id: str = "") -> dict:
+    """List saved text sources or read one complete native Parse segment."""
+    sources = analysis.get("textEvidence", [])
+    if not document_id:
+        return {"documents": [{key: deepcopy(value) for key, value in item.items() if key != "text"}
+                              for item in sources]}
+    selected = next((deepcopy(item) for item in sources if item.get("id") == document_id), None)
+    return {
+        "documents": [selected] if selected else [],
+        **({} if selected else {"reason": "No saved parsed text exists for this document ID."}),
+        "provenance": "Saved first-pass CU page text; interpretation is not a typed extracted field.",
+    }
+
+
 def claim_references(analysis: dict) -> set[str]:
     """Enumerate typed paths, exact category aliases and supplied segment IDs."""
     references = set()

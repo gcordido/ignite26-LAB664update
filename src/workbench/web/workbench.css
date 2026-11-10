@@ -796,25 +796,6 @@ body.resizing-column * {
   font-size: 12px;
   overflow-wrap: anywhere;
 }
-#policy-document-list {
-  width: min(940px, calc(100vw - 48px));
-  max-height: calc(100vh - 48px);
-  padding: 24px;
-  overflow: auto;
-}
-#policy-document-list-files li {
-  margin-block: 8px;
-  overflow-wrap: anywhere;
-}
-#policy-document-list-files strong,
-#policy-document-list-files a {
-  display: block;
-  margin-bottom: 8px;
-}
-#policy-document-list-files input {
-  width: 100%;
-  margin-top: 8px;
-}
 .policy-run-status {
   display: flex;
   align-items: center;

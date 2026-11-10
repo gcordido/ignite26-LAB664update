@@ -12,6 +12,7 @@ from unittest.mock import MagicMock, patch
 from pydantic import ValidationError
 from policy_check_inputs import (
     check_analysis, check_prompt, check_questions, fields_frontmatter, claim_references,
+    claim_fields, claim_document_text,
 )
 
 spec = importlib.util.spec_from_file_location(
@@ -23,6 +24,27 @@ spec.loader.exec_module(runtime)
 
 
 class FrameworkTests(unittest.TestCase):
+    def test_followup_reads_saved_packet_fields_and_whole_text_without_mutation(self):
+        source = {"contents": [{
+            "category": "rental_invoice", "pages": {"start": 2, "end": 3},
+            "fields": {"Rate": {"type": "number", "valueNumber": 0},
+                       "Requested": {"type": "boolean", "valueBoolean": False},
+                       "Return": {"type": "date"}},
+        }], "textEvidence": [{
+            "id": "parse.input1", "category": "rental_invoice",
+            "pages": {"start": 2, "end": 3}, "text": "<table>Complete original table</table>",
+        }]}
+        documents = claim_fields(source, "rental_invoice")["documents"]
+        self.assertEqual(documents, source["contents"])
+        documents[0]["fields"].clear()
+        self.assertIn("Rate", source["contents"][0]["fields"])
+        self.assertIn("reason", claim_fields(source, "packet-02"))
+        listed = claim_document_text(source)["documents"]
+        self.assertNotIn("text", listed[0])
+        self.assertEqual(claim_document_text(source, listed[0]["id"])["documents"], source["textEvidence"])
+        self.assertIn("reason", claim_document_text(source, "../../packet-02.pdf"))
+        self.assertEqual(claim_document_text({}, "parse.input1")["documents"], [])
+
     def test_check_projection_preserves_missing_false_zero_and_array_rows(self):
         source = {"contents": [
             {"category": "claim_summary", "fields": {
@@ -426,6 +448,7 @@ class FrameworkTests(unittest.TestCase):
         self.assertEqual(value["content"], row["content"])
         self.assertEqual(value["stateCodes"], ["TX"])
         self.assertEqual(value["ruleIds"], ["TX-R2"])
+        self.assertNotIn("ruleSections", value, "Initial-review evidence retains its existing schema.")
         for patch in (
             {"pageTo": 5}, {"pageTo": 1}, {"page": None}, {"sha256": "d" * 64},
             {"content": ""}, {"file": "../tx.pdf"},
@@ -465,6 +488,200 @@ class FrameworkTests(unittest.TestCase):
         self.assertEqual(value["pageTo"], 3)
         with self.assertRaises(ValueError):
             runtime.source_evidence({**row, "section": "Invented"}, config, {"tx.pdf": source}, citations, "TX")
+
+
+class FollowupFrameworkTests(unittest.IsolatedAsyncioTestCase):
+    async def test_followup_requires_server_selected_claim_evidence(self):
+        with self.assertRaisesRegex(ValueError, "requires saved evidence"):
+            await runtime.run(runtime.Turn(mode="search", chat=True, prompt="Follow-up",
+                                          configPath="unused-config.json"))
+
+    async def chat(self, respond, mode="search", page_to=1):
+        manifest = runtime.ROOT / "data" / "policies" / "rental" / "ocr-comparison-v2" / "manifest.json"
+        config = dict(
+            schemaVersion=1, provider="agent-framework",
+            azureOpenAIEndpoint="https://example.services.ai.azure.com",
+            searchEndpoint="https://example.search.windows.net", indexName="offline-test-index",
+            modelDeployment="gpt-5", corpusHash=hashlib.sha256(manifest.read_bytes()).hexdigest(),
+            indexFingerprint="a" * 64, extractionMode="standard",
+        )
+        source = next(item for item in json.loads(manifest.read_text(encoding="utf-8"))["documents"]
+                      if item.get("role") == "repair_review")
+        row = dict(id="same-figure", file=source["pdf"], documentId=source["documentId"],
+                   version=source["version"], sha256=source["sha256"],
+                   corpusHash=config["corpusHash"], indexFingerprint=config["indexFingerprint"],
+                   page=1, pageTo=page_to, content="Offline complete diagram fixture")
+        analysis = {"contents": [{"category": "rental_invoice", "fields": {
+            "DailyRate": {"type": "number", "valueNumber": 45},
+        }}], "textEvidence": [{
+            "id": "parse.invoice", "category": "rental_invoice",
+            "pages": {"start": 2, "end": 3}, "text": "Saved complete invoice",
+        }]}
+        config_file = runtime.ROOT / "offline-chat-config.json"
+        read_text = Path.read_text
+
+        def read_config(path, *args, **kwargs):
+            return json.dumps(config) if path == config_file else read_text(path, *args, **kwargs)
+
+        with patch.object(Path, "read_text", read_config), \
+                patch.object(runtime, "AzureCliCredential"), \
+                patch.object(runtime, "get_bearer_token_provider", return_value=lambda: "offline-token"), \
+                patch.object(runtime, "AsyncOpenAI"), patch.object(runtime, "OpenAIChatClient"), \
+                patch.object(runtime, "SearchClient") as search, patch.object(runtime, "Agent") as agent:
+            search.return_value.search.return_value = [row]
+
+            async def answer(messages, options):
+                tools = {fn.name: fn.func for fn in agent.call_args.kwargs["tools"]}
+                self.assertNotIn("Evaluate only Daily rate", agent.call_args.kwargs["instructions"])
+                self.assertNotIn("Saved complete invoice", messages[-1].text)
+                value = respond(tools)
+                return SimpleNamespace(text=json.dumps(value), usage_details={})
+
+            agent.return_value.run.side_effect = answer
+            turn = runtime.Turn(
+                mode=mode, chat=True, prompt="Follow-up", lossState="WA",
+                policyScope=runtime.PolicyScope(policyId="WA-ONLY", vin="ACTUAL-VIN"),
+                claimAnalysis=analysis, configPath=str(config_file),
+            )
+            value = await runtime.run(turn)
+            self.assertEqual(turn.lossState, "WA")
+            return value, search.return_value.search.call_args_list
+
+    async def test_hypothetical_az_and_actual_wa_keep_both_current_turn_citations(self):
+        def respond(tools):
+            az = json.loads(tools["search_policy_rules"]("repair routine authority", "AZ"))
+            wa = json.loads(tools["search_policy_rules"]("repair routine authority"))
+            self.assertTrue(az["hypothetical"])
+            self.assertEqual(az["actualLossState"], "WA")
+            self.assertEqual(az["retrievalState"], "AZ")
+            self.assertFalse(wa["hypothetical"])
+            citations = []
+            for retrieved, state in ((az, "AZ"), (wa, "WA")):
+                doc = retrieved["documents"][0]
+                self.assertIn(f"REPAIR-{state}-01", doc["ruleIds"])
+                self.assertIn("REPAIR-SCOPE-01", doc["ruleIds"])
+                self.assertNotIn("REPAIR-IL-01", doc["ruleIds"])
+                citations.append(dict(File=doc["file"], DocumentId=doc["documentId"],
+                                      Version=doc["version"], RuleId=f"REPAIR-{state}-01",
+                                      Section=doc["citationSections"][-1]))
+            return dict(Answer="Hypothetical Arizona differs from the actual WA claim.", Citation=citations)
+        value, searches = await self.chat(respond)
+        self.assertEqual(value["retrievalCalls"], 2)
+        self.assertEqual(len(value["retrieved"]), 2)
+        for search in searches:
+            self.assertNotIn("DEC-AZ", search.kwargs["filter"])
+            self.assertIn("indexFingerprint", search.kwargs["filter"])
+
+    async def test_claim_only_question_does_not_require_policy_search(self):
+        def respond(tools):
+            fields = json.loads(tools["get_claim_fields"]("rental_invoice"))
+            self.assertEqual(fields["documents"][0]["fields"]["DailyRate"]["valueNumber"], 45)
+            listed = json.loads(tools["get_claim_document_text"]())
+            text = json.loads(tools["get_claim_document_text"](listed["documents"][0]["id"]))
+            self.assertEqual(text["documents"][0]["text"], "Saved complete invoice")
+            return dict(Answer="The saved invoice states 45.", Citation=[])
+        value, searches = await self.chat(respond)
+        self.assertEqual(value["retrievalCalls"], 0)
+        self.assertEqual(searches, [])
+
+    async def test_unsupported_hypothetical_reports_missing_evidence(self):
+        def respond(tools):
+            retrieved = json.loads(tools["search_policy_rules"]("repair authority", "NV"))
+            self.assertEqual(retrieved["documents"], [])
+            self.assertIn("reason", retrieved)
+            return dict(Answer="No Nevada rule is represented in the policy index.", Citation=[])
+        value, searches = await self.chat(respond)
+        self.assertEqual(value["retrievalCalls"], 1)
+        self.assertEqual(searches, [])
+
+    async def test_ungrounded_chat_can_read_claims_but_not_search_policies(self):
+        def respond(tools):
+            self.assertNotIn("search_policy_rules", tools)
+            self.assertIn("get_claim_fields", tools)
+            self.assertIn("get_claim_document_text", tools)
+            return dict(Answer="Policy rules cannot be established in this baseline.", Citation=[])
+        await self.chat(respond, "ungrounded")
+
+    async def test_followup_still_rejects_unretrieved_rules_and_invalid_states(self):
+        manifest = runtime.ROOT / "data" / "policies" / "rental" / "ocr-comparison-v2"
+        source = next(item for item in json.loads((manifest / "manifest.json").read_text(encoding="utf-8"))["documents"]
+                      if item.get("role") == "repair_review")
+        entry = next(item for item in json.loads((manifest / "citations.json").read_text(encoding="utf-8"))
+                     if item["documentId"] == source["documentId"])
+
+        def invented(tools):
+            return dict(Answer="Invented threshold", Citation=[dict(
+                File=source["pdf"], DocumentId=source["documentId"], Version=source["version"],
+                RuleId="REPAIR-AZ-01", Section=next(iter(entry["sections"])),
+            )])
+        with self.assertRaisesRegex(ValueError, "not returned by this turn"):
+            await self.chat(invented)
+
+        def invalid(tools):
+            tools["search_policy_rules"]("repair", "AZ' or true")
+        with self.assertRaisesRegex(ValueError, "two-letter code"):
+            await self.chat(invalid)
+
+    async def test_followup_rejects_section_titles_invented_from_document_text(self):
+        def invented_section(tools):
+            doc = json.loads(tools["search_policy_rules"]("repair routine authority", "AZ"))["documents"][0]
+            return dict(Answer="Hypothetical Arizona threshold", Citation=[dict(
+                File=doc["file"], DocumentId=doc["documentId"], Version=doc["version"],
+                RuleId="REPAIR-AZ-01", Section="Invented section title",
+            )])
+
+        with self.assertRaisesRegex(ValueError, "not returned by this turn"):
+            await self.chat(invented_section)
+
+    async def test_followup_can_cite_another_state_on_the_retrieved_shared_page(self):
+        def respond(tools):
+            doc = json.loads(tools["search_policy_rules"]("repair routine authority"))["documents"][0]
+            self.assertIn("REPAIR-AZ-01", doc["ruleIds"])
+            self.assertIn("REPAIR-WA-01", doc["ruleIds"])
+            self.assertNotIn("REPAIR-IL-01", doc["ruleIds"])
+            return dict(Answer="Hypothetical Arizona differs from the actual Washington claim.", Citation=[dict(
+                File=doc["file"], DocumentId=doc["documentId"], Version=doc["version"],
+                RuleId="REPAIR-AZ-01", Section=doc["ruleSections"]["REPAIR-AZ-01"][0],
+            )])
+
+        value, _ = await self.chat(respond)
+        self.assertEqual(value["result"]["Citation"][0]["RuleId"], "REPAIR-AZ-01")
+
+    async def test_followup_rejects_rules_on_an_unretrieved_page(self):
+        def respond(tools):
+            doc = json.loads(tools["search_policy_rules"]("repair routine authority"))["documents"][0]
+            return dict(Answer="Unsupported Illinois threshold", Citation=[dict(
+                File=doc["file"], DocumentId=doc["documentId"], Version=doc["version"],
+                RuleId="REPAIR-IL-01", Section=doc["citationSections"][0],
+            )])
+
+        with self.assertRaisesRegex(ValueError, "not returned by this turn"):
+            await self.chat(respond)
+
+    async def test_claim_document_provenance_cannot_be_a_policy_citation(self):
+        def respond(tools):
+            tools["get_claim_document_text"]("statement-1")
+            return dict(Answer="WA from saved statement page 2", Citation=[dict(
+                File="claim_packet", DocumentId="statement-1", Version="n/a",
+                RuleId="n/a", Section="Statement page 2",
+            )])
+
+        with self.assertRaisesRegex(ValueError, "not returned by this turn"):
+            await self.chat(respond)
+        self.assertIn("Empty for claim-only answers",
+                      runtime.Answer.model_json_schema()["properties"]["Citation"]["description"])
+
+    async def test_followup_preserves_rule_section_pairs_in_a_multi_page_chunk(self):
+        def respond(tools):
+            doc = json.loads(tools["search_policy_rules"]("repair routine authority", "AZ"))["documents"][0]
+            self.assertIn("REPAIR-IL-01", doc["ruleIds"])
+            return dict(Answer="Arizona rule with the wrong page", Citation=[dict(
+                File=doc["file"], DocumentId=doc["documentId"], Version=doc["version"],
+                RuleId="REPAIR-AZ-01", Section=doc["ruleSections"]["REPAIR-IL-01"][0],
+            )])
+
+        with self.assertRaisesRegex(ValueError, "not returned by this turn"):
+            await self.chat(respond, page_to=2)
 
 
 class ParallelFrameworkTests(unittest.IsolatedAsyncioTestCase):

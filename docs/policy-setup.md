@@ -183,13 +183,36 @@ under `data\policy-demo\history\four-checks`.
 The active policy manifest has 21 PDFs. Legacy rental-terms/state-SOP/shared-standard
 PDFs remain in `data\policies\archive\legacy-rental-review-v2\` with verified
 historical aliases; they don't enter active ingestion or preview warming.
-The **Policy documents** link opens three dataset-folder links: the original policy
-PDFs, saved Search outputs, and saved Digital Parse outputs. Each displays its
-actual absolute directory on the workbench host. On the local Windows workbench,
-select a link to request Windows Explorer through a private-session, same-origin
-endpoint restricted to these three dataset IDs. If opening or clipboard access
-is unavailable, use **Copy path** or copy the selected fallback field manually.
+The **Policy documents** link opens the original policy PDFs folder directly in
+Windows Explorer on the local workbench host, without a dataset-selection dialog.
+It uses a private-session, same-origin endpoint with the fixed `original` dataset
+ID. Opening failures are displayed beside the link.
 There is no arbitrary path execution, directory browsing, or Blob upload.
+The Azure Search index link follows the active agent configuration rather than
+the index recorded in saved reviews. Optional `resourceProvenance` in the live
+configuration takes precedence over bundled resource metadata; links require
+matching generation, corpus and Search endpoint. Missing or invalid metadata
+disables the portal link, not policy checks. This does not change deployment or
+ingestion. When live configuration is unavailable,
+the link identifies the saved review index instead and labels it accordingly.
+
+### Follow-up questions
+
+Follow-ups use separate instructions to answer across the selected packet,
+while the initial three checks keep their narrow evidence and actual-state scope.
+Read-only tools query policy rules (`search_policy_rules`), saved CU fields
+(`get_claim_fields`) and saved native text (`get_claim_document_text`). Evidence
+is assembled on the server; no fresh extraction, arbitrary file access or
+cross-packet access is allowed. Existing ID and tax-text exclusions remain.
+
+An explicit hypothetical can change the Search state, not the actual claim,
+policy ID, insured VIN or saved results. Answers label hypotheticals and explain
+missing rules rather than inventing thresholds. Policy citations must match
+registered rules and sections on pages retrieved in the current turn, including
+shared SOP figures. Claim provenance belongs in answer text; claim-only answers
+do not require Search. Azure and authentication failures remain explicit errors.
+
+### Native policy document representations
 
 Native document representations are committed separately under
 `data\policy-document-demo\search\` and `data\policy-document-demo\digital\`.

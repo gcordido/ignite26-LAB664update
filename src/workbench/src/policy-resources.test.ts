@@ -16,14 +16,15 @@ test("the actual current generation links to its exact Search index, not a servi
   const resources = policyResourceLinks(config, metadata);
   const target = new URL(resources.index.href!);
   assert.equal(target.origin, "https://portal.azure.com");
-  assert.equal(resources.index.name, "lab664-claim-policy-pruned-v5-1728bee05009");
+  assert.equal(resources.index.name, config.indexName);
   const parts = target.hash.split("/");
   assert.equal(parts[2], "Index.ReactView");
   assert.equal(decodeURIComponent(parts[4]), `${metadata.search.resourceId}#${config.indexName}`);
-  assert.equal(decodeURIComponent(parts[6]), "West US");
-  assert.equal(parts[8], "standard");
-  assert.equal(resources.storage.href, undefined);
-  assert.match(resources.storage.message, /No verified Azure container.*local corpus/);
+  assert.equal(decodeURIComponent(parts[6]), metadata.search.location);
+  assert.equal(parts[8], metadata.search.sku);
+  const localResources = policyResourceLinks(config, { ...metadata, storage: { kind: "local" } });
+  assert.equal(localResources.storage.href, undefined);
+  assert.match(localResources.storage.message, /No verified Azure container.*local corpus/);
   assert.equal(policyResourceLinks({ ...config, searchEndpoint: `${config.searchEndpoint}/` }, metadata).index.href,
     resources.index.href);
 });
@@ -46,6 +47,21 @@ test("optional Blob metadata produces an encoded exact container view only for t
     assert.equal(policyResourceLinks(config, { ...blob, storage: { ...blob.storage, containerName } }).storage.href, undefined);
 });
 
+test("active configuration metadata takes precedence over the historical bundled generation", async () => {
+  const live = {
+    ...config, indexName: "new-live-index", indexFingerprint: "a".repeat(64),
+    resourceProvenance: { ...metadata, indexName: "new-live-index", indexFingerprint: "a".repeat(64) },
+  };
+  const resources = await policyResources(live, folder);
+  assert.equal(resources.index.name, live.indexName);
+  assert.ok(resources.index.href);
+  assert.ok(decodeURIComponent(resources.index.href).includes(`#${live.indexName}`));
+  assert.equal((await policyResources({ ...live, resourceProvenance: null }, folder)).index.href, undefined);
+  assert.match((await policyResources({
+    ...live, resourceProvenance: metadata,
+  }, folder)).index.message!, /different policy generation/);
+});
+
 test("absent, invalid, foreign-endpoint and stale-generation metadata never invent links", () => {
   for (const value of [
     undefined, null, {},
@@ -53,7 +69,7 @@ test("absent, invalid, foreign-endpoint and stale-generation metadata never inve
     { ...metadata, corpusHash: "a".repeat(64) },
     { ...metadata, indexFingerprint: "b".repeat(64) },
     { ...metadata, search: { ...metadata.search, resourceId: "https://evil.example/?token=secret" } },
-    { ...metadata, search: { ...metadata.search, resourceId: metadata.search.resourceId.replace("mmi-sample-ai-search", "other-service") } },
+    { ...metadata, search: { ...metadata.search, resourceId: metadata.search.resourceId.replace(/[^/]+$/, "other-service") } },
   ]) {
     const resources = policyResourceLinks(config, value);
     assert.equal(resources.index.href, undefined);
@@ -80,7 +96,7 @@ test("missing and corrupt optional metadata remain explicit without breaking the
   }
 });
 
-test("resource rendering preserves saved-generation links and separately identifies the live index", async () => {
+test("resource rendering links to the live agent index even when saved reviews use another generation", async () => {
   const source = await readFile(new URL("../web/workbench.js", import.meta.url), "utf8");
   class Node {
     textContent = ""; title = ""; href = ""; target = ""; rel = ""; hidden = false;
@@ -96,22 +112,48 @@ test("resource rendering preserves saved-generation links and separately identif
   const savedResources = policyResourceLinks(config, metadata);
   const saved = { indexName: config.indexName, source: "bundled", resources: savedResources };
   const results = new Map<string, unknown>([["search", saved]]);
+  const liveResources = policyResourceLinks(
+    { ...config, indexName: "different-live-index" },
+    { ...metadata, indexName: "different-live-index" },
+  );
   const context = vm.createContext({
     get, URL, policyMode: "search", policyResults: results,
-    policyStatus: { resources: { index: { name: "different-live-index", href: "https://portal.azure.com/" } } },
+    policyStatus: { configured: true, resources: liveResources },
     element: (_tag: string, text: string) => Object.assign(new Node(), { textContent: text }),
   });
   vm.runInContext(source.slice(source.indexOf("function renderPolicyResources("),
     source.indexOf("async function updatePolicyAvailability(")), context);
   vm.runInContext("renderPolicyResources()", context);
   const anchor = get("policy-index-resource").children[0];
-  assert.equal(anchor.textContent, config.indexName);
-  assert.equal(anchor.href, savedResources.index.href);
+  assert.equal(anchor.textContent, "different-live-index");
+  assert.equal(anchor.href, liveResources.index.href);
   assert.equal(anchor.target, "_blank");
   assert.equal(anchor.rel, "noopener noreferrer");
   assert.ok(!nodes.has("policy-storage-resource"));
   assert.equal(get("policy-resource-context").hidden, false);
-  assert.match(get("policy-resource-context").textContent, /Live checks use index different-live-index/);
+  assert.match(get("policy-resource-context").textContent, /Live agent calls use the linked index/);
+  assert.ok(get("policy-resource-context").textContent.includes(config.indexName));
+  results.set("search", { items: [
+    { status: "completed", indexName: "historical-index" },
+    { status: "completed", indexName: config.indexName },
+  ] });
+  vm.runInContext("renderPolicyResources()", context);
+  assert.equal(get("policy-index-resource").children[0].href, liveResources.index.href);
+  results.clear();
+  vm.runInContext("renderPolicyResources()", context);
+  assert.equal(get("policy-index-resource").children[0].href, liveResources.index.href);
+  assert.equal(get("policy-resource-context").hidden, true);
+  vm.runInContext(`policyStatus = {
+    configured: true, modes: { search: { indexName: "unverified-live-index" } }
+  }`, context);
+  results.set("search", saved);
+  vm.runInContext("renderPolicyResources()", context);
+  assert.equal(get("policy-index-resource").textContent, "unverified-live-index");
+  assert.match(get("policy-index-resource").title, /unavailable/);
+  vm.runInContext("policyStatus = { configured: false }", context);
+  vm.runInContext("renderPolicyResources()", context);
+  assert.equal(get("policy-index-resource").children[0].href, savedResources.index.href);
+  assert.match(get("policy-resource-context").textContent, /live agent configuration is unavailable/);
   results.set("search", { items: [{ status: "completed", indexName: "historical-index" }] });
   vm.runInContext("renderPolicyResources()", context);
   assert.equal(get("policy-index-resource").textContent, "historical-index");
@@ -154,88 +196,54 @@ test("live policy confirmation closes Settings so operational progress remains v
   assert.equal(vm.runInContext("pendingPolicyRun.mode", context), "search");
 });
 
-test("compact dataset dialog renders three absolute folder links, opens only dataset IDs, and provides copy fallbacks", async () => {
+test("the policy folder link opens only the original PDFs directly and reports failures without a dialog", async () => {
     const source = await readFile(new URL("../web/workbench.js", import.meta.url), "utf8");
     class Node {
-      children: Node[] = [];
-      dataset: Record<string, string> = {};
-      textContent = ""; href = ""; open = false;
-      value = ""; hidden = false; focused = false; selected = false;
+      textContent = ""; hidden = true;
       attributes: Record<string, string> = {};
-      onclick?: (event?: { preventDefault(): void }) => Promise<void>;
-      append(...nodes: Node[]) { this.children.push(...nodes); }
-      replaceChildren() { this.children = []; }
-      showModal() { this.open = true; }
-      close() { this.open = false; }
+      getAttribute(name: string) { return this.attributes[name] ?? null; }
       setAttribute(name: string, value: string) { this.attributes[name] = value; }
       removeAttribute(name: string) { delete this.attributes[name]; }
-      focus() { this.focused = true; }
-      select() { this.selected = true; }
     }
     const nodes = new Map<string, Node>();
     const get = (id: string) => {
       if (!nodes.has(id)) nodes.set(id, new Node());
       return nodes.get(id)!;
     };
-    const original = ["original", "search", "digital"].map(id => ({
-      id, label: `${id} dataset`, path: `C:\\Lab & demo\\${id}`,
-      href: `file:///C:/Lab%20%26%20demo/${id}/`,
-    }));
-    let datasets = original;
-    let openError = false, copyError = false;
-    const copied: string[] = [];
+    let openError = false;
+    let release: (() => void) | undefined;
+    let pending = false;
     const calls: { route: string; body: unknown }[] = [];
     const context = vm.createContext({
-      get, element: (_tag: string, text = "") => Object.assign(new Node(), { textContent: text }),
-      document: { createTextNode: (text: string) => Object.assign(new Node(), { textContent: text }) },
-      URL,
-      navigator: { clipboard: { writeText: async (text: string) => {
-        if (copyError) throw new Error("Clipboard permission denied");
-        copied.push(text);
-      } } },
+      get,
       api: async (route: string, body: unknown) => {
         calls.push({ route, body });
-        if (route === "policy/datasets") return { datasets };
         if (openError) throw new Error("Platform cannot open folders");
+        if (pending) await new Promise<void>(resolve => { release = resolve; });
         return { requested: true };
       },
     });
     vm.runInContext(source.slice(source.indexOf("async function openPolicyDocuments()"),
       source.indexOf('get("policy-local-documents").onclick')), context);
     await vm.runInContext("openPolicyDocuments()", context);
-    assert.deepEqual(calls, [{ route: "policy/datasets", body: undefined }]);
-    const rows = get("policy-document-list-files").children;
-    assert.equal(rows.length, 3);
-    for (const [index, row] of rows.entries()) {
-      const [label, link, copy, fallback] = row.children;
-      assert.equal(label.textContent, original[index].label);
-      assert.equal(link.textContent, original[index].path);
-      assert.equal(link.href, original[index].href);
-      let prevented = false;
-      await link.onclick?.({ preventDefault: () => { prevented = true; } });
-      assert.ok(prevented, "file URLs must use the protected native opener, not browser file navigation");
-      assert.equal(calls.at(-1)?.route, "policy/datasets/open");
-      assert.equal(JSON.stringify(calls.at(-1)?.body), JSON.stringify({ id: original[index].id }));
-      await copy.onclick?.();
-      assert.equal(copied.at(-1), original[index].path);
-      assert.equal(fallback.hidden, true);
-    }
+    assert.equal(JSON.stringify(calls), JSON.stringify([
+      { route: "policy/datasets/open", body: { id: "original" } },
+    ]));
+    assert.equal(get("policy-folder-status").hidden, false);
+    assert.match(get("policy-folder-status").textContent, /folder requested in Windows Explorer/);
+    assert.equal(get("policy-local-documents").getAttribute("aria-disabled"), null);
+    assert.ok(!nodes.has("policy-document-list"));
+    pending = true;
+    const opening = vm.runInContext("openPolicyDocuments()", context);
+    assert.equal(get("policy-local-documents").getAttribute("aria-disabled"), "true");
+    await vm.runInContext("openPolicyDocuments()", context);
+    assert.equal(calls.length, 2, "repeated clicks must not open additional Explorer windows");
+    release!();
+    await opening;
+    pending = false;
     openError = true;
-    await rows[0].children[1].onclick?.({ preventDefault() {} });
-    assert.match(get("policy-document-list-status").textContent, /Could not open folder.*Copy path/);
-    copyError = true;
-    await rows[0].children[2].onclick?.();
-    assert.ok(!rows[0].children[3].hidden && rows[0].children[3].focused && rows[0].children[3].selected);
-    assert.match(get("policy-document-list-status").textContent, /Copy the selected path manually/);
-    for (const invalid of [
-      original.slice(0, 2), [...original, original[0]],
-      original.map((item, index) => index ? item : { ...item, id: "arbitrary" }),
-      original.map((item, index) => index ? item : { ...item, path: "../private" }),
-      original.map((item, index) => index ? item : { ...item, href: "javascript:alert(1)" }),
-    ]) {
-      datasets = invalid;
-      await assert.rejects(vm.runInContext("openPolicyDocuments()", context), /folders are invalid/);
-      assert.equal(get("policy-document-list-files").children.length, 0);
-      assert.match(get("policy-document-list-status").textContent, /unavailable/);
-    }
+    await assert.rejects(vm.runInContext("openPolicyDocuments()", context), /Platform cannot open folders/);
+    assert.match(get("policy-folder-status").textContent, /Could not open.*Platform cannot open folders/);
+    assert.equal(get("policy-local-documents").getAttribute("aria-disabled"), null);
+    assert.ok(!nodes.has("policy-document-list"));
 });

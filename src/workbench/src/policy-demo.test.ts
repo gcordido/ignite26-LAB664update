@@ -9,7 +9,7 @@ import { cacheFolders, dataRoot, repositoryRoot } from "./config.ts";
 import { policyDemo, readPolicyDemo } from "./policy-demo.ts";
 import { frameworkConfigSchema, PolicyService, type PolicyItem } from "./policy-service.ts";
 import { createApp } from "./server.ts";
-import { parseSourceDigest } from "./policy-core.ts";
+import { canonical, parseSourceDigest } from "./policy-core.ts";
 
 test("Parse source integrity survives Git LF/CRLF checkout conversion without accepting content changes", () => {
   const source = '{\n  "lossDate": "2026-02-12"\n}\n';
@@ -45,8 +45,12 @@ test("pruned three-check bundle uses hash-verified first-pass Parse without a su
   assert.equal(demo.sourceCache.folder, path.join(repositoryRoot, "data", "results"));
   assert.equal(demo.results(demo.sourceRun).items.length, 10);
   assert.equal(demo.results(demo.sourceRun).items.flatMap(item => item.result?.Checks ?? []).length, 30);
-  assert.ok(demo.results(demo.sourceRun).items.every(item => !item.historical),
-    "A fresh checkout must keep the exact current runtime/question identity.");
+  const savedReviews = await Promise.all(manifest.files
+    .filter(({ name }: { name: string }) => name.startsWith("framework-saved-"))
+    .map(async ({ name }: { name: string }) => JSON.parse(await readFile(path.join(folder, name), "utf8"))));
+  assert.deepEqual(demo.results(demo.sourceRun).items.map(item => canonical(item.result)).sort(),
+    savedReviews.map(saved => canonical(saved.raw.result)).sort(),
+    "Follow-up runtime changes must preserve generated review outcomes, not relabel or regenerate them.");
 });
 
 test("bundled comparisons use Texas 75, Washington 85 and the original Illinois policy VIN", async () => {

@@ -33,6 +33,7 @@ export const frameworkConfigSchema = z.object({
   corpusHash: hash, indexFingerprint: hash, extractionMode: z.enum(["layout", "standard"]),
   cuEndpoint: azureRoot, cuApiVersion: z.enum(["2025-11-01", "2026-06-01-preview"]),
   claimAnalyzerId: z.string().regex(/^[A-Za-z0-9_-]{1,128}$/).optional(), claimAnalyzerHash: hash.optional(),
+  resourceProvenance: z.unknown().optional(),
 });
 export type FrameworkConfig = z.infer<typeof frameworkConfigSchema>;
 type FrameworkMode = "ungrounded" | "search";
@@ -115,16 +116,17 @@ const envelope = z.object({
   retrieved: z.array(z.object({
     file: z.string(), documentId: z.string(), version: z.string(),
     citationSections: z.array(z.string()).min(1),
+    ruleSections: z.record(z.string(), z.array(z.string()).min(1)).optional(),
     ruleIds: z.array(z.string()), sha256: hash, corpusHash: hash, indexFingerprint: hash,
   }).passthrough()),
   claimInput: z.string().optional(),
   checkPrompts: z.partialRecord(z.enum(checkNames), z.string().min(1)).optional(),
 });
 
-export function parseFrameworkResult(raw: unknown, mode: FrameworkMode, config: FrameworkConfig) {
+export function parseFrameworkResult(raw: unknown, mode: FrameworkMode, config: FrameworkConfig, requireRetrieval = true) {
   const value = envelope.parse(raw);
   if (value.mode !== mode || (mode === "ungrounded" && (value.retrievalCalls || value.retrieved.length)) ||
-      (mode === "search" && !value.retrievalCalls))
+      (mode === "search" && !value.retrievalCalls && (requireRetrieval || value.retrieved.length > 0)))
     throw new LabError(502, "Agent Framework retrieval mode/evidence mismatch.");
   if (value.retrieved.some((doc) => doc.corpusHash !== config.corpusHash || doc.indexFingerprint !== config.indexFingerprint))
     throw new LabError(502, "Search returned a different corpus or index snapshot.");
@@ -134,6 +136,7 @@ function verifyCitations(citations: z.infer<typeof citationSchema>[], raw: z.inf
   for (const citation of citations)
     if (!raw.retrieved.some((doc) => doc.file === citation.File && doc.documentId === citation.DocumentId &&
       doc.version === citation.Version.replace(/^v/, "") && doc.citationSections.includes(citation.Section) &&
+      (doc.ruleSections?.[citation.RuleId] ?? doc.citationSections).includes(citation.Section) &&
       doc.ruleIds.includes(citation.RuleId)))
       throw new LabError(502, "Agent cited a rule not retrieved during this turn.");
 }
@@ -280,7 +283,8 @@ export class PolicyService {
     const markdown = canonical(claimAnalysis);
     const reviewQuestion = await question();
     const prompt = `${reviewQuestion}\n\n---\n\nClaim input: saved typed Parse fields and selected native page text; no second claim extraction.\nUntrusted parsed evidence:\n\n${markdown}`;
-    return { markdown, prompt, reviewQuestion, claimAnalysis, ...scope };
+    const chatAnalysis = { ...claimAnalysis, textEvidence: parsedTextEvidence(exported, true) };
+    return { markdown, prompt, reviewQuestion, claimAnalysis, chatAnalysis, ...scope };
   }
   private reviewOptions(config: FrameworkConfig) {
     return {
@@ -470,11 +474,13 @@ export class PolicyService {
     ).prompt;
     const index = checkNames.indexOf(check);
     const result = { Checks: [parsed.result.Checks[index]] };
-    return { contextId: digest(canonical({ key, agent, check, prompt, result })), packetId, mode, check, agent,
+    return { contextId: digest(canonical({ key, agent, check, prompt, result, chatAnalysis: input.chatAnalysis })), packetId, mode, check, agent,
+      claimAnalysis: input.chatAnalysis,
       prompt, promptSource: savedPrompt ? "saved" as const : "current" as const,
       result, citations: [parsed.citations[index]] };
   }
-  async followup(mode: PolicyMode, message: string, history: ChatMessage[], expectedAgent: PolicyContext) {
+  async followup(mode: PolicyMode, message: string, history: ChatMessage[], expectedAgent: PolicyContext,
+    claimAnalysis: ReturnType<typeof policyClaimAnalysis>) {
     const config = await this.required();
     const expected = this.agent(config, mode);
     if (expected.configurationHash !== expectedAgent.configurationHash || expected.mode !== expectedAgent.mode)
@@ -485,10 +491,10 @@ export class PolicyService {
       throw new LabError(409, "Chat model settings changed. Reload this chat.");
     const lossState = "lossState" in expectedAgent && typeof expectedAgent.lossState === "string" ? expectedAgent.lossState : null;
     const raw = await (this.frameworkDependencies.invoke ?? invokeFramework)({
-      mode, prompt: message, history, lossState, policyScope: expectedAgent.policyScope, chat: true,
+      mode, prompt: message, history, lossState, policyScope: expectedAgent.policyScope, chat: true, claimAnalysis,
       ...chatOptions, configPath: this.configPath,
     });
-    const value = parseFrameworkResult(raw, mode, config);
+    const value = parseFrameworkResult(raw, mode, config, false);
     const parsed = chatAnswerSchema.parse(value.result);
     verifyCitations(parsed.Citation, value);
     const [citations] = await resolveCitations({ Checks: [{ Citation: parsed.Citation }] });

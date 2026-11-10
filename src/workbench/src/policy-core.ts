@@ -172,12 +172,12 @@ export function policyClaimAnalysis(
   };
 }
 
-export function parsedTextEvidence(packet: ReturnType<typeof packetJson>) {
+export function parsedTextEvidence(packet: ReturnType<typeof packetJson>, includeOther = false) {
   return packet.documents.flatMap((document) => {
     const text = document.extracted_text;
     if (!text.trim() || ["id_document", "tax_1099a", "claim_summary"].includes(document.category))
       return [];
-    if (document.category === "other" &&
+    if (!includeOther && document.category === "other" &&
         !/\b(?:policy|insured|loss|claim|rental|drivab|drivable|repair|collision|coverage|vehicle condition)\b/i.test(text))
       return [];
     const contentPath = document.extractions[0]?.content_path ??

@@ -63,7 +63,8 @@ export function createPolicyChat({ container, api, onSource, onError }) {
       const notice = document.createElement("p");
       notice.className = "muted";
       notice.textContent = `${context.agent.modelDeployment} · ${context.agent.indexName ?? "No policy retrieval"}. ` +
-        "This conversation covers only this check. Follow-ups use Azure and may be billed. Chat does not change saved results.";
+        "Ask about any policy or claim detail in this packet, including hypothetical scenarios. " +
+        "Uses saved CU fields and parsed page text; no new claim extraction. Follow-ups use Azure and may be billed. Chat does not change saved results.";
       const original = document.createElement("details");
       const summary = document.createElement("summary");
       const promptLabel = context.promptSource === "saved"
@@ -92,7 +93,7 @@ export function createPolicyChat({ container, api, onSource, onError }) {
       ];
       chat.chatStyle = { width: "100%", height: "auto", overflow: "visible", border: "none", backgroundColor: "#fff", fontFamily: "Segoe UI, sans-serif" };
       chat.messageStyles = { default: { shared: { bubble: { maxWidth: "96%", fontSize: "13px" } } } };
-      chat.textInput = { placeholder: { text: `Ask about ${label.toLowerCase()}…` } };
+      chat.textInput = { placeholder: { text: "Ask about this claim, its policy, or a hypothetical scenario…" } };
       chat.requestBodyLimits = { maxMessages: 1 };
       chat.remarkable = { html: false };
       chat.errorMessages = { displayServiceErrorMessages: true };

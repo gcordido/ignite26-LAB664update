@@ -804,6 +804,8 @@ test("policy resource labels replace the retrieval selector and live controls st
   assert.doesNotMatch(html, /id="policy-mode"|id="policy-toolbar"/);
   assert.match(html, /Azure Search \(FoundryIQ\) Index for policy documents:/);
   assert.match(html, /Policy documents: <a id="policy-local-documents" href="\/#policy-documents">data\\policies\\rental\\ocr-comparison-v2\\/);
+  assert.doesNotMatch(html, /id="origin"|id="policy-document-list"/);
+  assert.match(html, /id="policy-folder-status"[^>]*role="status"/);
   assert.doesNotMatch(html, /Azure Storage documents here:|policy-storage-resource/);
   const settings = html.match(/<dialog id="app-settings"[\s\S]*?<\/dialog>/)![0];
   assert.match(settings, /id="policy-run"/);

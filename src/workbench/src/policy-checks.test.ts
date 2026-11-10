@@ -144,6 +144,15 @@ test("Framework output enforces honest no-retrieval and real per-turn indexed ci
     frameworkReview(noTool, "search", value),
     /mode\/evidence mismatch/,
   );
+  const pageScoped = result("search", value);
+  const wrongPage = { ...pageScoped, retrieved: pageScoped.retrieved.map((doc) => ({
+    ...doc, ruleSections: { "TX-R2": ["A different section"] },
+  })) };
+  await assert.rejects(frameworkReview(wrongPage, "search", value), /not retrieved/);
+  const correctPage = { ...pageScoped, retrieved: pageScoped.retrieved.map((doc) => ({
+    ...doc, ruleSections: { "TX-R2": doc.citationSections },
+  })) };
+  assert.equal((await frameworkReview(correctPage, "search", value)).citations[1].length, 1);
   const notApplicable = result("search", value);
   notApplicable.result.Checks[1].Outcome = "NotApplicable";
   assert.equal(
@@ -191,6 +200,34 @@ test("compact findings retain comparisons and reject unsupported policy-rule poi
   compact.result.Checks[1].Comparisons[0].PolicyField = "TX-R2";
   compact.result.Checks[1].Headline = "x".repeat(101);
   await assert.rejects(frameworkReview(compact, "search", value));
+});
+
+test("claim-only follow-ups allow no Search calls without weakening review or evidence validation", async (t) => {
+  const settings = await config();
+  const baseline = result("ungrounded", settings);
+  let response = { ...baseline, mode: "search",
+    result: { Answer: "The saved invoice states $54 per day.", Citation: baseline.result.Checks[0].Citation } };
+  const folder = await mkdtemp(path.join(os.tmpdir(), "policy-claim-chat-"));
+  t.after(() => rm(folder, { recursive: true, force: true }));
+  const cache = new Cache(), original = await cache.load(await includedRunId(cache));
+  const run = { ...original, items: original.items.slice(0, 1), source: original.source.slice(0, 1) };
+  const readRaw = (id: string) => cache.raw(run.id, id);
+  const service = new PolicyService({ config: async () => settings, cacheFolder: folder,
+    invoke: async (input) => (input as { chat?: boolean }).chat ? response : result("search", settings) });
+  await (await service.start(run, "search", readRaw)).task;
+  const { agent: context, claimAnalysis: analysis } = await service.chatContext(run, "search", run.source[0].id, readRaw);
+  assert.equal((await service.followup("search", "What is the invoice rate?", [], context, analysis)).text,
+    response.result.Answer);
+  assert.throws(() => parseFrameworkResult(response, "search", settings), /mode\/evidence mismatch/);
+  response = { ...response, result: { ...response.result,
+    Citation: result("search", settings).result.Checks[1].Citation } };
+  await assert.rejects(service.followup("search", "Invented policy rule", [], context, analysis), /not retrieved/);
+  const evidence = result("search", settings);
+  response = { ...response, retrievalCalls: 1, retrieved: evidence.retrieved,
+    result: { Answer: "Retrieved policy evidence.", Citation: evidence.result.Checks[1].Citation } };
+  assert.equal((await service.followup("search", "What is the rule?", [], context, analysis)).citations.length, 1);
+  response.retrieved[0].indexFingerprint = "d".repeat(64);
+  await assert.rejects(service.followup("search", "Stale generation", [], context, analysis), /different corpus/);
 });
 
 test("Framework modes share prepared claim inputs but isolate review caches, chat and failures", async () => {
@@ -333,8 +370,12 @@ test("Framework modes share prepared claim inputs but isolate review caches, cha
       "What is missing?",
       [],
       context.agent,
+      context.claimAnalysis,
     );
     assert.equal(reply.text, "No rules established");
+    assert.deepEqual(requests.at(-1)?.claimAnalysis, context.claimAnalysis);
+    assert.ok(context.claimAnalysis.contents.some(document => document.category === "repair_estimate"));
+    assert.ok(context.claimAnalysis.contents.some(document => document.category === "rental_invoice"));
     const previousModel = process.env.POLICY_CHAT_MODEL_DEPLOYMENT;
     const previousEffort = process.env.POLICY_CHAT_REASONING_EFFORT;
     try {
@@ -344,10 +385,10 @@ test("Framework modes share prepared claim inputs but isolate review caches, cha
       assert.equal(fasterChat.agent.modelDeployment, "gpt-4.1-mini");
       assert.equal(fasterChat.agent.reasoningEffort, undefined);
       assert.notEqual(fasterChat.contextId, context.contextId);
-      await service.followup("ungrounded", "What dates are missing?", [], fasterChat.agent);
+      await service.followup("ungrounded", "What dates are missing?", [], fasterChat.agent, fasterChat.claimAnalysis);
       assert.equal(requests.at(-1)?.modelDeployment, "gpt-4.1-mini");
       assert.equal((await service.snapshot(run, "ungrounded", readRaw))[0].historical, false);
-      await assert.rejects(service.followup("ungrounded", "Old context", [], context.agent), /settings changed/);
+      await assert.rejects(service.followup("ungrounded", "Old context", [], context.agent, context.claimAnalysis), /settings changed/);
     } finally {
       if (previousModel === undefined) delete process.env.POLICY_CHAT_MODEL_DEPLOYMENT;
       else process.env.POLICY_CHAT_MODEL_DEPLOYMENT = previousModel;
@@ -355,7 +396,7 @@ test("Framework modes share prepared claim inputs but isolate review caches, cha
       else process.env.POLICY_CHAT_REASONING_EFFORT = previousEffort;
     }
     await assert.rejects(
-      service.followup("search", "wrong mode", [], context.agent),
+      service.followup("search", "wrong mode", [], context.agent, context.claimAnalysis),
       /configuration changed/,
     );
     const changed = new PolicyService({
@@ -676,9 +717,13 @@ test("private API chats preserve history, isolate cases and never replay failed 
         mode: "ungrounded" | "search";
         chat?: boolean;
         history?: unknown[];
+        claimAnalysis?: ReturnType<typeof policyClaimAnalysis>;
       };
       const raw = result(request.mode, settings);
       if (!request.chat) return raw;
+      assert.ok(request.claimAnalysis?.contents.some(document => document.category === "repair_estimate"));
+      assert.ok(request.claimAnalysis?.contents.some(document => document.category === "rental_invoice"));
+      assert.ok(request.claimAnalysis?.textEvidence.length);
       calls++;
       histories.push(structuredClone(request.history));
       if (delay)
@@ -745,6 +790,7 @@ test("private API chats preserve history, isolate cases and never replay failed 
   assert.equal((await fetch(base + query)).status, 401);
   const read = async () => (await fetch(base + query, { headers })).json();
   const context = await read();
+  assert.equal("claimAnalysis" in context, false, "Saved packet evidence stays server-side until requested by a tool");
   assert.equal(context.messages.length, 2);
   assert.equal(context.messages[0].content, context.prompt);
   assert.equal(calls, 0);
@@ -765,6 +811,10 @@ test("private API chats preserve history, isolate cases and never replay failed 
     });
   assert.equal((await send({ ...body, live: false })).status, 400);
   assert.equal((await send({ ...body, message: " " })).status, 400);
+  assert.equal((await fetch(base + "policy/chat", {
+    method: "POST", headers,
+    body: JSON.stringify({ ...body, claimAnalysis: { contents: [{ category: "forged" }] } }),
+  })).status, 400, "The client cannot replace server-selected claim evidence");
   assert.equal(
     (await send({ ...body, contextId: "a".repeat(64) })).status,
     409,
