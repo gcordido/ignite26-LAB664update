@@ -44,7 +44,7 @@ In this lab, you will use Azure Document Intelligence and Content Understanding 
    - If prompted for a Temporary Access Pass (TAP): +++@lab.CloudPortalCredential(User1).AccessToken+++
    - If prompted for a Password: +++@lab.CloudPortalCredential(User1).Password+++
 
-Then select 'Yes' when asked to sign in to all apps and websites. 
+Then select 'No, this app only' when asked to sign in to all apps and websites. 
 
 !IMAGE[38jmsmpt.png](instructions359897/38jmsmpt.png)
 
@@ -54,7 +54,7 @@ Finally, confirm the subscription selection by pressing **Enter**.
 
 3. Run the command below to set up the dependencies and prepare the policy search index:
 
-    - **Setup** restores the locked npm dependencies, including *Deep Chat*, and prepares the Python environment in `.tools\policy-venv` using the lab's approved package sources.
+    - **Setup** restores the locked npm dependencies, including *Deep Chat*, and prepares the Python environment in **.tools\policy-venv** using the lab's approved package sources.
     - **Deploy** finds the existing Azure AI Search, Storage, and Foundry resources and model in your resource group. It uploads the policy PDFs to Blob Storage and configures a Search indexer with a Content Understanding skill. Azure AI Search then extracts the content, splits it into semantic chunks, generates AI descriptions of figures, and populates the index. Once verification succeeds, the script saves the connection settings for the workbench.
 
     No pre-filled configuration file or hosted agent is required. Azure AI Search handles policy extraction and indexing; Python does not extract or upload individual chunks. Later policy checks reuse the saved claim Parse results rather than creating a claim-summary analyzer or running Content Understanding on the claims again.
@@ -537,26 +537,26 @@ Sign in with the same Azure lab account used in CU Studio.
 
 ### Sign in to the GitHub Copilot app
 
-1. In your browser, navigate to [GitHub enterprise sign-in](https://github.com/enterprises/skillable-events/sso) and sign in with your **Azure lab credentials**.
-2. Return to the **GitHub Copilot app** and select **Sign in with GitHub**. Follow the instructions on the web page that opens, including the one-time code prompt, to complete sign-in.
+1. In your browser, navigate to GitHub enterprise sign-in at `https://github.com/enterprises/skillable-events/sso` and sign in with your **Azure lab credentials**.
+2. Open the **GitHub Copilot app** from the Desktop icon and select **Sign in with GitHub**. Follow the instructions on the web page that opens, including the one-time code prompt, to complete sign-in.
 
 ### Open the lab checkout
 
 1. In the sidebar, select **+** beside **Projects**, then select **Open folder**.
 
-!IMAGE[Open folder from the Projects menu](instructions359897/copilot-open-folder.png)
+!IMAGE[m78g0dmn.png](instructions359897/m78g0dmn.png)
 
 2. Choose `C:\Users\LabUser\Desktop\ignite26-LAB664` in the folder picker. Select the lab project under **Projects**, then use **New** at the top left to start a fresh session for that project.
 
-!IMAGE[The lab project and New session navigation](instructions359897/copilot-new-session.png)
+!IMAGE[7gblz1a9.png](instructions359897/7gblz1a9.png)
 
 3. Below the prompt, open the workspace selector, which may initially show **New worktree**. In the **Where to work** menu, select **Current checkout**.
 
-!IMAGE[Choose Current checkout instead of New worktree](instructions359897/copilot-select-current-checkout.png)
+!IMAGE[yr72k9vw.png](instructions359897/yr72k9vw.png)
 
 4. Confirm the prompt footer shows **ignite26-LAB664** and **Current checkout**. Keep **Interactive** mode and normal tool approvals enabled; do not enable **allow-all**.
 
-!IMAGE[The prompt footer with the lab project and Current checkout](instructions359897/copilot-current-checkout.png)
+!IMAGE[ns0m6984.png](instructions359897/ns0m6984.png)
 
 5. Open the model picker in the prompt footer and select **GPT 6.1 Sol**. This selects Copilot's coding model; leave the CU analyzer's existing **GPT-5.5** configuration unchanged.
 
@@ -574,13 +574,13 @@ As Copilot works, follow how it translates your request into analyzer checks, CL
 
 At first tool use, you may see **Trust this repository?**. Confirm that the project is the lab checkout above, then select **Trust repository** only if you trust its files. You can choose **Skip for now** instead and review individual tool requests.
 
-!IMAGE[Trust repository and Skip for now choices](instructions359897/copilot-trust-repository.png)
+!IMAGE[xgvtpq5h.png](instructions359897/xgvtpq5h.png)
 
 Copilot is instructed to show each CU CLI command in chat before running it and report the result afterward. Check the analyzer ID, input file, endpoint when present, and operation before approving. If a chat preview is missing, ask Copilot to show the full command before continuing. You can expand tool cards to inspect commands that already ran; missing chat text does not mean they were not executed.
 
 Review Copilot's initial proposal before approving a disposable repair-analyzer copy and **two analyses** of `data\documents\packet-08\05-estimate.pdf`: one before the fix and one after.
 
-!IMAGE[Illustrative confirmation for the disposable copy and two packet-8 analyses](instructions359897/copilot-repair-analysis-approval-example.png)
+!IMAGE[mfyfxprq.png](instructions359897/mfyfxprq.png)
 
 Illustrative approval prompt (edited example).
 
@@ -609,3 +609,17 @@ Use the individual repair estimates, not the full packets. Changed values are po
 **Review the changes - no new Azure calls**
 
 > Other than the amounts we fixed, did anything change or go missing? Show me the old and new values using the saved results. Don't run anything again.
+
+===
+
+## Summary
+
+Congratulations! You have successfully completed the lab.
+
+In this lab, you explored how to turn insurance documents into structured, source-linked information for claims review. You:
+
+- Compared layout extraction with prebuilt schema-based analyzers.
+- Customized repair estimate and Statement analyzers, then classified, split and routed mixed document packets.
+- Used the **Insurance Workbench app** to inspect extracted fields, review business-rule findings and compare an updated repair analyzer with the original.
+- Checked claim facts against policy evidence retrieved through **Azure Search (Foundry IQ)** and asked an agent follow-up questions.
+- Optionally used **GitHub Copilot and the Content Understanding CLI** to improve a disposable analyzer copy and compare before/after results with explicit approvals.
