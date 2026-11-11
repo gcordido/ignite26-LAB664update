@@ -574,7 +574,7 @@ Sign in with the same Azure lab account used in CU Studio.
 
 Use `repair_extractor_analyzer` from **Step 3**, not the router or the improved analyzer from Step 8.
 
-> Hey, I just validated packet 8 and the repair line items don't add up to the subtotal. Can you try fixing it on a copy of `repair_extractor_analyzer`? Add PartsAmount and LaborAmount as extracted numbers, and change the line-item TotalAmount from an object to a generated number. Use the printed row total if there is one, otherwise add parts and labor when both are there. Don't guess missing amounts, and leave the document total alone. Show me what you'll change first, then compare before and after.
+> `Hey, I just validated packet 8 and the repair line items don't add up to the subtotal. Can you try fixing it on a copy of repair_extractor_analyzer? Add PartsAmount and LaborAmount as extracted numbers, and change the line-item TotalAmount from an object to a generated number. Use the printed row total if there is one, otherwise add parts and labor when both are there. Don't guess missing amounts, and leave the document total alone. Show me what you'll change first, then compare before and after.`
 
 Copilot checks your Azure connection and asks for your Content Understanding endpoint if needed. Follow how Copilot turns your request into analyzer checks, CLI commands, a schema diff, approvals and a before/after comparison, not just the final answer. Review each CLI command in chat before approving it, then check the result.
 
@@ -602,13 +602,13 @@ Stay in the session that ran the analyzer work. The first prompt needs approval 
 
 **Check other packets**
 
-> Can you try the repair estimates from packets 1 and 3 with the baseline and improved analyzers? Check if the fix changed anything else, like the vehicle, VIN or odometer. Show me the files and ask before running the four analyses.
+> `Can you try data\samples\packet-01-estimate.pdf and data\samples\packet-03-estimate.pdf with both analyzers? Check if the fix changed anything else, like the vehicle, VIN or odometer. Show me the files and ask before running the four analyses.`
 
 Use the individual repair estimates, not the full packets. Changed values are potential regressions to review, not proof that either result is correct.
 
 **Review the changes - no new Azure calls**
 
-> Other than the amounts we fixed, did anything change or go missing? Show me the old and new values using the saved results. Don't run anything again.
+> `Other than the amounts we fixed, did anything change or go missing? Show me the old and new values using the saved results. Don't run anything again.`
 
 ===
 
