@@ -1,0 +1,27 @@
+{
+  "baseAnalyzerId": "prebuilt-document",
+  "description": "Classification-only logical-document splitting for the lab's synthetic insurance packets.",
+  "config": {
+    "returnDetails": true,
+    "enableSegment": true,
+    "segmentPerPage": false,
+    "allowInPageSegments": false,
+    "contentCategories": {
+      "id_document": {
+        "description": "The lab's identity-like demo card with named holder, portrait and membership identifier. This synthetic membership card demonstrates ID field extraction, not government-ID authenticity. Exclude invoice, tax and repair documents."
+      },
+      "tax_1099a": {
+        "description": "An IRS Form 1099-A Acquisition or Abandonment of Secured Property, including fictional borrower-copy examples. Exclude other tax forms and prose references."
+      },
+      "repair_estimate": {
+        "description": "A standalone repair workshop estimate or quote with vehicle details and proposed repair work. Keep continuation pages of the same estimate together; split a different estimate even if adjacent. Exclude towing/rental/glass invoices and their supporting inspection supplements even when they mention a proposed repair schedule."
+      },
+      "other": {
+        "description": "Each distinct supporting document: policy declarations/endorsements, claim intake forms, incident reports, handwritten statements, towing/rental/glass invoices with their own continuation supplements, valuation/downtime schedules, and workshop inspection records. Identify logical boundaries even when adjacent documents both have category other. Keep paginated continuation pages together; do not merge different document titles or identifiers. These documents are unrouted, not discarded."
+      }
+    }
+  },
+  "models": {
+    "completion": "gpt-5.5"
+  }
+}
