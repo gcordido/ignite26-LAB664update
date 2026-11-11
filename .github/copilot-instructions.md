@@ -77,7 +77,7 @@ azd ai cu analyzer create <improved> --schema "<schema>"
    no inventory/speculative ID probes.
    Briefly summarize direction and request approval naming both same-resource IDs,
    the baseline copy and **exactly two billable CU analyses** of
-   `data\samples\packet-08-estimate.pdf`: one per analyzer. Creating the improved
+   `data\documents\packet-08\05-estimate.pdf`: one per analyzer. Creating the improved
    analyzer needs separate approval after the final diff in stage 2.
 
 2. **Baseline, edit and approve creation.** Create unique `.tools\copilot-lab\<run>\`;
