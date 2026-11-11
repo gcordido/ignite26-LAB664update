@@ -575,7 +575,7 @@ Use `repair_extractor_analyzer` from **Step 3**, not the router or the improved 
 
 > Hey, I just validated packet 8 and the repair line items don't add up to the subtotal. Can you try fixing it on a copy of `repair_extractor_analyzer`? Add PartsAmount and LaborAmount as extracted numbers, and change the line-item TotalAmount from an object to a generated number. Use the printed row total if there is one, otherwise add parts and labor when both are there. Don't guess missing amounts, and leave the document total alone. Show me what you'll change first, then compare before and after.
 
-Copilot checks your Azure connection and asks for your Content Understanding endpoint if needed. Follow how Copilot turns your request into analyzer checks, CLI commands, a schema diff, approvals and a before/after comparison, not just the final answer. Review each CLI command in chat before approving it, then check the result. Ask for any missing command preview before continuing.
+Copilot checks your Azure connection and asks for your Content Understanding endpoint if needed. Follow how Copilot turns your request into analyzer checks, CLI commands, a schema diff, approvals and a before/after comparison, not just the final answer. Review each CLI command in chat before approving it, then check the result.
 
 Review Copilot's initial proposal before approving a disposable repair-analyzer copy and **two analyses** of `data\documents\packet-08\05-estimate.pdf`: one before the fix and one after.
 
