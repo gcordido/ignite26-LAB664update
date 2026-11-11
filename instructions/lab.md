@@ -544,29 +544,30 @@ Sign in with the same Azure lab account used in CU Studio.
 ### Sign in to the GitHub Copilot app
 
 1. In your browser, navigate to GitHub enterprise sign-in at `https://github.com/enterprises/skillable-events/sso` and sign in with your **Azure lab credentials**.
-2. Open the **GitHub Copilot app** from the Desktop icon and select **Sign in with GitHub**. Follow the instructions on the web page that opens, including the one-time code prompt, to complete sign-in.
+2. Open the **GitHub Copilot app** from the Desktop icon and select **Sign in to GitHub**. On the **Device Activation** page, confirm your lab GitHub account is shown under **Signed in as**, then select **Continue**. If needed, select **Use a different account** first. Enter the one-time code, then authorize the GitHub Copilot app when prompted to complete sign-in.
+3. If the **Connect your work** screen appears, select **Choose a folder...**, choose `C:\Users\LabUser\Desktop\ignite26-LAB664`, then select **Continue**. Use the existing lab folder, not a sample repository.
 
-### Open the lab checkout
+!IMAGE[Choose the existing lab folder during first-run setup](instructions359897/copilot-connect-your-work.png)
 
-1. In the sidebar, select **+** beside **Projects**, then select **Open folder**.
+### Open a session for the lab folder
 
-!IMAGE[m78g0dmn.png](instructions359897/m78g0dmn.png)
+1. If `ignite26-LAB664` is not already listed under **Sessions**, select **+** beside **Sessions**, then select **Add local folder or repository**. Choose `C:\Users\LabUser\Desktop\ignite26-LAB664` in the folder picker.
 
-2. Choose `C:\Users\LabUser\Desktop\ignite26-LAB664` in the folder picker. Select the lab project under **Projects**, then use **New** at the top left to start a fresh session for that project.
+!IMAGE[Add the lab folder using the Sessions menu](instructions359897/copilot-sessions-add-local-folder.png)
 
-!IMAGE[7gblz1a9.png](instructions359897/7gblz1a9.png)
+2. Select **+** beside **ignite26-LAB664** under **Sessions** to create a **New session**. Expand the folder first if needed.
 
-3. Below the prompt, open the workspace selector, which may initially show **New worktree**. In the **Where to work** menu, select **Current checkout**.
+!IMAGE[Create a new session using the plus beside the lab folder](instructions359897/copilot-session-start-in-lab-folder.png)
 
-!IMAGE[yr72k9vw.png](instructions359897/yr72k9vw.png)
+3. Confirm the folder label below the prompt shows **ignite26-LAB664**. Clicking this label opens the folder picker; leave the lab folder selected.
 
-4. Confirm the prompt footer shows **ignite26-LAB664** and **Current checkout**. Keep **Interactive** mode and normal tool approvals enabled; do not enable **allow-all**.
+!IMAGE[The lab folder selected in the session folder picker](instructions359897/copilot-session-folder-picker.png)
 
-!IMAGE[ns0m6984.png](instructions359897/ns0m6984.png)
+4. Keep **Interactive** mode and normal tool approvals enabled; do not enable **allow-all**.
 
-5. Open the model picker in the prompt footer and select **GPT 6.1 Sol**. This selects Copilot's coding model; leave the CU analyzer's existing **GPT-5.5** configuration unchanged.
+!IMAGE[The session prompt in Interactive mode with the lab folder below it](instructions359897/copilot-session-composer.png)
 
-Use **Current checkout**, not **New worktree**: instructions staged on the VM may be uncommitted and absent from a new worktree. Changing folders in a PowerShell window does not change the Copilot app's workspace.
+5. Open the model picker in the prompt footer and select **GPT 6.1 Sol**. Leave reasoning effort at the lab default, **Medium**.
 
 ### Give the agent the task
 
@@ -574,23 +575,15 @@ Use `repair_extractor_analyzer` from **Step 3**, not the router or the improved 
 
 > Hey, I just validated packet 8 and the repair line items don't add up to the subtotal. Can you try fixing it on a copy of `repair_extractor_analyzer`? Add PartsAmount and LaborAmount as extracted numbers, and change the line-item TotalAmount from an object to a generated number. Use the printed row total if there is one, otherwise add parts and labor when both are there. Don't guess missing amounts, and leave the document total alone. Show me what you'll change first, then compare before and after.
 
-After you send the prompt, Copilot will check your Azure connection and ask for your Content Understanding resource endpoint if needed.
-
-As Copilot works, follow how it translates your request into analyzer checks, CLI commands, a schema diff, approvals and a before/after comparison. Inspect the commands and results along the way, not just the final answer.
-
-At first tool use, you may see **Trust this repository?**. Confirm that the project is the lab checkout above, then select **Trust repository** only if you trust its files. You can choose **Skip for now** instead and review individual tool requests.
-
-!IMAGE[xgvtpq5h.png](instructions359897/xgvtpq5h.png)
-
-Copilot is instructed to show each CU CLI command in chat before running it and report the result afterward. Check the analyzer ID, input file, endpoint when present, and operation before approving. If a chat preview is missing, ask Copilot to show the full command before continuing. You can expand tool cards to inspect commands that already ran; missing chat text does not mean they were not executed.
+Copilot checks your Azure connection and asks for your Content Understanding endpoint if needed. Follow how Copilot turns your request into analyzer checks, CLI commands, a schema diff, approvals and a before/after comparison, not just the final answer. Review each CLI command in chat before approving it, then check the result. Ask for any missing command preview before continuing.
 
 Review Copilot's initial proposal before approving a disposable repair-analyzer copy and **two analyses** of `data\documents\packet-08\05-estimate.pdf`: one before the fix and one after.
 
-!IMAGE[mfyfxprq.png](instructions359897/mfyfxprq.png)
+!IMAGE[Approve the disposable copy and two analyses](instructions359897/copilot-approve-copy-and-two-analyses.png)
 
-Illustrative approval prompt (edited example).
+Example approval prompt; wording may vary.
 
-Review Copilot's proposed changes. It will ask again before replacing its copy of the analyzer. Your original stays unchanged.
+Review the schema diff. Before applying it, Copilot asks separately to **delete and recreate its disposable analyzer copy**. Check that the named ID is the copy, not `repair_extractor_analyzer`. Your original stays unchanged.
 
 ### Review the comparison
 
@@ -604,7 +597,7 @@ If values differ, ask Copilot to explain before rerunning.
 
 ### More prompts to try
 
-Stay in the same session. The first prompt needs approval for **four new document analyses**. The second uses saved results only.
+Stay in the session that ran the analyzer work. The first prompt needs approval for **four new document analyses**. The second uses saved results only.
 
 **Check other packets**
 
