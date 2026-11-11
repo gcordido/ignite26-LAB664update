@@ -49,13 +49,6 @@
         <button id="close-settings" class="secondary">Close</button>
       </div>
     </dialog>
-    <dialog id="policy-document-list" aria-labelledby="policy-document-list-title">
-      <h2 id="policy-document-list-title">Policy datasets</h2>
-      <p class="muted">Open these folders in Windows Explorer on the workbench machine, or copy their full paths. Saved outputs are available offline; no Azure calls are made.</p>
-      <p id="policy-document-list-status" role="status"></p>
-      <ul id="policy-document-list-files"></ul>
-      <button id="policy-document-list-close" class="secondary">Close</button>
-    </dialog>
     <nav id="workflow-pivots" aria-label="Workbench sections">
       <button data-workflow="extract" aria-pressed="true">Parse and extract</button>
       <button
@@ -136,12 +129,12 @@
               Rental Invoice
             </button>
           </div>
-          <span id="origin" class="badge"></span>
         </div>
         <p id="checks-description" class="muted" hidden></p>
         <div id="policy-resources" hidden>
           <p>Azure Search (FoundryIQ) Index for policy documents: <span id="policy-index-resource">Loading verified resource metadata...</span></p>
           <p>Policy documents: <a id="policy-local-documents" href="/#policy-documents">data\policies\rental\ocr-comparison-v2\</a></p>
+          <p id="policy-folder-status" class="muted" role="status" hidden></p>
           <p id="policy-resource-context" class="muted" hidden></p>
         </div>
           <div id="policy-run-status" class="policy-run-status" role="status" hidden>
@@ -189,7 +182,7 @@
             </div>
             <div id="policy-table-intro" hidden>
               <h2 class="results-heading">Claim policy checks</h2>
-              <p>Compare daily rental base caps, effective dates and each repair-estimate gross total with retrieved evidence. Repair authority is a synthetic internal review threshold, not law, a coverage cap or payment approval. Select a result to see the values and sources.</p>
+              <p>Select a result to see the values and sources.</p>
             </div>
             <div id="packets" class="table">
               <table id="packet-table" aria-label="Customer results">

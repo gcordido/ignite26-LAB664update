@@ -17,6 +17,22 @@ export function chatMessageHtml(text, citations = []) {
   return `<div style="white-space:pre-wrap;overflow-wrap:anywhere">${escapeHtml(text)}</div>${sources}`;
 }
 
+export function initialPromptHtml(text) {
+  return `<div><div id="policy-initial-prompt" data-policy-prompt-text style="white-space:pre-wrap;overflow-wrap:anywhere;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:4;overflow:hidden;line-height:1.4;max-height:5.6em">${escapeHtml(text)}</div>` +
+    '<button type="button" data-policy-prompt-toggle aria-controls="policy-initial-prompt" aria-expanded="false" aria-label="Show more of the initial prompt" style="display:block;background:transparent;border:0;color:inherit;cursor:pointer;font:inherit;padding:6px 0 0;text-decoration:underline">Show more</button></div>';
+}
+
+export function toggleInitialPrompt(button) {
+  const prompt = button.parentElement?.querySelector("[data-policy-prompt-text]");
+  if (!prompt) throw new Error("Initial policy prompt text is missing.");
+  const expanded = button.getAttribute("aria-expanded") !== "true";
+  prompt.style.webkitLineClamp = expanded ? "unset" : "4";
+  prompt.style.maxHeight = expanded ? "none" : "5.6em";
+  button.setAttribute("aria-expanded", String(expanded));
+  button.setAttribute("aria-label", `Show ${expanded ? "less" : "more"} of the initial prompt`);
+  button.textContent = expanded ? "Show less" : "Show more";
+}
+
 export function resultChatText(result) {
   return result.Checks.map((check) =>
     `${checkLabels[check.Check] ?? check.Check}\n${check.Outcome === "NotApplicable" ? "Not applicable" : check.Outcome === "InProgress" ? "Waiting for info - missing claim evidence for this comparison" : check.ReviewRequired ? "Review required" : "Satisfied"}\n` +
@@ -62,17 +78,11 @@ export function createPolicyChat({ container, api, onSource, onError }) {
       };
       const notice = document.createElement("p");
       notice.className = "muted";
-      notice.textContent = `${context.agent.modelDeployment} · ${context.agent.indexName ?? "No policy retrieval"}. ` +
-        "This conversation covers only this check. Follow-ups use Azure and may be billed. Chat does not change saved results.";
-      const original = document.createElement("details");
-      const summary = document.createElement("summary");
-      const promptLabel = context.promptSource === "saved"
-        ? `${label}: original question and saved Parse evidence`
-        : `${label}: current question and saved Parse evidence`;
-      summary.textContent = promptLabel;
-      const prompt = document.createElement("pre");
-      prompt.textContent = context.prompt;
-      original.append(summary, prompt);
+      notice.append(
+        `Agent Framework using model: ${context.agent.modelDeployment}`, document.createElement("br"),
+        `Search index for policies: ${context.agent.indexName ?? "No policy retrieval"}.`, document.createElement("br"),
+        'Ask about any policy or claim detail in this packet. Uses CU fields and parsed page text from the "Parse and Extract" results.',
+      );
       const chat = document.createElement("deep-chat");
       chat.setAttribute("aria-label", `${label} follow-up conversation`);
       const revealComposer = () => requestAnimationFrame(() => {
@@ -82,7 +92,7 @@ export function createPolicyChat({ container, api, onSource, onError }) {
       const citations = [...context.citations.flat(), ...context.replies.flatMap((reply) => reply.citations)];
       const originalSources = context.citations.flat();
       chat.history = [
-        { role: "user", html: `<details><summary>${escapeHtml(promptLabel)}</summary>${chatMessageHtml(context.prompt)}</details>` },
+        { role: "user", html: initialPromptHtml(context.prompt) },
         { role: "ai", html: chatMessageHtml(resultChatText(context.result), originalSources) },
         ...context.messages.slice(2).map((message, index) => ({
           role: message.role === "assistant" ? "ai" : "user",
@@ -92,7 +102,7 @@ export function createPolicyChat({ container, api, onSource, onError }) {
       ];
       chat.chatStyle = { width: "100%", height: "auto", overflow: "visible", border: "none", backgroundColor: "#fff", fontFamily: "Segoe UI, sans-serif" };
       chat.messageStyles = { default: { shared: { bubble: { maxWidth: "96%", fontSize: "13px" } } } };
-      chat.textInput = { placeholder: { text: `Ask about ${label.toLowerCase()}…` } };
+      chat.textInput = { placeholder: { text: "Ask about this claim, its policy, or a hypothetical scenario…" } };
       chat.requestBodyLimits = { maxMessages: 1 };
       chat.remarkable = { html: false };
       chat.errorMessages = { displayServiceErrorMessages: true };
@@ -115,7 +125,13 @@ export function createPolicyChat({ container, api, onSource, onError }) {
         if (listening || !chat.shadowRoot) return;
         listening = true;
         chat.shadowRoot?.addEventListener("click", (event) => {
-          const link = event.target instanceof Element ? event.target.closest("a") : null;
+          const target = event.target instanceof Element ? event.target : null;
+          const toggle = target?.closest("[data-policy-prompt-toggle]");
+          if (toggle) {
+            toggleInitialPrompt(toggle);
+            return;
+          }
+          const link = target?.closest("a");
           if (!link) return;
           event.preventDefault();
           const citation = citations.find((value) => value.href === link.getAttribute("href") &&
@@ -126,7 +142,7 @@ export function createPolicyChat({ container, api, onSource, onError }) {
       const toolbar = document.createElement("div");
       toolbar.className = "actions";
       toolbar.append(heading, reload);
-      holder.replaceChildren(toolbar, notice, original, chat);
+      holder.replaceChildren(toolbar, notice, chat);
       holder.hidden = selectionKey !== key;
     } catch (error) {
       if (revision !== generation) return;

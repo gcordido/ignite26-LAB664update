@@ -53,3 +53,22 @@ test("scope preserves conflicting identities and excludes rented-vehicle and sup
   assert.equal(parsedPolicyScope(exported).policyScope.vin, packet.expectedRepair.vin);
   assert.equal(parsedPolicyScope(exported).lossState, "TX");
 });
+
+test("follow-ups can read other saved page text without broadening initial checks or excluded documents", async () => {
+  const cache = new Cache();
+  const run = await cache.load("c12569eb-cf4b-479a-9f57-d6bf57fb5732");
+  const packet = run.source[0], raw = await cache.raw(run.id, packet.id);
+  const exported = packetJson(raw, packet, run, summarize(raw, packet, run.analyzer.mode));
+  const other = structuredClone(exported.documents[0]);
+  other.category = "other";
+  other.extracted_text = "Appointment confirmed for Tuesday.";
+  exported.documents = [other];
+  assert.deepEqual(parsedTextEvidence(exported), []);
+  const expanded = parsedTextEvidence(exported, true);
+  assert.equal(expanded[0].text, other.extracted_text);
+  assert.deepEqual(expanded[0].pages, other.pages);
+  for (const category of ["id_document", "tax_1099a"] as const) {
+    other.category = category;
+    assert.deepEqual(parsedTextEvidence(exported, true), []);
+  }
+});

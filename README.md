@@ -60,11 +60,10 @@ Loading makes no Azure calls. Follow-up chat requires live Azure configuration, 
 FoundryIQ is the lab's umbrella label; this implementation retrieves evidence
 directly from Azure AI Search, not a Foundry IQ knowledge base.
 The index name above the grid links directly to its Azure portal index view.
-Resource links describe the displayed results' generation, not a different live
-configuration. **Policy documents** shows exactly three full-path dataset links:
-original policy PDFs, saved Search outputs, and saved Digital Parse outputs.
-On the local Windows workbench, a link requests its folder in Explorer; copy-path
-and manual-copy fallbacks are available. No files are uploaded to Blob Storage.
+It follows the configured live agent index when available, or identifies the saved
+review index otherwise. **Policy documents** opens the original policy PDFs folder
+directly in Windows Explorer on the local workbench; opening errors appear beside
+the link.
 Select a policy check's source link to view its **Original**, **CU Search**, or **Digital parse** tabs.
 Both native analyzer outputs are included for every active PDF; viewing them
 needs no Azure sign-in or calls. Digital parse can legitimately contain no text
@@ -100,9 +99,11 @@ separate from repair review authority; inspect the matched policy evidence for e
 
 In **Settings**, enable live calls, then select **Run live policy checks** and
 confirm only to request policy work. Matching current
-reviews are reused; uncached packets use saved Parse fields and selected first-pass
-page text, without claim-summary preparation or claim CU reanalysis. The agent
-interprets rental applicability for Daily rate before three parallel comparison calls. Azure charges apply.
+reviews are reused; uncached packets use scoped typed Parse fields and retrieved
+policy evidence for each check, without claim-summary preparation or claim CU
+reanalysis. Before three parallel comparison calls, the agent interprets rental
+applicability for Daily rate using saved fields and selected first-pass page text.
+Azure charges apply.
 The previous three-, four-, and five-check bundles remain history; the new bundle replaces
 the active results without editing extracted facts or inventing outcomes.
 The active corpus contains 10 declarations, nine scanned effective-date records,

@@ -419,8 +419,9 @@ export function createApp(
     if (s.run?.id !== runId)
       throw new LabError(409, "The selected CU run changed. Reload this chat.");
     const { context, state } = await chatContext(s, mode, packetId, check);
+    const { claimAnalysis: _claimAnalysis, ...publicContext } = context;
     res.json({
-      ...context,
+      ...publicContext,
       messages: state.messages,
       replies: state.replies,
       busy: state.busy,
@@ -460,6 +461,7 @@ export function createApp(
           message,
           state.messages,
           context.agent,
+          context.claimAnalysis,
         );
         state.messages.push(
           { role: "user", content: message },

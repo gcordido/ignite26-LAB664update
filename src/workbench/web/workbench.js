@@ -30,7 +30,6 @@ let sessionId = "";
 let busy = false;
 let liveCallsEnabled = false;
 let run;
-let origin = "cached";
 let view = "classification";
 let lastExtractionView = "classification";
 let allFields = false;
@@ -266,7 +265,6 @@ async function renderRun(nextRun, nextOrigin) {
   const changedRun = run?.id !== nextRun.id;
   const changed = changedRun || Array.isArray(preloaded);
   run = nextRun;
-  origin = nextOrigin;
   if (changed) {
     ++selectionVersion;
     selectedPacket = "";
@@ -292,10 +290,6 @@ async function renderRun(nextRun, nextOrigin) {
       results.set(result.packet.id, result);
     }
   get("batch").hidden = false;
-  const badge = get("origin");
-  badge.textContent = `${origin === "live" ? "Live" : "Cached"}${run.status === "failed" ? " \u00b7 Failed" : ""}`;
-  badge.className = `badge${origin === "live" ? " live" : ""}`;
-  badge.title = `${run.analyzer.id} / ${JSON.stringify(run.analyzer.models)} / ${run.apiVersion}\n${run.startedAt}\nDataset: ${run.datasetHash}\nDefinition: ${run.analyzer.fingerprint}${origin === "cached" ? "\nHistorical native JSON; no Azure analysis." : ""}`;
   if (run.currentDatasetMatches === false)
     fail(new Error("The saved results belong to a different source dataset."));
   const completed = run.items.filter(
@@ -1225,7 +1219,6 @@ api("session", {})
       if (first) await showCustomer(first.id);
     }
     controls();
-    if (globalThis.location?.hash === "#policy-documents") await openPolicyDocuments();
   })
   .catch(fail);
 
@@ -1278,7 +1271,11 @@ function renderPolicyResources() {
     : name && name !== policyStatus?.resources?.index?.name
       ? undefined
       : policyStatus?.resources ?? (!saved ? policyStatus?.bundledDemo?.resources : undefined));
-  const resources = names.length > 1 || (name && candidate?.index?.name !== name) ? undefined : candidate;
+  const savedResources = names.length > 1 || (name && candidate?.index?.name !== name) ? undefined : candidate;
+  const live = policyStatus?.configured;
+  const resources = live ? policyStatus.resources : savedResources;
+  const label = live ? resources?.index?.name ?? policyStatus.modes?.[policyMode]?.indexName ?? "Unavailable"
+    : names.length > 1 ? "Multiple saved index generations" : name ?? resources?.index?.name ?? "Unavailable";
   const render = (id, label, href, message) => {
     const node = get(id);
     node.title = message ?? "";
@@ -1292,88 +1289,35 @@ function renderPolicyResources() {
     } else node.textContent = label;
   };
   const unavailable = "Verified resource metadata is unavailable for these policy results.";
-  render("policy-index-resource", names.length > 1 ? "Multiple saved index generations" :
-    name ?? resources?.index?.name ?? "Unavailable",
+  render("policy-index-resource", label,
     resources?.index?.href, resources?.index?.message ?? (!resources ? unavailable : ""));
-  const active = policyStatus?.resources?.index?.name;
   const context = get("policy-resource-context");
-  context.hidden = !name || !active || name === active;
-  context.textContent = context.hidden ? "" : `Showing saved result sources. Live checks use index ${active}.`;
+  context.hidden = live ? !name || name === label : false;
+  context.textContent = context.hidden ? "" : live
+    ? `Live agent calls use the linked index. Saved reviews used index ${name}.`
+    : "Showing the saved review index; live agent configuration is unavailable.";
 }
 async function openPolicyDocuments() {
-  const dialog = get("policy-document-list");
-  if (!dialog.open) dialog.showModal();
-  const status = get("policy-document-list-status");
-  status.textContent = "Resolving local dataset folders...";
-  get("policy-document-list-files").replaceChildren();
+  const link = get("policy-local-documents");
+  if (link.getAttribute("aria-disabled") === "true") return;
+  link.setAttribute("aria-disabled", "true");
+  const status = get("policy-folder-status");
+  status.hidden = false;
+  status.textContent = "Opening the original policy PDFs folder in Windows Explorer...";
   try {
-    const { datasets } = await api("policy/datasets");
-    const ids = ["original", "search", "digital"];
-    if (!Array.isArray(datasets) || datasets.length !== 3 ||
-        datasets.some((dataset, index) => dataset.id !== ids[index] ||
-          typeof dataset.label !== "string" || typeof dataset.path !== "string" ||
-          !/^(?:[a-z]:[\\/]|\/|\\\\)/i.test(dataset.path) ||
-          new URL(dataset.href).protocol !== "file:"))
-      throw new Error("The local policy dataset folders are invalid.");
-    for (const dataset of datasets) {
-      const row = element("li");
-      const link = element("a", dataset.path);
-      link.href = dataset.href;
-      link.dataset.datasetId = dataset.id;
-      let opening = false;
-      link.onclick = async (event) => {
-        event.preventDefault();
-        if (opening) return;
-        opening = true;
-        link.setAttribute("aria-disabled", "true");
-        status.textContent = `Requesting Windows Explorer for ${dataset.label}...`;
-        try {
-          await api("policy/datasets/open", { id: dataset.id });
-          status.textContent = `Folder requested in Windows Explorer: ${dataset.path}`;
-        } catch (error) {
-          status.textContent = `Could not open folder: ${error.message} Use Copy path instead.`;
-        } finally {
-          opening = false;
-          link.removeAttribute("aria-disabled");
-        }
-      };
-      const fallback = element("input");
-      fallback.value = dataset.path;
-      fallback.readOnly = true;
-      fallback.hidden = true;
-      fallback.setAttribute("aria-label", `${dataset.label} path to copy manually`);
-      const copy = element("button", "Copy path");
-      copy.className = "secondary";
-      copy.onclick = async () => {
-        try {
-          if (!navigator.clipboard?.writeText) throw new Error("Clipboard access is unavailable.");
-          await navigator.clipboard.writeText(dataset.path);
-          status.textContent = `Copied path: ${dataset.path}`;
-        } catch (error) {
-          fallback.hidden = false;
-          fallback.focus();
-          fallback.select();
-          status.textContent = `Could not copy automatically: ${error.message} Copy the selected path manually.`;
-        }
-      };
-      row.append(element("strong", dataset.label), link, copy, fallback);
-      get("policy-document-list-files").append(row);
-    }
-    status.textContent = "Three local datasets. The source folder may also contain supporting metadata.";
+    await api("policy/datasets/open", { id: "original" });
+    status.textContent = "Original policy PDFs folder requested in Windows Explorer.";
   } catch (error) {
-    status.textContent = `Policy documents unavailable: ${error.message}`;
+    status.textContent = `Could not open the original policy PDFs folder: ${error.message}`;
     throw error;
+  } finally {
+    link.removeAttribute("aria-disabled");
   }
 }
 get("policy-local-documents").onclick = (event) => {
   event.preventDefault();
   void openPolicyDocuments().catch(fail);
 };
-get("policy-document-list-close").onclick = () => get("policy-document-list").close();
-globalThis.addEventListener?.("hashchange", () => {
-  if (globalThis.location?.hash === "#policy-documents")
-    void openPolicyDocuments().catch(fail);
-});
 async function updatePolicyAvailability() {
   clearTimeout(policyAvailabilityTimer);
   try {
@@ -1970,10 +1914,6 @@ async function openPolicySource(citation, link) {
 get("policy-source-back").onclick = () => {
   const previous = policySource;
   showPolicyPanel(true);
-  if (previous?.listing) {
-    void openPolicyDocuments().catch(fail);
-    return;
-  }
   get("policy-review-pane").scrollTop = previous?.scrollTop ?? 0;
   previous?.link.focus({ preventScroll: true });
 };

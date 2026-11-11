@@ -604,6 +604,9 @@ test("comparison source matching uses CU paths and exact cited rules, not labels
   assert.equal(claimFieldSources(fields, "ActualRepairCompletion").length, 0);
   assert.equal(claimFieldSources(fields, "Rental.Total").length, 0);
   assert.equal(claimFieldSources(fields, "Rental.DailyRates").length, 1);
+  assert.deepEqual(claimFieldSources([...fields, {
+    field: "Not provided", value: "unrelated", status: "present", category: "statement", regions: [region],
+  }], "Not provided"), []);
   const parsed = {
     field: "parse.contents[0]", contentPath: "contents[0]", value: "Rental requested: No",
     status: "present", category: "statement", pages: { start: 4, end: 6 },
@@ -804,6 +807,8 @@ test("policy resource labels replace the retrieval selector and live controls st
   assert.doesNotMatch(html, /id="policy-mode"|id="policy-toolbar"/);
   assert.match(html, /Azure Search \(FoundryIQ\) Index for policy documents:/);
   assert.match(html, /Policy documents: <a id="policy-local-documents" href="\/#policy-documents">data\\policies\\rental\\ocr-comparison-v2\\/);
+  assert.doesNotMatch(html, /id="origin"|id="policy-document-list"/);
+  assert.match(html, /id="policy-folder-status"[^>]*role="status"/);
   assert.doesNotMatch(html, /Azure Storage documents here:|policy-storage-resource/);
   const settings = html.match(/<dialog id="app-settings"[\s\S]*?<\/dialog>/)![0];
   assert.match(settings, /id="policy-run"/);

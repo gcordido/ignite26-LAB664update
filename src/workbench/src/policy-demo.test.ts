@@ -9,7 +9,8 @@ import { cacheFolders, dataRoot, repositoryRoot } from "./config.ts";
 import { policyDemo, readPolicyDemo } from "./policy-demo.ts";
 import { frameworkConfigSchema, PolicyService, type PolicyItem } from "./policy-service.ts";
 import { createApp } from "./server.ts";
-import { parseSourceDigest } from "./policy-core.ts";
+import { canonical, checkContractVersion, digest, parseSourceDigest } from "./policy-core.ts";
+import { claimFieldSources } from "../web/policy-evidence-links.js";
 
 test("Parse source integrity survives Git LF/CRLF checkout conversion without accepting content changes", () => {
   const source = '{\n  "lossDate": "2026-02-12"\n}\n';
@@ -31,7 +32,7 @@ test("earlier three, four and five-check bundles are history-only, not reinterpr
   }
 });
 
-test("pruned three-check bundle uses hash-verified first-pass Parse without a summary cache", async () => {
+test("the three-check bundle preserves Parse and refreshes packets 03 and 06", async () => {
   const folder = path.join(repositoryRoot, "data", "policy-demo");
   const demo = await readPolicyDemo(folder);
   const manifest = JSON.parse(await readFile(path.join(folder, "manifest.json"), "utf8"));
@@ -45,11 +46,19 @@ test("pruned three-check bundle uses hash-verified first-pass Parse without a su
   assert.equal(demo.sourceCache.folder, path.join(repositoryRoot, "data", "results"));
   assert.equal(demo.results(demo.sourceRun).items.length, 10);
   assert.equal(demo.results(demo.sourceRun).items.flatMap(item => item.result?.Checks ?? []).length, 30);
-  assert.ok(demo.results(demo.sourceRun).items.every(item => !item.historical),
-    "A fresh checkout must keep the exact current runtime/question identity.");
+  const items = demo.results(demo.sourceRun).items;
+  assert.deepEqual(items.filter(item => !item.historical).map(item => item.id).sort(), ["packet-03", "packet-06"]);
+  assert.ok(items.filter(item => item.historical).every(item => !["packet-03", "packet-06"].includes(item.id)),
+    "Only packets 03 and 06 were refreshed against the current prompt.");
+  const savedReviews = await Promise.all(manifest.files
+    .filter(({ name }: { name: string }) => name.startsWith("framework-saved-"))
+    .map(async ({ name }: { name: string }) => JSON.parse(await readFile(path.join(folder, name), "utf8"))));
+  assert.deepEqual(demo.results(demo.sourceRun).items.map(item => canonical(item.result)).sort(),
+    savedReviews.map(saved => canonical(saved.raw.result)).sort(),
+    "Follow-up runtime changes must preserve generated review outcomes, not relabel or regenerate them.");
 });
 
-test("bundled comparisons use Texas 75, Washington 85 and the original Illinois policy VIN", async () => {
+test("bundled rates and refreshed effective terms preserve their expected findings", async () => {
   const demo = await readPolicyDemo(path.join(repositoryRoot, "data", "policy-demo"));
   const items = demo.results(demo.sourceRun).items;
   for (const [id, rate, cap] of [["packet-01", "54", "75"], ["packet-02", "61", "85"]]) {
@@ -58,12 +67,50 @@ test("bundled comparisons use Texas 75, Washington 85 and the original Illinois 
     assert.equal(check.Outcome, "Satisfied");
     assert.ok(check.Comparisons?.some((pair) => pair.ClaimValue.includes(rate) && pair.PolicyValue.includes(cap)));
   }
-  const terms = items.find((item) => item.id === "packet-06")?.result?.Checks[1];
-  assert.equal(terms?.Check, "Effective terms");
-  assert.equal(terms.Outcome, "Satisfied");
-  assert.ok(terms.Comparisons?.some((pair) =>
-    pair.ClaimValue === "1FMCU0G63MA514686" && pair.PolicyValue === pair.ClaimValue));
-  assert.ok(terms.Citation.some((citation) => citation.File === "effective-date-il-packet-06.pdf"));
+  for (const [id, state, policy, accident, term] of [
+    ["packet-03", "az", "SCI-A1132557", "2025-07-19", "2025-02-19 through 2026-02-19"],
+    ["packet-06", "il", "PMM-A4329240", "2026-03-05", "2025-10-06 through 2026-10-06"],
+  ]) {
+    const terms = items.find((item) => item.id === id)?.result?.Checks[1];
+    assert.equal(terms?.Check, "Effective terms");
+    assert.equal(terms.Outcome, "Satisfied");
+    assert.equal(terms.ReviewRequired, false);
+    assert.ok(terms.ExpectedValue.includes(policy));
+    assert.ok(terms.ActualValue.includes(accident) && terms.ActualValue.includes(term));
+    assert.ok(terms.Citation.some((citation) => citation.File === `declarations-${state}-${id}.pdf`));
+  }
+});
+
+test("bundled daily findings retain shared evidence without invented missing-rate sources", async () => {
+  const folder = path.join(repositoryRoot, "data", "policy-demo");
+  const demo = await readPolicyDemo(folder);
+  const run = demo.sourceRun;
+  const config = frameworkConfigSchema.parse(JSON.parse(
+    await readFile(path.join(folder, "policy-agent-framework.json"), "utf8"),
+  ));
+  for (const id of ["packet-04", "packet-06", "packet-08", "packet-10"]) {
+    const packet = run.source.find(item => item.id === id);
+    const daily = demo.results(run).items.find(item => item.id === id)?.result?.Checks[0];
+    assert.ok(packet && daily);
+    assert.equal(daily.Outcome, "NotApplicable");
+    const key = digest(canonical({
+      checkContractVersion, config, runId: run.id, analyzer: run.analyzer.fingerprint, mode: "search", packetId: id,
+    }));
+    const saved = JSON.parse(await readFile(path.join(folder, `framework-saved-${key}.json`), "utf8"));
+    const decision = saved.raw.rentalApplicability as { status: string; sourceReferences: string[] };
+    assert.equal(decision.status, "nonrental");
+    const comparison = daily.Comparisons?.find(pair =>
+      decision.sourceReferences.includes(pair.ClaimField) && pair.ClaimValue !== "Not provided");
+    assert.ok(comparison, `${id}: shared nonrental evidence is missing`);
+    const evidence = await demo.service.claimEvidence(run, packet, await demo.sourceCache.raw(run.id, id));
+    assert.ok(claimFieldSources(evidence.fields, comparison.ClaimField).length, `${id}: claim source is not linked`);
+  }
+  for (const id of ["packet-03", "packet-05", "packet-07"]) {
+    const daily = demo.results(run).items.find(item => item.id === id)?.result?.Checks[0];
+    assert.equal(daily?.Outcome, "InProgress");
+    assert.ok(daily.Comparisons?.some(pair =>
+      pair.ClaimField === "Not provided" && pair.ClaimValue === "Not provided"));
+  }
 });
 
 test("all eleven original repair quotes use their loss-state diagram, independently of rental", async () => {
@@ -87,9 +134,10 @@ test("all eleven original repair quotes use their loss-state diagram, independen
     assert.equal(check?.Check, "Repair estimate");
     assert.equal(check.Outcome, source.gross.some(amount => amount > source.threshold)
       ? "ReviewRequired" : "Satisfied", item?.id ?? `packet index ${index}`);
-    const values = check.Comparisons?.map(pair => pair.ClaimValue.replaceAll(",", "")) ?? [];
+    const values = [check.ActualValue, ...(check.Comparisons?.map(pair => pair.ClaimValue) ?? [])]
+      .join(" ").replaceAll(",", "");
     for (const amount of source.gross)
-      assert.ok(values.some(value => value.includes(String(amount))), `${item?.id}: gross ${amount}`);
+      assert.ok(values.includes(String(amount)), `${item?.id}: gross ${amount}`);
     assert.ok(check.Comparisons?.some(pair => pair.PolicyValue.replaceAll(",", "").includes(String(source.threshold))));
     assert.ok(check.Citation.some(citation => citation.RuleId === `REPAIR-${source.state}-01`));
     const page = index < 5 ? 1 : 2;
@@ -142,7 +190,7 @@ async function appSession(t: TestContext, policy: PolicyService, cache = new Cac
   };
 }
 
-test("a fresh machine loads the current bundled policy reviews without Azure or local configuration", async (t) => {
+test("a fresh machine loads bundled reviews without Azure or local configuration", async (t) => {
   const folder = await mkdtemp(path.join(os.tmpdir(), "lab664-offline-"));
   t.after(() => rm(folder, { recursive: true, force: true }));
   const policy = new PolicyService({
@@ -171,10 +219,12 @@ test("a fresh machine loads the current bundled policy reviews without Azure or 
   assert.equal(payload.source, "bundled");
   assert.equal(payload.sourceRunId, demo.info.runId);
   assert.equal(payload.staleDataset, undefined);
-  assert.equal(payload.extractionMode, "layout");
+  assert.equal(payload.extractionMode, "standard");
   assert.equal(payload.items.length, 10);
   assert.ok(payload.items.every((item: PolicyItem) =>
     item.status === "completed" && item.result?.Checks.length === 3));
+  assert.deepEqual(payload.items.filter((item: PolicyItem) => !item.historical).map((item: PolicyItem) => item.id).sort(),
+    ["packet-03", "packet-06"]);
   const chat = await request(`policy/chat?${new URLSearchParams({
     runId: selected.id, packetId: "packet-01", mode: "search", check: "Daily rate",
   })}`);

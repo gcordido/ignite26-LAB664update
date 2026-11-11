@@ -1,15 +1,29 @@
 {
   "schemaVersion": 1,
   "provider": "agent-framework",
-  "azureOpenAIEndpoint": "https://aifoundry-67149656.services.ai.azure.com",
-  "modelDeployment": "gpt-5-2-67149656",
-  "searchEndpoint": "https://search-67149656.search.windows.net",
-  "indexName": "lab664-rental-v2-managed-23092a011115",
+  "azureOpenAIEndpoint": "https://mmi-sample-foundry.services.ai.azure.com",
+  "modelDeployment": "gpt-5.2",
+  "searchEndpoint": "https://fibey-iq-search.search.windows.net",
+  "indexName": "lab664-rental-v2-managed-c65b525338ec",
   "corpusHash": "97fc0fadd0e452a620c8cb9c454770dacc053dfdfb78a6e9449b43f368671fda",
-  "indexFingerprint": "23092a0111153fa99cd113c5ad317a936e34f3991641b41d58bb03ddccddb1c0",
+  "indexFingerprint": "c65b525338ecdf32ecef4356d92a9b22b2eb1ca6d5e763e2dadfadfd3548e51c",
   "extractionMode": "standard",
-  "cuEndpoint": "https://aifoundry-67149656.services.ai.azure.com",
+  "cuEndpoint": "https://mmi-sample-foundry.services.ai.azure.com",
   "cuApiVersion": "2026-06-01-preview",
-  "claimAnalyzerId": "lab664_policy_checks_claim_summary",
-  "claimAnalyzerHash": "7c5eec1408015b6a74d67afa6fb6abfcd350eec3fe38ce4ecc1ee7c7ab9be70e"
+  "resourceProvenance": {
+    "schemaVersion": 1,
+    "indexName": "lab664-rental-v2-managed-c65b525338ec",
+    "corpusHash": "97fc0fadd0e452a620c8cb9c454770dacc053dfdfb78a6e9449b43f368671fda",
+    "indexFingerprint": "c65b525338ecdf32ecef4356d92a9b22b2eb1ca6d5e763e2dadfadfd3548e51c",
+    "search": {
+      "resourceId": "/subscriptions/3b393ccb-47e3-4dea-9004-0c1085b5aba6/resourceGroups/mmi-sample-vendors/providers/Microsoft.Search/searchServices/fibey-iq-search",
+      "location": "West US 2",
+      "sku": "basic"
+    },
+    "storage": {
+      "kind": "blob",
+      "resourceId": "/subscriptions/3b393ccb-47e3-4dea-9004-0c1085b5aba6/resourceGroups/mmi-sample-vendors/providers/Microsoft.Storage/storageAccounts/mmisamplestorage",
+      "containerName": "lab664-rental-v2-c65b525338ec"
+    }
+  }
 }

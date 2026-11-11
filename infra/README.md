@@ -274,8 +274,9 @@ Azure charges.
 
 The **FoundryIQ** UI label is the lab's umbrella name; the three-comparison
 review uses scoped evidence prefetched from Azure AI Search, not a Foundry IQ
-knowledge base. Each uncached packet interprets rental applicability once, then
-runs three parallel comparisons using saved Parse fields and relevant page text.
+knowledge base. Each uncached packet interprets rental applicability once using
+saved Parse fields and relevant page text, then runs three parallel comparisons
+using scoped typed Parse fields and prefetched policy evidence.
 Policy review and chat do not submit another claim CU extraction.
 Matched execution caches skip those calls. Follow-up chat can use the Search tool.
 

@@ -1,16 +1,16 @@
 {
   "schemaVersion": 1,
-  "indexName": "lab664-rental-v2-managed-23092a011115",
+  "indexName": "lab664-rental-v2-managed-c65b525338ec",
   "corpusHash": "97fc0fadd0e452a620c8cb9c454770dacc053dfdfb78a6e9449b43f368671fda",
-  "indexFingerprint": "23092a0111153fa99cd113c5ad317a936e34f3991641b41d58bb03ddccddb1c0",
+  "indexFingerprint": "c65b525338ecdf32ecef4356d92a9b22b2eb1ca6d5e763e2dadfadfd3548e51c",
   "search": {
-    "resourceId": "/subscriptions/5b6d15bb-1c6b-4fe5-9829-30d9c85f5ef7/resourceGroups/ResourceGroup1/providers/Microsoft.Search/searchServices/search-67149656",
-    "location": "South Central US",
+    "resourceId": "/subscriptions/3b393ccb-47e3-4dea-9004-0c1085b5aba6/resourceGroups/mmi-sample-vendors/providers/Microsoft.Search/searchServices/fibey-iq-search",
+    "location": "West US 2",
     "sku": "basic"
   },
   "storage": {
     "kind": "blob",
-    "resourceId": "/subscriptions/5b6d15bb-1c6b-4fe5-9829-30d9c85f5ef7/resourceGroups/ResourceGroup1/providers/Microsoft.Storage/storageAccounts/stocmx3mp2dqc6c",
-    "containerName": "lab664-rental-v2-23092a011115"
+    "resourceId": "/subscriptions/3b393ccb-47e3-4dea-9004-0c1085b5aba6/resourceGroups/mmi-sample-vendors/providers/Microsoft.Storage/storageAccounts/mmisamplestorage",
+    "containerName": "lab664-rental-v2-c65b525338ec"
   }
 }
