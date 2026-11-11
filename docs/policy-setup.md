@@ -58,8 +58,9 @@ to access the npm registry.
 The launcher automatically uses this environment. Stop the app and rerun setup
 after pulling dependency updates.
 
-The three comparisons reuse the original Parse fields and selected whole
-first-pass page text; they don't require a claim summary or another claim CU call.
+The three comparisons use scoped original typed Parse fields and retrieved policy
+evidence. The shared rental-applicability decision can also use selected whole
+first-pass page text. Neither requires a claim summary or another claim CU call.
 The optional legacy claim-summary definition includes rental-request/use wording
 (`RentalRequested`, `RentalUsed`, `RequestTypeEvidence`). If a separate experiment
 needs that analyzer, provision a changed definition under a new ID with

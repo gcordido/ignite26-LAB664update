@@ -546,7 +546,8 @@ test("policy review and confirmation use saved Parse evidence with no summary pr
   assert.match(confirmation, /saved Parse fields and selected first-pass page text; no claim CU reanalysis/);
   assert.match(confirmation, /three comparisons for each remaining case/);
   assert.match(html, /<h2 class="results-heading">Claim policy checks<\/h2>/);
-  assert.match(html, /synthetic internal review threshold, not law, a coverage cap or payment approval/);
+  assert.match(html, /<p>Select a result to see the values and sources\.<\/p>/);
+  assert.match(source, /Satisfied does not mean coverage or payment approval/);
   assert.doesNotMatch(confirmation, /Prepare any missing claim fields|new extraction and agent calls/);
 });
 

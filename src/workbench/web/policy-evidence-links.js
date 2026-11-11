@@ -1,5 +1,6 @@
 /** Resolve only supplied CU paths; never guess sources from labels or values. */
 export function claimFieldSources(fields, path) {
+  if (path === "Not provided") return [];
   return fields.filter((fact) => {
     if (path.startsWith("parse.")) {
       const pages = fact.pages;

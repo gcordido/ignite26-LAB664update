@@ -469,7 +469,8 @@ export class PolicyService {
     const prompt = savedPrompt ?? z.object({ prompt: z.string().min(1) }).parse(
       await (runtime.frameworkDependencies.invoke ?? invokeFramework)({
         mode, prompt: input.reviewQuestion, prepareCheck: check,
-        claimAnalysis: input.claimAnalysis, configPath: runtime.configPath,
+        claimAnalysis: input.claimAnalysis, lossState: input.lossState, policyScope: input.policyScope,
+        configPath: runtime.configPath,
       }),
     ).prompt;
     const index = checkNames.indexOf(check);

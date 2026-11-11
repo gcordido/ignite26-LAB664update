@@ -78,13 +78,14 @@ class RepairCheckTests(unittest.TestCase):
         questions = check_questions(ROOT / "docs" / "rental-review-agent-question-v2.md", runtime.CHECKS)
         prompt = check_prompt({"contents": []}, "Repair estimate", questions,
                              {"status": "nonrental", "reason": "No rental", "sourceReferences": []})
-        self.assertNotIn("Shared rental applicability (derived interpretation", prompt)
+        self.assertNotIn("Shared rental applicability decision", prompt)
         normalized = " ".join(prompt.split())
-        for phrase in ("BEFORE deductible", "exact decimal cents", "inclusive state threshold",
-                       "alternate quotes SEPARATELY", "Duplicate pages", "supplement",
-                       "Business rules validation", "actual CLAIM LOSS STATE", "NotApplicable requires",
-                       "Currency must be established as USD", "genuinely different VIN",
-                       "return InProgress even when each visible amount separately fits"):
+        for phrase in ("before deductible", "exact cents", "inclusive threshold",
+                       "Evaluate alternate quotes separately", "Count duplicate pages", "SUPPLEMENT",
+                       "actual CLAIM LOSS STATE", "affirmative no-repair evidence",
+                       "Currency must be established as USD", "normalize O/0",
+                       "PolicyField must match the cited state-specific RuleId",
+                       "independently of rental applicability"):
             self.assertIn(phrase, normalized)
         self.assertNotIn("2,500", prompt, "Thresholds must come from indexed diagram, not a prompt table.")
 

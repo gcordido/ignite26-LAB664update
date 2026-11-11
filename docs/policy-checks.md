@@ -13,14 +13,17 @@ The workflow has three parts:
 3. **Review:** A Python Microsoft Agent Framework agent evaluates three comparisons
    and answers follow-up questions using grounded Search retrieval.
 
-Reviews use only saved **Parse and extract** fields and selected first-pass page
-text from that same run. There is no claim-summary prerequisite or claim CU
-reanalysis. The CU Python SDK's public `to_llm_input` helper formats typed fields as YAML
-frontmatter with `include_fields=True` and `include_markdown=False` (there is
-no separate public `to_llm_frontmatter` helper). Each check receives only its
-relevant field paths, document categories and preserved text evidence IDs.
-Page images, bounding boxes, confidence and duplicate prose are not sent. False and zero remain
-values; fields without a value appear in explicit `missingFields` metadata.
+Reviews reuse saved **Parse and extract** data from the same run. The separate
+rental-applicability decision can use selected first-pass page text; each
+individual check receives scoped typed fields and prefetched policy evidence.
+There is no claim-summary prerequisite or claim CU reanalysis. The CU Python
+SDK's public `to_llm_input` helper formats typed fields as YAML frontmatter with
+`include_fields=True` and `include_markdown=False` (there is no separate public
+`to_llm_frontmatter` helper). Each check receives only its relevant field paths
+and document categories. Daily rate also receives the shared applicability
+decision and its source references. Page images, bounding boxes, confidence and
+duplicate prose are not sent. False and zero remain values; fields without a
+value appear in explicit `missingFields` metadata.
 Missing claim facts wait for data; conflicting facts require review. The agent
 does not reread the PDF to repair extraction.
 The full packet export remains available in Parse and extract for human inspection.
@@ -134,7 +137,10 @@ evidence confirms no rental was requested or used and no rental request,
 agreement, use or bill conflicts. A pending request still applies before use.
 **Effective terms** still compares the applicable policy and genuine amendment
 with the actual loss date for the matched policy ID and insured VIN. Non-rental
-status isn't a blanket exemption from that comparison. **Repair estimate** is
+status isn't a blanket exemption from that comparison. The source remains scoped
+to the exact registered policy and VIN, while its printed identifiers can have
+minor policy-number formatting or one-character OCR differences, or one O/0
+VIN OCR difference. Other VIN conflicts still require review. **Repair estimate** is
 also independent of rental applicability; evaluate the supplied repair quotes
 against the retrieved state-specific internal authority diagram.
 
@@ -199,10 +205,10 @@ charges, use [Load saved policy results](#load-saved-policy-results) instead.
 1. In **Settings**, select **Reload saved results** to load the
    included completed **10/10** CU run. Select **Check policies**.
 2. In **Settings**, enable live calls and select **Run live policy checks**
-   and confirm. This runs the Agent Framework agent against saved CU
-   fields and selected first-pass text, not just a local rules engine. Azure charges apply;
-   no claim CU reanalysis is submitted. The confirmation covers all loaded
-   cases, not only the selected row.
+   and confirm. This runs the Agent Framework agent against scoped saved CU
+   fields, a shared rental-applicability decision and retrieved policy evidence,
+   not just a local rules engine. Azure charges apply; no claim CU reanalysis is
+   submitted. The confirmation covers all loaded cases, not only the selected row.
 3. Wait for the batch to finish. While a run is active, a prominent status banner
    shows the packet being processed, its customer name when available, the
    number of finished packets, and a total elapsed timer updated every second.
@@ -242,7 +248,7 @@ The matching revised declarations and effective amendment can establish the
 contractual limit when the policy ID and insured VIN are verified. They cannot
 establish that repairs actually began or ended.
 
-In **Policy documents**, compare **CU Search** and **Digital parse** with each PDF.
+Follow a policy citation to compare **CU Search** and **Digital parse** with its PDF.
 Declarations retain sparse tables; effective-date records retain scans; the
 repair SOP retains both complete diagram pages. Both genuine native outputs
 are bundled for every active PDF. Digital parse may successfully return no text
@@ -280,9 +286,8 @@ steps.
    use page ranges. The agent restricts retrieval to the loss state and verified
    corpus generation rather than searching every policy indiscriminately.
 
-The current pruned three-check bundle records its isolated index in
-`data\policy-demo\policy-agent-framework.json`, with **CU Layout** extraction.
-Don't describe it as Standard extraction. The
+The current pruned three-check bundle records its index in
+`data\policy-demo\policy-agent-framework.json`, with **Standard** extraction. The
 [managed CU ingestion setup](policy-setup.md) activates a replacement only
 after ingestion and source verification succeed.
 
@@ -304,17 +309,16 @@ archive paths and rationale. Historical citations resolve only through these
 verified records; archives aren't in active retrieval, previews or document counts.
 Corpus generation verifies the pruned sources rather than recreating legacy files.
 
-The **Policy documents** link opens three dataset entries, not a file inventory:
-the original PDFs, saved `prebuilt-documentSearch` outputs, and saved
-`prebuilt-digitalParse` outputs. Each link displays its resolved absolute directory.
-The local Windows workbench intercepts the file link and requests Explorer through
-a private-session, same-origin endpoint accepting only those three dataset IDs.
-Copy-path and manual-copy fallbacks remain available if opening is unsupported.
-No arbitrary paths or shell commands are accepted. Source links in check results
-still open **Original**, **CU Search**, and **Digital parse** tabs. No files are uploaded.
-Public portal metadata lives in `data\policy-demo\resources.json`, separate from
-model inputs and review-cache identity. It must match the exact index name,
-corpus hash, index fingerprint and Search endpoint before any links are shown.
+The **Policy documents** link opens the original policy PDFs folder directly in
+Windows Explorer on the local workbench host, without a dataset-selection dialog.
+It uses a private-session, same-origin endpoint with the fixed `original` dataset
+ID; opening errors are shown beside the link. No arbitrary paths or shell commands
+are accepted, and opening the folder uploads no files. Source links in check
+results still open **Original**, **CU Search**, and **Digital parse** tabs.
+Public portal metadata can be embedded as `resourceProvenance` in the active
+configuration or, when absent, loaded from its cache or bundle's `resources.json`.
+It must match the exact index name, corpus hash, index fingerprint and Search
+endpoint before any links are shown.
 Missing, invalid or stale metadata produces an explicit unavailable label and
 doesn't prevent loading offline reviews. After a different deployment, register
 only verified resource metadata for that generation; a Blob entry requires its
@@ -327,8 +331,9 @@ and live configuration use different indexes, the page identifies both.
 
 Open [`infra/policy-framework-agent.py`](../infra/policy-framework-agent.py).
 Find `Agent`, `OpenAIChatClient` and `search_policy_rules`. Initial reviews
-prefetch Search evidence and pass each check only its relevant saved Parse fields, selected first-pass text and
-rules. Follow-up chat can use the Search tool. The
+prefetch Search evidence and pass each check its relevant typed Parse fields and
+rules. The separate shared rental-applicability decision can use selected
+first-pass text; follow-up chat can retrieve it on demand and use the Search tool. The
 [workbench policy service](../src/workbench/src/policy-service.ts) starts this
 Python agent and validates results and citations. This isn't an npm Agent
 Framework implementation or a hosted Foundry agent.
@@ -389,7 +394,7 @@ tab or source link doesn't submit an agent request or start ingestion.
 | Mode | What the agent receives |
 |---|---|
 | No policy retrieval (historical backend baseline only) | Saved claim evidence only. Missing governing policy evidence remains explicit, with no invented citations or benefit limits. Not selectable in the app. |
-| FoundryIQ | Relevant saved Parse fields, selected first-pass text and prefetched Azure AI Search evidence for each check; follow-up chat can use the Search tool. |
+| FoundryIQ | Scoped typed Parse fields and prefetched Azure AI Search evidence for each check; shared rental applicability can use selected first-pass text. Follow-up chat can retrieve that text and use the Search tool. |
 
 The application fixes the loss state, policy ID, insured VIN and source
 generation in the Search filter. Policy-specific documents require both
@@ -404,9 +409,10 @@ and missing claim facts aren't filled in from policy rules or local answer guide
 
 ### Follow batch progress
 
-Policy checks use the loaded saved Parse fields and selected first-pass
-page text. The ten cases run sequentially; the status line shows completed
-cases, the active case, three-comparison review progress and total elapsed time.
+Policy checks use scoped saved Parse fields and a shared rental-applicability
+decision that can use selected first-pass page text. The ten cases run
+sequentially; the status line shows completed cases, the active case,
+three-comparison review progress and total elapsed time.
 
 Refreshing the same browser tab reconnects to its private session, reloads its
 selected CU run and resumes policy progress without submitting another batch.

@@ -604,6 +604,9 @@ test("comparison source matching uses CU paths and exact cited rules, not labels
   assert.equal(claimFieldSources(fields, "ActualRepairCompletion").length, 0);
   assert.equal(claimFieldSources(fields, "Rental.Total").length, 0);
   assert.equal(claimFieldSources(fields, "Rental.DailyRates").length, 1);
+  assert.deepEqual(claimFieldSources([...fields, {
+    field: "Not provided", value: "unrelated", status: "present", category: "statement", regions: [region],
+  }], "Not provided"), []);
   const parsed = {
     field: "parse.contents[0]", contentPath: "contents[0]", value: "Rental requested: No",
     status: "present", category: "statement", pages: { start: 4, end: 6 },

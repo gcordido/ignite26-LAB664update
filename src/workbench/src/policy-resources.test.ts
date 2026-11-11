@@ -13,6 +13,7 @@ const config = JSON.parse(await readFile(path.join(folder, "policy-agent-framewo
 const metadata = JSON.parse(await readFile(path.join(folder, "resources.json"), "utf8"));
 
 test("the actual current generation links to its exact Search index, not a service homepage", () => {
+  assert.deepEqual(config.resourceProvenance, metadata);
   const resources = policyResourceLinks(config, metadata);
   const target = new URL(resources.index.href!);
   assert.equal(target.origin, "https://portal.azure.com");
@@ -83,9 +84,10 @@ test("absent, invalid, foreign-endpoint and stale-generation metadata never inve
 test("missing and corrupt optional metadata remain explicit without breaking the offline bundle", async () => {
   const temporary = await mkdtemp(path.join(os.tmpdir(), "policy-resources-"));
   try {
-    assert.match((await policyResources(config, temporary)).index.message!, /unavailable/);
+    const configWithoutMetadata = { ...config, resourceProvenance: undefined };
+    assert.match((await policyResources(configWithoutMetadata, temporary)).index.message!, /unavailable/);
     await writeFile(path.join(temporary, "resources.json"), "{bad json");
-    assert.match((await policyResources(config, temporary)).index.message!, /invalid/);
+    assert.match((await policyResources(configWithoutMetadata, temporary)).index.message!, /invalid/);
     const demo = await readPolicyDemo(folder);
     assert.equal(demo.results(demo.sourceRun).items.length, 10);
     assert.deepEqual(demo.results(demo.sourceRun).resources, demo.info.resources);

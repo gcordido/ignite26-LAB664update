@@ -230,6 +230,37 @@ test("claim-only follow-ups allow no Search calls without weakening review or ev
   await assert.rejects(service.followup("search", "Stale generation", [], context, analysis), /different corpus/);
 });
 
+test("historical chat prompt preparation receives the review's resolved routing scope", async (t) => {
+  const folder = await mkdtemp(path.join(os.tmpdir(), "policy-chat-routing-"));
+  t.after(() => rm(folder, { recursive: true, force: true }));
+  const settings = await config(), cache = new Cache();
+  const original = await cache.load(await includedRunId(cache));
+  const run = { ...original, items: original.items.slice(0, 1), source: original.source.slice(0, 1) };
+  const requests: { prepareCheck?: string; lossState?: string | null;
+    policyScope?: { policyId: string | null; vin: string | null } }[] = [];
+  const { checkPrompts: _checkPrompts, ...withoutSavedPrompts } = result("search", settings);
+  const service = new PolicyService({
+    config: async () => settings,
+    cacheFolder: folder,
+    invoke: async (input) => {
+      const request = input as (typeof requests)[number];
+      requests.push(request);
+      return request.prepareCheck ? { prompt: "Current scoped question" } : withoutSavedPrompts;
+    },
+  });
+  const readRaw = (id: string) => cache.raw(run.id, id);
+  await (await service.start(run, "search", readRaw)).task;
+  const context = await service.chatContext(run, "search", run.source[0].id, readRaw, "Repair estimate");
+  assert.equal(context.promptSource, "current");
+  assert.equal(context.prompt, "Current scoped question");
+  assert.equal(requests[1].prepareCheck, "Repair estimate");
+  assert.equal(requests[1].lossState, requests[0].lossState);
+  assert.deepEqual(requests[1].policyScope, requests[0].policyScope);
+  assert.equal(requests[1].lossState, "TX");
+  assert.ok(requests[1].policyScope?.policyId);
+  assert.ok(requests[1].policyScope?.vin);
+});
+
 test("Framework modes share prepared claim inputs but isolate review caches, chat and failures", async () => {
   const folder = await mkdtemp(path.join(os.tmpdir(), "framework-policy-"));
   try {
