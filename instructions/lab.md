@@ -146,7 +146,9 @@ In this step, we will build a custom repair analyzer to handle repair estimate d
 
 > [+Note] **Import from JSON — repair fields**
 >
-> In the **field-schema toolbar**, select **Import** and choose `repair-schema.json` from `data\samples`. Confirm schema replacement if prompted.
+> On the **Schema** tab, select **Import** (up-arrow icon) in the toolbar above the fields, between **Suggest** and **Export**, as highlighted below. Choose `repair-schema.json` from `data\samples`. Confirm schema replacement if prompted.
+>
+> !IMAGE[Schema toolbar with the Import button highlighted between Suggest and Export.](../img/cu-studio-schema-import.png)
 
 > [+Note] **Enter manually — repair fields**
 >
@@ -456,7 +458,9 @@ The PDF lists parts and labor separately, matched by operation reference. The or
 
 > [+Note] **Import from JSON — repair fix**
 >
-> In the **main field-schema toolbar**, select **Import** and choose `repair-fixed-schema.json` from `data\samples`. Confirm schema replacement if prompted. It retains the full step 3 invoice and vehicle schema, changing only `LineItems.TotalAmount` and adding `LineItems.PartsAmount` and `LineItems.LaborAmount`. If you added your own fields beyond step 3, use the manual path instead to retain them.
+> On the **Schema** tab, select **Import** (up-arrow icon) in the main toolbar above the fields, between **Suggest** and **Export**, as highlighted below. Use the main Schema toolbar, not the nested line items editor. Choose `repair-fixed-schema.json` from `data\samples`. Confirm schema replacement if prompted. It retains the full step 3 invoice and vehicle schema, changing only `LineItems.TotalAmount` and adding `LineItems.PartsAmount` and `LineItems.LaborAmount`. If you added your own fields beyond step 3, use the manual path instead to retain them.
+>
+> !IMAGE[Schema toolbar with the Import button highlighted between Suggest and Export.](../img/cu-studio-schema-import.png)
 
 > [+Note] **Enter manually — repair fix**
 >
