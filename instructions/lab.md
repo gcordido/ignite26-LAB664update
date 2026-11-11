@@ -520,7 +520,7 @@ In this optional exercise, you'll see how:
 - The Content Understanding CLI (`azd ai cu`) lets you or a coding agent manage analyzers and analyze documents.
 - Copilot can turn a natural-language request into an improvement workflow: inspect the analyzer, make targeted schema changes on a copy, and compare before/after results.
 
-You'll repeat the repair-analyzer workflow from Step 8 on a disposable copy. Your original analyzers and Workbench results stay unchanged.
+You'll repeat the repair-analyzer workflow from Step 8 using separate baseline and improved analyzers. Your original analyzers and Workbench results stay unchanged.
 
 ### Install the Content Understanding CLI
 
@@ -578,23 +578,23 @@ Use `repair_extractor_analyzer` from **Step 3**, not the router or the improved 
 
 Copilot checks your Azure connection and asks for your Content Understanding endpoint if needed. Follow how Copilot turns your request into analyzer checks, CLI commands, a schema diff, approvals and a before/after comparison, not just the final answer. Review each CLI command in chat before approving it, then check the result.
 
-Review Copilot's initial proposal before approving a disposable repair-analyzer copy and **two analyses** of `data\documents\packet-08\05-estimate.pdf`: one before the fix and one after.
+If **Trust the ignite26-LAB664 repository?** appears, confirm this is the lab folder you selected, then choose **Always trust ignite26-LAB664**.
+
+!IMAGE[Trust the selected lab repository if prompted](instructions359897/copilot-trust-lab-repository.png)
+
+Review Copilot's initial proposal before approving a baseline analyzer copy and **two analyses** of `data\documents\packet-08\05-estimate.pdf`: one using the baseline copy and one using a separately approved improved analyzer.
 
 !IMAGE[lt1mzyc6.png](instructions359897/lt1mzyc6.png)
 
 Example approval prompt; wording may vary.
 
-Review the schema diff. Before applying it, Copilot asks separately to **delete and recreate its disposable analyzer copy**. Check that the named ID is the copy, not `repair_extractor_analyzer`. Your original stays unchanged.
+Copilot runs the first analysis with the baseline copy, then shows the proposed schema changes. It asks for a second approval to create a separate improved analyzer. Review the changes and approve to continue. Copilot then tests the improved analyzer and compares the results.
 
 ### Review the comparison
 
-For packet 8, use these reference checks:
+Explicitly extracting labor alongside parts helps the analyzer account for both when generating line-item totals. For packet 8, check that the line items now reconcile with the subtotal, while the document total remains **1,691.08**.
 
-- Each row has `PartsAmount` and `LaborAmount`, with a numeric `TotalAmount`.
-- Row totals are **1,203.20, 186.00 and 210.80**, adding to the **1,600.00 subtotal**.
-- The gap drops from **496.00 to 0.00**; the document total stays **1,691.08**.
-
-If values differ, ask Copilot to explain before rerunning.
+Copilot has created separate baseline and improved analyzers. In [Content Understanding Studio](https://contentunderstanding.ai.azure.com/), select your lab resource and look for the analyzer beginning with **copilot_repair_improved_** in **Analyzer list**. Copilot provides its full name in the results.
 
 ### More prompts to try
 
@@ -602,7 +602,7 @@ Stay in the session that ran the analyzer work. The first prompt needs approval 
 
 **Check other packets**
 
-> Can you try the repair estimates from packets 1 and 3 with both analyzers? Check if the fix changed anything else, like the vehicle, VIN or odometer. Show me the files and ask before running the four analyses.
+> Can you try the repair estimates from packets 1 and 3 with the baseline and improved analyzers? Check if the fix changed anything else, like the vehicle, VIN or odometer. Show me the files and ask before running the four analyses.
 
 Use the individual repair estimates, not the full packets. Changed values are potential regressions to review, not proof that either result is correct.
 
