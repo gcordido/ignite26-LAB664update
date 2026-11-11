@@ -101,7 +101,7 @@ Return to the previous page by clicking the **Back** button at the top left of t
 
 Let's examine the differences between the prebuilt layout extraction and the schema-based extraction for the same document. 
 1. Scroll down on the **Procurement** section to locate the **Invoice** prebuilt analyzer and click on it to open the details.
-2. Inspect the **Fields tab** on the right panel with the default samples.  Invoice does schema-based extraction to extract fields relevant to the document type, such as **AmountDue**, **BalanceForward** and **Billing Address**. Note fields have a confidence score.
+2. Inspect the **Fields tab** on the right panel with the default samples.  Invoice does schema-based extraction to extract fields relevant to the document type, such as **AmountDue**, **BalanceForward** and **Billing Address**. Note fields have a confidence score.
 3. Hover over a field in the right panel, like "AmountDue". Notice that it shows grounding to the document.
 4. Now upload the same **towing-invoice.pdf** document to see how the schema-based extraction applies to your own file. Compare the extracted fields and confidence scores with the layout extraction results you've got in the previous step to understand the differences.
 
@@ -191,7 +191,7 @@ You should have **seven fields: five Extract and two Generate**, with **Source &
 > [!Note] **Extract and Generate:** Keep stated facts separate from generated interpretations. A **generated field** can summarize by combining passages and may not be a direct quotation from the document. **Extract** indicates the result should be pulled directly from a value in the document.
 
 5. Click **Save**.
-6. Click **Run analysis** to test the uploaded handwritten statement. Inspect the returned facts alongside the source document.
+6. Click **Run analysis** to test the uploaded handwritten statement. Inspect the returned facts alongside the source document.
     - In the statement, check `claimant_name = "Danielle Ortiz"` and `incident_date = 2026-02-12`. The incident date should not be replaced by the letter's sent date.
     - The five *Extract* fields contain stated facts; the two *Generate* fields provide readable, grounded synthesis rather than verbatim quotes.
     - Inspect source highlights and confidence where returned. 
@@ -498,7 +498,7 @@ If you're starting here and the app isn't running, follow [Step 7's app-launch i
 
 !IMAGE[91ysxon6.png](instructions359897/91ysxon6.png)
 
-7. Select the linked policy threshold to inspect the supporting diagram. Compare its description in **Prebuilt Search** which uses a json object using MermadeJS format to render that flow chart  then select **Back to policy check**.
+7. Select the linked policy threshold to inspect the supporting diagram. Compare its description in **Prebuilt Search** which uses a json object using MermadeJS format to render that flow chart  then select **Back to policy check**.
 
 !IMAGE[2ihrasgl.png](instructions359897/2ihrasgl.png)
 
@@ -545,25 +545,26 @@ Sign in with the same Azure lab account used in CU Studio.
 2. Open the **GitHub Copilot app** from the Desktop icon and select **Sign in to GitHub**. On the **Device Activation** page, confirm your lab GitHub account is shown under **Signed in as**, then select **Continue**. If needed, select **Use a different account** first. Enter the one-time code, then authorize the GitHub Copilot app when prompted to complete sign-in.
 3. If the **Connect your work** screen appears, select **Choose a folder...**, choose `C:\Users\LabUser\Desktop\ignite26-LAB664`, then select **Continue**. Use the existing lab folder, not a sample repository.
 
-!IMAGE[Choose the existing lab folder during first-run setup](instructions359897/copilot-connect-your-work.png)
+!IMAGE[3yuvq4zf.png](instructions359897/3yuvq4zf.png)
 
 ### Open a session for the lab folder
 
 1. If `ignite26-LAB664` is not already listed under **Sessions**, select **+** beside **Sessions**, then select **Add local folder or repository**. Choose `C:\Users\LabUser\Desktop\ignite26-LAB664` in the folder picker.
 
-!IMAGE[Add the lab folder using the Sessions menu](instructions359897/copilot-sessions-add-local-folder.png)
+!IMAGE[93smfl0y.png](instructions359897/93smfl0y.png)
+
 
 2. Select **+** beside **ignite26-LAB664** under **Sessions** to create a **New session**. Expand the folder first if needed.
 
-!IMAGE[Create a new session using the plus beside the lab folder](instructions359897/copilot-session-start-in-lab-folder.png)
+!IMAGE[hb4zznz1.png](instructions359897/hb4zznz1.png)
 
 3. Confirm the folder label below the prompt shows **ignite26-LAB664**. Clicking this label opens the folder picker; leave the lab folder selected.
 
-!IMAGE[The lab folder selected in the session folder picker](instructions359897/copilot-session-folder-picker.png)
+!IMAGE[mvfucsce.png](instructions359897/mvfucsce.png)
 
 4. Keep **Interactive** mode and normal tool approvals enabled; do not enable **allow-all**.
 
-!IMAGE[The session prompt in Interactive mode with the lab folder below it](instructions359897/copilot-session-composer.png)
+!IMAGE[z2u8u7u0.png](instructions359897/z2u8u7u0.png)
 
 5. Open the model picker in the prompt footer and select **GPT 6.1 Sol**. Leave reasoning effort at the lab default, **Medium**.
 
@@ -577,7 +578,7 @@ Copilot checks your Azure connection and asks for your Content Understanding end
 
 Review Copilot's initial proposal before approving a disposable repair-analyzer copy and **two analyses** of `data\documents\packet-08\05-estimate.pdf`: one before the fix and one after.
 
-!IMAGE[Approve the disposable copy and two analyses](instructions359897/copilot-approve-copy-and-two-analyses.png)
+!IMAGE[lt1mzyc6.png](instructions359897/lt1mzyc6.png)
 
 Example approval prompt; wording may vary.
 
