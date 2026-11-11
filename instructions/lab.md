@@ -67,8 +67,6 @@ Don't need to wait for it to finish. Leave this terminal open and proceed to ste
 
 ### Part 1: Understand the documents
 
-For every file upload or JSON import in this lab, use `C:\Users\LabUser\Desktop\ignite26-LAB664\data\samples`. All learner inputs are together in this folder.
-
 ### Explore the prebuilt analyzers in CU Studio
 
 To get started, let's explore the prebuilt analyzers in CU (Content Understanding) Studio by uploading and analyzing a few sample documents.
