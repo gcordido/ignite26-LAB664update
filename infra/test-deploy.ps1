@@ -15,6 +15,8 @@ $state.outputs = @{
     accountResourceId = @{value="$resourceRoot/Microsoft.CognitiveServices/accounts/test-foundry"}
     policyModelDeployment = @{value='test-model'}
     policyCuModelName = @{value='gpt-5.2'}
+    policyIndexModelDeployment = @{value='index-model'}
+    policyIndexCuModelName = @{value='gpt-5.5'}
     policyClaimAnalyzerId = @{value='test_claims'}
 }
 $state.resources = @(
@@ -24,6 +26,7 @@ $state.resources = @(
 )
 $state.models = @(
     @{name='test-model'; properties=@{provisioningState='Succeeded'; model=@{name='gpt-5.2'}}},
+    @{name='index-model'; properties=@{provisioningState='Succeeded'; model=@{name='gpt-5.5'}}},
     @{name='embeddings'; properties=@{provisioningState='Succeeded'; model=@{name='text-embedding-3-large'}}}
 )
 $state.failDiscovery = $false
@@ -79,6 +82,9 @@ try {
     Assert ($settings.searchResourceId -eq $state.outputs.searchServiceResourceId.value) 'Search resource ID must propagate.'
     Assert ($settings.modelDeployment -eq 'test-model') 'Actual deployment name must propagate.'
     Assert ($settings.cuModelName -eq 'gpt-5.2') 'CU model name must propagate.'
+    Assert ($settings.indexModelDeployment -eq 'index-model') 'Index model deployment must propagate.'
+    Assert ($settings.indexCuModelName -eq 'gpt-5.5') 'Index CU model name must propagate.'
+    Assert ($state.pythonCalls[-1] -contains '--index-model-deployment') 'Standard indexing must receive the index model.'
 
     & $deploy -PythonExecutable Invoke-TestPython -ResourceGroup test-group -DeployResources -Apply -CreateClaimAnalyzer
     Assert ($state.pythonCalls[-1] -contains '--create-claim-analyzer') 'Explicit legacy creation must remain available.'
@@ -120,6 +126,9 @@ try {
     Assert ($state.pythonCalls[-1] -contains '--search-resource-id') 'Discovered targets must override previous configuration.'
     Assert ($state.pythonCalls[-1] -contains 'test-model') 'Discovery must select the policy model, not embeddings.'
     Assert ($state.pythonCalls[-1] -contains '--cu-model-name') 'Actual CU model name must propagate.'
+    $at = [array]::IndexOf($state.pythonCalls[-1], '--index-model-deployment')
+    Assert ($at -gt 0 -and $state.pythonCalls[-1][$at + 1] -eq 'index-model') 'Discovery must select the gpt-5.5 index model.'
+    Assert ($state.pythonCalls[-1] -contains 'test-model') 'Discovery must keep gpt-5.2 for the agent.'
     Assert ($state.pythonCalls[-1] -notcontains '--create-claim-analyzer') 'Discovery must not create a default summary analyzer.'
     Assert ($state.pythonCalls[-1] -notcontains '--claim-analyzer-id') 'Discovery must not require a summary analyzer.'
     Assert ($state.pythonCalls[-1] -notcontains '--index-only') 'Discovery must activate the workbench after verification.'
@@ -181,8 +190,14 @@ try {
     Assert ($state.pythonCalls[-1] -contains '--create-claim-analyzer') 'Explicit discovery creation must propagate.'
     Assert ($state.pythonCalls[-1] -contains 'lab664_policy_checks_claim_summary') 'Explicit discovery creation must retain the legacy default ID.'
     & $deploy -PythonExecutable Invoke-TestPython -ResourceGroup test-group -ModelDeployment second-policy -UseLayout
+    Assert ($state.pythonCalls[-1] -notcontains '--index-model-deployment') 'Layout indexing must not receive Standard-only index flags.'
     Assert ($state.pythonCalls[-1] -notcontains '--claim-analyzer-id') 'Default Layout deployment must not require a summary analyzer.'
     Assert ($state.pythonCalls[-1] -notcontains '--create-claim-analyzer') 'Default Layout deployment must not create a summary analyzer.'
+
+    $state.models = @($state.models | Where-Object { $_.name -ne 'index-model' })
+    & $deploy -PythonExecutable Invoke-TestPython -ResourceGroup test-group -ModelDeployment second-policy -WarningVariable indexWarnings -WarningAction SilentlyContinue
+    Assert ($state.pythonCalls[-1] -notcontains '--index-model-deployment') 'Missing gpt-5.5 must fall back to the policy model.'
+    Assert (($indexWarnings -join ' ') -like '*gpt-5.5*') 'Missing gpt-5.5 must warn.'
 
     $state.models = @($state.models | Where-Object { $_.name -eq 'embeddings' })
     $failed = $false

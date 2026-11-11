@@ -132,7 +132,8 @@ def atomic_json(path: Path, value: Any) -> None:
 
 # ---------------------------------------------------------------- local sources
 
-SEED_KEYS = {"modelDeployment", "cuModelName", "claimAnalyzerId", "cuApiVersion",
+SEED_KEYS = {"modelDeployment", "cuModelName", "indexModelDeployment", "indexCuModelName",
+             "claimAnalyzerId", "cuApiVersion",
              "layoutSourceIndex", "layoutIndexName", *RESOURCE_TYPES}
 
 
@@ -171,6 +172,10 @@ def runtime_settings(root: Path = ROOT, seed: dict[str, Any] | None = None) -> d
         "azureOpenAIEndpoint": foundry_root,
         "modelDeployment": config.get("modelDeployment", ""),
         "modelName": config.get("cuModelName") or config.get("modelDeployment", ""),
+        # Search-managed CU skill model; falls back to the agent model when no override is set.
+        "indexModelDeployment": config.get("indexModelDeployment") or config.get("modelDeployment", ""),
+        "indexModelName": (config.get("indexCuModelName") or config.get("indexModelDeployment")
+                           or config.get("cuModelName") or config.get("modelDeployment", "")),
         "cuEndpoint": foundry_root,
         "cuApiVersion": config.get("cuApiVersion", "2025-11-01"),
         "claimAnalyzerId": config.get("claimAnalyzerId", ""),
@@ -179,7 +184,7 @@ def runtime_settings(root: Path = ROOT, seed: dict[str, Any] | None = None) -> d
     if not settings["modelDeployment"]:
         raise SetupError(f"modelDeployment is required for CU figure descriptions: set it in {CONFIG_PATH} "
                          "or pass --model-deployment (an existing Foundry model deployment).")
-    for key in ("modelDeployment", "modelName"):
+    for key in ("modelDeployment", "modelName", "indexModelDeployment", "indexModelName"):
         if not isinstance(settings[key], str) or not re.fullmatch(r"[A-Za-z0-9_.-]{1,128}", settings[key]):
             raise SetupError(f"{key} must be a model/deployment name of 1-128 letters, digits, dots, underscores or hyphens.")
     if settings["cuApiVersion"] not in ("2025-11-01", "2026-06-01-preview"):
@@ -393,7 +398,7 @@ def generation_hash(sources: dict[str, Any], settings: dict[str, Any]) -> str:
     """Definition + source hash; any pipeline, model or source change yields a new generation."""
     return sha256_hex(canonical_bytes({
         "schema": SCHEMA, "pipeline": PIPELINE,
-        "model": [settings["modelName"], settings["modelDeployment"]],
+        "model": [settings["indexModelName"], settings["indexModelDeployment"]],
         "services": [settings["searchEndpoint"], settings["storageResourceId"], settings["cuEndpoint"]],
         "corpusHash": sources["corpusHash"],
         "sources": [[d["documentId"], d["version"], d["file"], d["sha256"], d["stateCodes"],
@@ -458,8 +463,8 @@ def skillset_definition(names: dict[str, str], generation: str, settings: dict[s
         "skills": [{
             "@odata.type": "#" + PIPELINE["skill"], "name": "content-understanding",
             "description": "Semantic chunks with page locations and figure descriptions",
-            "context": "/document", "modelName": settings["modelName"],
-            "modelDeployment": settings["modelDeployment"],
+            "context": "/document", "modelName": settings["indexModelName"],
+            "modelDeployment": settings["indexModelDeployment"],
             "extractionOptions": PIPELINE["extractionOptions"],
             "chunkingProperties": dict(PIPELINE["chunking"]),
             "inputs": [{"name": "file_data", "source": "/document/file_data"}],
@@ -1173,6 +1178,9 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--refresh", action="store_true", help="with --apply: re-run indexing, replacing drifted blobs")
     parser.add_argument("--model-deployment", help="existing Foundry model deployment (seed for a fresh clone)")
     parser.add_argument("--cu-model-name", help="CU model name when it differs from the deployment name")
+    parser.add_argument("--index-model-deployment",
+                        help="model deployment for the Search CU skill (defaults to --model-deployment)")
+    parser.add_argument("--index-cu-model-name", help="Search CU skill model name when it differs from its deployment")
     parser.add_argument("--claim-analyzer-id", help="opt into legacy summary-analyzer validation; its hash is read, not supplied")
     parser.add_argument("--create-claim-analyzer", action="store_true",
                         help="with --apply, explicitly create the legacy claim extractor only if absent; requires an explicit or saved ID")
@@ -1187,6 +1195,7 @@ def main(argv: list[str] | None = None) -> int:
     try:
         http = Http()
         seed = {**resource_seed(args), "modelDeployment": args.model_deployment, "cuModelName": args.cu_model_name,
+                        "indexModelDeployment": args.index_model_deployment, "indexCuModelName": args.index_cu_model_name,
                 "claimAnalyzerId": args.claim_analyzer_id, "cuApiVersion": args.cu_api_version}
         report = (apply(http, ROOT, args.refresh, seed=seed, create_claim_analyzer=args.create_claim_analyzer,
                         index_only=args.index_only)

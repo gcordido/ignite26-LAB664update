@@ -401,6 +401,14 @@
       "type": "string",
       "value": "gpt-5.2"
     },
+    "policyIndexModelDeployment": {
+      "type": "string",
+      "value": "[variables('gpt55DeploymentName')]"
+    },
+    "policyIndexCuModelName": {
+      "type": "string",
+      "value": "gpt-5.5"
+    },
     "policyClaimAnalyzerId": {
       "type": "string",
       "value": "lab664_policy_checks_claim_summary"
