@@ -283,9 +283,9 @@ You will start with a small three-page packet, then test the same configuration 
 
 After either path, verify **four categories and no routes**, then configure segmentation:
 
-1. In **Routing rules**, turn on **Enable segment**. Keep logical documents together: do not split every page or allow in-page segments, and retain the parent content. Recheck these settings after an import too.
+1. In **Routing rules**, turn on **Enable segment**, as shown below.
 
-!IMAGE[9zacnykv.png](instructions359897/9zacnykv.png)
+!IMAGE[Routing rules with the Enable segment toggle turned on and highlighted.](../img/cu-studio-enable-segment.png)
 
 > [!Note] With the configured settings, a two-page rental invoice should remain one logical document. Two adjacent documents should still be separate, even when both belong to `other`.
 
@@ -375,7 +375,7 @@ If you chose different custom IDs in steps 3–4, replace `repair_extractor_anal
 
 Continue here after either manual configuration or import.
 
-1. Verify there are **seven categories and six assigned routes**, with no route for `other`. Keep **Enable segment** on, per-page and in-page splitting off, and parent content retained, as in step 5.
+1. Verify there are **seven categories and six assigned routes**, with no route for `other`. Keep **Enable segment** on, as in step 5.
 
 !IMAGE[bj0sbmti.png](instructions359897/bj0sbmti.png)
 
