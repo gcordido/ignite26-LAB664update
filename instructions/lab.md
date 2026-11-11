@@ -35,9 +35,9 @@ Turn insurance claim packets into source-linked facts with Content Understanding
    ```
    Choose **Work or School account** if prompted, then use the following credentials:
 
-    - Username: +++@lab.CloudPortalCredential(User1).Username+++
-    - If prompted for a Temporary Access Pass (TAP): +++@lab.CloudPortalCredential(User1).AccessToken+++
-    - If prompted for a Password: +++@lab.CloudPortalCredential(User1).Password+++
+  - Username: +++@lab.CloudPortalCredential(User1).Username+++
+  - If prompted for a Temporary Access Pass (TAP): +++@lab.CloudPortalCredential(User1).AccessToken+++
+  - If prompted for a Password: +++@lab.CloudPortalCredential(User1).Password+++
 
 Then select 'No, this app only' when asked to sign in to all apps and websites. 
 
