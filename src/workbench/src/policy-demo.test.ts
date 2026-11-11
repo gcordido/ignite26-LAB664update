@@ -32,7 +32,7 @@ test("earlier three, four and five-check bundles are history-only, not reinterpr
   }
 });
 
-test("the earlier three-check bundle preserves hash-verified Parse and historical reviews", async () => {
+test("the three-check bundle preserves Parse and refreshes packets 03 and 06", async () => {
   const folder = path.join(repositoryRoot, "data", "policy-demo");
   const demo = await readPolicyDemo(folder);
   const manifest = JSON.parse(await readFile(path.join(folder, "manifest.json"), "utf8"));
@@ -46,8 +46,10 @@ test("the earlier three-check bundle preserves hash-verified Parse and historica
   assert.equal(demo.sourceCache.folder, path.join(repositoryRoot, "data", "results"));
   assert.equal(demo.results(demo.sourceRun).items.length, 10);
   assert.equal(demo.results(demo.sourceRun).items.flatMap(item => item.result?.Checks ?? []).length, 30);
-  assert.ok(demo.results(demo.sourceRun).items.every(item => item.historical),
-    "The bundled reviews predate the current Effective terms prompt.");
+  const items = demo.results(demo.sourceRun).items;
+  assert.deepEqual(items.filter(item => !item.historical).map(item => item.id).sort(), ["packet-03", "packet-06"]);
+  assert.ok(items.filter(item => item.historical).every(item => !["packet-03", "packet-06"].includes(item.id)),
+    "Only packets 03 and 06 were refreshed against the current prompt.");
   const savedReviews = await Promise.all(manifest.files
     .filter(({ name }: { name: string }) => name.startsWith("framework-saved-"))
     .map(async ({ name }: { name: string }) => JSON.parse(await readFile(path.join(folder, name), "utf8"))));
@@ -56,7 +58,7 @@ test("the earlier three-check bundle preserves hash-verified Parse and historica
     "Follow-up runtime changes must preserve generated review outcomes, not relabel or regenerate them.");
 });
 
-test("earlier bundled rates and effective terms preserve their original findings", async () => {
+test("bundled rates and refreshed effective terms preserve their expected findings", async () => {
   const demo = await readPolicyDemo(path.join(repositoryRoot, "data", "policy-demo"));
   const items = demo.results(demo.sourceRun).items;
   for (const [id, rate, cap] of [["packet-01", "54", "75"], ["packet-02", "61", "85"]]) {
@@ -65,17 +67,17 @@ test("earlier bundled rates and effective terms preserve their original findings
     assert.equal(check.Outcome, "Satisfied");
     assert.ok(check.Comparisons?.some((pair) => pair.ClaimValue.includes(rate) && pair.PolicyValue.includes(cap)));
   }
-  for (const [id, state, insured, indexed] of [
-    ["packet-03", "az", "KNDPMCAC0PA512343", "KNDPMCACOPA512343"],
-    ["packet-06", "il", "1FMCU0G63MA514686", "1FMCUOG63MA514686"],
+  for (const [id, state, policy, accident, term] of [
+    ["packet-03", "az", "SCI-A1132557", "2025-07-19", "2025-02-19 through 2026-02-19"],
+    ["packet-06", "il", "PMM-A4329240", "2026-03-05", "2025-10-06 through 2026-10-06"],
   ]) {
     const terms = items.find((item) => item.id === id)?.result?.Checks[1];
     assert.equal(terms?.Check, "Effective terms");
-    assert.equal(terms.Outcome, "ReviewRequired");
-    assert.equal(terms.ReviewRequired, true);
-    assert.ok(terms.Comparisons?.some((pair) =>
-      pair.ClaimValue === insured && pair.PolicyValue === indexed && pair.PolicyField === "POLICY-TERM"));
-    assert.ok(terms.Citation.some((citation) => citation.File === `effective-date-${state}-${id}.pdf`));
+    assert.equal(terms.Outcome, "Satisfied");
+    assert.equal(terms.ReviewRequired, false);
+    assert.ok(terms.ExpectedValue.includes(policy));
+    assert.ok(terms.ActualValue.includes(accident) && terms.ActualValue.includes(term));
+    assert.ok(terms.Citation.some((citation) => citation.File === `declarations-${state}-${id}.pdf`));
   }
 });
 
@@ -132,9 +134,10 @@ test("all eleven original repair quotes use their loss-state diagram, independen
     assert.equal(check?.Check, "Repair estimate");
     assert.equal(check.Outcome, source.gross.some(amount => amount > source.threshold)
       ? "ReviewRequired" : "Satisfied", item?.id ?? `packet index ${index}`);
-    const values = check.Comparisons?.map(pair => pair.ClaimValue.replaceAll(",", "")) ?? [];
+    const values = [check.ActualValue, ...(check.Comparisons?.map(pair => pair.ClaimValue) ?? [])]
+      .join(" ").replaceAll(",", "");
     for (const amount of source.gross)
-      assert.ok(values.some(value => value.includes(String(amount))), `${item?.id}: gross ${amount}`);
+      assert.ok(values.includes(String(amount)), `${item?.id}: gross ${amount}`);
     assert.ok(check.Comparisons?.some(pair => pair.PolicyValue.replaceAll(",", "").includes(String(source.threshold))));
     assert.ok(check.Citation.some(citation => citation.RuleId === `REPAIR-${source.state}-01`));
     const page = index < 5 ? 1 : 2;
@@ -187,7 +190,7 @@ async function appSession(t: TestContext, policy: PolicyService, cache = new Cac
   };
 }
 
-test("a fresh machine loads the historical bundled policy reviews without Azure or local configuration", async (t) => {
+test("a fresh machine loads bundled reviews without Azure or local configuration", async (t) => {
   const folder = await mkdtemp(path.join(os.tmpdir(), "lab664-offline-"));
   t.after(() => rm(folder, { recursive: true, force: true }));
   const policy = new PolicyService({
@@ -219,7 +222,9 @@ test("a fresh machine loads the historical bundled policy reviews without Azure 
   assert.equal(payload.extractionMode, "standard");
   assert.equal(payload.items.length, 10);
   assert.ok(payload.items.every((item: PolicyItem) =>
-    item.status === "completed" && item.historical && item.result?.Checks.length === 3));
+    item.status === "completed" && item.result?.Checks.length === 3));
+  assert.deepEqual(payload.items.filter((item: PolicyItem) => !item.historical).map((item: PolicyItem) => item.id).sort(),
+    ["packet-03", "packet-06"]);
   const chat = await request(`policy/chat?${new URLSearchParams({
     runId: selected.id, packetId: "packet-01", mode: "search", check: "Daily rate",
   })}`);
