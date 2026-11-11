@@ -568,6 +568,8 @@ Sign in with the same Azure lab account used in CU Studio.
 
 5. Open the model picker in the prompt footer and select **GPT 6.1 Sol**. Leave reasoning effort at the lab default, **Medium**.
 
+!IMAGE[spt098x3.png](instructions359897/spt098x3.png)
+
 ### Give the agent the task
 
 Use `repair_extractor_analyzer` from **Step 3**, not the router or the improved analyzer from Step 8.
