@@ -92,8 +92,6 @@ if ($DeployResources) {
         foundryResourceId = $outputs.accountResourceId.value
         modelDeployment = $outputs.policyModelDeployment.value
         cuModelName = $outputs.policyCuModelName.value
-        indexModelDeployment = $outputs.policyIndexModelDeployment.value
-        indexCuModelName = $outputs.policyIndexCuModelName.value
         cuApiVersion = '2026-06-01-preview'
     }
     if ($settings.Values | Where-Object { -not $_ }) {
@@ -142,7 +140,7 @@ elseif ($ResourceGroup) {
         cuModelName = $model.properties.model.name
         cuApiVersion = '2026-06-01-preview'
     }
-    # The Search-managed CU skill uses gpt-5.5 when exactly one ready deployment exists.
+    # Reuse the existing CU gpt-5.5 deployment for the Search-managed CU skill.
     $indexModels = @($ready | Where-Object { $_.properties.model.name -eq 'gpt-5.5' })
     if ($indexModels.Count -eq 1) {
         $settings.indexModelDeployment = $indexModels[0].name

@@ -171,9 +171,9 @@ deployment settings file is required:
 
 These commands discover existing Search, Storage and Foundry (`AIServices`)
 resources, and the ready `gpt-5.2` deployment used by the lab template.
-The Search index's Content Understanding skill uses the template's `gpt-5.5`
-deployment when exactly one is ready (otherwise it falls back to `gpt-5.2`); the
-policy agent and chat stay on `gpt-5.2`. Changing the index model changes the
+The Search index's Content Understanding skill reuses the existing `gpt-5.5`
+deployment that the lab's CU analyzers use, when exactly one is ready (otherwise
+it falls back to `gpt-5.2`); the policy agent and chat stay on `gpt-5.2`. Changing the index model changes the
 index generation, so the first such deploy reindexes and makes cached policy
 reviews historical until they are rerun.
 They do **not** deploy ARM, create services/models, assign roles, or change

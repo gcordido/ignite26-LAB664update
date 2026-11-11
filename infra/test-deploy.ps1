@@ -15,8 +15,6 @@ $state.outputs = @{
     accountResourceId = @{value="$resourceRoot/Microsoft.CognitiveServices/accounts/test-foundry"}
     policyModelDeployment = @{value='test-model'}
     policyCuModelName = @{value='gpt-5.2'}
-    policyIndexModelDeployment = @{value='index-model'}
-    policyIndexCuModelName = @{value='gpt-5.5'}
     policyClaimAnalyzerId = @{value='test_claims'}
 }
 $state.resources = @(
@@ -82,9 +80,6 @@ try {
     Assert ($settings.searchResourceId -eq $state.outputs.searchServiceResourceId.value) 'Search resource ID must propagate.'
     Assert ($settings.modelDeployment -eq 'test-model') 'Actual deployment name must propagate.'
     Assert ($settings.cuModelName -eq 'gpt-5.2') 'CU model name must propagate.'
-    Assert ($settings.indexModelDeployment -eq 'index-model') 'Index model deployment must propagate.'
-    Assert ($settings.indexCuModelName -eq 'gpt-5.5') 'Index CU model name must propagate.'
-    Assert ($state.pythonCalls[-1] -contains '--index-model-deployment') 'Standard indexing must receive the index model.'
 
     & $deploy -PythonExecutable Invoke-TestPython -ResourceGroup test-group -DeployResources -Apply -CreateClaimAnalyzer
     Assert ($state.pythonCalls[-1] -contains '--create-claim-analyzer') 'Explicit legacy creation must remain available.'
