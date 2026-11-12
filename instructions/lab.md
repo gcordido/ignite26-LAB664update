@@ -8,11 +8,11 @@ To begin, log into the virtual machine using the following credentials: +++@lab.
 
 Turn insurance claim packets into source-linked facts with Content Understanding, then review and improve the results in the **Insurance Workbench app**.
 
-- **Part 1 — Understand the documents:** classify and split packets, then extract required fields (steps 1–6).
-- **Part 2 — Validate the data with business rules:** inspect results and identify a business-rule failure (steps 7–8).
-- **Part 3 — Fix issues:** improve the repair analyzer and verify the highlighted failure again (step 8).
-- **Optional — Apply policies:** use a Foundry IQ (Azure Search Index) retrieval and Agent Framework to compare claims with policy evidence (step 9).
-- **Optional — Manage analyzers with a coding agent:** use GitHub Copilot and the Azure Developer CLI (`azd ai cu`) to manage and improve Content Understanding analyzers (step 10).
+- **Part 1 - Understand the documents:** classify and split packets, then extract required fields (steps 1-6).
+- **Part 2 - Validate the data with business rules:** inspect results and identify a business-rule failure (steps 7-8).
+- **Part 3 - Fix issues:** improve the repair analyzer and verify the highlighted failure again (step 8).
+- **Optional - Apply policies:** use a Foundry IQ (Azure Search Index) retrieval and Agent Framework to compare claims with policy evidence (step 9).
+- **Optional - Manage analyzers with a coding agent:** use GitHub Copilot and the Azure Developer CLI (`azd ai cu`) to manage and improve Content Understanding analyzers (step 10).
   
 ===
 
@@ -53,7 +53,7 @@ Finally, confirm the subscription selection by pressing **Enter**.
 powershell -ExecutionPolicy Bypass -Command "& '.\infra\setup.ps1'; & '.\infra\deploy.ps1' -ResourceGroup 'ResourceGroup1' -Apply"
 ```
 
-   - **Setup.ps1** restores install a handful of dependencies for the Insurance Workbench used later in the lab. 
+   - **Setup.ps1** restores install a handful of dependencies for the Insurance Workbench used later in the lab. 
    - **Deploy.ps1** setup Azure Search (FoundryIQ) index to enable policy checks later in the lab.
 
 > [!Note] Let the script run in the background. You will return to it in step 7 to check that setup completed and launch the app.
@@ -142,13 +142,13 @@ In this step, we will build a custom repair analyzer to handle repair estimate d
 7. In the **Choose a template window**, select the **Invoice** one. Click on **Save** to proceed.
 8. Add additional vehicle, vin, and odometer fields either with import or manually to configure the repair fields. 
 
-> [+Note] **Import from JSON — repair fields**
+> [+Note] **Import from JSON - repair fields**
 >
 > On the **Schema** tab, select **Import** (up-arrow icon) in the toolbar above the fields, between **Suggest** and **Export**, as highlighted below. Choose `repair-schema.json` from `data\samples`. Confirm schema replacement if prompted.
 >
-> !IMAGE[Schema toolbar with the Import button highlighted between Suggest and Export.](../img/cu-studio-schema-import.png)
+> !IMAGE[lqoeliv3.png](instructions359897/lqoeliv3.png)
 
-> [+Note] **Enter manually — repair fields**
+> [+Note] **Enter manually - repair fields**
 >
 > Keep all Invoice template fields. Add the three fields below, with method **Extract**, one by one. Enter each **Name**, **Type**, and **Description** before adding the next field.
 >
@@ -195,13 +195,13 @@ Choose an import or manual entry, then inspect how the same seven field descript
 
 4. Choose import or manual entry way to configure the Statement fields.
 
-> [+Note] **Import from JSON — Statement fields**
+> [+Note] **Import from JSON - Statement fields**
 >
 > In the **field-schema toolbar**, select **Import** and choose `statement-schema.json` from `data\samples`. Confirm schema replacement if prompted.
 >
 > !IMAGE[03cudcq2.png](instructions359897/03cudcq2.png)
 
-> [+Note] **Enter manually — Statement fields**
+> [+Note] **Enter manually - Statement fields**
 >
 > In the **field-schema editor**, remove any template fields and add exactly these seven fields. 
 >
@@ -262,11 +262,11 @@ You will start with a small three-page packet, then test the same configuration 
 
 3. Choose **one** way to configure the four categories. Do not assign child analyzer IDs yet.
 
-> [+Note] **Import from JSON — classification rules**
+> [+Note] **Import from JSON - classification rules**
 >
 > In **Routing rules**, open **More actions** (`...`) next to **Add category**, select **Import**, confirm, and choose `classifier-config.json` from `data\samples`. This imports four categories and logical-document segmentation, with no extraction routes.
 
-> [+Note] **Enter manually — classification rules**
+> [+Note] **Enter manually - classification rules**
 >
 > In **Routing rules**, add the four category keys and descriptions below. Enter each **Name** and **Description** before adding the next category. Leave every **Analyzer ID** empty.
 >
@@ -332,15 +332,15 @@ Continue in the editable step 5 project. If you left it, return to [CU Studio Bu
 
 Choose **one** configuration path, then continue at [Verify, test, and build the router](#verify-test-and-build-the-router). Both paths finish with the same tests and build.
 
-If you chose different custom IDs in steps 3–4, replace `repair_extractor_analyzer` and `statement_extractor_analyzer` in the imported rules' **Analyzer ID** selectors with your actual built IDs before saving. Use those same IDs for manual entry. Red **Analyzer not found** labels must be resolved before running.
+If you chose different custom IDs in steps 3-4, replace `repair_extractor_analyzer` and `statement_extractor_analyzer` in the imported rules' **Analyzer ID** selectors with your actual built IDs before saving. Use those same IDs for manual entry. Red **Analyzer not found** labels must be resolved before running.
 
-> [+Note] **Import from JSON — extraction routes**
+> [+Note] **Import from JSON - extraction routes**
 >
 > In **Routing rules**, open **More actions** (`...`) next to **Add category**, select **Import**, confirm, and choose `router-config.json` from `data\samples`. Do not use the field-schema Import button.
 >
 > !IMAGE[ywqnyvhk.png](instructions359897/ywqnyvhk.png)
 
-> [+Note] **Enter manually — extraction routes**
+> [+Note] **Enter manually - extraction routes**
 >
 > In **Routing rules**, retain `id_document` and `tax_1099a` with their step 5 descriptions. Select their routes below through **Analyzer ID** > **Prebuilt**. For tax, choose the unversioned `prebuilt-tax.us.1099A`.
 >
@@ -454,13 +454,13 @@ You've identified the missing labor amounts. Now change the analyzer, test the f
 
 The PDF lists parts and labor separately, matched by operation reference. The original extraction copied only the parts amounts into the row totals, leaving out labor. Use **Extract** for `PartsAmount` and `LaborAmount` to read those printed values, and **Generate** for `TotalAmount` to calculate their sum, which is not printed as a single row total. This makes the intended calculation explicit; the independent subtotal check still verifies the result.
 
-> [+Note] **Import from JSON — repair fix**
+> [+Note] **Import from JSON - repair fix**
 >
 > On the **Schema** tab, select **Import** (up-arrow icon) in the main toolbar above the fields, between **Suggest** and **Export**, as highlighted below. Use the main Schema toolbar, not the nested line items editor. Choose `repair-fixed-schema.json` from `data\samples`. Confirm schema replacement if prompted. It retains the full step 3 invoice and vehicle schema, changing only `LineItems.TotalAmount` and adding `LineItems.PartsAmount` and `LineItems.LaborAmount`. If you added your own fields beyond step 3, use the manual path instead to retain them.
 >
 > !IMAGE[Schema toolbar with the Import button highlighted between Suggest and Export.](../img/cu-studio-schema-import.png)
 
-> [+Note] **Enter manually — repair fix**
+> [+Note] **Enter manually - repair fix**
 >
 > In the **Schema** fields list, find **LineItems** and select its grid icon to open the line items editor.
 >
@@ -509,7 +509,7 @@ After either path, verify the document-level **TotalAmount** is unchanged and **
 
 ===
 
-## Step 9: Optional: Review claims with Azure AI Search (Foundry IQ)
+## Step 9 - Optional: Review claims with Azure AI Search (Foundry IQ)
 
 Step 8 used fixed business rules. In this optional part, use Azure AI Search (Foundry IQ) retrieval and Agent Framework to compare claim facts with policy evidence. The agent queries a Search index directly, not a knowledge-base API.
 
