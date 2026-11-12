@@ -12,7 +12,7 @@ Turn insurance claim packets into source-linked facts with Content Understanding
 - **Part 2 — Validate the data with business rules:** inspect results and identify a business-rule failure (steps 7–8).
 - **Part 3 — Fix issues:** improve the repair analyzer and verify the highlighted failure again (step 8).
 - **Optional — Apply policies:** use a Foundry IQ (Azure Search Index) retrieval and Agent Framework to compare claims with policy evidence (step 9).
-- **Optional — Manage analyzers with a coding agent:** use GitHub Copilot and the Azure Developer CLI (`azd ai cu`) to manage and improve Contnet Understanding analyzers (step 10).
+- **Optional — Manage analyzers with a coding agent:** use GitHub Copilot and the Azure Developer CLI (`azd ai cu`) to manage and improve Content Understanding analyzers (step 10).
   
 ===
 
@@ -53,13 +53,11 @@ Finally, confirm the subscription selection by pressing **Enter**.
 powershell -ExecutionPolicy Bypass -Command "& '.\infra\setup.ps1'; & '.\infra\deploy.ps1' -ResourceGroup 'ResourceGroup1' -Apply"
 ```
 
-   - **Setup.ps1** restores install a handful of dependencies for the Insurance Workbench used laterin the lab. 
-   - **Deploy.ps1** setup Azure Search (FoundryIQ) index to enable policy checks later in the lab
+   - **Setup.ps1** restores install a handful of dependencies for the Insurance Workbench used later in the lab. 
+   - **Deploy.ps1** setup Azure Search (FoundryIQ) index to enable policy checks later in the lab.
 
 > [!Note] Let the script run in the background. You will return to it in step 7 to check that setup completed and launch the app.
-
-
-Don't need to wait for it to finish. Leave this terminal open and proceed to step 2. 
+> Don't need to wait for it to finish. Leave this terminal open and proceed to step 2. 
 
 ===
 
@@ -94,6 +92,8 @@ Once done, follow the steps below to explore the prebuilt analyzers:
 
 !IMAGE[xfe4ei8u.png](instructions359897/xfe4ei8u.png)
 
+> [!Tip] If some tabs are hidden, click on the three-dot menu to reveal additional tabs.
+
 ### Try out Invoice prebuilt
 
 Return to the previous page by clicking the **Back** button at the top left of the page.
@@ -103,7 +103,7 @@ Return to the previous page by clicking the **Back** button at the top left of t
 Let's examine the differences between the prebuilt layout extraction and the schema-based extraction for the same document. 
 1. Scroll down on the **Procurement** section to locate the **Invoice** prebuilt analyzer and click on it to open the details.
 2. Inspect the **Fields tab** on the right panel with the default samples.  Invoice does schema-based extraction to extract fields relevant to the document type, such as **AmountDue**, **BalanceForward** and **Billing Address**. Note fields have a confidence score.
-3. Hover over a field in the right panel, like "AmountDue". Notice that it shows grounding to the document.
+3. Hover over a field in the right panel, like "AmountDue.Amount" value. Notice that it shows grounding to the document.
 4. Now upload the same **towing-invoice.pdf** document to see how the schema-based extraction applies to your own file. Compare the extracted fields and confidence scores with the layout extraction results you've got in the previous step to understand the differences.
 
 > [!Note] **Layout and fields:** Use Layout to inspect how a document is organized, and an invoice schema to retrieve named business values. A field such as **AmountDue** selects a specific meaning rather than returning every number on the page.
@@ -140,7 +140,7 @@ In this step, we will build a custom repair analyzer to handle repair estimate d
 !IMAGE[jur6eyeq.png](instructions359897/jur6eyeq.png)
 6. Once your project is created, select **Browse for Files** and upload `C:\Users\LabUser\Desktop\ignite26-LAB664\data\samples\repair-estimate.pdf`.
 7. In the **Choose a template window**, select the **Invoice** one. Click on **Save** to proceed.
-8. Add additional vehicle, vin, and odometer fields either with imort or manually to configure the repair fields. 
+8. Add additional vehicle, vin, and odometer fields either with import or manually to configure the repair fields. 
 
 > [+Note] **Import from JSON — repair fields**
 >
@@ -203,7 +203,7 @@ Choose an import or manual entry, then inspect how the same seven field descript
 
 > [+Note] **Enter manually — Statement fields**
 >
-> In the **field-schema editor**, remove any template fields and add exactly these seven fields. Enable **Source & Confidence** for each field.
+> In the **field-schema editor**, remove any template fields and add exactly these seven fields. 
 >
 > | Field | Type / method | Copy this description |
 > | :--- | :--- | :--- |
@@ -423,8 +423,8 @@ Wait for the cached results to load. Opening the app or switching review tabs do
 
 ### Explore the included results first 
 
-1. Open **Parse and extract**. The cached results load automatically; wait until the **Cached** badge and all ten customer rows appear. There is no batch to start or completion counter to wait for.
-2. Start with **Classification**. Each row is one customer; each check is a returned document instance and page range. Click a check or field value to open its full source PDF at that page. Documents classified as `other` are not shown in this grid, but remain in the analyzer's full response.
+1. Start with analyzing results on **Parse and extract** -> **Classification** (your default selection when the app starts, no action needed). The cached results load automatically; wait until the **Cached** badge and all ten customer rows appear.  
+2. Each row is one customer; each check is a returned document instance and page range. Click a check or field value to open its full source PDF at that page. Documents classified as `other` are not shown in this grid, but remain in the analyzer's full response.
 3. Switch to the **ID**, **1099-A**, **Repair Estimate**, **Statement**, **Towing Invoice**, and **Rental Invoice** views. Select a returned value to inspect its source document.
 4. Turn on **Confidence** to inspect returned scores. Blank means the service omitted a score, not zero. Click line items for source boxes or their table icon to expand item rows below the customer.
 
@@ -555,7 +555,7 @@ If you're starting here and the app isn't running, follow [Step 7's app-launch i
 
 ===
 
-## Step 10: Optional: Use GitHub Copilot + CLI to improve your analyzer
+## Step 10 - Optional: Use GitHub Copilot + CLI to improve your analyzer
 
 In this optional exercise, you'll see how:
 
@@ -623,7 +623,7 @@ Copilot checks your Azure connection and asks for your Content Understanding end
 
 If **Trust the ignite26-LAB664 repository?** appears, confirm this is the lab folder you selected, then choose **Always trust ignite26-LAB664**.
 
-!IMAGE[Trust the selected lab repository if prompted](instructions359897/copilot-trust-lab-repository.png)
+!IMAGE[ilc1ga19.png](instructions359897/ilc1ga19.png)
 
 Review Copilot's initial proposal before approving a baseline analyzer copy and **two analyses** of `data\documents\packet-08\05-estimate.pdf`: one using the baseline copy and one using a separately approved improved analyzer.
 
