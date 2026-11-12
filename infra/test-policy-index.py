@@ -284,6 +284,18 @@ class PolicyIndexTests(unittest.TestCase):
         self.assertEqual(setup.runtime_settings(self.root, {"modelDeployment": "explicit"})["modelDeployment"], "explicit")
         self.assertNotEqual(setup.generation_hash(self.sources, settings), self.generation)
 
+    def test_index_model_override_changes_only_search_skill_model(self):
+        self.assertEqual(self.settings["indexModelDeployment"], self.settings["modelDeployment"])
+        self.assertEqual(self.settings["indexModelName"], self.settings["modelName"])
+        settings = setup.runtime_settings(self.root, {
+            "indexModelDeployment": "lab-gpt55", "indexCuModelName": "gpt-5.5"})
+        self.assertEqual(settings["modelDeployment"], self.settings["modelDeployment"])
+        self.assertEqual(settings["modelName"], self.settings["modelName"])
+        generation = setup.generation_hash(self.sources, settings)
+        self.assertNotEqual(generation, self.generation)
+        skill = setup.skillset_definition(setup.names_for(generation), generation, settings)["skills"][0]
+        self.assertEqual((skill["modelName"], skill["modelDeployment"]), ("gpt-5.5", "lab-gpt55"))
+
     def test_invalid_or_missing_resource_settings_fail_before_azure_calls(self):
         for key in RESOURCES:
             for value in ("", "https://example.com", RESOURCES[key] + "/child", RESOURCES[key] + "?query"):
@@ -323,7 +335,7 @@ class PolicyIndexTests(unittest.TestCase):
         self.assertLessEqual(len(names["container"]), 63)
         self.assertEqual(self.generation, setup.generation_hash(setup.load_sources(self.root), self.settings))
         self.assertNotEqual(self.generation, setup.generation_hash(
-            self.sources, {**self.settings, "modelDeployment": "other", "modelName": "other"}))
+            self.sources, {**self.settings, "indexModelDeployment": "other", "indexModelName": "other"}))
         pdf = self.root / setup.CORPUS / "doc0.pdf"
         pdf.write_bytes(b"changed")
         manifest = self.root / setup.CORPUS / "manifest.json"

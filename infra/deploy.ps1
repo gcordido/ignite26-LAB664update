@@ -140,6 +140,15 @@ elseif ($ResourceGroup) {
         cuModelName = $model.properties.model.name
         cuApiVersion = '2026-06-01-preview'
     }
+    # Reuse the existing CU gpt-5.5 deployment for the Search-managed CU skill.
+    $indexModels = @($ready | Where-Object { $_.properties.model.name -eq 'gpt-5.5' })
+    if ($indexModels.Count -eq 1) {
+        $settings.indexModelDeployment = $indexModels[0].name
+        $settings.indexCuModelName = $indexModels[0].properties.model.name
+    }
+    else {
+        Write-Warning "Expected one ready gpt-5.5 deployment for policy indexing, found $($indexModels.Count); indexing uses '$($model.name)'."
+    }
     Write-Host ($settings | ConvertTo-Json)
 }
 elseif ($Subscription) {
@@ -173,6 +182,14 @@ if ($settings) {
         @('--cu-api-version', 'cuApiVersion')
     )) {
         $policyArguments += @($pair[0], $settings[$pair[1]])
+    }
+    if (-not $UseLayout) {
+        foreach ($pair in @(
+            @('--index-model-deployment', 'indexModelDeployment'),
+            @('--index-cu-model-name', 'indexCuModelName')
+        )) {
+            if ($settings[$pair[1]]) { $policyArguments += @($pair[0], $settings[$pair[1]]) }
+        }
     }
     if ($ClaimAnalyzerId) { $policyArguments += @('--claim-analyzer-id', $ClaimAnalyzerId) }
     if ($UseLayout) {
