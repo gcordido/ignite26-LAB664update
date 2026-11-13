@@ -117,6 +117,8 @@ Feel free to experiment with further prebuilt analyzers to understand how CU Stu
 | Identity / Generic ID document | demo-id.pdf | Named holder and available ID-like fields. This fictional membership specimen is not a government ID. |
 | US tax / 1099A | form-1099a.pdf | Tax year, lender, borrower, account, and form boxes. Nested year/copy results are not extra input documents. |
 
+> [!Tip] To locate 1099A under the US tax category, select **More analyzers**, if not immediately visible in the list.
+
 > [!Note] **Checkpoint:** you can explain the difference between document layout and schema-based extraction.
 
 ===
@@ -163,7 +165,7 @@ In this step, we will build a custom repair analyzer to handle repair estimate d
 > [!Note] **Field names and descriptions instruct the model:** Names and descriptions act like "mini-prompts" instructing the LLM how to interpret the document. For example, naming the intended entity, likely printed label, and exclusions helps distinguish a vehicle VIN from other identifiers.
 
 9. After either path, verify the three vehicle fields and the retained Invoice fields, then select **Save**.
-10. **Run analysis:** Click the **Run** button on the upper left to test the updated analyzer.
+10. **Run analysis:** Click the **Run analysis** button in the upper-left corner to test the updated analyzer.
 
 !IMAGE[ctdjrztc.png](instructions359897/ctdjrztc.png)
 
@@ -264,7 +266,7 @@ You will start with a small three-page packet, then test the same configuration 
 
 > [+Note] **Import from JSON - classification rules**
 >
-> In **Routing rules**, open **More actions** (`...`) next to **Add category**, select **Import**, confirm, and choose `classifier-config.json` from `data\samples`. This imports four categories and logical-document segmentation, with no extraction routes.
+> In the **Routing rules** tab, click the three-dot menu (⋮) immediately beside **Add category**, then select **Import**, confirm, and choose `classifier-config.json` from `data\samples`. This imports four categories and logical-document segmentation, with no extraction routes.
 
 > [+Note] **Enter manually - classification rules**
 >
