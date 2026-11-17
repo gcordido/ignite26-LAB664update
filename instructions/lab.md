@@ -130,7 +130,7 @@ In this step, we will build a custom repair analyzer to handle repair estimate d
 
 > [!Note] For this step, you'll use the **gpt-5.5** model instance pre-provisioned and mapped by the lab template. 
 
-1. Move from the **Discover** to the **Build** tab, by selecting it on the top right corner of the blue top navigation bar.
+1. Move from the **Discover** to the **Build** tab, by selecting it on the top right corner of the top navigation bar.
 2. Click on **Create** to start building your custom repair analyzer.
 3. Name the project as `custom-repair-extractor`.
 4. Select `2026-06-01 (Preview)` as the API version and `Standard Extraction` as the workflow type.
@@ -285,7 +285,7 @@ After either path, verify **four categories and no routes**, then configure segm
 
 1. In **Routing rules**, turn on **Enable segment**, as shown below.
 
-!IMAGE[Routing rules with the Enable segment toggle turned on and highlighted.](../img/cu-studio-enable-segment.png)
+!IMAGE[11mmze7v.png](instructions359897/11mmze7v.png)
 
 > [!Note] With the configured settings, a two-page rental invoice should remain one logical document. Two adjacent documents should still be separate, even when both belong to `other`.
 
@@ -338,7 +338,7 @@ If you chose different custom IDs in steps 3-4, replace `repair_extractor_analyz
 
 > [+Note] **Import from JSON - extraction routes**
 >
-> In **Routing rules**, open **More actions** (`...`) next to **Add category**, select **Import**, confirm, and choose `router-config.json` from `data\samples`. Do not use the field-schema Import button.
+> In the **Routing rules** tab, click the three-dot menu (⋮) immediately beside **Add category**, then select **Import**, confirm, and choose `router-config.json` from `data\samples`. Do not use the field-schema Import button.
 >
 > !IMAGE[ywqnyvhk.png](instructions359897/ywqnyvhk.png)
 
@@ -460,7 +460,7 @@ The PDF lists parts and labor separately, matched by operation reference. The or
 >
 > On the **Schema** tab, select **Import** (up-arrow icon) in the main toolbar above the fields, between **Suggest** and **Export**, as highlighted below. Use the main Schema toolbar, not the nested line items editor. Choose `repair-fixed-schema.json` from `data\samples`. Confirm schema replacement if prompted. It retains the full step 3 invoice and vehicle schema, changing only `LineItems.TotalAmount` and adding `LineItems.PartsAmount` and `LineItems.LaborAmount`. If you added your own fields beyond step 3, use the manual path instead to retain them.
 >
-> !IMAGE[Schema toolbar with the Import button highlighted between Suggest and Export.](../img/cu-studio-schema-import.png)
+> !IMAGE[rmt8l9rr.png](instructions359897/rmt8l9rr.png)
 
 > [+Note] **Enter manually - repair fix**
 >
@@ -470,7 +470,6 @@ The PDF lists parts and labor separately, matched by operation reference. The or
 >
 > Within **LineItems**, delete the existing **TotalAmount** object using the trash can icon on its row. This also removes its nested **Amount** and **CurrencyCode**. Do not delete or change the separate document-level **TotalAmount**.
 >
-> !IMAGE[ma6pu0dc.png](instructions359897/ma6pu0dc.png)
 >
 > Add these three fields directly under **LineItems**, as siblings of **Description** and **Quantity**, not inside another object:
 >
@@ -480,11 +479,14 @@ The PDF lists parts and labor separately, matched by operation reference. The or
 > | `LaborAmount` | Number | Extract | `Printed labor amount for this line item's operation reference. Match the same operation across parts and labor sections. Do not substitute parts, labor hours, a rate, or a subtotal. Leave unset if absent; an explicit zero is valid.` |
 > | `TotalAmount` | Number | Generate | `Total amount for this line item. Use its explicit printed total; otherwise, sum PartsAmount and LaborAmount. Do not use a parts-only amount or the invoice subtotal. Leave unset if no line-item total is printed and either component is missing.` |
 >
-> !IMAGE[ljfsfbut.png](instructions359897/ljfsfbut.png)
 >
 > Add the fields in this order, then select **Back to main view**.
 
-After either path, verify the document-level **TotalAmount** is unchanged and **LineItems.TotalAmount** is now a single **Number**, not an object. Select **Save**. The validation rule supports both the numeric row total and the original `TotalAmount.Amount`. It prefers the returned row total and uses parts plus labor only when that total is missing; a wrong returned total still fails.
+After either path, verify the document-level **TotalAmount** is unchanged and **LineItems.TotalAmount** is now a single **Number**, not an object.
+
+!IMAGE[ljfsfbut.png](instructions359897/ljfsfbut.png)
+
+Select **Save**. The validation rule supports both the numeric row total and the original `TotalAmount.Amount`. It prefers the returned row total and uses parts plus labor only when that total is missing; a wrong returned total still fails.
 
 5. To verify the changes, select **Browse for files** and upload `packet-08-estimate.pdf` from `data\samples`, then select **Run analysis**. Expand the **LineItems** object in the **Test** tab and inspect every line item and its source regions. A useful result for this document is:
 
